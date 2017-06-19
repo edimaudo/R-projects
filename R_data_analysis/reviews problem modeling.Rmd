@@ -1,0 +1,158 @@
+
+# Instructions
+
+### General 
+
+ - Read the problem description below. You are to build models on your training set, to validate these for example using cross-validation, and to select the best model for generalizing to the test set. You should then predict the response variable on the test set, and submit the resulting predictions to the online leaderboard app for evaluation. 
+ 
+### Code and models
+ 
+ - You should use only models and algorithms which may include linear and logistic regression, with and without regularization, classification and regression trees, and variable selection methods including subset selection techniques.
+ 
+ - You should stick to the implementations of the algorithms which may include the `lm()` and `glm()` functions, as well as the **leaps**, **glmnet** and **rpart** packages. 
+ 
+ - Data manipulation packages, such as **sqldf**, **data.table** and **dplyr** can be used, as long as they are used for data manipulation only and not for modelling. For model evaluation, you can use your own code, or code from packages from such as **boot**, **caret** and **cvTools**, *as long as you do not use model implementations other than those listed above*. 
+ 
+ - You are allowed (encouraged) to create new features (or to recode existing features) for input into your models. You can for example use "term-frequency-inverse-document-frequency" scaling for your variables, recode some variables as factors, use interactions and so forth. *It is explicitly not allowed to do additional text mining on the original raw review text.* You should not add any features derived directly from the raw data. Also, *automatic basis expansions (such as splines)  should not be used*. These restrictions are designed to keep the playing field level, and to spare you from the danger of computationally intensive endeavours which might not reap rewards. 
+ 
+  -  You are expected to make model improvements by thinking about the problem, the variables and the allowed methods.
+ 
+### Organizational
+
+ - Your group may make a maximum of 30 submissions over the course of the competition. You should strive to make at least 10 submissions.
+ 
+ - Some benchmarks will be added to the leaderboard. These will include relatively simple models, which you should try to beat, and more advanced ones.
+ 
+ - The competition will run strictly from 07:00 on Wednesday, 31 May 2017, until 23:00 on Thurday, 1 June 2017.
+ 
+ - All code for your best model (from adding or transforming features in the original data set up to model fitting and evaluation), must be included in the final report. It should be reproducible (that is, remember to set the seed of the random number generator before using it), to the point that your submission file can be replicated exactly. 
+ 
+ - You should decide whether the output of the code must be included in the file, or only the code itself: use **knitr** chunk options as you see fit. 
+ 
+# Problem Description
+
+You work at a company running a number of online stores. A big part of the consumer appeal of these shops are the user-generated content, mainly product reviews, that it hosts. Managing the quality of the content is a tough but important task, and is one of your team's responsibilities. 
+
+One particularly annoying problem that can occur is that the scores (number of stars) assigned to a product review does not seem to match the sentiment of that review. A person might for example sound very pleased with the product, but would only score it two out of five stars. Another might sound disappointed but still award five stars. 
+
+There is a suspicion among the development team that these discrepancies are related to the design of the online interface through which reviews are submitted, but this is not known for certain.
+
+Your team has decided that the first step towards being able to identify, and hence investigate and possibly correct, such reviews, is to build a model to predict the review score from the review text itself. If you can come up with a good model, you can detect anomalous scores by comparing the actual score to the prediction from your model. The reviews with the largest residuals can then be followed up to establish what the reason was for the apparent discrepancy.
+
+To build your model, you have compiled a data set of 150 000 reviews, each scored from 1 to 5 stars. The data contains customer reviews of food and beverage products, made by almost 100 000 different user profiles. It is provided as a training set of 100 000 reviews, and a test set of 50 000 reviews. 
+
+Your task is to train a model to provide accurate predictions for the `score` variable on the test set, using the provided true scores on the training set. The mean squared prediction error on the test set is used as the evaluation metric. 
+
+Your colleague, who knows a bit about natural language processing, has already expanded the data into 168 variables. These are outlined in the table below:
+
+Variable Name                     | Description
+-------------------------------------------- | ---------------------------------------------------
+score                                        | The number of stars awarded (the response variable)
+id                                           | Unique identifier for the review
+profile_name                                 | The profile name chosen by the poster
+helpful_numerator                            | The number of times a review was voted to be helpful
+helpful_denominator                          | The total number of votes for the review
+headline                                     | The raw text of the review headline (title)
+text                                         | The raw review text
+year, month, weekday                         | The year, month and weekday on which the review was posted
+headline_nr_words                            | Number of words in the headline of the review
+headline_prop_caps                           | Proportion of capital letters in the headline
+headline_nr_exclamations                     | Number of exclamation marks in the headline
+headline_sentiment                           | Sentiment score for the headline
+headline_anger -- headline_positive          | Emotions and valence from the NRC dictionary for the headline
+nr_char                                      | The total number of characters in the review, including spaces
+nr_words                                     | The total number of words in the review
+q1_wlen, median_wlen, q3_wlen, max_wlen      | Quartiles and maximum of the word length distribution
+nr_exclamations                              | Number of exclamation marks in the review
+nr_exclamations_3_more                       | Number of times three or more exclamation marks appear together
+nr_dollars                                   | Number of dollar signs in the review
+nr_uppercase_words                           | Number of upper case words in the review
+nr_digit_words                               | Number of numbers (of 1 or more digits) in the review
+nr_uppercase_words                           | Number of uppercase words in the review
+prop_punctuation                             | Proportion of non-whitespace characters that are punctuation marks
+text_sentiment                               | Sentiment score for the review text
+text_anger -- text_positive                  | Emotions and valence from the NRC dictionary for the review text
+flesch_kincaid -- average_grade_level        | Five readability scores, and an average, for the review text
+nr_tokens -- X                               | The number of tokens, and the parts-of-speech counts in the review text (see the table below) using these tokens
+ingredi -- cardboard                         | The number of times each of these stemmed words appear in the review, as a proportion of the total number of stemmed words in the review
+
+Table: A brief description of the variables in the data set.
+
+The parts-of-speech counts for the review text have been derived based on the 12 universal parts-of-speech tags of [Petrov, Das & McDonald (2011)](https://arxiv.org/abs/1104.2086). These are given in the table below.
+
+|Tag    |Description                                       |
+|:-----------|:--------------------------------------------|
+|punctuation | punctuation
+|VERB        | verbs (all tenses and modes)                  
+|NOUN        | nouns (common and proper)
+|PRON        | pronouns 
+|ADJ         | adjectives
+|ADV         | adverbs
+|ADP         | adpositions (prepositions and postpositions)
+|CONJ        | conjunctions
+|DET         | determiners
+|NUM         | cardinal numbers
+|PRT         | particles or other function words
+|X           | other: foreign words, typos, abbreviations
+
+
+Table: An overview of the 12 universal parts-of-speech (POS) tags of [Petrov, Das & McDonald (2011)](https://arxiv.org/abs/1104.2086), and their meanings.
+
+The readability scores are the Flesch Kincaid, Gunning Fog Index, Coleman Liau, SMOG, Automated Readability Index and an average of these. See [here](https://en.wikipedia.org/wiki/Readability) for an overview. Here is a [reference](https://pdfs.semanticscholar.org/b89f/2a5ef026f32645348584a57ba23dcdf03d3e.pdf) for the NRC emotion lexicon, which counts the number of words associated with a few different emotions, as well as positive and negative valence.
+
+Using these features and the `score` variable on the training data, you set out to train a model which can predict `score` for the reviews in the test data. Although you have already substantially reduced the number of words in the data to only the most promising ones, it might very well be that not all the features are important for predicting the `score`. Also, you are not certain what the best encoding for some of these features are, and there may even be nonlinear effects and interactions that are worth considering.
+
+Your strategy is to get to know the data a bit better, then to establish a baseline model, and consequently to spend your time pursuing the most promising possibilities for improving on this model. The data is available as `reviews_train` and `reviews_test` in the files `reviews_train.RData` and `reviews_test.RData`, respectively.
+
+# Submission
+
+The submission file should be a `.csv` file with only two columns, named `id` and `score`. The first of these are the `id` variable from the test set, and the latter is the predicted response. There should be one prediction for each test observation. Make sure that the observations (rows) are in the same order as in the test set.
+
+You can create such submission files with, for example, the following code (fill in the required objects):
+
+```{r eval = FALSE}
+df <- data.frame(id = reviews_test$id, score = test_predictions)
+write.csv(df, file = "group-0-submission-0.csv", row.names = FALSE)
+```
+
+It is **very important** that your submission files follow the naming convention `group-x-submission-y.csv`, where `x` is your group number and `y` the number of the submission. If you do not use the correct names, the app will not know what group you are from, or might mistake you for another group. Please be careful with this.
+
+Your submissions will be evaluated on half the test data to create the interim leaderboard. When the competition closes, the final leaderboard is created by using the entire test set.
+
+# Report Format
+
+The report should be roughly three to five pages, excluding code. You must include all your code for your final model, including the code you used to tune it on the training set, and any preprocessing or feature engineering steps. The code needs to run when evaluated, but you do not need to evaluate it in your R Markdown file. 
+
+Here is a suggested structure for the report:
+ 
+ - *Introduction*: Provide a short description of the problem and the goal of the project. Give an overview of the structure of the rest of the report.
+ 
+ - *Data*: Briefly discuss the data, including a summary of the types of variables provided. Report any peculiarities in the data and how you dealt with those. You can report the most important findings from an exploratory data analysis.
+ 
+ - *Feature Engineering & Preprocessing*: Discuss the types of feature transformations and coding that you used, and which new variables you created, if any. This could focus on the final model, or on your general approach.
+ 
+ - *Model Building*: Describe your general approach to model building: what models and features did you consider at first, why did you consider these, and how did you improve on them? Give a description of your best model and how you arrived at it.
+ 
+ - *Results*: Briefly discuss your model's test performance, and how that compared to the estimated test performance you obtained on your training data. What distinguished it from your other models? Did you expect it to be the best model?
+ 
+ - *Limitations and Recommendations*: Discuss the limitations of the data, your approach to modelling it, and potential avenues for improvement.
+ 
+```{r eval = FALSE}
+str(reviews_train)
+
+reviews_train$score <- as.factor(reviews_train$score)
+
+is.factor(reviews_train$score)
+reviews_train$score
+
+library("glmnet")
+xmat_reviews_train <- model.matrix(~. - 1, data = reviews_train[, -1)
+set.seed(123)
+cv_Credit_lasso <- cv.glmnet(x = xmat_reviews_train, y = reviews_train[, "score"])
+
+xmat_Credit <- model.matrix(~. - "score", data = reviews_train[, -1])
+set.seed(123)
+cv_reviews_train <- cv.glmnet(x = xmat_reviews_train, y = reviews_train[, "score"])
+
+```
+
