@@ -1,0 +1,17 @@
+We are working with electric usage data.  The data are time series. The intervals are 15 minutes, 60 minutes, or daily. The data usually arrive in CSV.  Typical format is one interval of data per line. The CSV may contain data from a single SITE_ID (unique identifier) or multiple SITE_IDs.  An example of the CSV is attached.  We are looking for code that will do the following:
+1)	Import in one or more CSV files. 
+2)	Convert the time-date stamp from character/string into a Time and Date value
+3)	Allow data frame to be subset into one or more SITE_IDs
+4)	Allow data frame to be subset by DATE
+5)	Plot multiple Y variables for one or more SITE_IDs
+6)	Calculate summary statistics for all or some SITE_IDs.  Summary statistics should be output to text file.  Summary statistics include:
+a.	Total number of observations
+b.	Number observation days
+c.	Average values for numeric values
+d.	Min value for numeric values
+e.	Max value for numeric values
+f.	95th percentile for numeric values
+g.	5th percentile for numeric values
+h.	Percentage of data that are zero
+i.	Percentage of data that are missing
+j.	Percentage of data that are negative
