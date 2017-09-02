@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: \"Reactive Interactive Histogram\"\noutput: slidy_presentation\nruntime: shiny\n---\n\n```{r setup, include=FALSE}\nknitr::opts_chunk$set(echo = FALSE)\n```\n\n## Static Histogram\n\nThe `hist` function allows us to easily create histograms:\n\n```{r static_histogram}\nhist(rnorm(100))\n```\n\n\n## Reactive Histogram with Shiny\n\nUsing reactive expressions it's possible to control when datasets are updated.\n\n\n```{r interactive_histogram}\nlibrary(shiny)\nlibrary(shinythemes)\nshinyApp(\n  ui = navbarPage(\n    theme = shinytheme(\"journal\"),\n    \"Dashboard-like navbarPage\",\n    tabPanel(\"Histograms\",\n    fluidPage(sidebarLayout(\n      sidebarPanel(\n        sliderInput(\"no_data\", label = \"Number of data\",\n                    min = 1000,\n                    max = 5000,\n                    value = 1000),\n        sliderInput(\"mean\", label = \"Mean\",\n                    min = 0,\n                    max = 8,\n                    value = 3),\n        sliderInput(\"sd\", label = \"Standard Deviation\",\n                    min = 1,\n                    max = 10,\n                    value = 2),\n        uiOutput(\"xlim_ui\")\n      ),\n      mainPanel(plotOutput(\"histogram\"))\n    ))\n    ),\n    navbarMenu(\n      \"Menu Item With Children\",\n      tabPanel(\"Child One\",\n                fluidPage(\n                  plotOutput(\"curve1\")\n                )\n               ),\n      tabPanel(\"Child Two\",\n               fluidPage(\n                plotOutput(\"curve2\")\n               )\n               )\n    ), collapsible = TRUE\n  ),\n  server = function(input, output){\n    \n    output$xlim_ui <- renderUI({\n      if(is.null(input$mean)){\n        return()\n      }\n      sliderInput(\"xlim\", label = \"xlim\",\n                  min = input$mean,\n                  max = 10,\n                  value = input$mean,\n                  step = 1)\n    })\n    \n    data_for_plot <- reactive({\n      rnorm(input$no_data, mean = input$mean, sd = input$sd)\n    })\n    \n    output$histogram <- renderPlot({\n      if(is.null(input$xlim)){\n        return()\n      }\n      \n      data_for_plot <- data_for_plot()\n      \n      hist(data_for_plot, xlim = c(-input$xlim,input$xlim))\n    })\n    \n    output$curve1 <- renderPlot({\n      curve(x^1, from = -5, to = 5)\n    })\n    \n    output$curve2 <- renderPlot({\n      curve(x^2, from = -5, to = 5)\n    })\n  }\n)\n```\n",
+    "created" : 1457630707830.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3124235716",
+    "id" : "A6E9E7D",
+    "lastKnownWriteTime" : 1457633227,
+    "last_content_update" : 1457633227814,
+    "path" : "~/Desktop/Exercise Files/04_07/04_07_End.Rmd",
+    "project_path" : "04_07_End.Rmd",
+    "properties" : {
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

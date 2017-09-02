@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "library(highcharter)\nshinyUI(navbarPage(\n  \"highcharter dashboars\",\n  tabPanel(\"Fertility Forecast\",\n           fluidPage(\n             sidebarLayout(\n               sidebarPanel(\n                 dateRangeInput(\n                   \"date_range\",\n                   label = \"Date Range\",\n                   min = \"1960-01-01\",\n                   max = \"2012-12-01\",\n                   start = \"1960-06-06\",\n                   end = \"2012-01-01\",\n                   format = \"yyyy-mm-dd\",\n                   startview = \"decade\"\n                 ),\n                 sliderInput(\n                   \"forecast_n_months\",\n                   min = 12,\n                   max = 12 * 5,\n                   value = 48,\n                   step = 12,\n                   label = \"Forecast n months\"\n                 )\n               ),\n               mainPanel(highchartOutput(\"forecastPlot\"))\n             )\n           )),\n  navbarMenu(\n    \"More Examples\",\n    tabPanel(\"Interactive Histogram\",\n             fluidPage(\n               sidebarLayout(\n                 sidebarPanel(\n                   sliderInput(\n                     \"no_data\",\n                     label = \"Number of data\",\n                     min = 1000,\n                     max = 5000,\n                     value = 1000\n                   ),\n                   sliderInput(\n                     \"mean\",\n                     label = \"Mean\",\n                     min = 0,\n                     max = 8,\n                     value = 3\n                   ),\n                   sliderInput(\n                     \"sd\",\n                     label = \"Standard Deviation\",\n                     min = 1,\n                     max = 10,\n                     value = 2\n                   ),\n                   uiOutput(\"xlim_ui\")\n                 ),\n                 mainPanel(highchartOutput(\"histogram\"))\n               )\n             )),\n    tabPanel(\"Interactive Scatterchart\",\n             fluidPage(\n               highchartOutput(\"scatterchart\")\n             ))\n  ),\n  collapsible = TRUE\n))",
+    "created" : 1457660162778.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3030452709",
+    "id" : "AB212504",
+    "lastKnownWriteTime" : 1457661105,
+    "last_content_update" : 1457661105075,
+    "path" : "~/Google Drive/Lynda/Martin Hadley/Interactive Presentaitons with Shiny and R/Lynda - Interactive Presentations with R and Shiny/Intro to Creating Presentations/recorded-files/exercises/06_03/ui.R",
+    "project_path" : "ui.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

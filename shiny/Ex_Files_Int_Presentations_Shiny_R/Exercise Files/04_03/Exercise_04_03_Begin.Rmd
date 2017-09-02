@@ -1,0 +1,41 @@
+---
+title: "Visualising Curves with Shiny"
+output: slidy_presentation
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Visualising Curves
+
+The function `curve` allows us to visualise expressions, like `x^2`
+
+```{r curve_static}
+curve(x^2, from = -5, to = 5)
+```
+
+
+## Visualising Curves with Shiny
+
+The Shiny app below allows us to visualise the expression `x^n` with `n` ranging from 1 to 5:
+
+```{r curve_shiny}
+library(shiny)
+shinyApp(
+  ui = fluidPage(
+    selectInput("exponent", label = "Exponent",
+                choices = 1:5,
+                selected = 2),
+    plotOutput("curvePlot")
+  ),
+  server = function(input, output){
+    output$curvePlot <- renderPlot({
+      curve(x^input$exponent, from = -5, to = 5)
+    }
+    )
+  }
+)
+```
+

@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "shinyApp(\n  ui = fluidPage(\n    sliderInput(\n      \"exponent\",\n      label = \"Exponent\",\n      min = 1,\n      max = 5,\n      value = 2\n    ),\n    plotOutput(\"curvePlot\")\n  ),\n  server = function(input, output) {\n    output$curvePlot <-\n      renderPlot({\n        curve(x ^ input$exponent, from = -5, to = 5)\n      })\n  }\n)",
+    "created" : 1457655923046.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "638124799",
+    "id" : "75C666C9",
+    "lastKnownWriteTime" : 1457655991,
+    "last_content_update" : 1457655991187,
+    "path" : "~/Google Drive/Lynda/Martin Hadley/Interactive Presentaitons with Shiny and R/Lynda - Interactive Presentations with R and Shiny/Intro to Creating Presentations/recorded-files/exercises/06_02/06_02.R",
+    "project_path" : "06_02.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

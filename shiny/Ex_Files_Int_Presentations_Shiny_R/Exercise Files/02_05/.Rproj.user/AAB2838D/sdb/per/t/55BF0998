@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: \"Slidy Presentation\"\noutput: slidy_presentation\ncss: \"complex-css.css\"\n---\n\n```{r setup, include=FALSE}\nknitr::opts_chunk$set(echo = FALSE)\n```\n\n## R Markdown\n\nThe result of 2+2 is `r 2+2`\n\n```{r curve_plot, echo = FALSE}\ncurve(x^2, from = -5, to = 5)\n```\n\n\nThis is an R Markdown presentation. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.\n\nWhen you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document.\n\n## Slide with Bullets\n\n- Bullet 1\n- Bullet 2\n- Bullet 3\n\n## Slide with R Output\n\n```{r cars, echo = TRUE}\nsummary(cars)\n```\n\n## Slide with Plot\n\n```{r pressure}\nplot(pressure)\n```\n\n",
+    "created" : 1457550516332.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "349113481",
+    "id" : "55BF0998",
+    "lastKnownWriteTime" : 1457550536,
+    "last_content_update" : 1457550536721,
+    "path" : "~/Desktop/Exercise Files/02_05/02_05_slidy.Rmd",
+    "project_path" : "02_05_slidy.Rmd",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

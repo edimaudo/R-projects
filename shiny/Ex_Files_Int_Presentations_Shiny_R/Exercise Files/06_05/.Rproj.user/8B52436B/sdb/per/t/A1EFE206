@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: \"iframe Included Dashboard\"\noutput: slidy_presentation\ncss: complex-css.css\n---\n\n```{r setup, include=FALSE}\nknitr::opts_chunk$set(echo = TRUE)\n```\n\n## Shiny Dashboard\n\nThe Shiny app below is included by way of shinyAppDir, note the need to specify the height of the output Shiny app explicitly.\n\n<iframe src=\"zacharyheilyn.shinyapps.io/highchart-dashboard\" height=\"100%\"></iframe>\n\n",
+    "created" : 1457672273340.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1484789497",
+    "id" : "A1EFE206",
+    "lastKnownWriteTime" : 1457711471,
+    "last_content_update" : 1457711471163,
+    "path" : "~/Google Drive/Lynda/Martin Hadley/Interactive Presentaitons with Shiny and R/Lynda - Interactive Presentations with R and Shiny/Intro to Creating Presentations/recorded-files/exercises/06_05/06_05.Rmd",
+    "project_path" : "06_05.Rmd",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

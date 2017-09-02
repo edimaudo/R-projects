@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "library(WDI)\nlibrary(highcharter)\nlibrary(forecast)\n\nwdi_data <- WDI(\n  country = \"US\",\n  indicator = \"SP.DYN.TFRT.IN\",\n  start = 1960,\n  end = 2012\n)\n\nwdi_data <-\n  ts(\n    data = wdi_data$SP.DYN.TFRT.IN,\n    start = 1960,\n    end = 2012,\n    frequency = 1\n  )\n\nforecast(ets(wdi_data),\n         h = 48 / 12,\n         level = 95) %>%\n  hchart %>%\n  hc_tooltip(\n    valuePrefix = \"There were \",\n    valueSuffix = \" births per women\",\n    valueDecimals = 2\n  ) %>%\n  hc_title(text = \"Fertility Forecast for the US\")",
+    "created" : 1457717283394.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "323002253",
+    "id" : "323B7DF",
+    "lastKnownWriteTime" : 1457660328,
+    "last_content_update" : 1457660328,
+    "path" : "~/Desktop/Exercise Files/06_03/06_03_01.R",
+    "project_path" : "06_03_01.R",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

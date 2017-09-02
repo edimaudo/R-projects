@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: \"Interactive Histogram\"\noutput: slidy_presentation\nruntime: shiny\n---\n\n```{r setup, include=FALSE}\nknitr::opts_chunk$set(echo = FALSE)\n```\n\n## Static Histogram\n\nThe `hist` function allows us to easily create histograms:\n\n```{r static_histogram}\nhist(rnorm(100))\n```\n\n\n## Interactive Histogram with Shiny\n\nThis shiny app allows us to modify the dataset visualised in our histogram\n\n```{r interactive_histogram}\nlibrary(shiny)\nshinyApp(\n  ui = fluidPage(\n    sliderInput(\"no_data\", label = \"Number of data\",\n                min = 1000,\n                max = 5000,\n                value = 1000),\n    sliderInput(\"mean\", label = \"Mean\",\n                min = 0,\n                max = 8,\n                value = 3),\n    sliderInput(\"sd\", label = \"Standard Deviation\",\n                min = 1,\n                max = 10,\n                value = 2),\n    uiOutput(\"xlim_slider\"),\n    plotOutput(\"histogram\")\n  ),\n  server = function(input, output){\n    output$xlim_slider <- renderUI({\n      sliderInput(\"xlim\", label = \"xlim\",\n                min = input$mean,\n                max = 10,\n                value = 10)\n    })\n    \n    output$histogram <- renderPlot(\n      hist(rnorm(input$no_data, mean = input$mean, sd = input$sd), xlim = c(-input$xlim,input$xlim))\n    )\n  }\n)\n```\n",
+    "created" : 1457566797645.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1069054636",
+    "id" : "632248DA",
+    "lastKnownWriteTime" : 1457567647,
+    "last_content_update" : 1457567647621,
+    "path" : "~/Desktop/Exercise Files/04_04/Exercise_04_04_Begin.Rmd",
+    "project_path" : "Exercise_04_04_Begin.Rmd",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

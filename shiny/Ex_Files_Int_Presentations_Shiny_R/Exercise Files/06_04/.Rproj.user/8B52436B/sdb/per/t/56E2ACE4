@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "library(WDI)\nlibrary(highcharter)\nlibrary(forecast)\nlibrary(lubridate)\n\nshinyServer(function(input, output) {\n  output$xlim_ui <- renderUI({\n    if (is.null(input$mean)) {\n      return()\n    }\n    sliderInput(\n      \"xlim\",\n      label = \"xlim\",\n      min = input$mean,\n      max = 10,\n      value = input$mean,\n      step = 1\n    )\n  })\n  \n  histogram_data <- reactive({\n    rnorm(input$no_data, mean = input$mean, sd = input$sd)\n  })\n  \n  output$histogram <- renderHighchart({\n    hchart(histogram_data(), name = \"Measure\") %>%\n      hc_title(text = \"Interactive Histogram with Highchart\") %>%\n      hc_tooltip(valuePrefix = \"foobar\", valueSuffix = 'USD')\n  })\n  wdi_time_series <- reactive({\n    start_year <- year(as.POSIXct(input$date_range[1]))\n    end_year <- year(as.POSIXct(input$date_range[2]))\n    \n    wdi_data <- WDI(\n      country = \"US\",\n      indicator = \"SP.DYN.TFRT.IN\",\n      start = start_year,\n      end = end_year\n    )\n    ts(\n      data = wdi_data$SP.DYN.TFRT.IN,\n      start = start_year,\n      end = end_year,\n      frequency = 1\n    )\n  })\n  \n  output$forecastPlot <- renderHighchart({\n    forecast(ets(wdi_time_series()),\n             h = input$forecast_n_months / 12,\n             level = 95) %>% hchart %>%\n      hc_tooltip(\n        valuePrefix = \"There were \",\n        valueSuffix = \" births per women\",\n        valueDecimals = 2\n      ) %>%\n      hc_title(text = \"Fertility Forecast for the US\")\n  })\n  \n  output$scatterchart <- renderHighchart({\n    highchart() %>% \n      hc_title(text = \"Scatter chart with size and color\") %>% \n      hc_add_serie_scatter(iris$Sepal.Length, iris$Sepal.Width,\n                           iris$Petal.Width, iris$Species)\n  })\n}\n)",
+    "created" : 1457711487731.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1240666066",
+    "id" : "56E2ACE4",
+    "lastKnownWriteTime" : 1457660696,
+    "last_content_update" : 1457660696,
+    "path" : "~/Google Drive/Lynda/Martin Hadley/Interactive Presentaitons with Shiny and R/Lynda - Interactive Presentations with R and Shiny/Intro to Creating Presentations/recorded-files/exercises/06_04/shinyApp/server.R",
+    "project_path" : "shinyApp/server.R",
+    "properties" : {
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

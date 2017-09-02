@@ -1,0 +1,55 @@
+If have internet
+@import url("https://fonts.googleapis.com/css?family=Roboto");
+
+/* Slide Titles */
+h1 {
+    color: white;
+    margin-top: 100px;
+    text-align: center;
+    padding-top: 100;
+}
+
+section{
+  margin-top: 100px;
+  padding-top: 100px; 
+}
+
+div.slide{
+  margin-top: 20px;
+}
+
+p {
+    margin-bottom: 50px;
+}
+
+body
+{
+  color: white;
+  background-color: #4285F4;
+  font-family: 'Roboto', sans-serif;
+}
+
+#nextsteps {
+   color: blue;
+}
+
+.emphasized {
+   font-size: 1.2em;
+}
+
+
+html {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+a:link {
+    color: #4fc3f7;
+}
+
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+}

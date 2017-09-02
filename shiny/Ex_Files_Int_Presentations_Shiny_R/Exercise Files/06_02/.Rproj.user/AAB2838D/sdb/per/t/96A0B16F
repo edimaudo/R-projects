@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "library(shiny)\nshinyApp(\n  ui = fluidPage(\n    sliderInput(\n      \"exponent\",\n      label = \"Exponent\",\n      min = 1,\n      max = 5,\n      value = 2\n    ),\n    plotOutput(\"curvePlot\")\n  ),\n  server = function(input, output) {\n    output$curvePlot <-\n      renderPlot({\n        curve(x ^ input$exponent, from = -5, to = 5)\n      })\n  }\n)",
+    "created" : 1457717251188.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "278813672",
+    "id" : "96A0B16F",
+    "lastKnownWriteTime" : 1457717526,
+    "last_content_update" : 1457717526106,
+    "path" : "~/Desktop/Exercise Files/06_02/06_02.R",
+    "project_path" : "06_02.R",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "read.csv(file = \"\")",
+    "created" : 1457712238282.000,
+    "dirty" : true,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "4219028228",
+    "id" : "BC8ECB93",
+    "lastKnownWriteTime" : 4294967296,
+    "last_content_update" : 1457712250591,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

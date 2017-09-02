@@ -1,0 +1,102 @@
+---
+title: "Reactive Interactive Histogram"
+output: slidy_presentation
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Static Histogram
+
+The `hist` function allows us to easily create histograms:
+
+```{r static_histogram}
+hist(rnorm(100))
+```
+
+
+## Reactive Histogram with Shiny
+
+Using reactive expressions it's possible to control when datasets are updated.
+
+
+```{r interactive_histogram}
+library(shiny)
+library(shinythemes)
+shinyApp(
+  ui = navbarPage(
+    theme = shinytheme("journal"),
+    "Dashboard-like navbarPage",
+    tabPanel("Histograms",
+    fluidPage(sidebarLayout(
+      sidebarPanel(
+        sliderInput("no_data", label = "Number of data",
+                    min = 1000,
+                    max = 5000,
+                    value = 1000),
+        sliderInput("mean", label = "Mean",
+                    min = 0,
+                    max = 8,
+                    value = 3),
+        sliderInput("sd", label = "Standard Deviation",
+                    min = 1,
+                    max = 10,
+                    value = 2),
+        uiOutput("xlim_ui")
+      ),
+      mainPanel(plotOutput("histogram"))
+    ))
+    ),
+    navbarMenu(
+      "Menu Item With Children",
+      tabPanel("Child One",
+                fluidPage(
+                  plotOutput("curve1")
+                )
+               ),
+      tabPanel("Child Two",
+               fluidPage(
+                plotOutput("curve2")
+               )
+               )
+    ), collapsible = TRUE
+  ),
+  server = function(input, output){
+    
+    output$xlim_ui <- renderUI({
+      if(is.null(input$mean)){
+        return()
+      }
+      sliderInput("xlim", label = "xlim",
+                  min = input$mean,
+                  max = 10,
+                  value = input$mean,
+                  step = 1)
+    })
+    
+    data_for_plot <- reactive({
+      rnorm(input$no_data, mean = input$mean, sd = input$sd)
+    })
+    
+    output$histogram <- renderPlot({
+      if(is.null(input$xlim)){
+        return()
+      }
+      
+      data_for_plot <- data_for_plot()
+      
+      hist(data_for_plot, xlim = c(-input$xlim,input$xlim))
+    })
+    
+    output$curve1 <- renderPlot({
+      curve(x^1, from = -5, to = 5)
+    })
+    
+    output$curve2 <- renderPlot({
+      curve(x^2, from = -5, to = 5)
+    })
+  }
+)
+```

@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: \"shinyAppDir Included Dashboard\"\noutput: slidy_presentation\nresource_files:\n- shinyApp/ui.R\n- shinyApp/server.R\nruntime: shiny\ncss: complex-css.css\n---\n\n```{r setup, include=FALSE}\nknitr::opts_chunk$set(echo = TRUE)\n```\n\n## Shiny Dashboard\n\nThe Shiny app below is included by way of shinyAppDir, note the need to specify the height of the output Shiny app explicitly.\n\n```{r shiny_app}\nlibrary(shiny)\nshinyAppDir(appDir = \"shinyApp\", options = list(height = \"700px\"))\n```\n\n\n",
+    "created" : 1457717230850.000,
+    "dirty" : true,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "28421484",
+    "id" : "5832DFE2",
+    "lastKnownWriteTime" : 1457719603,
+    "last_content_update" : 1457719687424,
+    "path" : "~/Desktop/Exercise Files/06_04/06_04.Rmd",
+    "project_path" : "06_04.Rmd",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

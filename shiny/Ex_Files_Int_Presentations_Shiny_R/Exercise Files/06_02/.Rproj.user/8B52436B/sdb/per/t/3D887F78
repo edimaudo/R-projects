@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "shinyServer(function(input, output){\n  output$curvePlot <- renderPlot(\n    curve(x^input$exponent, from = -5, to = 5)\n  )\n})\n",
+    "created" : 1457655368672.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3837763917",
+    "id" : "3D887F78",
+    "lastKnownWriteTime" : 1457655471,
+    "last_content_update" : 1457655471991,
+    "path" : "~/Google Drive/Lynda/Martin Hadley/Interactive Presentaitons with Shiny and R/Lynda - Interactive Presentations with R and Shiny/Intro to Creating Presentations/recorded-files/exercises/06_02/server.R",
+    "project_path" : "server.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

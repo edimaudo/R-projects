@@ -1,0 +1,10 @@
+name: shinyAppDir-presentation
+account: zacharyheilyn
+server: shinyapps.io
+appId: 88428
+bundleId: 393322
+url: https://zacharyheilyn.shinyapps.io/shinyAppDir-presentation/
+when: 1457719694.54259
+asMultiple: FALSE
+asStatic: FALSE
+additionalFiles: shinyApp/ui.R|shinyApp/server.R

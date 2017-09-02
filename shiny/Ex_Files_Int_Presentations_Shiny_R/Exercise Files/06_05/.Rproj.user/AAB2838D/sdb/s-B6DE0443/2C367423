@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: \"iframe Included Dashboard\"\noutput: slidy_presentation\ncss: complex-css.css\n---\n\n```{r setup, include=FALSE}\nknitr::opts_chunk$set(echo = TRUE)\n```\n\n## Shiny Dashboard\n\nThe Shiny app below is included by way of shinyAppDir, note the need to specify the height of the output Shiny app explicitly.\n\n\n<iframe src=\"http://zacharyheilyn.shinyapps.io/highcharter-dashboard\" width=\"100%\" height=\"100%\"></iframe>\n\n",
+    "created" : 1457720173262.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "107862147",
+    "id" : "2C367423",
+    "lastKnownWriteTime" : 1457720703,
+    "last_content_update" : 1457720703301,
+    "path" : "~/Desktop/Exercise Files/06_05/06_05.Rmd",
+    "project_path" : "06_05.Rmd",
+    "properties" : {
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

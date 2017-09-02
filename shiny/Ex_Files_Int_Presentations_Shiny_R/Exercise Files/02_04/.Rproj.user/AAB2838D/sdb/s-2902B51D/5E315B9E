@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "/* Slide Titles */\nh1 {\n    color: blue;\n    margin-top: 100px;\n    text-align: center;\n    padding-top: 100;\n}",
+    "created" : 1457484101741.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "737621289",
+    "id" : "5E315B9E",
+    "lastKnownWriteTime" : 1457177419,
+    "last_content_update" : 1457177419,
+    "path" : "~/Desktop/Exercise Files/02_04_css/simple-css.css",
+    "project_path" : "simple-css.css",
+    "properties" : {
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "css"
+}

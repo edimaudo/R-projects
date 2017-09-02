@@ -1,0 +1,21 @@
+---
+title: "shinyAppDir Included Dashboard"
+output: slidy_presentation
+runtime: shiny
+css: complex-css.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Shiny Dashboard
+
+The Shiny app below is included by way of shinyAppDir, note the need to specify the height of the output Shiny app explicitly.
+
+```{r shiny_app}
+library(shiny)
+shinyAppDir(appDir = "shinyApp", options = list(height = "700px"))
+```
+
+

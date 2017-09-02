@@ -1,0 +1,17 @@
+---
+title: "iframe Included Dashboard"
+output: slidy_presentation
+css: complex-css.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Shiny Dashboard
+
+The Shiny app below is included by way of shinyAppDir, note the need to specify the height of the output Shiny app explicitly.
+
+
+<iframe src="http://zacharyheilyn.shinyapps.io/highcharter-dashboard" width="100%" height="100%"></iframe>
+

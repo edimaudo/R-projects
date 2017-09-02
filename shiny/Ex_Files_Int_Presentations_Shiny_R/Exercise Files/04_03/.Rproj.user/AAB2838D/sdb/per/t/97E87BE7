@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: \"Visualising Curves with Shiny\"\noutput: slidy_presentation\nruntime: shiny\n---\n\n```{r setup, include=FALSE}\nknitr::opts_chunk$set(echo = FALSE)\n```\n\n## Visualising Curves\n\nThe function `curve` allows us to visualise expressions, like `x^2`\n\n```{r curve_static}\ncurve(x^2, from = -5, to = 5)\n```\n\n\n## Visualising Curves with Shiny\n\nThe Shiny app below allows us to visualise the expression `x^n` with `n` ranging from 1 to 5:\n\n```{r curve_shiny}\nlibrary(shiny)\nshinyApp(\n  ui = fluidPage(\n    selectInput(\"exponent\", label = \"Exponent\",\n                choices = 1:5,\n                selected = 2),\n    plotOutput(\"curvePlot\")\n  ),\n  server = function(input, output){\n    output$curvePlot <- renderPlot({\n      curve(x^input$exponent, from = -5, to = 5)\n    }\n    )\n  }\n)\n```\n\n",
+    "created" : 1457565260445.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2628924746",
+    "id" : "97E87BE7",
+    "lastKnownWriteTime" : 1457566693,
+    "last_content_update" : 1457566693759,
+    "path" : "~/Desktop/Exercise Files/04_03/Exercise_04_03_Begin.Rmd",
+    "project_path" : "Exercise_04_03_Begin.Rmd",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}
