@@ -1,27 +1,10 @@
 #libraries
+library(corrplot)
 library(cluster)
 library(ggplot2)
 library(factoextra)
-library(corrplot)
-library(psy)
 library(lattice)
-library(nFactors)
-library(RColorBrewer)
-library(scales)
-library(ggpubr)
-library(MASS)
-library(psych)
-library(cluster)
-library(ggplot2)
-library(factoextra)
-library(corrplot)
-library(lattice)
-library(readxl)
-library(gridExtra)
-library(dplyr)
-library(tidyr)
-library(polycor)  
-library(plyr)
+library(dplyr)    
 
 
 #Q1
@@ -80,4 +63,28 @@ ggplot(mydata, aes(x=Con17, y=PctUnemployed)) + geom_point() + theme_minimal()
 
 #boxplot of which depicts the distribution of the Labour Party’s constituency-level 
 #vote share in each UK region (Region)
-ggplot(mydata, aes(class, hwy)) + geom_boxplot()
+ggplot(mydata, aes(Region, Lab17)) + geom_boxplot() + theme_minimal()
+
+#mean difference in the Labour Party’s share of the vote (Lab17) in 
+#England and in Scotland
+countryEnglanddata <- filter(mydata, Country == "E")
+countryScotlanddata <- filter(mydata, Country == "S")
+
+countryEnglandLab17 <- countryEnglanddata$Lab17
+countryScotlandLab17 <- countryScotlanddata$Lab17
+
+mean_difference <- t.test(countryEnglandLab17, countryScotlandLab17, mu = 0, conf = .95)
+print(mean_difference)
+
+# linear regression 
+#dependent variable is the Liberal Democrat share of 
+#the vote in a constituency (LD17 ), and the independent variable 
+#is the percentage of the population of a constituency 
+#with high levels of education (PctHighEducation).
+
+fit1 <- lm(LD17 ~ PctHighEducation, data = mydata)
+summary(fit1)
+
+ggplot(mydata, aes(x = PctHighEducation, y = LD17)) + 
+  geom_point() +
+  stat_smooth(method = "lm", col = "red")
