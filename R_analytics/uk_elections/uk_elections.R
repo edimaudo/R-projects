@@ -1,5 +1,4 @@
 #libraries
-#load libraries
 library(cluster)
 library(ggplot2)
 library(factoextra)
@@ -9,8 +8,21 @@ library(lattice)
 library(nFactors)
 library(RColorBrewer)
 library(scales)
-library(NbClust)
 library(ggpubr)
+library(MASS)
+library(psych)
+library(cluster)
+library(ggplot2)
+library(factoextra)
+library(corrplot)
+library(lattice)
+library(readxl)
+library(gridExtra)
+library(dplyr)
+library(tidyr)
+library(polycor)  
+library(plyr)
+
 
 #Q1
 scores <- c(98, 74, 65, 78, 17, 65, 82, 72, 68, 
@@ -46,3 +58,26 @@ n99 <- c(left99,right99)
 #Q4
 #look at the p-values of the different coefficients to explain the impact
 #Also look at the r-square value to see how much it interrpets
+
+#Q3
+mydata <- results
+View(mydata)
+
+#summary for LD17
+summary_LD17 <- summary(mydata$LD17)
+print(summary_LD17)
+
+#summary for Winner2015
+summary_Winner2015 <- summary(mydata$Winner2015)
+print(summary_Winner2015)
+
+#scatterplot of Conservative vote share in 2017 in each constituency and PctHomeowners
+ggplot(mydata, aes(x=Con17, y=PctHomeOwners)) + geom_point()
+
+#scatterplot of Conservative vote share in 2017 in percentage of 
+#unemployed people in each constituency (PctUnemployed)
+ggplot(mydata, aes(x=Con17, y=PctUnemployed)) + geom_point() + theme_minimal()
+
+#boxplot of which depicts the distribution of the Labour Party’s constituency-level 
+#vote share in each UK region (Region)
+ggplot(mydata, aes(class, hwy)) + geom_boxplot()
