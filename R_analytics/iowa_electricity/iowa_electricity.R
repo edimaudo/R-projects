@@ -28,3 +28,4 @@ View(iowadata)
 #summary
 summary(iowadata)
 
+#fit model for 
