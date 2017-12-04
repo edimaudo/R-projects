@@ -1,4 +1,2 @@
 # R
-R data analytics
-
-#analysis using R
+R data analytics and app development using Shiny
