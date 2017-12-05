@@ -13,3 +13,6 @@ head(testData)
 
 predictionModel <- lm(PE ~ ., data = trainData)
 summary(predictionModel)
+
+#testing
+prediction <- predict(predictionModel, newdata = testData)
