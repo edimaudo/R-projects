@@ -5,7 +5,7 @@
 #shipment of lumber was less than usual (μ0=39000μ0=39000 cubic feet),
 set.seed(0)
 treeVolume <- c(rnorm(75, mean = 36500, sd = 2000))
-t.test(treeVolume, mu = 39000) # Ho: mu = 39000
+t.test(treeVolume, mu = 39000) # Ho: %>%  mu = 39000
 
 #paired t-test
 # For instance, let’s say that we work at a large health clinic and we’re testing a new drug, 
