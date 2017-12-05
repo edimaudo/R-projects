@@ -18,3 +18,19 @@ y=my_sigmoid(x)
 plot(x,y,type="l",col="red",xlab="",ylab="",main="Sigmoid function (Logistic curve)")
 abline(v=0,lty = 2,col="gray 70")
 abline(h=0.5,lty = 2,col="gray70")
+
+y=ex2data1$Label
+X=cbind(1,ex2data1$Exam1,ex2data1$Exam2)
+head(X)
+
+initial_theta =matrix(rep(0,ncol(X)))
+
+my_cost=function(theta, X, y){
+  cost_gradient=list()
+  h_theta= my_sigmoid(X%*%theta)
+  cost= 1/nrow(X)*sum(-y*log(h_theta)-(1-y)*log(1-h_theta))
+  return(cost)
+}
+
+round(my_cost(initial_theta, X, y),3)
+
