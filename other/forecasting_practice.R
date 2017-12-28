@@ -22,3 +22,11 @@ dj <- dowjones
 str(dj)
 dj_ts <- ts(usdeath,start=1, frequency=1)
 plot(dj_ts)
+
+
+#monthly sales (in thousands) of product A for a plastics manufacturer for years 1 through 5
+prod_A_ts = ts(plastics, start = 1, frequency = 1)
+plot(prod_A_ts)
+
+fit <- decompose(plastics, type="multiplicative")
+plot(fit)
