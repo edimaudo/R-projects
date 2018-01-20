@@ -25,10 +25,9 @@ mydata <- mydata %>%
          CreditRisk = ifelse(CreditRisk == 1, TRUE, FALSE))
 
 #split data
-index <- sample(1:nrow(mydata),round(0.90*nrow(mydata)))
-train <- mydata[index,]
-test <- mydata[-index,]
-
+#index <- sample(1:nrow(mydata),round(0.90*nrow(mydata)))
+train <- head(mydata,360)#mydata[index,]
+test <- mydata[361:400,]
 #build neural network
 set.seed(123)
 n <- names(train)
@@ -46,8 +45,16 @@ plot(cred_risk, rep = 'best')
 prtrain.nn <- compute(cred_risk, train[,1:10])
 prtrain.nn_ <- prtrain.nn$net.result*(max(mydata$CreditRisk)-min(mydata$CreditRisk))+min(mydata$CreditRisk)
 train.r <- (train$CreditRisk)*(max(mydata$CreditRisk)-min(mydata$CreditRisk))+min(mydata$CreditRisk)
-MSETrain.nn <- sum((train.r - prtrain.nn_)^2)/nrow(train)
-print(paste(MSETrain.nn))
+SSETrain.nn <- sum((train.r - prtrain.nn_)^2)#/nrow(train)
+print(paste(SSETrain.nn))
+
+#find accuracy of training
+resultstraining <- data.frame(actual = train$CreditRisk, prediction = prtrain.nn$net.result)
+roundedresultstraining<-sapply(resultstraining,round,digits=0)
+roundedresultstrainingdf=data.frame(roundedresultstraining)
+attach(roundedresultstrainingdf)
+table(actual,prediction)
+
 
 # perform prediction on test data
 pr.nn <- compute(cred_risk,test[,1:10])
@@ -55,4 +62,11 @@ pr.nn_ <- pr.nn$net.result*(max(mydata$CreditRisk)-min(mydata$CreditRisk))+min(m
 test.r <- (test$CreditRisk)*(max(mydata$CreditRisk)-min(mydata$CreditRisk))+min(mydata$CreditRisk)
 MSETest.nn <- sum((test.r - pr.nn_)^2)/nrow(test)
 print(paste(MSETest.nn))
+
+#find accuracy of test
+resultstest <- data.frame(actual = test$CreditRisk, prediction = pr.nn$net.result)
+roundedresultstest<-sapply(resultstest,round,digits=0)
+roundedresultstestdf=data.frame(roundedresultstest)
+attach(roundedresultstestdf)
+table(actual,prediction)
 
