@@ -24,7 +24,6 @@ library(stringr)
 library(data.table)
 library(ggplot2)
 
-
 #load files
 file_names = c(
   "SceneAnalytics.dbo.LK_account_unique_member_identifier_sample10.csv",
@@ -58,6 +57,82 @@ for(i in filenames){
   assign(i, read.csv(paste(i, ".csv", sep="")))
 }
 
+#==============================
+#exploratory analysis
+#==============================
+#customer age ranges
+summary(SceneAnalytics.dbo.SP_CustomerDetail$age_class)
+ggplot(data = SceneAnalytics.dbo.SP_CustomerDetail, mapping = aes(x=as.factor(age_class) ))+
+  geom_bar()
+#18-24 and 25-34 and 35-44 account for a large percentage of the market
+
+#province
+summary(SceneAnalytics.dbo.SP_CustomerDetail$StateProv)
+ggplot(data = SceneAnalytics.dbo.SP_CustomerDetail, mapping = aes(x=as.factor(StateProv) ))+
+  geom_bar()
+#ontario is the most important market
+
+#summarize city information
+cityInfo <- SceneAnalytics.dbo.SP_CustomerDetail %>%
+  group_by(City) %>%
+  summarise(count= n(), percentage = n() / nrow(SceneAnalytics.dbo.SP_CustomerDetail)) %>%
+  arrange(desc(count))
+#Toronto, Calgary, Edmonton, Vancouver are very important
+
+#other possible questions if needed
+#How many people in each vertical
+
+#vertical questions
+#scentourage & 18-24 & app users
+#-how often do they go
+#-how much do the spend, What is the average spend + do they buy from the concessions, average points
+#-what cities and province
+#-what cinemas
+#-what movie times
+#-type of movie goer (purchases ticket online, Tuesday watcher?)
+#-do they use other channels (email, sms)
+#- how many active user?
+#type of points being used?
+#type of card being used
+
+#CARA
+#type of card being used?
+#average transaction
+#no of points used, 
+#active users
+#type of points
+# merchant information
+# location with respect to points, transactions w.r.t city, province
+
+#high value
+#all the questions asked for the other verticals
+
+#===============
+#rfm analysis
+#===============
+rfm_everyone <- SceneAnalytics.dbo.SP_Points %>%
+  select(Unique_member_identifier, points, pointdt, pointid, TransAmount)
+
+#drop na in rfm_everyone
+rfm_everyone <- rfm_everyone %>%
+  drop_na()
+
+#convert date
+rfm_everyone <- rfm_everyone %>%
+  mutate(pointdt = as.Date(pointdt,"%Y-%m-%d"))
+
+rfm_everyone <- rfm_everyone %>% 
+  group_by(Unique_member_identifier) %>% 
+  summarise(recency=as.numeric(as.Date("2018-01-22")-max(pointdt)),
+            frequency=n_distinct(pointid), monetary= sum(TransAmount)) 
+
+#rfm for high value
+
+summary(rfm_everyone) #get more info from professor about high value
+#high value 
+rfm_everyone <-rfm_everyone %>%
+  arrange(desc(monetary))
+print(rfm_everyone[1:50,])
 
 #==============================
 #market basket analysis
@@ -67,30 +142,44 @@ for(i in filenames){
 library(arules)
 library(arulesViz)
 
-point_info_data <- SceneAnalytics.dbo.SP_Points %>%
+#create point and location data
+
+#location code information
+point_location_data1 <- SceneAnalytics.dbo.SP_Points %>%
   mutate(LocationCode = ex_sourceid) %>%
-  inner_join(SceneAnalytics.dbo.SP_Location, "LocationCode")
-
-point_info_data2 <- SceneAnalytics.dbo.SP_Points %>%
-  mutate(LocationCode = ex_sourceid) %>%
-  left_join(SceneAnalytics.dbo.SP_DimProxyLocation, "LocationCode") %>%
-  filter(OperatingStatus == "Active") %>%
-  rename(Locationcode = LocationCode) %>%
-  left_join(SceneAnalytics.dbo.SP_LocationCARA, "Locationcode")
-
-#select the columns needed
-
-#combine columns
-point_data = rbind(point_info_data, point_info_data2)
-
-#points data
-point_data <- SceneAnalytics.dbo.SP_Points %>%
+  left_join(SceneAnalytics.dbo.SP_Location, "LocationCode") %>%
+  filter(isActive) %>%
   rename(Ex_sourceid = ex_sourceid) %>%
-  inner_join(SceneAnalytics.dbo.SP_Partner_E, "Ex_sourceid")
+  left_join(SceneAnalytics.dbo.SP_Partner_E, "Ex_sourceid")
+
+point_location_data_temp1 <- point_location_data1 %>%
+  select(Unique_member_identifier, points, 
+         Ex_sourceid, LocationCode, LocationName, 
+         City, Province, PartnerID, PartnerName)
+
+#locationCARA information
+point_location_data2 <- SceneAnalytics.dbo.SP_Points %>%
+  rename(ex_sourceID = ex_sourceid) %>%
+  left_join(SceneAnalytics.dbo.SP_LocationCARA,"ex_sourceID") %>%
+  filter(isActive) %>%
+  rename(Ex_sourceid = ex_sourceID) %>%
+  left_join(SceneAnalytics.dbo.SP_Partner_E, "Ex_sourceid") %>%
+  rename(LocationCode = Locationcode) %>%
+  left_join(SceneAnalytics.dbo.SP_DimProxyLocation, "LocationCode")
+  
+point_location_data_temp2 <- point_location_data2 %>%
+  rename(Province = Province.y) %>%
+  select(Unique_member_identifier, points, 
+         Ex_sourceid, LocationCode, LocationName, 
+         City, Province, PartnerID, PartnerName)
+
+#combine temp point dataframes
+point_data <- rbind(point_location_data_temp1, point_location_data_temp2)
 
 #update Unique ID
 point_data <- point_data %>%
   mutate(Unique_member_identifier = as.character(Unique_member_identifier))
+
 
 #============================
 #market basket overall
@@ -98,30 +187,23 @@ point_data <- point_data %>%
 
 all_data <- point_data
 all_data <- all_data %>%
-  mutate(PartnerName = as.character(PartnerName))
-
-test_all <- all_data %>%
-  group_by(Unique_member_identifier) %>%
-  summarise(
-    count_id = n_distinct(Unique_member_identifier)
-  )
-
-test_all <- test_all %>%
-  arrange(desc(count_id) )
+  mutate(LocationName = as.character(LocationName))
 
 #change to dataframe
 mba_all <- as.data.frame(all_data)
 
 #prep data for apriori algorithm
-mba_all_trans <- as(split(mba_all[,"PartnerName"], 
-                            mba_all[,"Unique_member_identifier"]), "transactions")
+mba_all_trans <- as(split(mba_all[,"LocationName"], 
+                          mba_all[,"Unique_member_identifier"]), "transactions")
 
 #rules using apriori
 mba_all_rules <- apriori(mba_all_trans, 
-                           parameter = list(supp = 0.00006, conf = 0.000025, 
-                                            target = "rules", minlen = 1))
+                         parameter = list(supp = 0.00006, conf = 0.000025, 
+                                          target = "rules", minlen = 1))
 summary(mba_all_rules)
-inspect(mba_all_rules[1:10])
+inspect(mba_all_rules[1:20])
+
+
 #============================
 #youth (18-24)
 #============================
@@ -136,13 +218,13 @@ youth_data <- customer_data %>%
   inner_join(point_data, "Unique_member_identifier")
 
 youth_data <- youth_data %>%
-  mutate(PartnerName = as.character(PartnerName))
+  mutate(LocationName = as.character(LocationName))
 
 mba_youth <- as.data.frame(youth_data)
 
 #prep data for apriori algorithm
-mba_youth_trans <- as(split(mba_youth[,"PartnerName"], 
-                             mba_youth[,"Unique_member_identifier"]), "transactions")
+mba_youth_trans <- as(split(mba_youth[,"LocationName"], 
+                            mba_youth[,"Unique_member_identifier"]), "transactions")
 
 #rules
 mba_youth_rules <- apriori(mba_youth_trans, 
@@ -173,17 +255,20 @@ app_data <- enrollment %>%
 app_data <- app_data %>%
   inner_join(point_data, "Unique_member_identifier")
 
+app_data <- app_data %>%
+  mutate(LocationName = as.character(LocationName))
+
 #items and transactions
 mba_app <- as.data.frame(app_data)
 
 #prep data for apriori algorithm
-mba_app_trans <- as(split(mba_app[,"PartnerName"], 
+mba_app_trans <- as(split(mba_app[,"LocationName"], 
                           mba_app[,"Unique_member_identifier"]), "transactions")
 
 #rules
 mba_app_rules <- apriori(mba_app_trans, 
-                           parameter = list(supp = 0.00006, conf = 0.000025, 
-                                            target = "rules", minlen = 1))
+                         parameter = list(supp = 0.00006, conf = 0.000025, 
+                                          target = "rules", minlen = 1))
 summary(mba_app_rules)
 
 #============================
@@ -208,43 +293,41 @@ scentourage_data <- scentourage_enrollment %>%
 scentourage_data <- scentourage_data %>%
   inner_join(point_data, "Unique_member_identifier")
 
+scentourage_data <- scentourage_data %>%
+  mutate(LocationName = as.character(LocationName))
+
 #items and transactions
 mba_scentourage <- as.data.frame(scentourage_data)
 
 #prep data for apriori algorithm
-mba_scentourage_trans <- as(split(mba_scentourage[,"PartnerName"], 
-                          mba_scentourage[,"Unique_member_identifier"]), "transactions")
+mba_scentourage_trans <- as(split(mba_scentourage[,"LocationName"], 
+                                  mba_scentourage[,"Unique_member_identifier"]), "transactions")
 
 #rules
 mba_scentourage_rules <- apriori(mba_scentourage_trans, 
-                         parameter = list(supp = 0.00006, conf = 0.000025, 
-                                          target = "rules", minlen = 1))
+                                 parameter = list(supp = 0.00006, conf = 0.000025, 
+                                                  target = "rules", minlen = 1))
 summary(mba_scentourage_rules)
 
 #============================
 #Cara (i.e., those who have shopped in any brand)
 #============================
-cara_location <- SceneAnalytics.dbo.SP_LocationCARA %>% 
-  rename(Ex_sourceid = ex_sourceID)
-
 cara_data <- point_data %>%
-  left_join(cara_location, "Ex_sourceid")
-
-cara_data <- cara_data %>%
   mutate(PartnerName = as.character(PartnerName))
 
 #change to dataframe
 mba_cara <- as.data.frame(cara_data)
 
 #prep data for apriori algorithm
-mba_cara_trans <- as(split(mba_cara[,"PartnerName"], 
-                          mba_cara[,"Unique_member_identifier"]), "transactions")
+mba_cara_trans <- as(split(mba_cara[,"LocationName"], 
+                           mba_cara[,"Unique_member_identifier"]), "transactions")
 
 #rules
 mba_cara_rules <- apriori(mba_cara_trans, 
-                         parameter = list(supp = 0.00006, conf = 0.000025, 
-                                          target = "rules", minlen = 1))
+                          parameter = list(supp = 0.00006, conf = 0.000025, 
+                                           target = "rules", minlen = 1))
 summary(mba_cara_rules)
+
 
 #============================
 #high value (not defined but assuming customer points > 1500)
@@ -266,17 +349,20 @@ high_value_data <- high_value_data %>%
   mutate(PartnerName = as.character(PartnerName)) %>%
   filter(points > 1000)
 
+high_value_data <- high_value_data %>%
+  mutate(LocationName = as.character(LocationName))
+
 #items and transactions
 mba_high_value <- as.data.frame(high_value_data)
 
 #prep data for apriori algorithm
-mba_high_value_trans <- as(split(mba_high_value[,"PartnerName"], 
-                          mba_high_value[,"Unique_member_identifier"]), "transactions")
+mba_high_value_trans <- as(split(mba_high_value[,"LocationName"], 
+                                 mba_high_value[,"Unique_member_identifier"]), "transactions")
 
 #rules
 mba_high_value_rules <- apriori(mba_high_value_trans, 
-                         parameter = list(supp = 0.00006, conf = 0.000025, 
-                                          target = "rules", minlen = 1))
+                                parameter = list(supp = 0.00006, conf = 0.000025, 
+                                                 target = "rules", minlen = 1))
 summary(mba_high_value_rules)
 
 #============================
