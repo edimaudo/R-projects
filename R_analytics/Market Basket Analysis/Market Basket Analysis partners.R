@@ -153,6 +153,9 @@ point_data <- SceneAnalytics.dbo.SP_Points %>%
 point_data <- point_data %>%
   mutate(Unique_member_identifier = as.character(Unique_member_identifier))
 
+#point_data <- point_data %>%
+#  filter(!is.na(PartnerName))
+
 #============================
 #market basket overall
 #============================
@@ -161,14 +164,15 @@ all_data <- point_data
 all_data <- all_data %>%
   mutate(PartnerName = as.character(PartnerName))
 
-test_all <- all_data %>%
-  group_by(Unique_member_identifier) %>%
-  summarise(
-    count_id = n_distinct(Unique_member_identifier)
-  )
 
-test_all <- test_all %>%
-  arrange(desc(count_id) )
+# test_all <- all_data %>%
+#   group_by(Unique_member_identifier) %>%
+#   summarise(
+#     count_id = n_distinct(Unique_member_identifier)
+#   )
+# 
+# test_all <- test_all %>%
+#   arrange(desc(count_id) )
 
 #change to dataframe
 mba_all <- as.data.frame(all_data)
@@ -180,9 +184,9 @@ mba_all_trans <- as(split(mba_all[,"PartnerName"],
 #rules using apriori
 mba_all_rules <- apriori(mba_all_trans, 
                          parameter = list(supp = 0.00006, conf = 0.000025, 
-                                          target = "rules", minlen = 1))
+                                          target = "rules", minlen = 2))
 summary(mba_all_rules)
-inspect(mba_all_rules[1:10])
+inspect(mba_all_rules[1:6])
 #============================
 #youth (18-24)
 #============================
@@ -208,14 +212,45 @@ mba_youth_trans <- as(split(mba_youth[,"PartnerName"],
 #rules
 mba_youth_rules <- apriori(mba_youth_trans, 
                            parameter = list(supp = 0.00006, conf = 0.000025, 
-                                            target = "rules", minlen = 1))
+                                            target = "rules", minlen = 2))
 summary(mba_youth_rules)
-inspect(mba_youth_rules[1:7])
+inspect(mba_youth_rules[1:4])
 
 #============================
 #app users
 #============================
 
+#write.csv(SceneAnalytics.dbo.SP_AccountHistoryType$Descr,"typedesc.csv")
+
+account_hist_type <- SceneAnalytics.dbo.SP_AccountHistoryType %>%
+  filter(Descr %in% c('Customer logged into Scene API Web Login',
+                      'Customer logged into Scene API MobileApp'))
+
+account_hist <- account_hist_type %>% 
+  right_join(SceneAnalytics.dbo.SP_AccountHistory, "AccountHistoryTypeID")
+
+account_hist <- account_hist %>%
+  mutate(Unique_member_identifier = as.character(Unique_member_identifier))
+
+account_data <- account_hist %>%
+  right_join(point_data, "Unique_member_identifier")
+
+#items and transactions
+mba_app1 <- as.data.frame(account_data)
+
+#prep data for apriori algorithm
+mba_app_trans1 <- as(split(mba_app1[,"PartnerName"], 
+                          mba_app1[,"Unique_member_identifier"]), "transactions")
+
+#rules
+mba_app_rules1 <- apriori(mba_app_trans1, 
+                         parameter = list(supp = 0.00006, conf = 0.000025, 
+                                          target = "rules", minlen = 2))
+summary(mba_app_rules1)
+inspect(mba_app_rules1[1:6])
+
+
+#-------------------------------------------------------
 enrollment <- SceneAnalytics.dbo.SP_FactEnrollment %>%
   rename(SourceID = EnrollmentSourceKey)
 
@@ -244,8 +279,9 @@ mba_app_trans <- as(split(mba_app[,"PartnerName"],
 #rules
 mba_app_rules <- apriori(mba_app_trans, 
                          parameter = list(supp = 0.00006, conf = 0.000025, 
-                                          target = "rules", minlen = 1))
+                                          target = "rules", minlen = 2))
 summary(mba_app_rules)
+inspect(mba_app_rules[1:2])
 
 #============================
 #scentourage
@@ -279,8 +315,9 @@ mba_scentourage_trans <- as(split(mba_scentourage[,"PartnerName"],
 #rules
 mba_scentourage_rules <- apriori(mba_scentourage_trans, 
                                  parameter = list(supp = 0.00006, conf = 0.000025, 
-                                                  target = "rules", minlen = 1))
+                                                  target = "rules", minlen = 2))
 summary(mba_scentourage_rules)
+inspect(mba_scentourage_rules[1])
 
 #============================
 #Cara (i.e., those who have shopped in any brand)
@@ -304,8 +341,9 @@ mba_cara_trans <- as(split(mba_cara[,"PartnerName"],
 #rules
 mba_cara_rules <- apriori(mba_cara_trans, 
                           parameter = list(supp = 0.00006, conf = 0.000025, 
-                                           target = "rules", minlen = 1))
+                                           target = "rules", minlen = 2))
 summary(mba_cara_rules)
+inspect(mba_cara_rules[1:6])
 
 #============================
 #high value (not defined but assuming customer points > 1500)
@@ -325,7 +363,7 @@ high_value_data <- high_value_data %>%
 
 high_value_data <- high_value_data %>%
   mutate(PartnerName = as.character(PartnerName)) %>%
-  filter(points > 1000)
+  filter(points > 5000)
 
 #items and transactions
 mba_high_value <- as.data.frame(high_value_data)
@@ -337,8 +375,9 @@ mba_high_value_trans <- as(split(mba_high_value[,"PartnerName"],
 #rules
 mba_high_value_rules <- apriori(mba_high_value_trans, 
                                 parameter = list(supp = 0.00006, conf = 0.000025, 
-                                                 target = "rules", minlen = 1))
+                                                 target = "rules", minlen = 2))
 summary(mba_high_value_rules)
+inspect(mba_high_value_rules[1:2])
 
 #============================
 #recommendations using recommender lab
@@ -353,3 +392,5 @@ getModel(rec)
 
 pred <- predict(rec, dat[1:5,])
 as(pred, "list")
+
+
