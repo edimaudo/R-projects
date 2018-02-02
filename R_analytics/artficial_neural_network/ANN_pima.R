@@ -20,7 +20,8 @@ names(pima_data) <- c('Number_of_times_pregnant','Plasma_glucose_concentration',
 
 plt1 <- ggplot(pima_data, aes(x = Body_mass_index, y = Age, colour = as.factor(label))) +
   geom_point(size=3) + ggtitle("BMI and Age")
-plt2 <- ggplot(pima_data, aes(x = Diastolic_blood_pressure, y = Plasma_glucose_concentration, colour = as.factor(label))) +
+plt2 <- ggplot(pima_data, aes(x = Diastolic_blood_pressure, 
+                              y = Plasma_glucose_concentration, colour = as.factor(label))) +
   geom_point(size=3) +
   ggtitle("Plasma_glucose_concentration and Diastolic_blood_pressure")
 plt1
