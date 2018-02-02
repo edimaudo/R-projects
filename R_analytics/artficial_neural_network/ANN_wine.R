@@ -7,7 +7,10 @@ wine_data <- read.table(file.choose(), sep = ",")
 glimpse(wine_data)
 
 #rename columns
-names(wine_data) <- c("label",'Alcohol','Malic_acid','Ash','Alcalinity_of_ash','Magnesium','Total_phenols','Flavanoids','Nonflavanoid_phenols','Proanthocyanins','Color_intensity','Hue','OD280_OD315_of_diluted_wines','Proline')
+names(wine_data) <- c("label",'Alcohol','Malic_acid','Ash',
+                      'Alcalinity_of_ash','Magnesium','Total_phenols',
+                      'Flavanoids','Nonflavanoid_phenols','Proanthocyanins',
+                      'Color_intensity','Hue','OD280_OD315_of_diluted_wines','Proline')
 
 glimpse(wine_data)
 
