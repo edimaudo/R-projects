@@ -58,83 +58,31 @@ for(i in filenames){
   assign(i, read.csv(paste(i, ".csv", sep="")))
 }
 
-#==============================
-#exploratory analysis
-#==============================
-#customer age ranges
-summary(SceneAnalytics.dbo.SP_CustomerDetail$age_class)
-ggplot(data = SceneAnalytics.dbo.SP_CustomerDetail, mapping = aes(x=as.factor(age_class) ))+
-  geom_bar()
-#18-24 and 25-34 and 35-44 account for a large percentage of the market
+# Questions for Katarina
+# 
+# Team performed market basket analysis 
+# How would you define a high value user
+# Does app user 
+# What type of insights are you looking for in the different segments?
+#   How much detail would you like to see?
+#   Would you look to see a proof of concept with respect to a BI tool or tool like R that showcases the information?
+#   What is the end use of the tools e.g. marketing campaign?
 
-#province
-summary(SceneAnalytics.dbo.SP_CustomerDetail$StateProv)
-ggplot(data = SceneAnalytics.dbo.SP_CustomerDetail, mapping = aes(x=as.factor(StateProv) ))+
-  geom_bar()
-#ontario is the most important market
+#Q&A with prof
+# - how to properly collect the data
+# - validate the market basket analysis
+# - type of visuals are good for this type of analysis
+# 
+# - 
+#   
+#   
+#   #only collect once since it is memory heavy
+#   #can still use arules for the visualization
+#   
+#   
+#   possible option is to get multiple data points + them combine them on your local machine and then run the arules and arules viz
+# Also consider using the other columns in point example the ex_transactiondescription
 
-#summarize city information
-cityInfo <- SceneAnalytics.dbo.SP_CustomerDetail %>%
-  group_by(City) %>%
-  summarise(count= n(), percentage = n() / nrow(SceneAnalytics.dbo.SP_CustomerDetail)) %>%
-  arrange(desc(count))
-#Toronto, Calgary, Edmonton, Vancouver are very important
-
-#==============================
-#other possible questions if needed
-#How many people in each vertical
-
-#vertical questions
-#scentourage & 18-24 & app users
-#-how often do they go
-#-how much do the spend, What is the average spend + do they buy from the concessions, average points
-#-what cities and province
-#-what cinemas
-#-what movie times
-#-type of movie goer (purchases ticket online, Tuesday watcher?)
-#-do they use other channels (email, sms)
-#- how many active user?
-#type of points being used?
-#type of card being used
-
-#CARA
-#type of card being used?
-#average transaction
-#no of points used, 
-#active users
-#type of points
-# merchant information
-# location with respect to points, transactions w.r.t city, province
-
-#high value
-#all the questions asked for the other verticals
-
-#===============
-#rfm analysis
-#===============
-rfm_everyone <- SceneAnalytics.dbo.SP_Points %>%
-  select(Unique_member_identifier, points, pointdt, pointid, TransAmount)
-
-#drop na in rfm_everyone
-rfm_everyone <- rfm_everyone %>%
-  drop_na()
-
-#convert date
-rfm_everyone <- rfm_everyone %>%
-  mutate(pointdt = as.Date(pointdt,"%Y-%m-%d"))
-
-rfm_everyone <- rfm_everyone %>% 
-  group_by(Unique_member_identifier) %>% 
-  summarise(recency=as.numeric(as.Date("2018-01-22")-max(pointdt)),
-            frequency=n_distinct(pointid), monetary= sum(TransAmount)) 
-
-#rfm for high value
-
-summary(rfm_everyone) #get more info from professor about high value
-#high value 
-rfm_everyone <-rfm_everyone %>%
-  arrange(desc(monetary))
-print(rfm_everyone[1:50,])
 #==============================
 #market basket analysis
 #==============================
@@ -161,7 +109,7 @@ point_data <- point_data %>%
 
 all_data <- point_data
 all_data <- all_data %>%
-  mutate(PartnerName = as.character(PartnerName))
+  mutate(ex = as.character(PartnerName))
 
 # test_all <- all_data %>%
 #   group_by(Unique_member_identifier) %>%
@@ -238,12 +186,12 @@ mba_app1 <- as.data.frame(account_data)
 
 #prep data for apriori algorithm
 mba_app_trans1 <- as(split(mba_app1[,"PartnerName"], 
-                          mba_app1[,"Unique_member_identifier"]), "transactions")
+                           mba_app1[,"Unique_member_identifier"]), "transactions")
 
 #rules
 mba_app_rules1 <- apriori(mba_app_trans1, 
-                         parameter = list(supp = 0.00006, conf = 0.000025, 
-                                          target = "rules", minlen = 2))
+                          parameter = list(supp = 0.00006, conf = 0.000025, 
+                                           target = "rules", minlen = 2))
 summary(mba_app_rules1)
 inspect(mba_app_rules1[1:6])
 
