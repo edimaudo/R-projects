@@ -20,12 +20,11 @@ library(forecast)
 #read in the data
 mydata <- read.csv("/Users/edima/Documents/Coding/R/R_analytics/cryptocurrency_prediction/crypto-markets.csv")
 
-symbolInfo <- unique(mydata$name)
-symbolInfo <- symbolInfo %>%
-  arrange(symbolInfo)
+newdata <- mydata[order(mydata$name),] 
+
+symbolInfo <- unique(newdata$name)
 
 tickers = c("Bitcoin","Ethereum","Ripple","Bitcoin Cash","Bitcoin Gold","Litecoin")
-
 
 
 # Define UI for application crypto app
@@ -37,20 +36,32 @@ ui <- fluidPage(
     
     # Define the sidebar with one input
     sidebarPanel(
-      selectInput("currencyInfo", "Crypotcurrency:", 
+      selectInput("nameInfo", "Crypotcurrency:", 
                   choices=symbolInfo)
     ),
     
-    # Create a spot for the barplot
+    # Create a spot for the prediction
     mainPanel(
-      plotOutput("Cryptocurrency prediction")  
+      plotOutput("CryptocurrencyPrediction")  
     )
   )
 )
 
 # Define server logic for crypto prediction app
 server <- function(input, output) {
-   
+
+  output$CryptocurrencyPrediction <- renderPlot({
+    
+    #get the data
+    graphdata <- mydata %>%
+      filter(name %in% input$nameInfo) %>%
+      select(date, close)
+    
+    #render the forecast
+    graphdata1 <- ts(graphdata, start=2013, end=2025, frequency = 12)
+    plot(forecast(graphdata1[,2]), col="grey", main = input$nameInfo, xlab="Date", ylab="Closing Prices")
+    
+  })
 }
 
 # Run the application 
