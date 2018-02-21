@@ -13,6 +13,7 @@ library(corrplot)
 library(caret)
 library(e1071)
 
+
 #load data
 train <- read.csv(file.choose(), sep = ",")
 test <- read.csv(file.choose(), sep = ",")
@@ -23,20 +24,19 @@ glimpse(test)
 
 names(training)
 
-#remove the first columns
-train[1] <- NULL
-test[1] <- NULL
-
 #backup 
 train.orig <- train
 test.orig <- test
 
-#remove na since data imputation would give odd results
-train <- na.omit(train)
+#remove the first columns
+train[1] <- NULL
+test[1] <- NULL
 
-#correlation
-#corinfo <- training[,2:11]
-#corrplot(cor(corinfo), method="number")
+
+
+#remove na
+train <- na.omit(train)
+test <- na.omit(test)
 
 set.seed(123)
 
@@ -65,6 +65,27 @@ ctrl <- trainControl(method = "cv", number = 5)
 tbmodel <- train(as.factor(SeriousDlqin2yrs) ~., data = train, method = "C5.0Tree", trControl = ctrl)
 pred <- predict(tbmodel, train)
 confusionMatrix(pred,train$SeriousDlqin2yrs)
+
+# Linear Discriminant Analysis with Jacknifed Prediction
+library(MASS)
+fit <- lda(train$SeriousDlqin2yrs ~., data=train, 
+           na.action="na.omit", CV=TRUE)
+# Assess the accuracy of the prediction
+# percent correct for each category of G
+ct <- table(train$SeriousDlqin2yrs, fit$class)
+diag(prop.table(ct, 1))
+# total percent correct
+sum(diag(prop.table(ct)))
+
+#random forest
+library(randomForest)
+train_rf <- randomForest(train$SeriousDlqin2yrs ~ . , data = train, ntree = 500)
+
+#support vector machines
+
+#boosting
+
+#model comparison
 
 
 
