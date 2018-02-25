@@ -12,32 +12,42 @@
 rm(list=ls())
 
 #load data
-temp <- read.csv(file.choose(), sep = "|")
+temp <- suppressWarnings(read_delim(file.choose(),delim = "||",col_names = FALSE))
+
+#drop columns
+temp[,6] <- NULL
+temp[,4] <- NULL
+temp[,2] <- NULL
 
 #add headers
 colnames(temp) <- c("movie_id","rating","sentiment","text_info")
 
-#clean headers
-temp$rating <- NULL
-temp$text_info <-NULL
-colnames(temp)[colnames(temp)=="sentiment"] <- "rating"
-names(temp)[3]<-"sentiment"
-names(temp)[5]<-"text_info"
-temp[,4] <- NULL
+# #clean headers
+# temp$rating <- NULL
+# temp$text_info <-NULL
+# colnames(temp)[colnames(temp)=="sentiment"] <- "rating"
+# names(temp)[3]<-"sentiment"
+# names(temp)[5]<-"text_info"
+# temp[,4] <- NULL
 
 #=====================
 #exploratory analysis
 #=====================
-
+library(ggolot2)
+library(tidyverse)
 #barplot of ratings
+#sorted
+ggplot(temp, aes(x=reorder(as.factor(rating), -table(rating)[rating]))) + geom_bar() + theme_classic()
 
 #barplot of sentiment
+ggplot(temp, aes(x=reorder(as.factor(sentiment), -table(sentiment)[sentiment]))) + geom_bar() + theme_classic()
 
 #====================
 #analysis
-#===================
+#====================
 
-
+library(tidytext)
+library(tm)
 #function to clean text_info
 
 #sentiment analysis
@@ -45,3 +55,5 @@ temp[,4] <- NULL
 #doc classification
 
 #clustering based on text info to give possibly type of movie and rating
+
+#word cloud
