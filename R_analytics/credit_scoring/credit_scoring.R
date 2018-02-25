@@ -12,7 +12,7 @@ library(GGally)
 library(corrplot)
 library(caret)
 library(e1071)
-
+library(kernlab)
 
 #load data
 train <- read.csv(file.choose(), sep = ",")
@@ -45,7 +45,7 @@ glimpse(test)
 
 #modeling
 
-#logistic regression
+# #logistic regression
 ctrl <- trainControl(method = "cv", number = 5)
 modelglm <- train(as.factor(SeriousDlqin2yrs) ~. , data = train, method = "glm", trControl = ctrl)
 summary(modelglm)
@@ -56,19 +56,19 @@ summary(predglm)
 ### score prediction using AUC
 confusionMatrix(predglm, train$SeriousDlqin2yrs)
 
-aucglm <- roc(as.numeric(train$SeriousDlqin2yrs), as.numeric(predglm),  ci=TRUE)
-plot(aucglm, ylim=c(0,1), print.thres=TRUE, 
-     main=paste('Logistic Regression AUC:',round(aucglm$auc[[1]],3)),col = 'blue')
+# aucglm <- roc(as.numeric(train$SeriousDlqin2yrs), as.numeric(predglm),  ci=TRUE)
+# plot(aucglm, ylim=c(0,1), print.thres=TRUE, 
+#      main=paste('Logistic Regression AUC:',round(aucglm$auc[[1]],3)),col = 'blue')
 
-#decision trees
+# #decision trees
 ctrl <- trainControl(method = "cv", number = 5)
 tbmodel <- train(as.factor(SeriousDlqin2yrs) ~., data = train, method = "C5.0Tree", trControl = ctrl)
 pred <- predict(tbmodel, train)
 confusionMatrix(pred,train$SeriousDlqin2yrs)
-
-# Linear Discriminant Analysis with Jacknifed Prediction
+# 
+# # Linear Discriminant Analysis with Jacknifed Prediction
 library(MASS)
-fit <- lda(train$SeriousDlqin2yrs ~., data=train, 
+fit <- lda(train$SeriousDlqin2yrs ~., data=train,
            na.action="na.omit", CV=TRUE)
 # Assess the accuracy of the prediction
 # percent correct for each category of G
@@ -77,15 +77,9 @@ diag(prop.table(ct, 1))
 # total percent correct
 sum(diag(prop.table(ct)))
 
-#random forest
-library(randomForest)
-train_rf <- randomForest(train$SeriousDlqin2yrs ~ . , data = train, ntree = 500)
 
-#support vector machines
 
-#boosting
 
-#model comparison
 
 
 
