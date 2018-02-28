@@ -61,13 +61,13 @@ ggplot(hcr, aes(x=reorder(as.factor(sentiment), -table(sentiment)[sentiment]))) 
 #compare models
 #==================
 
-#plot on ROC curve
 
 
 
-#=================
+
+#------------------
 #with text
-#==================
+#------------------
 #clean text function
 #logistic regression
 #decision trees
@@ -76,17 +76,17 @@ ggplot(hcr, aes(x=reorder(as.factor(sentiment), -table(sentiment)[sentiment]))) 
 #neural network
 #boosting algorithm
 
-#compare models + plot on ROC curve
+#compare models
 
 
-#===================
-#sentiment analysis
-#===================
+#------------------
+#prediction using sentiment analysis
+#------------------
 
-#====================
-#word cloud for each sentiment
-#====================
+#------------------
+#word cloud
+#------------------
 
-#===================
+#------------------
 #word clustering
-#===================
+#------------------
