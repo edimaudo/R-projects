@@ -9,6 +9,7 @@ library(ggplot2)
 library(colorspace)
 
 
+
 #list of files
 file_names = c(
   "LoanStats_2016Q1.csv",
@@ -36,11 +37,11 @@ for(i in filenames){
 }
 
 
-library(corrplot)
-
 #clean data
 
 #recode columns
+
+#combine data
 
 #-----------------
 #models
@@ -51,19 +52,19 @@ library(caret)
 control <- trainControl(method="repeatedcv", number=10, repeats=3)
 set.seed(123)
 #logistic regression
-fit.glm <- train(status~., data=kiva_no_text, method="glm", trControl=control)
+fit.glm <- train(status~., data=lending_club, method="glm", trControl=control)
 #decision trees
-fit.cart <- train(status~., data=kiva_no_text, method="rpart", trControl=control)
+fit.cart <- train(status~., data=lending_club, method="rpart", trControl=control)
 #LDA
-fit.lda <- train(status~., data=kiva_no_text, method="lda", trControl=control)
+fit.lda <- train(status~., data=lending_club, method="lda", trControl=control)
 #svm
-fit.svm <- train(status~., data=kiva_no_text, method="svmRadial", trControl=control)
+fit.svm <- train(status~., data=lending_club, method="svmRadial", trControl=control)
 #random forest
-fit.rf <- train(status~., data=kiva_no_text, method="rf", trControl=control)
+fit.rf <- train(status~., data=lending_club, method="rf", trControl=control)
 #bagged cart
-fit.treebag <- train(status~., data=kiva_no_text, method="treebag", trControl=control)
+fit.treebag <- train(status~., data=lending_club, method="treebag", trControl=control)
 #boosting algorithm - Stochastic Gradient Boosting (Generalized Boosted Modeling)
-fit.gbm <- train(status~., data=kiva_no_text, method="gbm", trControl=control)
+fit.gbm <- train(status~., data=lending_club, method="gbm", trControl=control)
 
 #------------------
 #compare models
