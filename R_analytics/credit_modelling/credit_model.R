@@ -11,12 +11,22 @@ library(colorspace)
 
 #list of files
 file_names = c(
-  "SceneAnalytics.dbo.LK_account_unique_member_identifier_sample10.csv",
+  "LoanStats_2016Q1.csv",
+  "LoanStats_2016Q2.csv",
+  "LoanStats_2016Q3.csv",
+  "LoanStats_2016Q4.csv",
+  "LoanStats_2017Q1.csv",
+  "LoanStats_2017Q2.csv",
+  "LoanStats_2017Q3.csv",
+  "LoanStats3a.csv",
+  "LoanStats3b.csv",
+  "LoanStats3c.csv",
+  "LoanStats3d.csv"
 
 )
 
 #update working directory
-setwd("/Users/edima/Documents/Queens/courses/big_data_865/project/sample02/") 
+setwd("//Users/edima/Documents/Coding/R/R_analytics/credit_modelling/") 
 
 #clean filenames
 filenames <- gsub("\\.csv$","", list.files(pattern="\\.csv$"))
@@ -25,11 +35,12 @@ for(i in filenames){
   assign(i, read.csv(paste(i, ".csv", sep="")))
 }
 
+
+library(corrplot)
+
 #clean data
 
-#build model
-
-
+#recode columns
 
 #-----------------
 #models
