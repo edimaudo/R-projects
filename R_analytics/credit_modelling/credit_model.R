@@ -36,6 +36,10 @@ for(i in filenames){
   assign(i, read.csv(paste(i, ".csv", sep="")))
 }
 
+#combine data
+lending_club <- rbind(LoanStats_2016Q1,LoanStats_2016Q2,LoanStats_2016Q3,
+                      LoanStats_2016Q4,LoanStats_2017Q1,LoanStats_2017Q2,
+                      LoanStats_2017Q3,LoanStats3a,LoanStats3b,LoanStats3c,LoanStats3d)
 
 #clean data
 
