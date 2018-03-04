@@ -64,19 +64,24 @@ kiva_no_text <- kiva_info
 recodeKIVA <- function (kiva_text){
   kiva_no_text <- kiva_text
   #recode status
-  kiva_no_text$status <- as.integer(recode_factor(kiva_no_text$status, "defaulted" = "0", "paid" = "1"))
+  kiva_no_text$status <- as.integer(recode_factor(kiva_no_text$status, "defaulted" = "0",
+                                                  "paid" = "1"))
   #recode country
-  kiva_no_text$country <- as.integer(recode_factor(kiva_no_text$country, "Dominican Republic" = "0",
+  kiva_no_text$country <- as.integer(recode_factor(kiva_no_text$country, 
+                                                   "Dominican Republic" = "0",
                                                    "Ecuador" = "1", "Kenya" = "2"))
   #recode gender
   kiva_no_text$gender <- as.integer(recode_factor(kiva_no_text$gender, "M" = "0", "F" = "1"))
   #recode nonpayment
-  kiva_no_text$nonpayment <- as.integer(recode_factor(kiva_no_text$nonpayment, "lender" = "0", "partner" = "1"))
+  kiva_no_text$nonpayment <- as.integer(recode_factor(kiva_no_text$nonpayment, "lender" = "0",
+                                                      "partner" = "1"))
   #recode sector
   kiva_no_text$sector <- as.integer(recode_factor(kiva_no_text$sector, 
-                                                  "Agriculture" = "0", "Food" = "1","Services" = "2", 
+                                                  "Agriculture" = "0", "Food" = "1",
+                                                  "Services" = "2", 
                                                   "Construction" = "3", 
-                                                  "Clothing" = "4", "Retail" = "5","Arts" = "6", "Food" = "7",
+                                                  "Clothing" = "4", "Retail" = "5",
+                                                  "Arts" = "6", "Food" = "7",
                                                   "Manufacturing" = "8", "Housing" = "9",
                                                   "Transportation" = "10", 
                                                   "Wholesale" = "11","Education" = "12", 
@@ -225,9 +230,12 @@ k = 50;#number of topics
 SEED = 7000;
 CSC_TM <-list(VEM = LDA(tdm, k = k, control = list(seed = SEED)),
               VEM_fixed = LDA(tdm, k = k,control = list(estimate.alpha = FALSE, seed = SEED)),
-              Gibbs = LDA(tdm, k = k, method = 'Gibbs',control = list(seed = SEED, burnin = 1000,thin = 100, iter = 1000)),
-              CTM = CTM(tdm, k = k,control = list(seed = SEED,var = list(tol = 10^-4), em = list(tol = 10^-3))))
-#To compare the fitted models we first investigate the values of the models fitted with VEM and estimated and with VEM and fixed 
+              Gibbs = LDA(tdm, k = k, method = 'Gibbs',control = list(seed = SEED, burnin = 1000,
+                                                                      thin = 100, iter = 1000)),
+              CTM = CTM(tdm, k = k,control = list(seed = SEED,var = list(tol = 10^-4), 
+                                                  em = list(tol = 10^-3))))
+#To compare the fitted models we first investigate the values of the models
+#fitted with VEM and estimated and with VEM and fixed 
 sapply(CSC_TM[1:2], slot, 'alpha')
 sapply(CSC_TM, function(x) mean(apply(posterior(x)$topics, 1, function(z) - sum(z * log(z)))))
 Topic <- topics(CSC_TM[['VEM']], 1)
