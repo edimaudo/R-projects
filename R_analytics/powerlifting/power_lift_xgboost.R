@@ -336,7 +336,8 @@ final_prediction <- predict(object = bst_tuned,
 
 # Add Binary Prediction
 final_prediction_binary <- as.numeric(final_prediction > 0.5)
-solution <- data.frame(name = df_observation_name$observation_name, predicted_binary_response_variable = final_prediction_binary)
+solution <- data.frame(name = df_observation_name$observation_name, 
+                       predicted_binary_response_variable = final_prediction_binary)
 solution <- solution %>% rename(observation_name = name)
 
 # Join with delographc data about observation 
