@@ -1,7 +1,7 @@
 # Write script for quick exploratory analysis to the data. In particular:
-#   -	Class distribution in the dataset
+# -	Class distribution in the dataset
 # -	Other relevant information about the dataset
-# -	Carry out pre-processing (i.e features relation, data normalisation, etc…)
+# -	Carry out pre-processing (i.e features relation…)
 # -	Drop irrelevant features (should be clearly explained and justified)
 # Codes must be commented, and steps explained. Produce at least two diagrams that explains 
 #the dataset in the link.
@@ -41,17 +41,40 @@ library(tidyverse)
 library(caret)
 library(mlbench)
 library(ggplot2)
+library(corrplot)
 
 #load HTRU data
-mydata <- read.csv(file.choose(), sep= ",")
+mydata <- read.csv(file.choose())
+
+mydata <- as.data.frame(mydata)
+
+#name columns
+names(mydata) <- c("mean_ip", "standard_deviation_ip", "excess_kurtosis_ip","skewness_ip",
+                 "mean_DMSNR","standard_deviation_DMSNR","excess_kurtoisis_DMSNR","skewness_DMSNR","class")
 
 #backup data
 mydata.orig <- mydata
 
-#exploratory analysis
-Summary(mydata)
+#summary
+summary(mydata)
 
+#correlation plot
+corrplot(cor(mydata), method="number")
 
+#find relevant features
+highlyCorrelated <- findCorrelation(cor(mydata), cutoff=0.5)
+
+#find important features
+control <- trainControl(method="repeatedcv", number=10, repeats=3)
+# train the model
+model <- train(class~., data=mydata, method="rf", preProcess="scale", trControl=control)
+# estimate variable importance
+importance <- varImp(model, scale=FALSE)
+# summarize importance
+print(importance)
+# plot importance
+plot(importance)
 
 #modelling approach
 
+#fine tune model
