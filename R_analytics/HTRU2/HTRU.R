@@ -49,8 +49,9 @@ mydata <- read.csv(file.choose())
 mydata <- as.data.frame(mydata)
 
 #name columns
-names(mydata) <- c("mean_ip", "standard_deviation_ip", "excess_kurtosis_ip","skewness_ip",
-                 "mean_DMSNR","standard_deviation_DMSNR","excess_kurtoisis_DMSNR","skewness_DMSNR","class")
+names(mydata) <- c("mean_ip", "standard_deviation_ip", "excess_kurtosis_ip",
+                   "skewness_ip","mean_DMSNR","standard_deviation_DMSNR",
+                 "excess_kurtoisis_DMSNR","skewness_DMSNR","class")
 
 #backup data
 mydata.orig <- mydata
@@ -67,7 +68,7 @@ highlyCorrelated <- findCorrelation(cor(mydata), cutoff=0.5)
 #find important features
 control <- trainControl(method="repeatedcv", number=10, repeats=3)
 # train the model
-model <- train(class~., data=mydata, method="rf", preProcess="scale", trControl=control)
+model <- train(class~., data=mydata, method="glm", preProcess="scale", trControl=control)
 # estimate variable importance
 importance <- varImp(model, scale=FALSE)
 # summarize importance
