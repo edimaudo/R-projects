@@ -65,6 +65,9 @@ corrplot(cor(mydata), method="number")
 #find relevant features
 highlyCorrelated <- findCorrelation(cor(mydata), cutoff=0.5)
 
+
+mydata$class <- as.factor(mydata$class)
+
 #find important features
 control <- trainControl(method="repeatedcv", number=10, repeats=3)
 # train the model
