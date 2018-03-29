@@ -1,32 +1,7 @@
-# Write script for quick exploratory analysis to the data. In particular:
-# -	Class distribution in the dataset
-# -	Other relevant information about the dataset
-# -	Carry out pre-processing (i.e features relation…)
-# -	Drop irrelevant features (should be clearly explained and justified)
-# Codes must be commented, and steps explained. Produce at least two diagrams that explains 
-#the dataset in the link.
-# 
-# 2. Build a classification model to classify/predict the class label in the dataset 
-#using any classification model 
-# (any of these SVM, Random Forest, Neural Networks or any other less complex classification model).
-# You must justify your choice of the method used, write, explain and comment the code produced 
-#to complete this task.
-# The codes must:
-# 1.	Divide the set into training and testing subsets
-# 2.	Build a model of choice using the training set
-# 3.	Test and evaluate the model
-# 4.	Report and discuss results
-# Now, you are required to improve the performance of the above model and try to get better results. 
-# There are different ways to improve and fine tune the model. More specifically, 
-#try to explore one or more of these options below:
-# 1.Fine tune the parameters of the model, or search for some existing techniques to 
-#optimise these parameters
-# 2.Use different metrics for evaluating the model 
-# (i.e perhaps the data is not balanced, and you might want to keep trying some other methods
-# 3.Use different models and compare the results
-# 4.Change the partitioning of the dataset. In some cases, more training data may help
-# 5.Use cross-validation if not used already
-# 6.Any other methods you think might be appropriate to use
+#exploratory analysis
+#feature engineering
+#use cross validation
+
 
 
 #HTRU dataset - http://archive.ics.uci.edu/ml/datasets/HTRU2
@@ -98,7 +73,55 @@ predictors(results)
 # plot the results
 plot(results, type=c("g", "o"))
 
+
+
 #modelling approach
+newdata <- mydata[,1:7]
+newdata$class <- mydata$class
+
+#cross fold validation
+control <- trainControl(method="repeatedcv", number=10, repeats=3)
+set.seed(7)
+
+#logistic regression
+fit.glm <- train(class~., data=newdata, method="glm", trControl=control)
+#decision trees
+fit.cart <- train(class~., data=newdata, method="rpart", trControl=control)
+#LDA
+fit.lda <- train(class~., data=newdata, method="lda", trControl=control)
+#svm
+fit.svm <- train(class~., data=newdata, method="svmRadial", trControl=control)
+#random forest
+fit.rf <- train(class~., data=newdata, method="rf", trControl=control)
+#bagged cart
+fit.treebag <- train(class~., data=newdata, method="treebag", trControl=control)
+#boosting algorithm - Stochastic Gradient Boosting (Generalized Boosted Modeling)
+fit.gbm <- train(class~., data=newdata, method="gbm", trControl=control)
+
+#------------------
+#compare models
+#------------------
+results <- resamples(list(logistic = fit.glm, cart = fit.cart, lda = fit.lda, 
+                          svm = fit.svm, randomforest = fit.rf, 
+                          baggedcart = fit.treebag, gradboost = fit.gbm))
+summary(results)
+
+# boxplot comparison
+bwplot(results)
+# Dot-plot comparison
+dotplot(results)
+
+# density plots of accuracy
+scales <- list(x=list(relation="free"), y=list(relation="free"))
+densityplot(results, scales=scales, pch = "|")
+
+# pair-wise scatterplots of predictions to compare models
+splom(results)
+
+#statistical significance for algorithms
+# difference in model predictions
+diffs <- diff(results)
+# summarize p-values for pair-wise comparisons
+summary(diffs)
 
 
-#fine tune model
