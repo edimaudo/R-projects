@@ -1,2 +1,2 @@
 # R
-R data analysis, statstics, data analytics and shiny
+Using R to build machine learning, statistics and web applications.
