@@ -33,13 +33,13 @@ setwd("/Users/edima/Documents/Queens/courses/big_data_865/project/oxford/")
 
 #load data
 file_names = c(
-  "O-D Distance Matrix.csv",
-  "Unit No.csv",
-  "Yorkdale August top stores visited.csv",
-  "Yorkdale September top stores visited.csv",
-  "Yorkdale October top stores visited.csv",
-  "Yorkdale November top stores visited.csv",
-  "Yorkdale December top stores visited.csv"
+  "Distance.csv",
+  "Unit.csv",
+  "August.csv",
+  "September.csv",
+  "October.csv",
+  "November.csv",
+  "December.csv"
 )
 
 #clean filenames
@@ -50,5 +50,6 @@ for(i in filenames){
 }
 
 #exploratory analysis
+glimpse()
 
 #
