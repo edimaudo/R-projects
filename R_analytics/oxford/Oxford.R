@@ -31,25 +31,23 @@ library(arulesViz)
 #set working direction
 setwd("/Users/edima/Documents/Queens/courses/big_data_865/project/oxford/")
 
-#load data
-file_names = c(
-  "Distance.csv",
-  "Unit.csv",
-  "August.csv",
-  "September.csv",
-  "October.csv",
-  "November.csv",
-  "December.csv"
+#load csv data
+filenames = c(
+  "Distance",
+  "Unit",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December"
 )
 
-#clean filenames
-filenames <- gsub("\\.csv$","", list.files(pattern="\\.csv$"))
 #load the files
 for(i in filenames){
   assign(i, read.csv(paste(i, ".csv", sep="")))
 }
 
 #exploratory analysis
-glimpse()
-
+glimpse(August)
+unique(August$Visit.Day)
 #
