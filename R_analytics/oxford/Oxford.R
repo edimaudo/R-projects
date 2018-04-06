@@ -33,8 +33,21 @@ setwd("/Users/edima/Documents/Queens/courses/big_data_865/project/oxford/")
 
 #load data
 file_names = c(
-  
+  "O-D Distance Matrix.csv",
+  "Unit No.csv",
+  "Yorkdale August top stores visited.csv",
+  "Yorkdale September top stores visited.csv",
+  "Yorkdale October top stores visited.csv",
+  "Yorkdale November top stores visited.csv",
+  "Yorkdale December top stores visited.csv"
 )
+
+#clean filenames
+filenames <- gsub("\\.csv$","", list.files(pattern="\\.csv$"))
+#load the files
+for(i in filenames){
+  assign(i, read.csv(paste(i, ".csv", sep="")))
+}
 
 #exploratory analysis
 
