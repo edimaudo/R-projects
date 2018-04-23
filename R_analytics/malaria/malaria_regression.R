@@ -27,14 +27,16 @@ test<-df[-sid,]
 library(corrplot)
 corrplot(cor(train), method = "number")
 
-#build initial model
+#build initial model and test
+linearMod <- lm(Malaria_Proportion ~., data=train)
+summary(linearMod)
+AIC(linearMod)
 
+testPred <- predict(linearMod, test)
+actuals_preds <- data.frame(cbind(actuals=test$Malaria_Proportion, predicteds=testPred))  # make actuals_predicteds dataframe.
+correlation_accuracy <- cor(actuals_preds) 
 
 #check for importance variables
 
-#build new model
-
-#check accuracy and AIC
-
-#test using test data
+#build new model + check accuracy and AIC + use against test data
 
