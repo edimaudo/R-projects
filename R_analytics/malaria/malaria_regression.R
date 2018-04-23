@@ -41,7 +41,8 @@ correlation_accuracy <- cor(actuals_preds)
 #find important features
 highlyCorrelated <- findCorrelation(cor(train), cutoff=0.5)
 control <- trainControl(method="repeatedcv", number=10, repeats=3)
-model <- train(Malaria_Proportion~., data=train, method="lm", preProcess="scale", trControl=control)
+model <- train(Malaria_Proportion~., data=train, 
+               method="lm", preProcess="scale", trControl=control)
 # estimate variable importance
 importance <- varImp(model, scale=FALSE)
 # summarize importance
@@ -64,4 +65,12 @@ predictors(results)
 plot(results, type=c("g", "o"))
 
 #build new model + check accuracy and AIC + use against test data
+linearMod2 <- lm(Malaria_Proportion ~ City_Rivers + Elevation + City_Roads + 
+                   Agriculture_fs_64K + Forest_fs_64K + Agriculture_fs_24K, data=train)
+summary(linearMod2)
+AIC(linearMod2)
 
+testPred <- predict(linearMod2, test)
+actuals_preds <- data.frame(cbind(actuals=test$Malaria_Proportion, predicteds=testPred))
+correlation_accuracy <- cor(actuals_preds)
+corrplot(correlation_accuracy, method = "number")
