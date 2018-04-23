@@ -33,10 +33,13 @@ summary(linearMod)
 AIC(linearMod)
 
 testPred <- predict(linearMod, test)
-actuals_preds <- data.frame(cbind(actuals=test$Malaria_Proportion, predicteds=testPred))  # make actuals_predicteds dataframe.
+actuals_preds <- data.frame(cbind(actuals=test$Malaria_Proportion, predicteds=testPred))
 correlation_accuracy <- cor(actuals_preds) 
+
+#build alternative models
 
 #check for importance variables
 
 #build new model + check accuracy and AIC + use against test data
 
+#linear regression using caret lm
