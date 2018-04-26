@@ -53,3 +53,4 @@ AIC(linearMod)
 testPred <- predict(linearMod, test)
 actuals_preds <- data.frame(cbind(actuals=test$area, predicteds=testPred))
 correlation_accuracy <- cor(actuals_preds) 
+%>% 
