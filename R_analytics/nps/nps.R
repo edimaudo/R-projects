@@ -11,6 +11,7 @@ library(mlbench)
 library(data.table)
 library(ggplot2)
 library(corrplot)
+library(pastecs)
 
 #load nps data
 df <- read.csv(file.choose(), sep=";")
@@ -25,6 +26,8 @@ apply(df, 2, function(x) any(is.na(x))) #no missing data
 set.seed(123)
 
 #descriptive statistics
+summary(df)
+stat.desc(df) 
 
 # graphs
 # Build bar chart that has 
@@ -46,6 +49,7 @@ set.seed(123)
  
 
 # multiple linear regression - dependdent variable is REC
+# outliers, non normality
 # note - use either BU or PRODUCT but not both
 # note -  check linear regression assumptions
 # - split data into test and train
