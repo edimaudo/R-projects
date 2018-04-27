@@ -29,15 +29,11 @@ set.seed(123)
 summary(df)
 stat.desc(df) 
 
-# graphs
-# Build bar chart that has 
-# region vs account
-# region vs product
-# region vs BU
-
-# Contigency analysis - Specify hypotheses; 
+# Contigency analysis 
 #Run two Chi2-Tests of Independence: (1) BU and NPS categories; (2) Region and NPS categories;
- 
+chisq.test(table(df$BU, df$REC))
+chisq.test(table(df$Region, df$REC))
+
 # Group comparison - Specify hypotheses; 
 #Conduct two t-tests (hypotheses tests). Dependent variable is REC (NPS raw score).
 #(1st t-test) Independent variable is Salesman.Professionality > 7 
