@@ -34,6 +34,18 @@ chisq.test(table(df$Region, df$REC))
 
 
 # multiple linear regression - dependdent variable is REC
+
+levels(df$BU)
+levels(df$PRODUCT)
+levels(df$Account)
+levels(df$Region)
+
+#remove date and BU column
+df <- df %>%
+  select(REC,Salesman.Friendliness,Salesman.Product.Knowledge, Salesman.Professionality,
+         Product.Tastiness, PRODUCT, Account, Region)
+
+#model 1
 # outliers, non normality
 # note - use either BU or PRODUCT but not both
 # note -  check linear regression assumptions
