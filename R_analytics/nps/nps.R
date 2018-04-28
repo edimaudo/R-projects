@@ -29,19 +29,9 @@ summary(df)
 stat.desc(df) 
 
 # Contigency analysis 
-#Run two Chi2-Tests of Independence: (1) BU and NPS categories; (2) Region and NPS categories;
 chisq.test(table(df$BU, df$REC))
 chisq.test(table(df$Region, df$REC))
 
-# Group comparison - Specify hypotheses; 
-#Conduct two t-tests (hypotheses tests). Dependent variable is REC (NPS raw score).
-#(1st t-test) Independent variable is Salesman.Professionality > 7 
-#(built a new dummy variable first!􏰀0 if Salesman.Professionality <= 7, 1 if >= 8)
-#; (2nd t-test) Independent variable is Product.Tastiness > 7 
-#(built a new dummy variable first! – use same rules as before);
-
-# correlation analysis
- 
 
 # multiple linear regression - dependdent variable is REC
 # outliers, non normality
