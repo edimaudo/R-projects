@@ -42,3 +42,27 @@ ev <- eigen(cor(mydata)) # get eigenvalues
 ap <- parallel(subject=nrow(mydata),var=ncol(mydata), rep=100, cent=.05)
 nS <- nScree(x=ev$values, aparallel=ap$eigen$qevpea)
 plotnScree(nS)
+
+n.factors <- 5
+
+# factor analysis
+fit <- factanal(mydata,
+                n.factors,# number of factors to extract
+                scores=c("regression"),
+                rotation="none")
+
+# plot factors
+load <- fit$loadings[,1:n.factors]
+plot(load,type="n") # set up plot
+text(load,labels=names(mydata),cex=.7)
+
+#rotate
+fit <- factanal(mydata,
+                n.factors,# number of factors to extract
+                scores=c("regression"),
+                rotation="varimax")
+
+# plot factors
+load <- fit$loadings[,1:n.factors]
+plot(load,type="n") # set up plot 
+text(load,labels=names(mydata),cex=.7)
