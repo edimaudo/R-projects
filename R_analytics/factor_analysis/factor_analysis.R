@@ -1,13 +1,5 @@
 #Determine the minimum number of factors needed given a 90% confidence level
 
-#Perform factor analysis for all variables to determine the top 4 most unique variables 
-#using 12 factors
-
-
-
-
-#-need to use the "factanal" library
-
 #remove all data
 rm(list=ls())
 
@@ -66,3 +58,5 @@ fit <- factanal(mydata,
 load <- fit$loadings[,1:n.factors]
 plot(load,type="n") # set up plot 
 text(load,labels=names(mydata),cex=.7)
+
+load[1:4,1:4]
