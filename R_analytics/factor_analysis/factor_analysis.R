@@ -26,3 +26,19 @@ library(NbClust)
 
 #load data
 mydata <- read.csv(file.choose(), sep = ',') #load csv file
+
+#Prepare data
+mydata.orig = mydata #save orig data copy
+mydata <- na.omit(mydata) # listwise deletion of missing
+#scale data if needed
+#mydata <- scale(mydata)
+mydata[1] <- NULL #remove the first column
+
+#set seed
+set.seed(1)
+
+#find the optimal # of factors
+ev <- eigen(cor(mydata)) # get eigenvalues
+ap <- parallel(subject=nrow(mydata),var=ncol(mydata), rep=100, cent=.05)
+nS <- nScree(x=ev$values, aparallel=ap$eigen$qevpea)
+plotnScree(nS)
