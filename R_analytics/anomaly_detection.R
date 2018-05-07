@@ -24,3 +24,9 @@ btc_ts %>%
   anomalize(remainder) %>%
   time_recompose() %>%
   plot_anomalies(time_recomposed = TRUE, ncol = 3, alpha_dots = 0.5)
+
+btc_ts %>% 
+  time_decompose(Price) %>%
+  anomalize(remainder) %>%
+  time_recompose() %>%
+  filter(anomaly == 'Yes')
