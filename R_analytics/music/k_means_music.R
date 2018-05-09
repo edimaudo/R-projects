@@ -13,4 +13,7 @@ library(factoextra)
 library(corrplot)
 library(lattice)
 library(NbClust)
+library(readxl)
 
+#get data
+mydata = as.data.frame(read_excel(file.choose()))
