@@ -1,0 +1,13 @@
+#remove old data
+rm(list=ls())
+
+#load libraries
+library(tidyverse)
+library(caret)
+library(mlbench)
+library(data.table)
+library(corrplot)
+library(ggplot2)
+
+#load data
+hd1 <- read.csv(file.choose()) #load housing header text
