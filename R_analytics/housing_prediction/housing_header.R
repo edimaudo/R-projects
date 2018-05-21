@@ -11,3 +11,9 @@ library(ggplot2)
 
 #load data
 hd1 <- read.csv(file.choose()) #load housing header text
+
+View(hd1)
+
+#pairwise correlation
+corrplot(cor(hd1),'number')
+
