@@ -17,3 +17,8 @@ View(hd1)
 #pairwise correlation
 corrplot(cor(hd1),'number')
 
+library(lattice)
+library(car)
+#scatterplot matrix
+scatterplotMatrix(~Zn+Indus+Chas+Nox+Rm+Age+Dis+Rad+Tax+Ptratio+B+Lstat|Medv, data=mtcars,
+                   main="Medv Options")
