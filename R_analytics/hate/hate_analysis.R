@@ -22,10 +22,31 @@ ggplot(data=country_count, aes(x= X_country, y=count, fill=how_hateful)) +
 
 # -Which countries are most sensitive to hate? 
 #(i.e., the share of 'very_hateful' *from all the ratings* (ratio) given by people from that country is the highest)
+country_hate_count <- country_count %>%
+  group_by(X_country) %>%
+  summarize(total_hate = sum(count))
+
+country_most_hate <- country_count %>%
+  filter(how_hateful == "very_hateful") %>%
+  select(X_country, count)
+
+very_hateful_dist <- country_most_hate %>% 
+  inner_join(country_hate_count, "X_country") %>%
+  mutate(hate_ratio = count / total_hate) %>%
+  arrange(desc(hate_ratio)) %>%
+  select(X_country, hate_ratio)
 
 # -Which countries are least sensitive to hate? 
 #(i.e., the share of 'not_hateful_at_all' *from all the ratings* (ratio) given by people from that country is the highest)
+country_least_hate <- country_count %>%
+  filter(how_hateful == "not_hateful_at_all") %>%
+  select(X_country, count)
 
+least_hateful_dist <- country_least_hate %>% 
+  inner_join(country_hate_count, "X_country") %>%
+  mutate(least_hate_ratio = count / total_hate) %>%
+  arrange(desc(least_hate_ratio)) %>%
+  select(X_country, least_hate_ratio)
 
 # Calculate hate interpretation score as explained below:
 # For each comment (_unit_id) there are five ratings.
