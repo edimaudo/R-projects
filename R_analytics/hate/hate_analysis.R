@@ -5,9 +5,7 @@
 #   
 # Questions:
 # -Is country (_country) significantly affecting the hatefulness ratings (how_hateful)?
-# -If yes, what are the major differences between countries?
 # -Is continent significantly affecting the hatefulness ratings (how_hateful) -- to answer this, group countries to continents by adding a new column CONTINENT
-# -If yes, what are the major differences between continents?
 # -Which countries are most sensitive to hate? (i.e., the share of 'very_hateful' *from all the ratings* (ratio) given by people from that country is the highest)
 # -Which countries are least sensitive to hate? (i.e., the share of 'not_hateful_at_all' *from all the ratings* (ratio) given by people from that country is the highest)
 
@@ -27,10 +25,13 @@
 #clear old data
 rm(list=ls())
 
-
 #load libraries
-
+library(ggplot2)
+library(corrplot)
+library(tidyverse)
 
 #load data
+df <- read.csv(file.choose(),sep=";")
+
 
 
