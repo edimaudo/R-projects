@@ -9,7 +9,7 @@ library(tidyverse)
 #load data
 df <- read.csv(file.choose())
 
-View(df)
+#View(df)
 
 #visualize the distribution of raters from different countries
 country_count <- df %>% 
@@ -20,9 +20,11 @@ ggplot(data=country_count, aes(x= X_country, y=count, fill=how_hateful)) +
   geom_bar(stat="identity") + scale_fill_brewer(palette="Paired") + theme_minimal() + 
   labs(x="Country", y="Count")
 
-# Questions:
-# -Which countries are most sensitive to hate? (i.e., the share of 'very_hateful' *from all the ratings* (ratio) given by people from that country is the highest)
-# -Which countries are least sensitive to hate? (i.e., the share of 'not_hateful_at_all' *from all the ratings* (ratio) given by people from that country is the highest)
+# -Which countries are most sensitive to hate? 
+#(i.e., the share of 'very_hateful' *from all the ratings* (ratio) given by people from that country is the highest)
+
+# -Which countries are least sensitive to hate? 
+#(i.e., the share of 'not_hateful_at_all' *from all the ratings* (ratio) given by people from that country is the highest)
 
 
 # Calculate hate interpretation score as explained below:
