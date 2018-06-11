@@ -13,17 +13,11 @@ setwd("/Users/edima/Documents/Coding/R/R_analytics/item_sales/")
 
 #load data
 file_names = c(
-  "LoanStats_2016Q1.csv",
-  "LoanStats_2016Q2.csv",
-  "LoanStats_2016Q3.csv",
-  "LoanStats_2016Q4.csv",
-  "LoanStats_2017Q1.csv",
-  "LoanStats_2017Q2.csv",
-  "LoanStats_2017Q3.csv",
-  "LoanStats3a.csv",
-  "LoanStats3b.csv",
-  "LoanStats3c.csv",
-  "LoanStats3d.csv"
+  "item_categories.csv",
+  "items.csv",
+  "sales_train.csv",
+  "shops.csv",
+  "test.csv"
 )
 
 #clean filenames
@@ -34,6 +28,9 @@ for(i in filenames){
 }
 
 #data backup
+item_categories.backup <- item_categories
+item_categories.backup <- items
+shops.backup <- shops
 
 #examine data
 
