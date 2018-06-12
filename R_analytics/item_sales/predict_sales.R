@@ -32,11 +32,10 @@ item_categories.backup <- item_categories
 item_categories.backup <- items
 shops.backup <- shops
 
-#examine data
-
-#find missing data
-
-
+#find missing data - no missing data
+missing_data_item_cat <- apply(item_categories, 2, function(x) any(is.na(x)))
+missing_data_items <- apply(items, 2, function(x) any(is.na(x)))
+missing_data_shops <- apply(shops, 2, function(x) any(is.na(x)))
 
 #data exploration
 
@@ -44,5 +43,4 @@ shops.backup <- shops
 
 #perform forecasting
 
-#
 
