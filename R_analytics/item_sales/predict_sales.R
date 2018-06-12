@@ -58,7 +58,19 @@ consolidated$year=as.factor(consolidated$year)
 
 glimpse(consolidated)
 
-#data exploration
+#data exploration & visualization
+##Stores by Sales
+consolidated %>%
+  group_by(shop_id) %>%
+  summarise(total_sales = sum(item_cnt_day)) %>%
+  arrange(desc(total_sales))%>%
+  head(15)%>%
+  ggplot(aes(x = reorder(as.factor(shop_id), total_sales), y = total_sales,fill=as.factor(shop_id))) +
+  geom_bar(stat = 'identity') + 
+  theme(legend.position = "none")+
+  labs(y = 'Total unit sales', x = 'Stores', title = 'Total Sales by Store') +
+  coord_flip()
+
 
 
 #perform forecasting
