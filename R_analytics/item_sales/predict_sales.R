@@ -71,7 +71,17 @@ consolidated %>%
   labs(y = 'Total unit sales', x = 'Stores', title = 'Total Sales by Store') +
   coord_flip()
 
-
+##Most frequent items by store
+consolidated %>%
+  group_by(shop_id) %>%
+  summarise(count = n_distinct(item_id)) %>%
+  arrange(desc(count)) %>%
+  head(15) %>%
+  ggplot(aes(x = reorder(as.factor(shop_id), count), y = count,fill=as.factor(shop_id))) +
+  geom_bar(stat = 'identity') +
+  theme(legend.position = "none") +
+  coord_flip() +
+  labs(x = "Stores", y = "Frequency of item",title="Most frequent items by store")
 
 #perform forecasting
 
