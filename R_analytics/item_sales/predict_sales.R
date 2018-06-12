@@ -96,6 +96,79 @@ consolidated %>%
   coord_flip() +
   labs(x = "Stores ", y = "Frequency of Category",title="Most frequent categories by store")
 
+###Highest contributing category in terms of sales
+consolidated %>%
+  group_by(item_category_id) %>%
+  summarise(total_sales = sum(item_cnt_day)) %>%
+  arrange(desc(total_sales))%>%
+  head(15)%>%
+  ggplot(aes(x = reorder(as.factor(item_category_id), total_sales), y = total_sales,fill=as.factor(item_category_id))) +
+  geom_bar(stat = 'identity') + 
+  theme(legend.position = "none")+
+  labs(y = 'Total unit sales', x = 'Categories', title = 'Total Sales by Category') +
+  coord_flip()
+
+###Most frequent stores by category
+consolidated %>%
+  group_by(item_category_id) %>%
+  summarise(count = n_distinct(shop_id)) %>%
+  arrange(desc(count)) %>%
+  head(15) %>%
+  ggplot(aes(x = reorder(as.factor(item_category_id), count),y = count,fill=as.factor(item_category_id)))+
+  geom_bar(stat = 'identity') +
+  theme(legend.position = "none") +
+  coord_flip() +
+  labs(x = "Categories ", y = "Frequency of Stores",title="Most frequent stores by category")
+
+##Most frequent items by category
+consolidated %>%
+  group_by(item_category_id) %>%
+  summarise(count = n_distinct(item_id)) %>%
+  arrange(desc(count)) %>%
+  head(15) %>%
+  ggplot(aes(x = reorder(as.factor(item_category_id), count),y = count,fill=as.factor(item_category_id)))+
+  geom_bar(stat = 'identity') +
+  theme(legend.position = "none") +
+  coord_flip() +
+  labs(x = "Categories ", y = "Number of unique Items",title = "Most frequent stores by category")
+
+##Top 15 Items by Sales
+consolidated %>%
+  group_by(item_id) %>%
+  summarise(total_sales = sum(item_cnt_day)) %>%
+  arrange(desc(total_sales))%>%
+  head(15)%>%
+  ggplot(aes(x = reorder(as.factor(item_id), total_sales), y = total_sales,fill=as.factor(item_id))) +
+  geom_bar(stat = 'identity') + 
+  theme(legend.position = "none")+
+  labs(y = 'Total unit sales', x = 'Item', title = 'Total Sales by Item') +
+  coord_flip()
+
+##Visualization sales trend by month
+consolidated %>%
+  group_by(month) %>%
+  summarise(total_sales = sum(item_cnt_day)) %>%
+  ggplot(aes(x = as.factor(month), y = total_sales, fill =as.factor(month))) +
+  geom_bar(stat = 'identity') + 
+  theme(legend.position = "none")+
+  labs(y = 'Total unit sales', x = 'Month', title = 'Total Sales by Month') 
+
+##Visualization sales trend by month by day
+consolidated %>%
+  group_by(day) %>%
+  summarise(total_sales = sum(item_cnt_day)) %>%
+  ggplot(aes(x = as.factor(day), y = total_sales, fill =day)) +
+  geom_bar(stat = 'identity') + 
+  theme(legend.position = "none")+
+  labs(y = 'Total unit sales', x = 'Day', title = 'Total Sales by Days') 
+
+###Item behavioural over a period of time
+consolidated %>%
+  ggplot(aes(date)) +
+  geom_freqpoly(color = "blue", binwidth = 10, size = 1.2)
+
+
+
 #perform forecasting
 
 
