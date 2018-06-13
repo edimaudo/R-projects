@@ -17,3 +17,6 @@ df.old <- df
 
 #use only days and number of bicycles
 df <- df[,1:2]
+
+#check for missing data
+missing_data <- apply(df, 2, function(x) any(is.na(x))) #no missing data
