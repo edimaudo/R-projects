@@ -13,4 +13,7 @@ library(readxl)
 #load excel file
 df = as.data.frame(read_excel(file.choose()))
 
+df.old <- df
 
+#use only days and number of bicycles
+df <- df[,1:2]
