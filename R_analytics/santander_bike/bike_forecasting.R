@@ -15,8 +15,23 @@ df = as.data.frame(read_excel(file.choose()))
 
 df.old <- df
 
-#use only days and number of bicycles
-df <- df[,1:2]
-
 #check for missing data
 missing_data <- apply(df, 2, function(x) any(is.na(x))) #no missing data
+
+#use only the first two columns
+df <- df %>%
+  rename(ds = Day, y = `Number of Bicycle Hires`) %>%
+  select(ds,y)
+
+#set seed for reproducability
+set.seed(123)
+
+#perform forecasting
+m <- prophet(df)
+
+future <- make_future_dataframe(m, periods = 365)
+forecast <- predict(m, future)
+tail(forecast[c('ds', 'yhat', 'yhat_lower', 'yhat_upper')])
+plot(m, forecast)
+
+prophet_plot_components(m, forecast)
