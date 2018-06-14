@@ -167,7 +167,7 @@ consolidated %>%
   ggplot(aes(date)) +
   geom_freqpoly(color = "blue", binwidth = 10, size = 1.2)
 
-
+#temp forecasting using prophet and all data
 
 #perform forecasting
 
