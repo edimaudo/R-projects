@@ -13,4 +13,5 @@ library(caret)
 library(xgboost)
 library(tidytext)
 
-
+#load safety data
+df <- read.csv(file.choose(), stringsAsFactors = FALSE)
