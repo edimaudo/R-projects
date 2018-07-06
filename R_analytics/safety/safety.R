@@ -44,18 +44,17 @@ df %>%
   ylab("Count") +
   xlab("Failure information") + theme_classic()
 
-#==============
-#world cloud
-#==============
+
 
 library(tm)
 library(SnowballC)
 library(wordcloud)
 library(topicmodels)
+library(slam)
+library(tidyr)
 
 #clean text
 #text cleaning function
-
 text.clean = function(x)                    # text data
 { 
   x  =  gsub("<.*?>", " ", x)               # regex for removing HTML tags
@@ -68,13 +67,32 @@ text.clean = function(x)                    # text data
   return(x)
 }
 
+df$Text <- text.clean(df$Text)
 
+#==============
+#world cloud
+#==============
+review_corpus = Corpus(VectorSource(df$Text))
+review_corpus = tm_map(review_corpus, content_transformer(tolower))
+review_corpus = tm_map(review_corpus, removeNumbers)
+review_corpus = tm_map(review_corpus, removePunctuation)
+review_corpus = tm_map(review_corpus, removeWords, c("the", "and", stopwords("english")))
+review_corpus =  tm_map(review_corpus, stripWhitespace)
 
-#visualize text using word cloud
+review_dtm <- DocumentTermMatrix(review_corpus)
+
+review_dtm = removeSparseTerms(review_dtm, 0.99)
+findFreqTerms(review_dtm, 1000)
+freq = data.frame(sort(colSums(as.matrix(review_dtm)), decreasing=TRUE))
+wordcloud(rownames(freq), freq[,1], max.words=200, colors=brewer.pal(1, "Dark2"))
 
 #==============
 #topic clustering
 #==============
+
+
+
+
 
 #==============
 #build classifier
