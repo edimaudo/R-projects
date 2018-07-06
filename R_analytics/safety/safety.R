@@ -1,5 +1,5 @@
 #objective
-#build a text classifier in ( R ) for safety observations to classify the (object) and (failure mode).
+#analyze safety information
 
 # remove old data
 rm(list=ls())
@@ -15,6 +15,12 @@ library(mlbench)
 library(caret)
 library(xgboost)
 library(tidytext)
+library(tm)
+library(SnowballC)
+library(wordcloud)
+library(topicmodels)
+library(slam)
+library(tidyr)
 
 #load safety data
 df <- read.csv(file.choose(), stringsAsFactors = FALSE)
@@ -43,15 +49,6 @@ df %>%
   geom_col() +
   ylab("Count") +
   xlab("Failure information") + theme_classic()
-
-
-
-library(tm)
-library(SnowballC)
-library(wordcloud)
-library(topicmodels)
-library(slam)
-library(tidyr)
 
 #clean text
 #text cleaning function
