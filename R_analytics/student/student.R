@@ -41,3 +41,47 @@ df.old <- df
 
 #remove na's
 df <- na.omit(df)
+
+#================
+#visualize data
+#================
+
+#gender vs. region
+ggplot(data=df, aes(x=region, y=gender, fill=gender)) +
+  geom_bar(stat="identity") + theme_classic()
+
+#gender vs. highest education vs. region
+ggplot(data=df, aes(x=region, y=highest_education, fill=highest_education)) +
+  geom_bar(stat="identity") + theme_classic()
+
+#gender vs. highest education vs final result
+
+#gender vs imd band
+
+#gender vs disability
+
+#disability vs final result vs gender
+
+#age band vs final results
+
+#highest_education vs imd band vs final result
+
+#region vs highest education vs final result
+
+
+#================
+#business review
+#================
+#things to remove
+#- code module
+
+#================
+#remove unneeded columns
+#================
+
+#================
+#predictive model
+#================
+
+#split data into training and test
+
