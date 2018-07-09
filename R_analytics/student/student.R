@@ -32,3 +32,11 @@ library(ggplot2)
 #read csv file
 df <- read.csv(file.choose())
 
+#check for missing data
+missing_data <- apply(df, 2, function(x) any(is.na(x)))
+print(missing_data) #no missing data
+
+#keep backup of data
+df.old <- df
+
+
