@@ -20,4 +20,12 @@
 # remove old data
 rm(list=ls())
 
-#
+#libraries
+library(corrplot)
+library(tidyverse)
+library(lubridate)
+library(mlbench)
+library(caret)
+library(xgboost)
+library(ggplot2)
+
