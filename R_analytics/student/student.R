@@ -5,12 +5,15 @@
 
 #data dictionary
 # code_module – an identification code for a module on which the student is registered.
-# code_presentation - the identification code of the presentation during which the student is registered on the module.
+# code_presentation - the identification code of the presentation during which the 
+#                      student is registered on the module.
 # id_student – a unique identification number for the student.
 # gender – the student’s gender.
-# region – identifies the geographic region, where the student lived while taking the module-presentation.
+# region – identifies the geographic region, where the student lived 
+#          while taking the module-presentation.
 # highest_education – highest student education level on entry to the module presentation.
-# imd_band – specifies the Index of Multiple Depravation band of the place where the student lived during the module-presentation.
+# imd_band – specifies the Index of Multiple Depravation band of the place where the 
+#            student lived during the module-presentation.
 # age_band – band of the student’s age.
 # num_of_prev_attempts – the number times the student has attempted this module.
 # studied_credits – the total number of credits for the modules the student is currently studying.
@@ -50,23 +53,9 @@ df <- na.omit(df)
 ggplot(data=df, aes(x=region, y=gender, fill=gender)) +
   geom_bar(stat="identity") + theme_classic()
 
-#gender vs. highest education vs. region
-ggplot(data=df, aes(x=region, y=highest_education, fill=highest_education)) +
+#gender vs. highest education
+ggplot(data=df, aes(x=region, y=final_result, fill=highest_education)) +
   geom_bar(stat="identity") + theme_classic()
-
-#gender vs. highest education vs final result
-
-#gender vs imd band
-
-#gender vs disability
-
-#disability vs final result vs gender
-
-#age band vs final results
-
-#highest_education vs imd band vs final result
-
-#region vs highest education vs final result
 
 
 #================
@@ -74,11 +63,14 @@ ggplot(data=df, aes(x=region, y=highest_education, fill=highest_education)) +
 #================
 #things to remove
 #- code module
+#-id_student
+#-imd_band
 
 #================
 #remove unneeded columns
 #================
-
+df$code_module <- NULL
+df$imd_band <- NULL
 #================
 #predictive model
 #================
