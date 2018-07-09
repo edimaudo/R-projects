@@ -39,4 +39,5 @@ print(missing_data) #no missing data
 #keep backup of data
 df.old <- df
 
-
+#remove na's
+df <- na.omit(df)
