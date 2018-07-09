@@ -71,9 +71,13 @@ ggplot(data=df, aes(x=region, y=final_result, fill=highest_education)) +
 #================
 df$code_module <- NULL
 df$imd_band <- NULL
+
 #================
 #predictive model
 #================
-
 #split data into training and test
-
+library(caTools)
+set.seed(123)
+sample <- sample.split(df,SplitRatio = 0.75) # splits the data in the ratio mentioned in SplitRatio. After splitting marks these rows as logical TRUE and the the remaining are marked as logical FALSE
+train <- subset(df,sample ==TRUE) # creates a training dataset named train1 with rows which are marked as TRUE
+test <- subset(df, sample==FALSE)
