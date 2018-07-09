@@ -29,3 +29,6 @@ library(caret)
 library(xgboost)
 library(ggplot2)
 
+#read csv file
+df <- read.csv(file.choose())
+
