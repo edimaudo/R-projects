@@ -61,14 +61,24 @@ ggplot(data=df, aes(x=region, y=final_result, fill=highest_education)) +
 #================
 #business review
 #================
-#things to remove
-#- code module
-#-id_student
-#-imd_band
+#things to remove - #- code module, #-id_student
+df$code_module <- NULL
+df$id_student <- NULL
+
+#normalize columns
+normalize <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x)))
+}
+
+df$studied_credits <- normalize(df$studied_credits)
 
 
+#create dummy variables
+dummy(x, data = NULL, sep = "", drop = TRUE, fun = as.integer, verbose = FALSE)
 
-
+#================
+#predictive model
+#================
 #split data into training and test
 library(caTools)
 set.seed(123)
@@ -76,21 +86,7 @@ sample <- sample.split(df,SplitRatio = 0.75)
 train <- subset(df,sample ==TRUE)
 test <- subset(df, sample==FALSE)
 
-#================
-#remove unneeded columns
-#================
-df$code_module <- NULL
-df$id_student <- NULL
+#find which columns are more important
 
-#normalize columns
-
-#recode columns
-
-
-
-
-#================
-#predictive model
-#================
-
+#
 
