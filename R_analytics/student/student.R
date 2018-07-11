@@ -74,19 +74,56 @@ df$studied_credits <- normalize(df$studied_credits)
 
 
 #create dummy variables
-dummy(x, data = NULL, sep = "", drop = TRUE, fun = as.integer, verbose = FALSE)
+#- code_presentation,gender, region, highest_education imd_band, age_band, disability
+library(dummies)
+colinfo <- colnames(df)
 
-#================
-#predictive model
-#================
+df.new <- dummy.data.frame(df[,1:9], sep = ".")
+df.new <- cbind(df.new,df[,10])
+
+df.new <- df.new %>%
+  rename (final_result=`df[, 10]`)
+
+#drop columns
+#presentation
+df.new$ode_presentation.2013B <- NULL
+#gender
+df.new$gender.F <- NULL
+#region
+df.new$`region.East Anglian Region` <- NULL
+#education
+df.new$`highest_education.No Formal quals` <- NULL
+#imb band
+df.new$imd_band. <- NULL
+#age band
+df.new$`age_band.55<=` <- NULL
+#disability 
+df.new$disability.N <- NULL
+
+
+# #find which columns are more important
+# control <- trainControl(method="repeatedcv", number=10, repeats=3)
+# # train the model
+# model <- train(final_result~., data=df.new, method="lvq", preProcess="scale", trControl=control)
+# # estimate variable importance
+# importance <- varImp(model, scale=FALSE)
+# # summarize importance
+# print(importance)
+# # plot importance
+# plot(importance)
+
 #split data into training and test
 library(caTools)
 set.seed(123)
 sample <- sample.split(df,SplitRatio = 0.75)
-train <- subset(df,sample ==TRUE)
-test <- subset(df, sample==FALSE)
+train <- subset(df.new,sample ==TRUE)
+test <- subset(df.new, sample==FALSE)
 
-#find which columns are more important
 
-#
-
+#================
+#predictive model
+#================
+library( 'e1071' )
+model <- svm( final_result~., train )
+res <- predict( model, newdata=train )
+res <- predict( model, newdata=test )
