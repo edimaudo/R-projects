@@ -34,5 +34,10 @@ Scott Wright
 rm(list=ls())
 
 #libraries
+library(corrplot)
+library(tidyverse)
+library(lubridate)
+library(ggplot2)
+
 
 
