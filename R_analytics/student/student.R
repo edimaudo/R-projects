@@ -115,6 +115,7 @@ df.new$disability.N <- NULL
 #split data into training and test
 library(caTools)
 set.seed(123)
+df.new$final_result <- as.factor(df.new$final_result)
 sample <- sample.split(df,SplitRatio = 0.75)
 train <- subset(df.new,sample ==TRUE)
 test <- subset(df.new, sample==FALSE)
@@ -123,7 +124,19 @@ test <- subset(df.new, sample==FALSE)
 #================
 #predictive model
 #================
+
 library( 'e1071' )
 model <- svm( final_result~., train )
 res <- predict( model, newdata=train )
-res <- predict( model, newdata=test )
+res1 <- predict( model, newdata=test )
+
+res1.new <- as.data.frame(res1)
+res.new <- as.data.frame(res)
+
+#library(SDMTools)
+#confusion.matrix(as.factor(train$final_result), as.factor(res.new$res), threshold = 0.5)
+#accuracy(train$final_result, res.new, threshold = 0.5)
+
+#confusion matrix
+table(train$final_result, res.new$res)
+table(test$final_result, res1.new$res1)
