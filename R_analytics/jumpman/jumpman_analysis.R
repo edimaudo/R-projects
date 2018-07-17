@@ -38,3 +38,22 @@ Jumpman left the pickup location
 ● when_the_Jumpman_arrived_at_dropoff → localized timestamp representing when the Jumpman reached the customer
 """
 
+#clear old data
+rm(list=ls())
+
+#load libraries
+library(ggplot2)
+library(corrplot)
+library(tidyverse)
+library(lubridate)
+library(data.table)
+library(stringr)
+
+#load data
+
+
+#summary statistics
+
+#data analysis
+
+#data integrity issues
