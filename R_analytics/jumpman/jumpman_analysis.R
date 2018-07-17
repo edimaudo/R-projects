@@ -59,5 +59,53 @@ summary(df)
 missing_data <- apply(df, 2, function(x) any(is.na(x)))
 # item quantity has missing data
 
+#empty(df)
+
+#==============
 #data analysis
+#==============
+#top 5 vehicle types
+df %>%
+  count(vehicle_type, sort = TRUE) %>%
+  top_n(5)
+
+#top 5 items
+df %>%
+  count(item_name, sort = TRUE) %>%
+  top_n(5)
+
+#top 5 item categories names
+df %>%
+  count(item_category_name, sort = TRUE) %>%
+  top_n(5)
+
+#top 5 popular pickup places
+df %>%
+  count(pickup_place, sort = TRUE) %>%
+  top_n(5)
+
+#top 5 place category
+df %>%
+  count(place_category, sort = TRUE) %>%
+  top_n(5)
+
+#top customer id
+df %>%
+  count(customer_id, sort = TRUE) %>%
+  top_n(5)
+
+#top 5 jumpman id
+df %>%
+  count(jumpman_id, sort = TRUE) %>%
+  top_n(5)
+
+#==============
+#data visualization
+#==============
+
+#how long it took to order vs item name, item category name, pickup place, vehicle type, place category
+ggplot(data=df, aes(x=item_name, y=how_long_it_took_to_order)) + geom_bar(stat="identity")
+
+
+
 
