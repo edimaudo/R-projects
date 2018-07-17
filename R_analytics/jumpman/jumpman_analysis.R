@@ -50,10 +50,14 @@ library(data.table)
 library(stringr)
 
 #load data
-
+df<- read.csv(file.choose())
 
 #summary statistics
+summary(df)
+
+#data integrity issues
+missing_data <- apply(df, 2, function(x) any(is.na(x)))
+# item quantity has missing data
 
 #data analysis
 
-#data integrity issues
