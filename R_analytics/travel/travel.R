@@ -122,7 +122,8 @@ ggplot(data = df,aes(x=as.factor(device),y=conversions)) + geom_bar(stat="identi
 #os type vs conversions
 ggplot(data = df,aes(x=as.factor(os_type),y=conversions)) + geom_bar(stat="identity") + 
   theme_classic() +  theme(axis.text.x = element_text(angle=60, hjust=1)) +
-  xlab("os type") + ylab("Conversions") # android and ios had the highest conversions which is in line with device info above
+  xlab("os type") + ylab("Conversions") # android and ios had the highest conversions which 
+#Åis in line with device info above
 
 #client type vs conversions
 ggplot(data = df,aes(x=as.factor(client_type),y=conversions)) + geom_bar(stat="identity") + 
@@ -141,28 +142,73 @@ ggplot(data = df,aes(x=as.factor(channel),y=conversions)) + geom_bar(stat="ident
 
 #mobile users have the highest conversion rate
 
-#3 build predictive model
-#data modelling
+#3) build predictive model
 
-#remove nas
-#drop date created at
-#drop depature airport code
-#drop departure airport code
-#drop arrival airport code
-#drop arrival country code
-#drop outbound date
-#drop inbound date
+df_main_non_category <- df %>%
+  select(total_price_usd, conversions) %>%
+  na.omit()
 
-#transform categorical variables and remove core value
+df_main_category <- df %>%
+  select(device, os_type, client_type,channel, stops, trip_type, trip_category, cabin_class) %>%
+  na.omit()
+
+##transform categorical variables to
+library(dummies)
+df_main_category.new <- dummy.data.frame(df_main_category, sep = ".")
+#drop columns to avoid multicollinearity
+df_main_category.new$device.desktop <- NULL
+df_main_category.new$os_type. <- NULL
+df_main_category.new$client_type.api <- NULL
+df_main_category.new$`channel.affiliates-api` <- NULL
+df_main_category.new$stops. <- NULL
+df_main_category.new$trip_type.multicity <- NULL
+df_main_category.new$cabin_class.ECONOMY <- NULL
+
+df_main <- cbind(df_main_category.new, df_main_non_category)
+
+#feature selection
+#Remove Redundant Feature remove when absolute correlation >= 0.75
+set.seed(7)
+# # calculate correlation matrix
+correlationMatrix <- cor(df_main[,1:25])
+# summarize the correlation matrix
+print(correlationMatrix)
+# find attributes that are highly corrected (ideally >0.75)
+highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.5)
+# print indexes of highly correlated attributes
+print(highlyCorrelated)
+
+#based on this remove these columns 8 13  9  1 20  3 18 16
+
+#drop unimportant features
+df_main[,20] <- NULL
+df_main[,18] <- NULL
+df_main[,16] <- NULL
+df_main[,13] <- NULL
+df_main[,9] <- NULL
+df_main[,8] <- NULL
+df_main[,3] <- NULL
+df_main[,1] <- NULL
 
 #split data in test and train
+library(caTools)
+df_main$conversions <- as.factor(df_main$conversions)
+sample <- sample.split(df_main,SplitRatio = 0.75)
+train <- subset(df_main.new,sample ==TRUE)
+test <- subset(df_main.new, sample==FALSE)
 
-#check for main features
+library( 'e1071' )
+model <- svm(conversions~., train )
+res <- predict( model, newdata=train )
+res1 <- predict( model, newdata=test )
 
-#try multiple machine learning models for binary classification
+res1.new <- as.data.frame(res1)
+res.new <- as.data.frame(res)
 
-#see accuracy
+library(SDMTools)
+confusion.matrix(as.factor(train$conversions), as.factor(res.new$res), threshold = 0.5)
+accuracy(train$conversions, res.new, threshold = 0.5)
 
-#use on test model
-
-#see accuracy
+#confusion matrix
+table(train$conversions, res.new$res)
+table(test$conversions, res1.new$res1)
