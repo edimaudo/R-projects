@@ -194,8 +194,8 @@ df_main[,1] <- NULL
 library(caTools)
 df_main$conversions <- as.factor(df_main$conversions)
 sample <- sample.split(df_main,SplitRatio = 0.75)
-train <- subset(df_main.new,sample ==TRUE)
-test <- subset(df_main.new, sample==FALSE)
+train <- subset(df_main,sample ==TRUE)
+test <- subset(df_main, sample==FALSE)
 
 library( 'e1071' )
 model <- svm(conversions~., train )
