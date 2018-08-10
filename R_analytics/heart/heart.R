@@ -68,3 +68,6 @@ names(df) <- c('age','sex','chest_pain_type','resting_blood_pressure',"serum_cho
 #visualization
 
 #check for imbalanced data
+ggplot(data=df, aes(x=factor(disease))) +
+  geom_bar() + theme_classic() + xlab("Number of heart diseases")  
+
