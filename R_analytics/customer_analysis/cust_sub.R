@@ -32,6 +32,22 @@ print(summary(df))
 names(df) <- c('CustomerID', 'DocumentType', 'ExpectedVolume', 'Industry', 
                'FileFirstDays', 'Stacks', 'SubscriptionPlan', 'Subscription')
 
+print(summary(df))
+
+#drop columns due to lack of information
+df$SubscriptionPlan <- NULL
+df$Industry <- NULL
+
+#correlation between cts variables
+corinfo <- cor(df[,4:6])
+
+#drop customer information
+df$CustomerID <- NULL
+
+#recode categorical variables
+
+corrplot(corinfo,method='number')
+
 #check for balanced data
 
 #correlation
