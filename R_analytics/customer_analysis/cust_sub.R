@@ -38,21 +38,32 @@ print(summary(df))
 df$SubscriptionPlan <- NULL
 df$Industry <- NULL
 
-#correlation between cts variables
-corinfo <- cor(df[,4:6])
-
 #drop customer information
 df$CustomerID <- NULL
 
-#check for balanced data
-ggplot(data=df, aes(x=factor(Subscription))) +
-  geom_bar() + theme_classic() + xlab("Type of subscription") 
-
-#recode categorical variables
-library(dummies)
-df_main_category.new <- dummy.data.frame(df_main_category, sep = ".")
+#correlation between cts variables
+corinfo <- cor(df[,4:6])
 corrplot(corinfo,method='number')
 
 #check for balanced data
+ggplot(data=df, aes(x=factor(Subscription))) +
+  geom_bar() + theme_classic() + xlab("Type of subscription") #lots more non subscriptions
+#model would definitely lean towards that
 
-#correlation
+#recode categorical variables
+library(dummies)
+df_main_category <- df %>%
+  select(DocumentType, ExpectedVolume)
+df_main_category.new <- dummy.data.frame(df_main_category, sep = ".")
+
+#drop value from one of the newly created columns to prevent multicollinearity
+df_main_category.new$ExpectedVolume.NULL <- NULL
+df_main_category.new$DocumentType.others <- NULL
+
+df <- df %>%
+  select(FileFirstDays, Stacks, Subscription)
+
+
+
+
+
