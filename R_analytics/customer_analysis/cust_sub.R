@@ -44,8 +44,13 @@ corinfo <- cor(df[,4:6])
 #drop customer information
 df$CustomerID <- NULL
 
-#recode categorical variables
+#check for balanced data
+ggplot(data=df, aes(x=factor(Subscription))) +
+  geom_bar() + theme_classic() + xlab("Type of subscription") 
 
+#recode categorical variables
+library(dummies)
+df_main_category.new <- dummy.data.frame(df_main_category, sep = ".")
 corrplot(corinfo,method='number')
 
 #check for balanced data
