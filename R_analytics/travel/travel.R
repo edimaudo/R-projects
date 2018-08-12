@@ -93,7 +93,6 @@ print(summary(df))
 missing_data <- apply(df, 2, function(x) any(is.na(x)))
 print(missing_data) #no missing data
 
-
 #1) 
 #look for significant correlations
 corrinfo <- df %>%
@@ -190,6 +189,7 @@ df_main[,8] <- NULL
 df_main[,3] <- NULL
 df_main[,1] <- NULL
 
+#machine learning
 #split data in test and train
 library(caTools)
 df_main$conversions <- as.factor(df_main$conversions)
@@ -197,18 +197,7 @@ sample <- sample.split(df_main,SplitRatio = 0.75)
 train <- subset(df_main,sample ==TRUE)
 test <- subset(df_main, sample==FALSE)
 
-library( 'e1071' )
-model <- svm(conversions~., train )
-res <- predict( model, newdata=train )
-res1 <- predict( model, newdata=test )
 
-res1.new <- as.data.frame(res1)
-res.new <- as.data.frame(res)
 
-library(SDMTools)
-confusion.matrix(as.factor(train$conversions), as.factor(res.new$res), threshold = 0.5)
-accuracy(train$conversions, res.new, threshold = 0.5)
 
-#confusion matrix
-table(train$conversions, res.new$res)
-table(test$conversions, res1.new$res1)
+
