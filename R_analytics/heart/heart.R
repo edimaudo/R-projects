@@ -97,20 +97,6 @@ test <- subset(df, sample==FALSE)
 library(car)
 scatterplotMatrix(df[,1:4])
 
-library( 'e1071' )
-model <- svm(disease~., train)
-res <- predict( model, newdata=train )
-res1 <- predict( model, newdata=test )
 
-res.new <- as.data.frame(res)
-res1.new <- as.data.frame(res1)
-
-library(SDMTools)
-confusion.matrix((train$disease), (res.new$res), threshold = 0.5)
-accuracy(train$diease, res.new, threshold = 0.5)
-
-#confusion matrix
-table(train$disease, res.new$res)
-table(test$diease, res1.new$res1)
 
 
