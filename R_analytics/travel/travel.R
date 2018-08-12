@@ -189,15 +189,29 @@ df_main[,8] <- NULL
 df_main[,3] <- NULL
 df_main[,1] <- NULL
 
+#normalize data
+normalize <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x)))
+}
+
+df_main$total_price_usd <- normalize(df_main$total_price_usd)
+
+#convert conversions to factor
+df$conversions <- as.factor(df$conversions)
+
 #machine learning
 #split data in test and train
+set.seed(123)
 library(caTools)
 df_main$conversions <- as.factor(df_main$conversions)
 sample <- sample.split(df_main,SplitRatio = 0.75)
 train <- subset(df_main,sample ==TRUE)
 test <- subset(df_main, sample==FALSE)
 
-
+#models
+model_gbm<-train(train[,1:17],train[,18],method='gbm')
+model_rf<-train(train[,1:17],train[,18],method='rf')
+model_nnet<-train(train[,1:17],train[,18],method='nnet')
 
 
 
