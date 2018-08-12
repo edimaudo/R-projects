@@ -65,8 +65,6 @@ df <- df %>%
 
 df_main <- cbind(df_main_category.new, df)
 
-
-
 #normalize data
 normalize <- function(x) {
   return ((x - min(x)) / (max(x) - min(x)))
@@ -104,35 +102,35 @@ model_gbm<-train(train[,1:21],train[,22],method='gbm')
 model_rf<-train(train[,1:21],train[,22],method='rf')
 model_nnet<-train(train[,1:21],train[,22],method='nnet')
 
-#finetune model
-fitControl <- trainControl(
-   method = "repeatedcv",
-   number = 5,
-   repeats = 5)
-
-modelLookup(model='gbm')
-#Creating grid
-grid <- expand.grid(n.trees=c(10,20,50,100,500,1000),shrinkage=c(0.01,0.05,0.1,0.5),n.minobsinnode = c(3,5,10),
-interaction.depth=c(1,5,10))
-
-#Training the model using grid
-model_gbm2<-train(train[,1:21],train[,22],method='gbm',
-                 trControl=fitControl,tuneGrid=grid)
-#Summarizing the model
-print(model_gbm2)
-
-#using tune length
-model_gbm3<-train(train[,1:21],train[,22],method='gbm',trControl=fitControl,tuneLength=10)
-print(model_gbm3)
-
-#Checking variable importance for GBM
-#Variable Importance
-varImp(object=model_gbm)
-varImp(object=model_gbm2)
-varImp(object=model_gbm3)
+# #finetune model
+# fitControl <- trainControl(
+#    method = "repeatedcv",
+#    number = 5,
+#    repeats = 5)
+# 
+# modelLookup(model='gbm')
+# #Creating grid
+# grid <- expand.grid(n.trees=c(10,20,50,100,500,1000),shrinkage=c(0.01,0.05,0.1,0.5),n.minobsinnode = c(3,5,10),
+# interaction.depth=c(1,5,10))
+# 
+# #Training the model using grid
+# model_gbm2<-train(train[,1:21],train[,22],method='gbm',
+#                  trControl=fitControl,tuneGrid=grid)
+# #Summarizing the model
+# print(model_gbm2)
+# 
+# #using tune length
+# model_gbm3<-train(train[,1:21],train[,22],method='gbm',trControl=fitControl,tuneLength=10)
+# print(model_gbm3)
 
 #Evaluation of trained Algorithm (or Model) and result
 #Predictions
-predictions<-predict.train(object=model_gbm,test[,22],type="raw")
-table(predictions)
+predictions<-predict.train(object=model_gbm,test,type="raw")
+#table(predictions)
 confusionMatrix(predictions,test[,22])
+
+predictions_rf<-predict.train(object=model_rf,test,type="raw")
+confusionMatrix(predictions_rf,test[,22])
+
+predictions_nnet<-predict.train(object=model_nnet,test,type="raw")
+confusionMatrix(predictions_nnet,test[,22])
