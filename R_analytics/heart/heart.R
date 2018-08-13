@@ -49,8 +49,7 @@ c('age','sex','chest_pain_type','resting_blood_pressure',"serum_cholestrol",'fas
 rm(list=ls())
 
 #load libraries
-for (package in c('ggplot2', 'corrplot','tidyverse',
-                  "cowplot",'lubridate','data.table','caret','mlbench','xgboost','plotrix')) {
+for (package in c('ggplot2','corrplot','tidyverse','caret','mlbench')) {
   if (!require(package, character.only=T, quietly=T)) {
     install.packages(package)
     library(package, character.only=T)
@@ -65,7 +64,6 @@ names(df) <- c('age','sex','chest_pain_type','resting_blood_pressure',"serum_cho
                'resting_ecg',"max_heart","exercise_angina",'oldpeak','slope_peak_exercise','major_vessels',
                'thal','disease')
 
-#visualization
 
 #check for imbalanced data
 ggplot(data=df, aes(x=factor(disease))) +
@@ -73,7 +71,7 @@ ggplot(data=df, aes(x=factor(disease))) +
 
 df.backup <- df
 
-df <- df.backup
+#df <- df.backup
 
 df <- df %>% 
   select('age', 
@@ -84,8 +82,35 @@ df <- df %>%
 
 df$disease <- recode_factor(df$disease, "1" = "0", "2" = "1")
 
+#remove empty data
 df <- na.omit(df)
 
+library(car)
+scatterplotMatrix(df[,1:4])
+
+#normalize data
+normalize <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x)))
+}
+
+df$age <- normalize((df$age))
+df$max_heart <- normalize((df$max_heart))
+df$resting_blood_pressure <- normalize((df$resting_blood_pressure))
+
+#feature selection
+#Remove Redundant Feature remove when absolute correlation >= 0.75
+set.seed(7)
+# # calculate correlation matrix
+correlationMatrix <- cor(df[,1:4])
+# summarize the correlation matrix
+print(correlationMatrix)
+# find attributes that are highly corrected (ideally >0.75)
+highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.75)
+# print indexes of highly correlated attributes
+print(highlyCorrelated)
+#no columns to remove
+
+#machine learing
 #split data into train and test
 library(caTools)
 set.seed(123)
@@ -94,8 +119,24 @@ sample <- sample.split(df,SplitRatio = 0.75)
 train <- subset(df,sample ==TRUE)
 test <- subset(df, sample==FALSE)
 
-library(car)
-scatterplotMatrix(df[,1:4])
+#models
+model_gbm<-train(train[,1:4],train[,5],method='gbm')
+model_rf<-train(train[,1:4],train[,5],method='rf')
+model_nnet<-train(train[,1:4],train[,5],method='nnet')
+
+#Predictions
+predictions<-predict.train(object=model_gbm,test,type="raw")
+#table(predictions)
+confusionMatrix(predictions,test[,5])
+
+predictions_rf<-predict.train(object=model_rf,test,type="raw")
+confusionMatrix(predictions_rf,test[,5])
+
+predictions_nnet<-predict.train(object=model_nnet,test,type="raw")
+confusionMatrix(predictions_nnet,test[,5])
+
+
+
 
 
 
