@@ -203,15 +203,24 @@ df$conversions <- as.factor(df$conversions)
 #split data in test and train
 set.seed(123)
 library(caTools)
-df_main$conversions <- as.factor(df_main$conversions)
 sample <- sample.split(df_main,SplitRatio = 0.75)
 train <- subset(df_main,sample ==TRUE)
 test <- subset(df_main, sample==FALSE)
 
-#models
+#models update memory to handle 
 model_gbm<-train(train[,1:17],train[,18],method='gbm')
 model_rf<-train(train[,1:17],train[,18],method='rf')
 model_nnet<-train(train[,1:17],train[,18],method='nnet')
 
+#Evaluation of trained Algorithm (or Model) and result
+#Predictions
+predictions<-predict.train(object=model_gbm,test,type="raw")
+#table(predictions)
+confusionMatrix(predictions,test[,18])
 
+predictions_rf<-predict.train(object=model_rf,test,type="raw")
+confusionMatrix(predictions_rf,test[,18])
+
+predictions_nnet<-predict.train(object=model_nnet,test,type="raw")
+confusionMatrix(predictions_nnet,test[,18])
 
