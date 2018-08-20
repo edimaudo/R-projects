@@ -85,11 +85,13 @@ df_category.new$poutcome.unknown <- NULL
 df_others <-df %>%
   select(age, balance, day, duration, campaign, pdays, previous)
 
-
 #normalize data
 normalize <- function(x) {
   return ((x - min(x)) / (max(x) - min(x)))
 }
+
+#normalize other data
+df_others <- lapply(df_others, normalize)
 
 #find which features are important
 
