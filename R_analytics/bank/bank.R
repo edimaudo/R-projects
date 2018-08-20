@@ -104,19 +104,36 @@ df_main <- df_main %>%
 #find which features are important 
 #option 1
 set.seed(7)
-# load the data
-data(PimaIndiansDiabetes)
 # calculate correlation matrix
-correlationMatrix <- cor(PimaIndiansDiabetes[,1:8])
-# summarize the correlation matrix
-print(correlationMatrix)
+correlationMatrix <- cor(df_main[,1:42])
 # find attributes that are highly corrected (ideally >0.75)
 highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.5)
 # print indexes of highly correlated attributes
-print(highlyCorrelated)
+print(highlyCorrelated) 
+#remove column 13, 16 and 41 
 
+df_main[,41] <- NULL
+df_main[,16] <- NULL
+df_main[,13] <- NULL
 
 #split data into train and test
+library(caTools)
+set.seed(7)
+sample <- sample.split(df_main,SplitRatio = 0.75)
+train <- subset(df_main,sample ==TRUE)
+test <- subset(df_main, sample==FALSE)
+
+train_predictors <- train[,1:39]
+train_predict <- train[,40]
 
 #design model
+model_gbm<-train(train_predictors, train_predict,method='gbm')
+model_rf<-train(train_predictors, train_predict,method='rf')
+model_logreg<-train(train_predictors, train_predict,method='logreg')
+model_nnet <- train(train_predictors, train_predict, method='nnet')
 
+#check accuracy of model
+predictions_gbm<-predict.train(object=model_gbm,test,type="raw")
+predictions_rf<-predict.train(object=model_rf,test,type="raw")
+predictions_logreg<-predict.train(object=model_logreg,test,type="raw")
+predictions_nnet<-predict.train(object=model_nnet,test,type="raw")
