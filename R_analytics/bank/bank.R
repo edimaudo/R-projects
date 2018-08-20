@@ -60,11 +60,36 @@ df <- read.csv(file.choose())
 
 summary(df)
 
-#check data balance
-
 #data cleaning
+#data looks fine
 
 #data transformation
+df_category <- df %>%
+  select(job,marital, education, default, housing, loan, contact, month, poutcome)
+
+library(dummies)
+df_category.new <- dummy.data.frame(df_category, sep = ".")
+df_category <- NULL
+
+#one hot encoding - remove one column from the different categories
+df_category.new$job.unknown <- NULL
+df_category.new$marital.divorced <- NULL
+df_category.new$education.unknown <- NULL
+df_category.new$default.no <- NULL
+df_category.new$housing.no <- NULL
+df_category.new$loan.no <- NULL
+df_category.new$contact.unknown <- NULL
+df_category.new$month.dec <- NULL
+df_category.new$poutcome.unknown <- NULL
+
+
+df_others <-df %>%
+  select(age, balance, day, duration, campaign, pdays, previous)
+
+
+
+#normalize data
+
 
 #find which features are important
 
