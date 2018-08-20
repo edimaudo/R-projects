@@ -128,12 +128,8 @@ train_predict <- train[,40]
 
 #design model
 model_gbm<-train(train_predictors, train_predict,method='gbm')
-model_rf<-train(train_predictors, train_predict,method='rf')
-model_logreg<-train(train_predictors, train_predict,method='logreg')
-model_nnet <- train(train_predictors, train_predict, method='nnet')
 
 #check accuracy of model
 predictions_gbm<-predict.train(object=model_gbm,test,type="raw")
-predictions_rf<-predict.train(object=model_rf,test,type="raw")
-predictions_logreg<-predict.train(object=model_logreg,test,type="raw")
-predictions_nnet<-predict.train(object=model_nnet,test,type="raw")
+table(predictions_gbm)
+confusionMatrix(predictions_gbm,test[,40])
