@@ -91,9 +91,30 @@ normalize <- function(x) {
 }
 
 #normalize other data
-df_others <- lapply(df_others, normalize)
+df_others <- as.data.frame(lapply(df_others, normalize))
 
-#find which features are important
+#combine data
+df_main <- cbind(df_category.new, df_others, df$y)
+
+#rename and recode df$y
+df_main <- df_main %>%
+  rename('y' = `df$y`) %>%
+  mutate(y = recode(y, "no"= '0', 'yes' = '1'))
+
+#find which features are important 
+#option 1
+set.seed(7)
+# load the data
+data(PimaIndiansDiabetes)
+# calculate correlation matrix
+correlationMatrix <- cor(PimaIndiansDiabetes[,1:8])
+# summarize the correlation matrix
+print(correlationMatrix)
+# find attributes that are highly corrected (ideally >0.75)
+highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.5)
+# print indexes of highly correlated attributes
+print(highlyCorrelated)
+
 
 #split data into train and test
 
