@@ -55,6 +55,5 @@ least_hateful_dist <- country_least_hate %>%
 # Do this computation for all comments and then take the sum of each country's differences (this will be used for visualization). The sum is called "hate interpretation score".
 # Finally, compute some suitable variation metric to describe how the hatefulness ratings vary *within* each country (again, this will be used for visualization).
 #-visualize hate interpretation scores between countries (map visualization)
-#-illustrate variation of hate interpretation between countries (table? map? => choose the best way)
 
 
