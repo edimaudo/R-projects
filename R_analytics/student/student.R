@@ -26,10 +26,8 @@ rm(list=ls())
 #libraries
 library(corrplot)
 library(tidyverse)
-library(lubridate)
 library(mlbench)
 library(caret)
-library(xgboost)
 library(ggplot2)
 
 #read csv file
@@ -46,7 +44,7 @@ df.old <- df
 df <- na.omit(df)
 
 #================
-#visualize data
+#data exploration
 #================
 
 #gender vs. region
@@ -57,6 +55,8 @@ ggplot(data=df, aes(x=region, y=gender, fill=gender)) +
 ggplot(data=df, aes(x=region, y=final_result, fill=highest_education)) +
   geom_bar(stat="identity") + theme_classic()
 
+#output
+ggplot(data=df, aes(x=factor(final_result))) + geom_bar() + theme_classic()
 
 #================
 #business review
@@ -72,71 +72,53 @@ normalize <- function(x) {
 
 df$studied_credits <- normalize(df$studied_credits)
 
-
 #create dummy variables
 #- code_presentation,gender, region, highest_education imd_band, age_band, disability
 library(dummies)
 colinfo <- colnames(df)
-
 df.new <- dummy.data.frame(df[,1:9], sep = ".")
+
+#combine data
 df.new <- cbind(df.new,df[,10])
 
+#rename predicted column
 df.new <- df.new %>%
   rename (final_result=`df[, 10]`)
 
+#find redundant features
+set.seed(7)
+# calculate correlation matrix
+correlationMatrix <- cor(df.new[,1:42])
+# summarize the correlation matrix
+#print(correlationMatrix)
+# find attributes that are highly corrected (ideally >0.75)
+highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.5)
+# print indexes of highly correlated attributes
+print(highlyCorrelated)
+
 #drop columns
-#presentation
-df.new$ode_presentation.2013B <- NULL
-#gender
-df.new$gender.F <- NULL
-#region
-df.new$`region.East Anglian Region` <- NULL
-#education
-df.new$`highest_education.No Formal quals` <- NULL
-#imb band
-df.new$imd_band. <- NULL
-#age band
-df.new$`age_band.55<=` <- NULL
-#disability 
-df.new$disability.N <- NULL
+df.new[,41] <- NULL
+df.new[,36] <- NULL
 
-
-# #find which columns are more important
-# control <- trainControl(method="repeatedcv", number=10, repeats=3)
-# # train the model
-# model <- train(final_result~., data=df.new, method="lvq", preProcess="scale", trControl=control)
-# # estimate variable importance
-# importance <- varImp(model, scale=FALSE)
-# # summarize importance
-# print(importance)
-# # plot importance
-# plot(importance)
+#convert final result to factors
+df.new <- df.new %>%
+  mutate(final_result = recode(final_result, "Distinction"= '1', 'Fail' = '2', 
+                               'Pass' = '3', "Withdrawn" = '4'))
 
 #split data into training and test
 library(caTools)
-set.seed(123)
+set.seed(7)
 df.new$final_result <- as.factor(df.new$final_result)
 sample <- sample.split(df,SplitRatio = 0.75)
 train <- subset(df.new,sample ==TRUE)
 test <- subset(df.new, sample==FALSE)
 
-
 #================
 #predictive model
 #================
-
-library( 'e1071' )
-model <- svm( final_result~., train )
-res <- predict( model, newdata=train )
-res1 <- predict( model, newdata=test )
-
-res1.new <- as.data.frame(res1)
-res.new <- as.data.frame(res)
-
-#library(SDMTools)
-#confusion.matrix(as.factor(train$final_result), as.factor(res.new$res), threshold = 0.5)
-#accuracy(train$final_result, res.new, threshold = 0.5)
-
-#confusion matrix
-table(train$final_result, res.new$res)
-table(test$final_result, res1.new$res1)
+predictors <- df.new[,1:40]
+predict <- df.new[,41]
+model_gbm<-train(predictors,predict,method='gbm')
+predictions<-predict.train(object=model_gbm,test,type="raw")
+table(predictions)
+confusionMatrix(predictions,test[,41])
