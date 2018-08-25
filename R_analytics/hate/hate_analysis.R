@@ -51,9 +51,12 @@ least_hateful_dist <- country_least_hate %>%
 # Calculate hate interpretation score as explained below:
 # For each comment (_unit_id) there are five ratings.
 # First, compute average hatefulness rating *for each comment* based on these five ratings.
-# Then, compute the *difference for each unique country* from the average rating. For example, if Comment A's average is 3.5 and a Mexican rater would rate it 2, so then the difference from the average is -1.5.
-# Do this computation for all comments and then take the sum of each country's differences (this will be used for visualization). The sum is called "hate interpretation score".
-# Finally, compute some suitable variation metric to describe how the hatefulness ratings vary *within* each country (again, this will be used for visualization).
-#-visualize hate interpretation scores between countries (map visualization)
+# Then, compute the *difference for each unique country* from the average rating. For example, 
+#if Comment A's average is 3.5 and a Mexican rater would rate it 2, so then the difference 
+#from the average is -1.5.
+# Do this computation for all comments and then take the sum of each country's differences
+#(this will be used for visualization). The sum is called "hate interpretation score".
+# Finally, compute some suitable variation metric to describe 
+#how the hatefulness ratings vary *within* each country (again, this will be used for visualization).
 
 
