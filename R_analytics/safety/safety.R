@@ -111,7 +111,3 @@ sapply(CSC_TM[1:2], slot, 'alpha')
 sapply(CSC_TM, function(x) mean(apply(posterior(x)$topics, 1, function(z) - sum(z * log(z)))))
 Topic <- topics(CSC_TM[['VEM']], 1)
 Terms <- terms(CSC_TM[['VEM']], 8)
-
-#==============
-#build classifier
-#==============
