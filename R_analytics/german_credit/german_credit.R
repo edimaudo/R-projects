@@ -60,6 +60,9 @@ data<-ubBalance(X=input, Y=output, type="ubSMOTE", percOver=300, percUnder=150, 
 #View(data)
 balancedData<-cbind(data$X,data$Y)
 
+#check for balanced data
+ggplot(data=balancedData, aes(factor(data$Y))) + geom_bar() + theme_classic()
+
 #data <- NULL
 #input <- NULL
 #mydata_category.new <- NULL
@@ -80,8 +83,23 @@ corvalues <- c(highlyCorrelated)
 balancedData.orig <- balancedData
 
 #drop columns
-balancedData <- balancedData[,-corvalues]
+balancedData <- as.data.frame(balancedData[,-corvalues])
 
 #split data in test and train
+library(caTools)
 #set seed
-set.seed(1)
+set.seed(123)
+sample <- sample.split(balancedData,SplitRatio = 0.75)
+traindata <- subset(balancedData,sample ==TRUE)
+testdata <- subset(balancedData, sample==FALSE)
+
+#predictors
+n1 <- ncol(traindata)
+predictors <- traindata[,-n1]
+#predict
+predict <- traindata[,49]
+#models
+model_gbm <- train(predictors, predict, method='gbm', verbose=False)
+predictions<-predict.train(object=model_gbm,testdata,type="raw")
+table(predictions)
+confusionMatrix(predictions,test[,22])
