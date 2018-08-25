@@ -20,51 +20,23 @@ mydata.orig <- mydata #save orig data copy
 
 mydata <- na.omit(mydata) # listwise deletion of missing
 
-
-
-#check for balanced data
-ggplot(data=mydata, aes(factor(Default))) + geom_bar() + theme_classic()
-#lot more 0s than 1
-
-#data balance
-#for unbalanced data set#
-library(unbalanced)
-n<-ncol(mydata)
-output<- mydata$D
-output<-as.factor(output)
-input<- rareevent_boost [ ,-n]
-View(input)
-
-#Balance the Dataset using ubSMOTE#
-data<-ubBalance(X= input, Y=output, type="ubSMOTE", percOver=300, percUnder=150, verbose=TRUE
-                View(data)
-                
-                #Balanced Data#
-                balancedData<-cbind(data$X,data$Y)
-                View(balancedData)
-                table(balancedData$CHURN_FLAG)
-
 #split data into categorical and non categorical data
-
-my_data_category <- mydata %>%
-  select()
-
 mydata_predict <- mydata %>%
-  select()
+  select(Default)
 
 mydata_not_category <- mydata %>%
-  select()
+  select(duration, amount, age)
 
-#normalization function
+#normalize function
+normalize <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x)))
+}
 
-#normalize cts variables
+mydata_not_category <- as.data.frame(lapply(mydata_not_category, normalize))
 
-#remove unnecessary features
-#set seed
-set.seed(1)
+mydata_category <- as.data.frame(mydata[, !names(mydata) %in% colnames(mydata_not_category)]) 
+mydata_category[,1] <- NULL
 
-#combine category, non category and predict
-
-#split data in test and train
-#set seed
-set.seed(1)
+#one hot encoding
+library(dummies)
+mydata_category.new <- dummy.data.frame(mydata_category, sep = ".")
