@@ -40,3 +40,7 @@ mydata_category[,1] <- NULL
 #one hot encoding
 library(dummies)
 mydata_category.new <- dummy.data.frame(mydata_category, sep = ".")
+
+#combine data
+df <- cbind(mydata_category.new, mydata_not_category, mydata_predict)
+
