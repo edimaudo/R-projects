@@ -1,19 +1,14 @@
+#Clear old data
+rm(list=ls())
+
 #libraries
 library(ggplot2)
 library(corrplot)
 library(lattice)
-library(dplyr)
-library(tidyr)
-library(LogicReg)
+library(tidyverse)
 library(caret)
+library(mlbench)
 library(readxl)
-library(pROC)
-#==========================
-#logistic regression
-#==========================
-
-#Clear old data
-rm(list=ls())
 
 mydata <- read_excel(file.choose())
 
@@ -21,30 +16,36 @@ mydata <- read_excel(file.choose())
 summary(mydata)
 
 #Prepare data
-mydata.orig = mydata #save orig data copy
+mydata.orig <- mydata #save orig data copy
 
 mydata <- na.omit(mydata) # listwise deletion of missing
 
 #set seed
 set.seed(1)
 
-splitIndex <- createDataPartition(mydata$Default, p = .80,list = FALSE, times = 1)
-trainSplit <- mydata[ splitIndex,]
-testSplit <- mydata[-splitIndex,]
-print(table(trainSplit$Default))
+#check for balanced data
+ggplot(data=mydata, aes(factor(Default))) + geom_bar() + theme_classic()
+#lot more 0s than 1
 
+#data balance
 
-#logistic regression
-ctrl <- trainControl(method = "cv", number = 5)
-modelglm <- train(Default ~. , data = trainSplit, method = "glm", trControl = ctrl)
-summary(modelglm)
-### predict
-predictors <- names(trainSplit)[names(trainSplit) != 'Default']
-predglm <- predict(modelglm, testSplit)
-summary(predglm)
-### score prediction using AUC
-confusionMatrix(predglm, testSplit$Default)
+#split data into categorical and non categorical data
 
-aucglm <- roc(as.numeric(testSplit$Default), as.numeric(predglm),  ci=TRUE)
-plot(aucglm, ylim=c(0,1), print.thres=TRUE, 
-     main=paste('Logistic Regression AUC:',round(aucglm$auc[[1]],3)),col = 'blue')
+my_data_category <- mydata %>%
+  select()
+
+mydata_predict <- mydata %>%
+  select()
+
+mydata_not_category <- mydata %>%
+  select()
+
+#normalization function
+
+#normalize cts variables
+
+#remove unnecessary features
+
+#combine category, non category and predict
+
+#split data in test and train
