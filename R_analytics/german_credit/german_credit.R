@@ -44,3 +44,44 @@ mydata_category.new <- dummy.data.frame(mydata_category, sep = ".")
 #combine data
 df <- cbind(mydata_category.new, mydata_not_category, mydata_predict)
 
+#for german credit
+#check for balanced data
+ggplot(data=mydata, aes(factor(Default))) + geom_bar() + theme_classic()
+#lot more 0s than 1
+
+#data balance
+library(unbalanced)
+n <- ncol(df)
+output<- as.factor(df$Default)
+input<- df[ ,-n]
+
+#Balance the Dataset using ubSMOTE#
+data<-ubBalance(X=input, Y=output, type="ubSMOTE", percOver=300, percUnder=150, verbose=TRUE)
+#View(data)
+balancedData<-cbind(data$X,data$Y)
+
+#data <- NULL
+#input <- NULL
+#mydata_category.new <- NULL
+
+#remove unnecessary features
+#set seed
+set.seed(1)
+correlationMatrix <- cor(balancedData[,1:61])
+# summarize the correlation matrix
+#print(correlationMatrix)
+# find attributes that are highly corrected (ideally >0.75)
+highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.5)
+# print indexes of highly correlated attributes
+print(highlyCorrelated)
+
+corvalues <- c(highlyCorrelated)
+
+balancedData.orig <- balancedData
+
+#drop columns
+balancedData <- balancedData[,-corvalues]
+
+#split data in test and train
+#set seed
+set.seed(1)
