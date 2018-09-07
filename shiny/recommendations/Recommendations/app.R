@@ -1,6 +1,6 @@
 # load the required packages
 library(shiny)
-require(shinydashboard)
+library(shinydashboard)
 library(ggplot2)
 library(dplyr)
 
