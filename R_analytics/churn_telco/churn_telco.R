@@ -4,8 +4,7 @@ rm(list = ls())
 #objective build predict churn
 
 #load libraries
-for (package in c('ggplot2', 'corrplot','tidyverse',
-                  "cowplot",'lubridate','data.table','caret','mlbench','xgboost','plotrix')) {
+for (package in c('ggplot2', 'corrplot','tidyverse','caret','mlbench')) {
   if (!require(package, character.only=T, quietly=T)) {
     install.packages(package)
     library(package, character.only=T)
@@ -35,7 +34,7 @@ ggplot(data=df, aes(x=factor(`Churn?`))) +
 #drop Phone column as not needed
 df$Phone <- NULL
 
-glimpse(df)
+#glimpse(df)
 
 #split columns into categorical and cts data and predicted variable
 df_category <- df %>%
@@ -83,11 +82,21 @@ print(highlyCorrelated)
 df_combine <- df_combine[,-c(highlyCorrelated)]
 
 #build model
-df_combine$df_churn <- recode_factor(df_combine$df_churn, "False." = "0", "True." = "1")
+df_combine$df_churn <- recode_factor(df_combine$df_churn, "False." = 0, "True." = 1)
 
 #split data into train and test
 set.seed(1)
 library(caTools)
 sample <- sample.split(df_combine,SplitRatio = 0.75)
-train <- subset(df_combine,sample ==TRUE)
+training <- subset(df_combine,sample ==TRUE)
 test <- subset(df_combine, sample==FALSE)
+
+#model
+predictor <- training[,1:64]
+predicted <- training[,65]
+model_gbm<-train(predictor,predicted,method='gbm')
+
+#Predictions
+predictions<-predict.train(object=model_gbm,test,type="raw")
+#table(predictions)
+confusionMatrix(predictions,test[,65])
