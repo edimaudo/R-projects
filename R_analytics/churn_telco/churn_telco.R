@@ -26,8 +26,8 @@ missing_data <- apply(df, 2, function(x) any(is.na(x))) #no missing data
 print(missing_data)
 
 #check churn data
-ggplot(data=df, aes(x=factor(`Churn?`))) +
-  geom_bar() + theme_classic() + xlab("Churn Amount")
+#ggplot(data=df, aes(x=factor(`Churn?`))) +
+#  geom_bar() + theme_classic() + xlab("Churn Amount")
 
 #transform data
 
@@ -80,6 +80,8 @@ print(highlyCorrelated)
 
 #drop columns
 df_combine <- df_combine[,-c(highlyCorrelated)]
+
+df_combine <- as.data.frame(df_combine)
 
 #build model
 df_combine$df_churn <- recode_factor(df_combine$df_churn, "False." = 0, "True." = 1)
