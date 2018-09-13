@@ -12,3 +12,9 @@ colnames(df_offers) <- c("offer_id", "campaign", "varietal", "min_qty", "discoun
 glimpse(df_offers)
 
 df_transactions <- read_excel(file.choose(),2)
+colnames(df_transactions) <- c("customer_name","offer_id")
+
+glimpse(df_transactions)
+
+df_combine <- df_transactions %>%
+  inner_join(df_offers,"offer_id")
