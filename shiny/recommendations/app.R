@@ -6,14 +6,9 @@ library(tidyverse)
 
 #load data
 recommendation <- read.csv('recommendation.csv',stringsAsFactors = F,header=T)
-#head(recommendation)
 
-ui <- dashboardPage(
-  #dashboardHeader(),
-  #dashboardSidebar(),
-  #dashboardBody()
   #Dashboard header carrying the title of the dashboard
-  header <- dashboardHeader(title = "Basic Dashboard"),  
+  header <- dashboardHeader(title = "Basic Dashboard")
   #Sidebar content of the dashboard
   sidebar <- dashboardSidebar(
     sidebarMenu(
@@ -21,12 +16,12 @@ ui <- dashboardPage(
       menuItem("Visit-us", icon = icon("send",lib='glyphicon'), 
                href = "https://www.salesforce.com")
     )
-  ),
+  )
   frow1 <- fluidRow(
     valueBoxOutput("value1")
     ,valueBoxOutput("value2")
     ,valueBoxOutput("value3")
-  ),
+  )
   frow2 <- fluidRow( 
     box(
       title = "Revenue per Account"
@@ -42,13 +37,13 @@ ui <- dashboardPage(
       ,collapsible = TRUE 
       ,plotOutput("revenuebyRegion", height = "300px")
     ) 
-  ),
+  )
   # combine the two fluid rows to make the body
-  body <- dashboardBody(frow1, frow2),
+  body <- dashboardBody(frow1, frow2)
   #completing the ui part with dashboardPage
   ui <- dashboardPage(title = 'This is my Page title', header, sidebar, body, skin='red')
   
-)
+
 
 # create the server functions for the dashboard  
 server <- function(input, output) { 
