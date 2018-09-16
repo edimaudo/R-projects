@@ -21,3 +21,22 @@ explanation <- first_result %>% html_node(".short-truth") %>% html_text(trim = T
 str_sub(explanation, 2, -2)
 
 url <- first_result %>% html_node("a") %>% html_attr("href")
+
+#build lie data
+library(dplyr)
+records <- vector("list", length = length(results))
+
+for (i in seq_along(results)) {
+  date <- str_c(results[i] %>% html_nodes("strong") %>% html_text(trim = TRUE), ", 2017")
+  lie <- str_sub(xml_contents(results[i])[2] %>% html_text(trim = TRUE), 2, -2)
+  explanation <- str_sub(results[i] %>% html_nodes(".short-truth") %>% html_text(trim = TRUE), 2, -2)
+  url <- results[i] %>% html_nodes("a") %>% html_attr("href")
+  records[[i]] <- data_frame(date = date, lie = lie, explanation = explanation, url = url)
+}
+
+df <- bind_rows(records)
+glimpse(df)
+
+library(lubridate)
+df$date <- mdy(df$date)
+glimpse(df)
