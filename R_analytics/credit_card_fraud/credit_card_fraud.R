@@ -56,4 +56,14 @@ balancedData <- balancedData %>%
 ggplot(balancedData, aes(Class)) +
   geom_bar() + theme_classic() + xlab("Class Information")
 
+df <- balancedData
+df$Time <- NULL
+
+#normalize data
+normalize <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x)))
+}
+
+df[,1:29] <- as.data.frame(lapply(df[,1:29], normalize))
+
 #data modelling
