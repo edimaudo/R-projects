@@ -1,0 +1,163 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Author template for Syngenta Crop Challenge (syngen)
+%% -- based on Author template for Operations Research (informs3.cls)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[syngen,nonblindrev]{informs3-syngen} 
+
+\DoubleSpacedXI % Made default 4/4/2014 at request
+%%\OneAndAHalfSpacedXI % current default line spacing
+%%\OneAndAHalfSpacedXII
+%%\DoubleSpacedXII
+
+\usepackage{endnotes}
+\let\footnote=\endnote
+\let\enotesize=\normalsize
+\def\notesname{Endnotes}%
+\def\makeenmark{$^{\theenmark}$}
+\def\enoteformat{\rightskip0pt\leftskip0pt\parindent=1.75em
+  \leavevmode\llap{\theenmark.\enskip}}
+
+% Private macros here (check that there is no clash with the style)
+
+% Natbib setup for author-year style
+\usepackage{natbib}
+ \bibpunct[, ]{(}{)}{,}{a}{}{,}%
+ \def\bibfont{\small}%
+ \def\bibsep{\smallskipamount}%
+ \def\bibhang{24pt}%
+ \def\newblock{\ }%
+ \def\BIBand{and}%
+
+%% Setup of theorem styles. Outcomment only one.
+%% Preferred default is the first option.
+\TheoremsNumberedThrough     % Preferred (Theorem 1, Lemma 1, Theorem 2)
+%\TheoremsNumberedByChapter  % (Theorem 1.1, Lema 1.1, Theorem 1.2)
+\ECRepeatTheorems
+
+%% Setup of the equation numbering system. Outcomment only one.
+%% Preferred default is the first option.
+\EquationsNumberedThrough    % Default: (1), (2), ...
+%\EquationsNumberedBySection % (1.1), (1.2), ...
+
+
+%%%%%%%%%%%%%%%%
+\begin{document}
+%%%%%%%%%%%%%%%%
+
+% Corresponding author's name for the running heads
+\RUNAUTHOR{CorrespondingAuthor}
+
+% Title or shortened title suitable for running heads. Sample:
+% \RUNTITLE{Bundling Information Goods of Decreasing Value}
+% Enter the (shortened) title:
+\RUNTITLE{Your Short Title}
+
+% Full title. Sample:
+% \TITLE{Bundling Information Goods of Decreasing Value}
+% Enter the full title:
+\TITLE{Appropriate Title of Your Submission}
+
+% Corresponding author or team lead. A single point of contact for each team submission is requested. 
+\ARTICLEAUTHORS{%
+\AUTHOR{Corresponding Author}
+\AFF{Address, Town, State, Zip code, Country, \EMAIL{CorrespondingAuthor@gmail.com}} %, \URL{}}
+} % end of the block
+
+\ABSTRACT{%
+You should replace this paragraph with your abstract. Following the standards of academic publications, this report should provide the criteria used in determining stress metrics, a clear description of the methodology and theory used, the quantitative results that justify the selection, and appropriate references. In the abstract, please briefly summarize your stress metrics and key points.
+% Enter your abstract
+}%
+
+% Sample
+%\KEYWORDS{deterministic inventory theory; infinite linear programming duality;
+%  existence of optimal policies; semi-Markov decision process; cyclic schedule}
+
+% Fill in data. If unknown, outcomment the field
+\KEYWORDS{Keywords summarizing the main techniques used in your approach, for example: stochastic optimization, neural networks, column generation}
+
+
+\maketitle
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Samples of sectioning (and labeling) 
+% NOTE: (1) \section and \subsection do NOT end with a period
+%       (2) \subsubsection and lower need end punctuation
+%       (3) capitalization is as shown (title style).
+%
+%\section{Introduction.}\label{intro} %%1.
+%\subsection{Duality and the Classical EOQ Problem.}\label{class-EOQ} %% 1.1.
+%\subsection{Outline.}\label{outline1} %% 1.2.
+%\subsubsection{Cyclic Schedules for the General Deterministic SMDP.}
+%  \label{cyclic-schedules} %% 1.2.1
+%\section{Problem Description.}\label{problemdescription} %% 2.
+
+% Text of your paper here
+
+\section{Introduction}
+
+In the introduction, you should include an overview of the approach. Throughout the document include citations as appropriate. As an example, include citations of the form: (Syngenta, 2018) or Syngenta (2018). Included figures and tables should be labeled and captioned with a short description.
+
+
+\section{Methodology and Theory}
+
+Present the methodology and theory of your approach. Charts, diagrams or other
+visualizations constructed from analyzing data may be useful to communicate your thoughts
+and possible approaches. Subsections are allowed. 
+
+
+\section{Quantitative Results}
+
+In accordance with your methodology, present results that justify your stress metrics and classifications of hybrids. Subsections are allowed.
+
+\section{Conclusion}
+
+Provide a summary of key findings.
+
+\section{Team Members}
+
+List all team members associated with the submission, including the corresponding author. A team’s solution should be submitted once (as opposed to each member of the team submitting the same solution individually).
+
+\begin{itemize}
+\item Team Member 1 (a.k.a. Corresponding Author), Affiliation and address, TM1@email.com
+\item Team Member 2, Affiliation and address, TM2@email.com
+\item Team Member 3, Affiliation and address, TM3@email.com
+\end{itemize}
+
+\section{Exogenous Data Sets (Optional)}
+
+Since the data sets provided in the challenge have geographic coordinates, researchers have the option to use additional data sources (ISRIC, VegScape, Drought Monitor, etc.). Any additional data sets used must be available for public use and properly cited. In this section, please list any external data sets used along with a reference.
+
+
+\section{Supplementary Materials (Optional)}
+
+Supplementary materials can include additional tables, figures, or further explanations not
+critical to the main sections.
+
+
+
+% Acknowledgments here
+\ACKNOWLEDGMENT{This section is optional.}
+
+
+
+% References here (outcomment the appropriate case)
+
+% CASE 1: BiBTeX used to constantly update the references
+%   (while the paper is being written).
+%\bibliographystyle{ormsv080} % outcomment this and next line in Case 1
+%\bibliography{<your bib file(s)>} % if more than one, comma separated
+
+% CASE 2: BiBTeX used to generate mypaper.bbl (to be further fine tuned)
+%\input{mypaper.bbl} % outcomment this line in Case 2
+
+%If you don't use BiBTex, you can manually itemize references as shown below.
+
+\begin{thebibliography}{}
+
+\bibitem[]{asi}
+Syngenta. 2018. Submission template example. \textit{Journal of Syngenta Research}. 1(1).
+\end{thebibliography}
+
+%%%%%%%%%%%%%%%%%
+\end{document}
+%%%%%%%%%%%%%%%%%
