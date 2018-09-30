@@ -32,9 +32,28 @@ print(missing_data)
 ggplot(data=df, aes(x=factor(Class))) +
   geom_bar() + theme_classic() + xlab("Class Information")
 
-#check for imbalanced data
+#fix imbalanced data
+library(unbalanced)
+n<-ncol(df)
+output<- df$Class
+output<-as.factor(output)
+input<- df[ ,-n]
 
+#Balance the Dataset using ubSMOTE#
+data<-ubBalance(X= input, Y=output, type="ubSMOTE", percOver=300, percUnder=150, verbose=TRUE)
+                
+#Balanced Data#
+balancedData<-cbind(data$X,data$Y)
+View(balancedData)
 
-#data transformation
+balancedData <- as.data.frame(balancedData)
+
+#update class name
+balancedData <- balancedData %>%
+  rename(Class = `data$Y`)
+
+#View new data
+ggplot(balancedData, aes(Class)) +
+  geom_bar() + theme_classic() + xlab("Class Information")
 
 #data modelling
