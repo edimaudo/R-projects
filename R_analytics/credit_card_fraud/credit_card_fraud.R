@@ -9,7 +9,7 @@
 rm(list=ls())
 
 #load libraries
-for (package in c('ggplot2', 'corrplot','tidyverse','caret','mlbench', 'xgboost', 'caTools')) {
+for (package in c('ggplot2','caret','mlbench', 'dplyr', 'caTools')) {
   if (!require(package, character.only=T, quietly=T)) {
     install.packages(package)
     library(package, character.only=T)
@@ -64,6 +64,24 @@ normalize <- function(x) {
   return ((x - min(x)) / (max(x) - min(x)))
 }
 
-df[,1:29] <- as.data.frame(lapply(df[,1:29], normalize))
 
-#data modelling
+df$Amount <- normalize(df$Amount)
+
+df <- as.data.frame(df)
+library(gbm)
+
+inTrainingset<-createDataPartition(df$Class, p=.75, list=FALSE)
+training<-df[inTrainingset,]
+rest<-df[-inTrainingset,]
+set.seed(123)
+
+gbmfit<-gbm(Class~., data=df,
+            distribution="bernoulli",n.trees=5,interaction.depth=7,shrinkage=.01)
+
+ctrl<-trainControl(method="repeatedcv",repeats=5)
+gbmTune<-train(Class~.,data=training, 
+               method="gbm", 
+               verbose=FALSE, 
+               trControl=ctrl)
+
+
