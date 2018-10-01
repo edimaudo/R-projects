@@ -80,8 +80,33 @@ predictions<-predict.train(object=model_gbm,test,type="raw")
 confusionMatrix(predictions,test[,27]) #70% accuracy
 
 #fine tune model
+# # calculate correlation matrix
+correlationMatrix <- cor(df_final[,1:26])
+# # summarize the correlation matrix
+# print(correlationMatrix)
+# # find attributes that are highly corrected (ideally >0.75)
+highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.5)
+# # print indexes of highly correlated attributes
+print(highlyCorrelated)
 
+df_final2 <- df_final[,-c(highlyCorrelated)]
 
+df_final2 <- as.data.frame(df_final2)
+
+set.seed(123)
+sample <- sample.split(df_final2,SplitRatio = 0.75)
+training <- subset(df_final2,sample ==TRUE)
+test <- subset(df_final2, sample==FALSE)
+
+#model
+predictor <- training[,1:21]
+predicted <- training[,22]
+model_gbm<-train(predictor,predicted,method='gbm')
+
+#Predictions
+predictions<-predict.train(object=model_gbm,test,type="raw")
+#table(predictions)
+confusionMatrix(predictions,test[,22]) #72% accuracy
 
 
 #output for kaggle - https://www.kaggle.com/uciml/german-credit
