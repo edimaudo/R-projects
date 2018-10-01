@@ -63,9 +63,25 @@ df_final <- df_final %>%
 df_final$Risk <- recode_factor(df_final$Risk, "good" = 0, "bad" = 1)
 
 #create models
+#split data into train and test
+set.seed(123)
+sample <- sample.split(df_final,SplitRatio = 0.75)
+training <- subset(df_final,sample ==TRUE)
+test <- subset(df_final, sample==FALSE)
 
-library(randomForest)
+#model
+predictor <- training[,1:26]
+predicted <- training[,27]
+model_gbm<-train(predictor,predicted,method='gbm')
 
-library(gbm)
+#Predictions
+predictions<-predict.train(object=model_gbm,test,type="raw")
+#table(predictions)
+confusionMatrix(predictions,test[,27]) #70% accuracy
+
+#fine tune model
+
+
+
 
 #output for kaggle - https://www.kaggle.com/uciml/german-credit
