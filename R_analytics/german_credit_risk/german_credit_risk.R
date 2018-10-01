@@ -57,7 +57,10 @@ df_category.new <- dummy.data.frame(as.data.frame(df_categorical), sep = "_")
 df_final <- cbind(df_category.new, df_cts, df$Risk)
 
 #recode risk profile
+df_final <- df_final %>%
+  rename(Risk = 'df$Risk')
 
+df_final$Risk <- recode_factor(df_final$Risk, "good" = 0, "bad" = 1)
 
 #create models
 
