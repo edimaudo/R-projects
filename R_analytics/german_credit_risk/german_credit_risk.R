@@ -16,10 +16,13 @@ normalize <- function(x) {
 
 #load data
 df <- read_csv(file.choose())
+df$X1 <- NULL
 
 #create backup
+df.backup <- df
 
 #summary
+print(summary(df))
 
 #look for missing data
 
