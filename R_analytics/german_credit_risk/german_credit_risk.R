@@ -2,7 +2,7 @@
 rm(list=ls())
 
 #load libraries
-for (package in c('ggplot2', 'corrplot','tidyverse','caret','mlbench')) {
+for (package in c('ggplot2', 'corrplot','tidyverse','caret','mlbench','mice', 'caTools')) {
   if (!require(package, character.only=T, quietly=T)) {
     install.packages(package)
     library(package, character.only=T)
@@ -29,6 +29,8 @@ df <- read_csv(file.choose())
 
 #recode risk profile
 
+#remove redundant columns
+
 
 
 #create models
@@ -37,3 +39,4 @@ library(randomForest)
 
 library(gbm)
 
+#output for kaggle - https://www.kaggle.com/uciml/german-credit
