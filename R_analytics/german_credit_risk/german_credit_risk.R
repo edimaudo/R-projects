@@ -105,7 +105,6 @@ model_gbm<-train(predictor,predicted,method='gbm')
 
 #Predictions
 predictions<-predict.train(object=model_gbm,test,type="raw")
-#table(predictions)
 confusionMatrix(predictions,test[,22]) #72% accuracy
 
 
