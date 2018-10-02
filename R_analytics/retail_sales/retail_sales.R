@@ -32,10 +32,18 @@ df <- read_csv(file.choose())
 colnames(df) <- c('Date',"Sale","Stock","Price")
 
 #create time series
-df_ts <- ts(df)
-
 df_other <- cbind(df[,1],df[,3])
 colnames(df_other) <- c("ds","y")
+
+#plot of information
+autoplot(ts(df_other), facets = TRUE) +
+  geom_smooth() +
+  labs("Company Stocks",
+       y = "Stock",
+       x = NULL)
+
+
+#use prophet
 df_other_prophet <- prophet(df_other)
 future <- make_future_dataframe(df_other_prophet, periods = 365)
 forecast <- predict(df_other_prophet, future)
@@ -43,10 +51,18 @@ tail(forecast[c('ds', 'yhat', 'yhat_lower', 'yhat_upper')])
 plot(df_other_prophet, forecast)
 prophet_plot_components(df_other_prophet, forecast)
 
+#multiplicative seasonality
+m <- prophet(df, seasonality.mode = 'multiplicative')
+forecast <- predict(m, future)
+plot(m, forecast)
 
-#split data into train and test
+#component
+prophet_plot_components(m, forecast)
 
-#model
+#others 
+m <- prophet(seasonality.mode = 'multiplicative')
+m <- add_seasonality(m, 'quarterly', period = 91.25, fourier.order = 8, mode = 'additive')
+m <- add_regressor(m, 'regressor', mode = 'additive')
 
 
 
