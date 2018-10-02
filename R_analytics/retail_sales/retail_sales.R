@@ -9,3 +9,25 @@
 # We encourage you to seek for the best demand forecasting model for the next 2-3 weeks. 
 # This valuable insight can help many supply chain practitioners 
 # to correctly manage their inventory levels.
+
+
+#objective
+#Short term forecasting to optimize in-store inventories
+
+#remove old data
+rm(list=ls())
+
+#load libraries
+for (package in c('ggplot2', 'corrplot','tidyverse','caret','mlbench', 'forecast', "fpp2","prophet")) {
+  if (!require(package, character.only=T, quietly=T)) {
+    install.packages(package)
+    library(package, character.only=T)
+  }
+}
+
+#load data
+df <- read_csv(file.choose())
+
+#Rename columns
+colnames(df) <- c('Date',"Sale","Stock","Price")
+#submit to kaggle
