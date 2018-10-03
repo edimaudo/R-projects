@@ -36,10 +36,22 @@
 rm(list=ls())
 
 #load libraries
-
+for (package in c('ggplot2', 'corrplot','tidyverse','caret','mlbench', 'forecast', "fpp2","prophet")) {
+  if (!require(package, character.only=T, quietly=T)) {
+    install.packages(package)
+    library(package, character.only=T)
+  }
+}
 
 
 #load data
+daily_sales <- read_csv(file.choose())
+item_cateogories <- read_csv(file.choose())
+items <- read_csv(file.choose())
+shops <- read_csv(file.choose())
+sales_train <- read_csv(file.choose())
+test <- read_csv(file.choose())
+sample_submission <- read_csv(file.choose())
 
 #get summary
 
