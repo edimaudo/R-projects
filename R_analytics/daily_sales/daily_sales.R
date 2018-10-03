@@ -33,8 +33,11 @@
 # item_category_name - name of item category
 
 #remove old data
+rm(list=ls())
 
 #load libraries
+
+
 
 #load data
 
