@@ -54,10 +54,10 @@ test <- read_csv(file.choose())
 sample_submission <- read_csv(file.choose())
 
 #get summary
-
-#load 
+print(summary(sales_train))
 
 #visualize data
+
 
 #create model
 
