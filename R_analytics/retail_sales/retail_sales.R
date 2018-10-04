@@ -42,7 +42,6 @@ autoplot(ts(df_other), facets = TRUE) +
        y = "Stock",
        x = NULL)
 
-
 #use prophet
 df_other_prophet <- prophet(df_other)
 future <- make_future_dataframe(df_other_prophet, periods = 365)
@@ -63,7 +62,3 @@ prophet_plot_components(m, forecast)
 m <- prophet(seasonality.mode = 'multiplicative')
 m <- add_seasonality(m, 'quarterly', period = 91.25, fourier.order = 8, mode = 'additive')
 m <- add_regressor(m, 'regressor', mode = 'additive')
-
-
-
-#submit to kaggle
