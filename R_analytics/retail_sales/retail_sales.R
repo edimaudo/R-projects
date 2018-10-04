@@ -49,16 +49,16 @@ forecast <- predict(df_other_prophet, future)
 tail(forecast[c('ds', 'yhat', 'yhat_lower', 'yhat_upper')])
 plot(df_other_prophet, forecast)
 prophet_plot_components(df_other_prophet, forecast)
-
-#multiplicative seasonality
-m <- prophet(df, seasonality.mode = 'multiplicative')
-forecast <- predict(m, future)
-plot(m, forecast)
-
-#component
-prophet_plot_components(m, forecast)
-
-#others 
-m <- prophet(seasonality.mode = 'multiplicative')
-m <- add_seasonality(m, 'quarterly', period = 91.25, fourier.order = 8, mode = 'additive')
-m <- add_regressor(m, 'regressor', mode = 'additive')
+# 
+# #multiplicative seasonality
+# m <- prophet(df, seasonality.mode = 'multiplicative')
+# forecast <- predict(m, future)
+# plot(m, forecast)
+# 
+# #component
+# prophet_plot_components(m, forecast)
+# 
+# #others 
+# m <- prophet(seasonality.mode = 'multiplicative')
+# m <- add_seasonality(m, 'quarterly', period = 91.25, fourier.order = 8, mode = 'additive')
+# m <- add_regressor(m, 'regressor', mode = 'additive')

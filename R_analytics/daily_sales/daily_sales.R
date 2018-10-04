@@ -45,7 +45,6 @@ for (package in c('ggplot2', 'corrplot','tidyverse','caret','mlbench', 'forecast
 
 
 #load data
-daily_sales <- read_csv(file.choose())
 item_cateogories <- read_csv(file.choose())
 items <- read_csv(file.choose())
 shops <- read_csv(file.choose())
@@ -56,7 +55,17 @@ sample_submission <- read_csv(file.choose())
 #get summary
 print(summary(sales_train))
 
-#visualize data
+#create time series models
+sales_group <- sales_train %>%
+  select(date, date_block_num, item_cnt_day) %>%
+  group_by(date) %>%
+  summarise(sum(date_block_num), sum(item_cnt_day))
+
+colnames(sales_group) <- c('date', 'date_block_num_total','item_cnt_day_total') 
+
+#conver to time series
+sales_group_ts <- ts(sales_group)
+
 
 
 #create model
