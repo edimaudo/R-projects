@@ -107,5 +107,3 @@ model_gbm<-train(predictor,predicted,method='gbm')
 predictions<-predict.train(object=model_gbm,test,type="raw")
 confusionMatrix(predictions,test[,22]) #72% accuracy
 
-
-#output for kaggle - https://www.kaggle.com/uciml/german-credit
