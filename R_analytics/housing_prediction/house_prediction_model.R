@@ -1,15 +1,16 @@
 #Predicting house prices
+rm(list=ls())
+
+packages <- c('ggplot2', 'corrplot','tidyverse','caret','mlbench','mice', 'caTools', 
+              'MASS','Metrics','randomForest','lars','xgboost','Matrix','methods')
 
 #load libraries
-library(MASS) 
-library(Metrics)
-library(corrplot)
-library(randomForest)
-library(lars)
-library(ggplot2)
-library(xgboost)
-library(Matrix)
-library(methods)
+for (package in packages) {
+  if (!require(package, character.only=T, quietly=T)) {
+    install.packages(package)
+    library(package, character.only=T)
+  }
+}
 
 #load data
 Training <- read.csv("train.csv")
@@ -139,5 +140,5 @@ Test_Matrix<-as(Test_Matrix,"sparseMatrix")
 Test_Matrix<-xgb.DMatrix(data = Test_Matrix[,2:76])
 
 #submission
-#Submit<- predict(Training, newdata=Test_Matrix)
+Submit<- predict(Training, newdata=Test_Matrix)
 #Submit<-data.frame(Id= Test$Id, SalePrice= Submit)
