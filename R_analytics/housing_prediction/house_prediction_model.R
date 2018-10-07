@@ -13,8 +13,8 @@ for (package in packages) {
 }
 
 #load data
-Training <- read.csv("train.csv")
-Test <- read.csv("test.csv")
+Training <- read.csv(file.choose())
+Test <- read.csv(file.choose())
 
 #set up work process
 #Data cleaning, Descriptive Analysis, Model Selection, Final Prediction
@@ -126,7 +126,7 @@ Test[is.na(Test)]<-0
 re_train<- as.matrix(Training,rownames.force =NA)
 re_train<- as(re_train,'sparseMatrix')
 retrain_Data<- xgb.DMatrix(data = re_train[,2:76],label=re_train[,"SalePrice"])
-bstSparse_retrain<- xgb.train(params=param,
+bstSparse_retrain<- xgb.train(
                               data=retrain_Data,
                               nrounds = 600,
                               watchlist = list(train = retrain_Data),
@@ -140,5 +140,5 @@ Test_Matrix<-as(Test_Matrix,"sparseMatrix")
 Test_Matrix<-xgb.DMatrix(data = Test_Matrix[,2:76])
 
 #submission
-Submit<- predict(Training, newdata=Test_Matrix)
-#Submit<-data.frame(Id= Test$Id, SalePrice= Submit)
+Submit<- predict( Training, as.data.frame(Test_Matrix))
+Submit<-data.frame(Id= Test$Id, SalePrice= Submit)
