@@ -3,7 +3,8 @@ rm(list=ls())
 
 #load libraries
 packages <- c('ggplot2', 'corrplot','tidyverse','caret','mlbench','mice', 'caTools', 
-              'MASS','Metrics','randomForest','lars','xgboost','Matrix','methods', 'data.table', 'lubridate')
+              'MASS','Metrics','randomForest','lars','xgboost','Matrix','methods', 
+              'data.table', 'lubridate','strftime')
 
 #load libraries
 for (package in packages) {
@@ -29,8 +30,10 @@ glimpse(train)
 train$date <- ymd(train$date)
 
 #convert visit start time
+train$visitStartTime <- as.POSIXct(train$visitStartTime, origin="1970-01-01")
 
 #extract data from total column and create new columns
+
 
 #extract data from geonetwork columns and create new columns
 
