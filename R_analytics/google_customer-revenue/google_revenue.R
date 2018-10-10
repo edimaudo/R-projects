@@ -4,7 +4,7 @@ rm(list=ls())
 #load libraries
 packages <- c('ggplot2', 'corrplot','tidyverse','caret','mlbench','mice', 'caTools', 
               'MASS','Metrics','randomForest','lars','xgboost','Matrix','methods', 
-              'data.table', 'lubridate','strftime')
+              'data.table', 'lubridate','jsonlite', 'stringr')
 
 #load libraries
 for (package in packages) {
@@ -32,8 +32,26 @@ train$date <- ymd(train$date)
 #convert visit start time
 train$visitStartTime <- as.POSIXct(train$visitStartTime, origin="1970-01-01")
 
-#extract data from total column and create new columns
+Clean_String <- function(extransaction){
+  temp <- extransaction
+  #' Remove everything that is not a number or letter 
+  temp <- stringr::str_replace_all(temp,"[^$()-*#0123456789\\s]", " ")
+  #remove white space on both sides
+  temp <- trimws(temp,"b")
+  # Shrink down to just one white space
+  temp <- stringr::str_replace_all(temp,"[\\s]+", " ")
+  return (temp)
 
+}
+
+#extract data from total column and create new columns
+#train$visits <- 
+#train$hits <-
+#train$pageviews <-
+#train$bounces <-
+#train$newVisits <-
+
+#extract data from traffic source
 
 #extract data from geonetwork columns and create new columns
 
