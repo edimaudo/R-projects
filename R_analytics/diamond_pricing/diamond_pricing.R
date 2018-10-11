@@ -1,3 +1,5 @@
+#goal is to design a function to predict price
+
 #remove old data
 rm(list=ls())
 
@@ -45,14 +47,10 @@ df_category.new <- as.data.frame(df_category.new)
 
 glimpse(df_category.new)
 
-#drop information to prevent multcollineariy
-df_category.new[1] <- NULL
-df_category.new[28] <- NULL
-
 df$Weight <- normalize(df$Weight)
 df_final <- cbind(df_category.new, df[,3], df[,4])
 
-#regression modelling
+
 
 #split data into train and test
 set.seed(123)
@@ -60,4 +58,9 @@ sample <- sample.split(df_final,SplitRatio = 0.75)
 training <- subset(df_final,sample ==TRUE)
 test <- subset(df_final, sample==FALSE)
 
+#regression modelling
+plot(Price ~., data=training)
+fit <- lm(Price ~., data=training)
+summary(fit)
+plot(residuals(fit) ~ ., data=training)
 
