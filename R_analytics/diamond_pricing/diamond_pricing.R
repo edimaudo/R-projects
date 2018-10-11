@@ -15,7 +15,15 @@ for (package in packages) {
 #load data
 df <- read_excel(file.choose()) #load the macro enabled file
 
+#check data
 glimpse(df)
+
+#summary
+print(summary(df))
+
+#look for missing data
+missing_data <- apply(df, 2, function(x) any(is.na(x)))
+print(missing_data)
 
 #check for missing data
 
