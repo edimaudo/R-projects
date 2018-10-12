@@ -59,8 +59,12 @@ training <- subset(df_final,sample ==TRUE)
 test <- subset(df_final, sample==FALSE)
 
 #regression modelling
-plot(Price ~., data=training)
+
 fit <- lm(Price ~., data=training)
 summary(fit)
+plot(Price ~., data=training)
 plot(residuals(fit) ~ ., data=training)
 
+pred1 <- predict(fit, newdata = test)
+rmse <- sqrt(sum((exp(pred1) - test$medv)^2)/length(test$medv))
+c(RMSE = rmse, R2=summary(fit)$r.squared)
