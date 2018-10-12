@@ -24,7 +24,3 @@ browserid	browser used
 devid	device used
 click	target variable
 
-
-starter kits
-https://github.com/HackerEarth-Challenges/ML-Challenge-3/blob/master/stackingClicks.R
-https://github.com/HackerEarth-Challenges/ML-Challenge-3/blob/master/lgb_starter.R
