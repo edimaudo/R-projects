@@ -2,12 +2,17 @@
 rm(list=ls())
 
 #load libraries
-for (package in c('ggplot2', 'corrplot','tidyverse','caret','mlbench')) {
+packages <- c('ggplot2', 'corrplot','tidyverse','caret','mlbench','mice', 'caTools', 
+              'MASS','Metrics','randomForest','lars','xgboost','Matrix','methods', 'lubridate',
+              'data.table')
+
+for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
     install.packages(package)
     library(package, character.only=T)
   }
 }
+
 
 #load data
 performance <- read_csv(file.choose())
