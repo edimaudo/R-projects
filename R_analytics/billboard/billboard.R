@@ -36,7 +36,7 @@ song_mentions <- function(search_word, df){
 }
 
 #song mentions
-print(song_mentions("life",df))
-print(song_mentions("war",df))
-print(song_mentions("love",df))
+paste("Life shows up ", song_mentions("life",df), " times")
+paste("war shows up ", song_mentions("war",df), " times")
+paste("love shows up ", song_mentions("love",df), " times")
 
