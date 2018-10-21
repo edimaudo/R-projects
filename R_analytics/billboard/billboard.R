@@ -16,4 +16,13 @@ for (package in packages) {
 }
 
 #load data
+df <- read_csv(file.choose())
 
+#get summary
+print(summary(df))
+
+#check for missing data
+missing_data <- apply(df, 2, function(x) any(is.na(x)))
+print(missing_data)
+
+glimpse(df$Song)
