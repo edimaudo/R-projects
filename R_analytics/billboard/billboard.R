@@ -26,3 +26,17 @@ missing_data <- apply(df, 2, function(x) any(is.na(x)))
 print(missing_data)
 
 glimpse(df$Song)
+
+song_mentions <- function(search_word, df){
+  toMatch <-  c(search_word)
+  count_val <- data.frame(string=df$Song, total_count=rowSums(sapply(toMatch, function(x) grepl(x, df$Song))))
+  final_count <- count_val %>%
+    count(total_count)
+  return (final_count$n[2])
+}
+
+#song mentions
+print(song_mentions("life",df))
+print(song_mentions("war",df))
+print(song_mentions("love",df))
+
