@@ -68,3 +68,4 @@ df_top_ten_count <- data.frame(table(unlist(strsplit(tolower(df_top_ten$Lyrics),
 df_top_20_word_count <- df_top_ten_count %>%
   arrange(desc(Freq)) %>%
   top_n(20)
+
