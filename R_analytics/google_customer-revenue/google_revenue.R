@@ -16,6 +16,7 @@ for (package in packages) {
 
 #load data
 train <- fread(file.choose())
+train <- train[1:5000,]
 
 #get summary
 print(summary(train))
@@ -73,6 +74,7 @@ colnames(df_train_info) <- c("visits", "hits","pageviews", "bounces","newvisits"
 
 #load test data
 test <- fread(file.choose())
+test <- test[1:5000,]
 
 #recode test data similar to train data
 
@@ -91,7 +93,8 @@ sample_submission <- read_csv(file.choose())
 #======================others
 #string split
 #stringr::str_split_fixed(x$y, "", 4)
-#df %>% separate(Clean_String(train$totals[5]), c("visits", "hits","pageviews", "bounces","newvisits"))
+#df %>% separate(Clean_String(train$totals[5]), 
+#c("visits", "hits","pageviews", "bounces","newvisits"))
 #Separate(data,column,into=” “,sep=” ” )
 #train$visits <- 
 #train$hits <-
