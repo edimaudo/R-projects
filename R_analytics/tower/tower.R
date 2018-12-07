@@ -20,6 +20,8 @@ mydataset <- df[ ,c(-1,-2,-3,-7,-8,-11,-12,-13)]
 #remove empty rows
 #mydataset <- na.omit(mydataset)
 
+mydataset <- mydataset[,1:40]
+
 #Apply MCA
 mca <- MCA(mydataset, graph = FALSE)
 print (mca)
@@ -92,7 +94,7 @@ plot(1:k.max, sil, type = "b", pch = 19,
      frame = FALSE, xlab = "Number of clusters k")
 abline(v = which.max(sil), lty = 2)
 
-nclusters = 5 #based on number of clusters from information from above.  Can change as you need
+nclusters = 6 #based on number of clusters from information from above.  Can change as you need
 
 #assign to clusters
 k <- kmeans(km, nclusters, nstart=25, iter.max=1000, 
