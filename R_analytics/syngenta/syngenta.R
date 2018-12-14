@@ -28,6 +28,7 @@ performance_other <- performance
 
 #drop some columns
 performance_other <-  performance_other[ ,c(-1,-7,-8)]
+performance_other <- na.omit(performance_other)
 
-mca <- MCA(performance_oother, graph = FALSE)
+mca <- MCA(performance_other, graph = FALSE)
 
