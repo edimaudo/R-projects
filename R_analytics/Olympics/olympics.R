@@ -48,5 +48,10 @@ ggplot(df_filtered_medal, aes(x=Sport , na.rm=TRUE)) + geom_bar(aes(fill = Medal
   ggtitle("Sport Medal count") + theme_bw()
 
 
+##(GDP/Population/Country) to do a regression/clustering model to 
+#predict/visualise on results for (summer 2020) olympics..
+#have train & test data
+#select method then it would show you the different error metrics like f1 score, accuracy, precision
+
 
 
