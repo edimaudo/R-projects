@@ -37,7 +37,8 @@ ui <- fluidPage(
     
     # Create a spot for the barplot
     mainPanel(
-      plotOutput("ageSex")  
+      plotOutput("ageSex"),
+      plotOutput("heightWeight")
     )
     
   )
@@ -48,17 +49,24 @@ ui <- fluidPage(
 # Define a server for the Shiny app
 server <- function(output,input){
 
-
     output$ageSex <- renderPlot({
-      
-      #get the data
       graphdata <- newdata %>%
         filter(Country %in% input$nameInfo)
-      
       ggplot(data=graphdata, aes(x=Age, na.rm=TRUE)) + geom_bar(aes(fill = Sex)) + xlab("Age") + 
         ggtitle("Age Vs Sex") + theme_bw()
 
     })
+    
+    output$heightWeight <- renderPlot({
+      graphdata <- newdata %>%
+        filter(Country %in% input$nameInfo)
+      ggplot(data=graphdata, aes(x=Height, y=Weight)) +
+        geom_point() + xlab("Height") + ylab("Weight") + 
+        ggtitle("Weight Vs Height") + theme_bw()
+      
+    })
+    
+    
   
 }
 
