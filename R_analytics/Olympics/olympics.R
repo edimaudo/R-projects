@@ -5,7 +5,7 @@
 rm(list=ls())
 
 #packages
-packages <- c("dplyr","ggplot2",'factoextra','FactoMineR')
+packages <- c("dplyr","ggplot2",'caret','mlbench')
 
 #load packages
 for (package in packages) {
@@ -50,7 +50,7 @@ ggplot(df_filtered_medal, aes(x=Sport , na.rm=TRUE)) + geom_bar(aes(fill = Medal
 
 ##(GDP/Population/Country) to do a regression/clustering model to 
 #predict/visualise on results for (summer 2020) olympics..
-#have train & test data
+#have train & test datai
 #select method then it would show you the different error metrics like f1 score, accuracy, precision
 
 
