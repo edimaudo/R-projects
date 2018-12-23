@@ -40,7 +40,8 @@ ui <- fluidPage(
       plotOutput("ageSex"),
       plotOutput("heightWeight"),
       plotOutput("medalCount"),
-      plotOutput('gameMedalCount')
+      plotOutput('gameMedalCount'), 
+      plotOutput("sportMedalCount")
     )
     
   )
@@ -85,6 +86,16 @@ server <- function(output,input){
       ggplot(graphdata, aes(x=factor(Games) , na.rm=TRUE)) + geom_bar(aes(fill = Medal)) + 
         xlab("Olympic games") + 
         ggtitle("Games Medal count") + theme_bw()
+    })
+    
+    output$sportMedalCount <- renderPlot({
+      graphdata <- newdata %>%
+        filter(Country %in% input$nameInfo)
+      graphdata <- graphdata %>%
+        filter(Medal != "NA")
+      ggplot(data=graphdata, aes(x=Sport , na.rm=TRUE)) + geom_bar(aes(fill = Medal)) + 
+        ylab("Sport events") + 
+        ggtitle("Sport Medal count") + theme_bw()
     })
     
     
