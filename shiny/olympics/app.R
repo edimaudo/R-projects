@@ -14,11 +14,11 @@ for (package in packages) {
 file_path <- "Olympics.csv"
 olympics <- read.csv(file_path)
 
-country <- unique(olympics$Country)
+newdata <- olympics[order(olympics$Country),] 
 
-#filter for one country - #select country
-#df_filtered <- df %>%
-#  dplyr::filter(Country == "Norway")
+country <- unique(newdata$Country)
+
+
 
 # Use a fluid Bootstrap layout
 ui <- fluidPage(    
@@ -31,8 +31,8 @@ ui <- fluidPage(
     
     # Define the sidebar with one input
     sidebarPanel(
-      selectInput("country", "Country:", 
-                  choices=colnames(country))
+      selectInput("nameInfo", "Country:", 
+                  choices=country)
     ),
     
     # Create a spot for the barplot
@@ -48,9 +48,14 @@ ui <- fluidPage(
 # Define a server for the Shiny app
 server <- function(output,input){
 
-    # Fill in the spot we created for a plot
+
     output$ageSex <- renderPlot({
-      ggplot(data=olympics, aes(x=Age, na.rm=TRUE)) + geom_bar(aes(fill = Sex)) + xlab("Age") + 
+      
+      #get the data
+      graphdata <- newdata %>%
+        filter(Country %in% input$nameInfo)
+      
+      ggplot(data=graphdata, aes(x=Age, na.rm=TRUE)) + geom_bar(aes(fill = Sex)) + xlab("Age") + 
         ggtitle("Age Vs Sex") + theme_bw()
 
     })
