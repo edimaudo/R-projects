@@ -38,7 +38,8 @@ ui <- fluidPage(
     # Create a spot for the barplot
     mainPanel(
       plotOutput("ageSex"),
-      plotOutput("heightWeight")
+      plotOutput("heightWeight"),
+      plotOutput("medalCount")
     )
     
   )
@@ -64,6 +65,15 @@ server <- function(output,input){
         geom_point() + xlab("Height") + ylab("Weight") + 
         ggtitle("Weight Vs Height") + theme_bw()
       
+    })
+    
+    output$medalCount <- renderPlot({
+      graphdata <- newdata %>%
+        filter(Country %in% input$nameInfo)
+      graphdata <- graphdata %>%
+        filter(Medal != "NA")
+      ggplot(data=graphdata, aes(x=Medal, na.rm=TRUE)) + geom_bar() + xlab("Medals") +
+        ggtitle("Medal Count by podium finish") + theme_bw()
     })
     
     
