@@ -24,6 +24,7 @@ training_scores <- predict(tree_classifier, train)
 roc_curve <- roc(predictions = training_scores[,2], labels = y_train)
 auc(roc_curve)
 plot(roc_curve$fpr, roc_curve$tpr, lwd = 2, col = "blue", type = "b", las = 1)
+test_scores <- predict(tree_classifier, X_test)
 
 train <- cbind(train, y_train)
 
