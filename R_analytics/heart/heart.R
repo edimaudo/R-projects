@@ -2,14 +2,10 @@
 #predict the presence or absence of heart disease given various data 
 #about a patient, including resting blood pressure, maximum heart rate, and EKG readings, 
 #as well as other information like age and sex.
-
-c('age','sex','chest_pain_type','resting_blood_pressure',"serum_cholestrol",'fasting_blood_sugar',
-  'resting_ecg',"max_heart","exercise_angina",'oldpeak','slope_peak_exercise','major_vessels',
-  'thal','disease')
 #data description
 # Attribute Information:
-#   ------------------------
-#   -- 1. age       
+# ------------------------
+# -- 1. age       
 # -- 2. sex       
 # -- 3. chest pain type  (4 values)       
 # -- 4. resting blood pressure  
