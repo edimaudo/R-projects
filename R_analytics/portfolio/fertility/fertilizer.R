@@ -16,6 +16,10 @@ df <- read.table(file.choose(),sep=",") #"breast-cancer-wisconsin.data",header=F
 #summary statisitcs
 summary(df)
 
+#check for missing data
+missing_data <- apply(df, 2, function(x) any(is.na(x))) #no missing data
+print(missing_data)
+
 #rename the columns
 
 #recode columns
