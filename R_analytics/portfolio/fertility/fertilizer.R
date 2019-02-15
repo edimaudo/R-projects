@@ -25,6 +25,11 @@ colnames(df) <- c('Season','Age','Diseases','Accidents','Surgical_intervention',
                   'Frequency of alcohol consumption','Smoking_Habit','Number_of_hours_spent_sitting','Output')
 
 #recode columns
+df$Output <- as.integer(recode_factor(df$Output, "N" = "1","O" = "2"))
+
+
+
+#normalize columns
 
 #set seed
 
