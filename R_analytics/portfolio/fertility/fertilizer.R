@@ -11,7 +11,7 @@ for (package in packages) {
   }
 }
 #load data
-df <- read.table(file.choose(),sep=",") #"breast-cancer-wisconsin.data",header=F,sep=",",stringsAsFactors=F)
+df <- read.table(file.choose(),sep=",")
 
 #summary statisitcs
 summary(df)
@@ -21,6 +21,8 @@ missing_data <- apply(df, 2, function(x) any(is.na(x))) #no missing data
 print(missing_data)
 
 #rename the columns
+colnames(df) <- c('Season','Age','Diseases','Accidents','Surgical_intervention','High_fevers_in_last_year',
+                  'Frequency of alcohol consumption','Smoking_Habit','Number_of_hours_spent_sitting','Output')
 
 #recode columns
 
