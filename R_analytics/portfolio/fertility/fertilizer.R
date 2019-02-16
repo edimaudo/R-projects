@@ -49,16 +49,26 @@ results <- resamples(list(logistic = fit.glm, svm = fit.svm, randomforest = fit.
 summary(results)
 
 #-----------------
-#updated prediction
+#updated predictions
 #-----------------
+df_output <- df$Output
+
+df_categorical <- df %>%
+  select()
+
+df_continuous <- df %>%
+  select()
 
 #one hot encode columns
 library(dummies)
 
-df_categorical <- df[c(3,4,5,6,8),]
-
 #normalize columns
+#normalize data
+normalize <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x)))
+}
 
+df_continuous <- as.data.frame(lapply(df_continuous, normalize))
 
 #create models
 
