@@ -1,8 +1,7 @@
 #remove old data
 rm(list=ls())
 #packages
-packages <- c('ggplot2', 'corrplot','tidyverse','caret','mlbench','mice', 'caTools', 
-              'MASS','Metrics','randomForest','lars','xgboost','Matrix','methods','readxl')
+packages <- c('ggplot2', 'corrplot','tidyverse','caret','mlbench','mice', 'caTools')
 #load packages
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
@@ -54,13 +53,14 @@ summary(results)
 df_output <- df$Output
 
 df_categorical <- df %>%
-  select()
+  dplyr::select(Diseases,Accidents,Surgical_intervention,High_fevers_in_last_year,Smoking_Habit)
 
 df_continuous <- df %>%
-  select()
+  dplyr::select(Season ,Age,`Frequency of alcohol consumption`,Number_of_hours_spent_sitting)
 
 #one hot encode columns
 library(dummies)
+df_category.new <- dummy.data.frame(as.data.frame(df_categorical), sep = "_")
 
 #normalize columns
 #normalize data
@@ -70,12 +70,15 @@ normalize <- function(x) {
 
 df_continuous <- as.data.frame(lapply(df_continuous, normalize))
 
-#create models
-
-#check best model
+#combine data
 
 #update model by remove redundant columns
 
 #create models
 
-#
+#check best model
+
+
+
+
+
