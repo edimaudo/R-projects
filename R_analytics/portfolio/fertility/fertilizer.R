@@ -25,15 +25,40 @@ colnames(df) <- c('Season','Age','Diseases','Accidents','Surgical_intervention',
                   'Frequency of alcohol consumption','Smoking_Habit','Number_of_hours_spent_sitting','Output')
 
 #recode columns
-df$Output <- as.integer(recode_factor(df$Output, "N" = "1","O" = "2"))
+df$Output <- recode_factor(df$Output, "N" = "1","O" = "2")
 
+#--------------------
+#initial prediction
+#--------------------
+set.seed(123)
+#cross fold validation
+control <- trainControl(method="repeatedcv", number=10, repeats=3)
+#logistic regression
+fit.glm <- train(Output~., data=df, method="glm", trControl=control)
+#svm
+fit.svm <- train(Output~., data=df, method="svmRadial", trControl=control)
+#random forest
+fit.rf <- train(Output~., data=df, method="rf", trControl=control)
+#boosting algorithm - Stochastic Gradient Boosting (Generalized Boosted Modeling)
+fit.gbm <- train(Output~., data=df, method="gbm", trControl=control)
 
+#------------------
+#compare models
+#------------------
+results <- resamples(list(logistic = fit.glm, svm = fit.svm, randomforest = fit.rf, gradboost = fit.gbm))
+summary(results)
+
+#-----------------
+#updated prediction
+#-----------------
+
+#one hot encode columns
+library(dummies)
+
+df_categorical <- df[c(3,4,5,6,8),]
 
 #normalize columns
 
-#set seed
-
-#split into train and test
 
 #create models
 
