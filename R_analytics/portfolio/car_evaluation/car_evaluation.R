@@ -119,3 +119,7 @@ summary(results)
 bwplot(results)
 # Dot-plot comparison
 dotplot(results)
+
+#use of test data
+test_scores <- predict(fit.gbm, test)
+confusionMatrix(test_scores, test$class)
