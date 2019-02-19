@@ -60,7 +60,7 @@ fit.gbm <- train(class~., data=train, method="gbm", trControl=control)
 #------------------
 #compare models
 #------------------
-results <- resamples(list(cart = fit.cart, 
+results <- resamples(list(cart = fit.cart, lda = fit.lda,
                           svm = fit.svm, randomforest = fit.rf, 
                           baggedcart = fit.treebag, gradboost = fit.gbm))
 summary(results)
@@ -70,8 +70,12 @@ bwplot(results)
 # Dot-plot comparison
 dotplot(results)
 
+#use test data
+test_scores <- predict(fit.gbm, test)
+confusionMatrix(test_scores, test$class)
 
 
+#see if new model can produce better outcomes
 class <- df$class
 
 df_categorical <- df %>%
@@ -83,17 +87,31 @@ df_cat_new <-  dummy.data.frame(df_categorical, sep = "_")
 
 df_new <- cbind(df_cat_new, class)
 
+#remove unncessary columns
+library(corrplot)
+#update model by remove redundant columns
+# # calculate correlation matrix
+correlationMatrix <- cor(df_new[,1:21])
+# # summarize the correlation matrix
+# print(correlationMatrix)
+# # find attributes that are highly corrected (ideally >0.75)
+highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.75)
+# # print indexes of highly correlated attributes
+print(highlyCorrelated)
+
+#drop columns
+#df_new <- df_new[,-c(highlyCorrelated)]
+
 #-----------
 #new prediction
 #-----------
+#split data into train and test
 sample <- sample.split(df_new,SplitRatio = 0.75)
 train <- subset(df_new,sample ==TRUE)
 test <- subset(df_new, sample==FALSE)
 
 #cross fold validation
 control <- trainControl(method="repeatedcv", number=10, repeats=3)
-#logistic regression
-fit.glm <- train(class~., data=train, method="glm", trControl=control)
 #decision trees
 fit.cart <- train(class~., data=train, method="rpart", trControl=control)
 #LDA
@@ -110,7 +128,7 @@ fit.gbm <- train(class~., data=train, method="gbm", trControl=control)
 #------------------
 #compare models
 #------------------
-results <- resamples(list(cart = fit.cart, 
+results <- resamples(list(cart = fit.cart, lda = fit.lda,
                           svm = fit.svm, randomforest = fit.rf, 
                           baggedcart = fit.treebag, gradboost = fit.gbm))
 summary(results)
