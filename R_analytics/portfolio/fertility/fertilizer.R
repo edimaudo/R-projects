@@ -26,6 +26,11 @@ colnames(df) <- c('Season','Age','Diseases','Accidents','Surgical_intervention',
 #recode columns
 df$Output <- recode_factor(df$Output, "N" = "1","O" = "2")
 
+#split into train and test
+sample <- sample.split(df,SplitRatio = 0.75)
+train <- subset(df,sample ==TRUE)
+test <- subset(df, sample==FALSE)
+
 #--------------------
 #initial prediction
 #--------------------
@@ -33,19 +38,24 @@ set.seed(123)
 #cross fold validation
 control <- trainControl(method="repeatedcv", number=10, repeats=3)
 #logistic regression
-fit.glm <- train(Output~., data=df, method="glm", trControl=control)
+fit.glm <- train(Output~., data=train, method="glm", trControl=control)
 #svm
-fit.svm <- train(Output~., data=df, method="svmRadial", trControl=control)
+fit.svm <- train(Output~., data=train, method="svmRadial", trControl=control)
 #random forest
-fit.rf <- train(Output~., data=df, method="rf", trControl=control)
+fit.rf <- train(Output~., data=train, method="rf", trControl=control)
 #boosting algorithm - Stochastic Gradient Boosting (Generalized Boosted Modeling)
-fit.gbm <- train(Output~., data=df, method="gbm", trControl=control)
+fit.gbm <- train(Output~., data=train, method="gbm", trControl=control)
 
 #------------------
 #compare models
 #------------------
-results <- resamples(list(logistic = fit.glm, svm = fit.svm, randomforest = fit.rf, gradboost = fit.gbm))
+results <- resamples(list(logistic = fit.glm, svm = fit.svm, 
+                          randomforest = fit.rf, gradboost = fit.gbm))
 summary(results)
+
+#apply model on test data
+test_scores <- predict(fit.gbm, test)
+confusionMatrix(test_scores, test$Output)
 
 #-----------------
 #updated modeling
@@ -93,17 +103,22 @@ print(highlyCorrelated)
 #drop columns
 df_new <- df_new[,-c(highlyCorrelated)]
 
+#split into train and test
+sample <- sample.split(df_new,SplitRatio = 0.75)
+train <- subset(df_new,sample ==TRUE)
+test <- subset(df_new, sample==FALSE)
+
 #create models
 #cross fold validation
 control <- trainControl(method="repeatedcv", number=10, repeats=3)
 #logistic regression
-fit.glm <- train(Output~., data=df_new, method="glm", trControl=control)
+fit.glm <- train(Output~., data=train, method="glm", trControl=control)
 #svm
-fit.svm <- train(Output~., data=df_new, method="svmRadial", trControl=control)
+fit.svm <- train(Output~., data=train, method="svmRadial", trControl=control)
 #random forest
-fit.rf <- train(Output~., data=df_new, method="rf", trControl=control)
+fit.rf <- train(Output~., data=train, method="rf", trControl=control)
 #boosting algorithm - Stochastic Gradient Boosting (Generalized Boosted Modeling)
-fit.gbm <- train(Output~., data=df_new, method="gbm", trControl=control)
+fit.gbm <- train(Output~., data=train, method="gbm", trControl=control)
 
 #------------------
 #compare models
@@ -111,7 +126,10 @@ fit.gbm <- train(Output~., data=df_new, method="gbm", trControl=control)
 results <- resamples(list(logistic = fit.glm, svm = fit.svm, randomforest = fit.rf, gradboost = fit.gbm))
 summary(results)
 
-#seems like our initial model worked just fine - using svm
+#use of test data
+test_scores <- predict(fit.gbm, test)
+confusionMatrix(test_scores, test$Output)
+
 
 
 
