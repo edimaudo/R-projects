@@ -139,5 +139,5 @@ bwplot(results)
 dotplot(results)
 
 #use of test data
-test_scores <- predict(fit.gbm, test)
+test_scores <- predict(fit.rf, test)
 confusionMatrix(test_scores, test$class)
