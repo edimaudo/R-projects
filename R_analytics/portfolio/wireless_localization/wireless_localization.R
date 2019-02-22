@@ -46,7 +46,7 @@ resultdata <- function(control, train){
   #bagged cart
   fit.treebag <- train(room~., data=train, method="treebag", trControl=control)
   #boosting algorithm - Stochastic Gradient Boosting (Generalized Boosted Modeling)
-  fit.gbm <- train(class~., data=train, method="gbm", trControl=control)
+  fit.gbm <- train(room~., data=train, method="gbm", trControl=control)
   
   #------------------
   #compare models
@@ -77,5 +77,5 @@ dotplot(results)
 #use test data
 fit.gbm <- train(room~., data=train, method="gbm", trControl=control)
 test_scores <- predict(fit.gbm, test)
-confusionMatrix(test_scores, test$class)
+confusionMatrix(test_scores, test$room)
 
