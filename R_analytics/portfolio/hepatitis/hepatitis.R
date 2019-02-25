@@ -28,8 +28,48 @@ df$protime[df$protime == '?'] <- NA
 
 df <- na.omit(df)
 
+#normalize
+normalize <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x)))
+}
+
 #recode histology
 df$histology <- as.factor(df$histology)
+histology <- df$histology
+
+df_cts <- df %>%
+  select('age','bilrubin','alk_phosphates','sgot',
+         'albumin','protime')
+
+df_cts <-  as.data.frame(lapply(df_cts, normalize))
+
+df_categories <- df %>%
+  select ('class','sex', 'steroid',
+          'antivirals','fatigue','malaise',
+          'anorexia','liver_big','liver_firm',
+          'spleen_palpable','spiders','ascites',
+          'varices','albumin')
+
+df_category_new <- dummy.data.frame(as.data.frame(df_categories), sep = "_")
+
+df_new <- rbind(df_category_new, df_cts, histology)
+
+#fine tune model
+# # calculate correlation matrix
+correlationMatrix <- cor(df_final[,1:26])
+# # summarize the correlation matrix
+# print(correlationMatrix)
+# # find attributes that are highly corrected (ideally >0.75)
+highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.75)
+# # print indexes of highly correlated attributes
+print(highlyCorrelated)
+
+df_new <- df_new[,-c(highlyCorrelated)]
+
+#split data into train and test
+sample <- sample.split(df_new,SplitRatio = 0.75)
+train <- subset(df_new,sample ==TRUE)
+test <- subset(df_new, sample==FALSE)
 
 resultdata <- function(control, train){
   set.seed(123)
@@ -50,16 +90,4 @@ resultdata <- function(control, train){
   return (results)
 }
 
-#normalize
-normalize <- function(x) {
-  return ((x - min(x)) / (max(x) - min(x)))
-}
 
-df_categories <- df %>%
-  select (')
-
-c("class",'age','sex',"steroid",'antivirals',
-  'fatigue','malaise','anorexia','liver_big',
-  "liver_firm",'spleen_palpable','spiders',
-  'ascites','varices','bilrubin','alk_phosphates',
-  'sgot','albumin','protime','histology')
