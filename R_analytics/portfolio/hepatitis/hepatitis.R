@@ -78,21 +78,31 @@ test <- subset(df_new, sample==FALSE)
 
 resultdata <- function(control, train){
   set.seed(123)
-  #LDA
-  fit.lda <- train(Glass~., data=train, method="lda", trControl=control)
-  #svm
-  fit.svm <- train(Glass~., data=train, method="svmRadial", trControl=control)
   #random forest
-  fit.rf <- train(Glass~., data=train, method="rf", trControl=control)
+  fit.rf <- train(histology~., data=train, method="rf", trControl=control)
   #boosting algorithm - Stochastic Gradient Boosting (Generalized Boosted Modeling)
-  fit.gbm <- train(Glass~., data=train, method="gbm", trControl=control)
+  fit.gbm <- train(histology~., data=train, method="gbm", trControl=control)
   
   #------------------
   #compare models
   #------------------
-  results <- resamples(list(lda = fit.lda,svm = fit.svm, randomforest = fit.rf, gradboost = fit.gbm))
+  results <- resamples(list(randomforest = fit.rf, gradboost = fit.gbm))
   
   return (results)
 }
 
+#cross fold validation
+control <- trainControl(method="repeatedcv", number=10, repeats=3)
+results <- resultdata(control, train)
 
+summary(results)
+
+# boxplot comparison
+bwplot(results)
+# Dot-plot comparison
+dotplot(results)
+
+#use test data
+fit.gbm <- train(histology~., data=train, method="gbm", trControl=control)
+test_scores <- predict(fit.gbm, test)
+confusionMatrix(test_scores, test$histology)
