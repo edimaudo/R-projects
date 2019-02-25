@@ -38,13 +38,18 @@ df$histology <- as.factor(df$histology)
 histology <- df$histology
 
 df_cts <- df %>%
-  select('age','bilrubin','alk_phosphates','sgot',
-         'albumin','protime')
+  dplyr::select('age','bilrubin','alk_phosphates','sgot','albumin','protime')
+
+df_cts$bilrubin <- as.double(df_cts$bilrubin)
+df_cts$alk_phosphates <- as.double(df_cts$alk_phosphates)
+df_cts$sgot <- as.double(df_cts$sgot)
+df_cts$albumin <- as.double(df_cts$albumin)
+df_cts$protime <- as.double(df_cts$protime)
 
 df_cts <-  as.data.frame(lapply(df_cts, normalize))
 
 df_categories <- df %>%
-  select ('class','sex', 'steroid',
+  dplyr::select ('class','sex', 'steroid',
           'antivirals','fatigue','malaise',
           'anorexia','liver_big','liver_firm',
           'spleen_palpable','spiders','ascites',
@@ -52,11 +57,11 @@ df_categories <- df %>%
 
 df_category_new <- dummy.data.frame(as.data.frame(df_categories), sep = "_")
 
-df_new <- rbind(df_category_new, df_cts, histology)
+df_new <- cbind(df_category_new, df_cts, histology)
 
 #fine tune model
 # # calculate correlation matrix
-correlationMatrix <- cor(df_final[,1:26])
+correlationMatrix <- cor(df_new[,1:62])
 # # summarize the correlation matrix
 # print(correlationMatrix)
 # # find attributes that are highly corrected (ideally >0.75)
