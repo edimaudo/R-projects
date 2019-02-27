@@ -59,3 +59,12 @@ summary(results)
 bwplot(results)
 # Dot-plot comparison
 dotplot(results)
+
+pred1 <- predict(fit, newdata = test)
+mae <- function(error)
+{
+  mean(abs(error))
+}
+error <- pred1 - test$Target
+MAE <- mae(error)
+R2=summary(fit)$r.squared
