@@ -38,33 +38,23 @@ print(highlyCorrelated)
 df <- df[,-c(highlyCorrelated)]
 
 #split into train and test
+set.seed(123)
 sample <- sample.split(df,SplitRatio = 0.75)
 train <- subset(df,sample ==TRUE)
 test <- subset(df, sample==FALSE)
 
 control <- trainControl(method="repeatedcv", number=10, repeats=3)
-#random forest
-fit.rf <- train(shares~., data=train, method="rf", trControl=control)
-#bagged cart
-fit.treebag <- train(shares~., data=train, method="treebag", trControl=control)
 #boosting algorithm - Stochastic Gradient Boosting (Generalized Boosted Modeling)
 fit.gbm <- train(shares~., data=train, method="gbm", trControl=control)
 
-results <- resamples(list(randomforest = fit.rf, 
-                          baggedcart = fit.treebag, gradboost = fit.gbm))
 
-summary(results)
-
-# boxplot comparison
-bwplot(results)
-# Dot-plot comparison
-dotplot(results)
-
-pred1 <- predict(fit, newdata = test)
+pred1 <- predict(fit.gbm, newdata = test)
 mae <- function(error)
 {
   mean(abs(error))
 }
-error <- pred1 - test$Target
+error <- pred1 - test$shares
 MAE <- mae(error)
-R2=summary(fit)$r.squared
+R2=summary(fit.gbm)$r.squared
+
+
