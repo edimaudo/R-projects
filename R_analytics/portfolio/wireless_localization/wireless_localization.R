@@ -23,7 +23,7 @@ names(df) <- c("wifi1", "wifi2", "wifi3","wifi4","wifi5","wifi6", "wifi7","room"
 missing_data <- apply(df, 2, function(x) any(is.na(x))) #no missing data
 print(missing_data)
 
-#factor class column
+#factor room column
 df$room <- as.factor(df$room)
 
 #normalize data
