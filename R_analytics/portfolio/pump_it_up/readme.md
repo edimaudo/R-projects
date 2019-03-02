@@ -1,0 +1,2 @@
+Using data from Taarifa and the Tanzanian Ministry of Water, can you predict which pumps are functional, which need some repairs, and which don't work at all? 
+Predict one of these three classes based on a number of variables about what kind of pump is operating, when it was installed, and how it is managed.
