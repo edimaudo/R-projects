@@ -23,9 +23,13 @@ summary(df)
 df.backup <- df
 
 #check for missing data
+missing_data <- apply(df, 2, function(x) any(is.na(x))) #no missing data
+print(missing_data)
 
 #check for balance
-#ggplot(df,aes(x=as.factor(TNPS_Answer_NLP))) + geom_bar()
+ggplot(df,aes(x=as.factor(TNPS_Answer_NLP))) + geom_bar() #data is unbalanced
+
+#rebalance the data
 
 
 #cts data
