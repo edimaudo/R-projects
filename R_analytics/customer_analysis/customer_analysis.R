@@ -30,7 +30,17 @@ print(missing_data)
 ggplot(df,aes(x=as.factor(TNPS_Answer_NLP))) + geom_bar() #data is unbalanced
 
 #rebalance the data
+df[1] <- NULL
+n<-ncol(df)
+output<- df$TNPS_Answer_NLP
+output<-as.factor(output)
+input<- df[ ,-c(2)]
+input$TNPS_date <- as.character(input$TNPS_date)
+View(input)
 
+#Balance the Dataset using ubSMOTE#
+data<-ubBalance(X= input, Y=output, type="ubSMOTE", percOver=300, percUnder=150, verbose=TRUE)
+View(data)
 
 #cts data
 
