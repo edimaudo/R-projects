@@ -60,9 +60,9 @@ control <- trainControl(method="repeatedcv", number=10, repeats=3)
 
 #modelnames <- paste(names(getModelInfo()), collapse=',  ') #get model names
 #adaboost
-fit.adaboost <- train(Target~., data=train, method="adaboost", trControl=control)
+#fit.adaboost <- train(Target~., data=train, method="adaboost", trControl=control)
 #adabag
-fit.adabag <- train(Target~., data=train, method="adaBag", trControl=control)
+#fit.adabag <- train(Target~., data=train, method="adaBag", trControl=control)
 #random forest
 fit.rf <- train(Target~., data=train, method="rf", trControl=control)
 #boosting algorithm - Stochastic Gradient Boosting (Generalized Boosted Modeling)
@@ -75,8 +75,7 @@ fit.gbmh2o <- train(Target~., data=train, method="gbm_h2o", trControl=control)
 #------------------
 #compare models
 #------------------
-results <- resamples(list(adaboost = fit.adaboost,adabag = fit.adabag,
-                          randomforest = fit.rf, gradboost = fit.gbm, svm = fit.svm, gbmh2o <- fit.gbmh2o))
+results <- resamples(list(randomforest = fit.rf, gradboost = fit.gbm, svm = fit.svm))
 
 summary(results)
 # boxplot comparison
