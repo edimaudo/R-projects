@@ -62,5 +62,32 @@ print(highlyCorrelated)
 
 df_new <- df_new[,-c(highlyCorrelated)]
 
+#split data
+set.seed(123)
+sample <- sample.split(df_new,SplitRatio = 0.75)
+train <- subset(df_new,sample ==TRUE)
+test <- subset(df_new, sample==FALSE)
 
+#cross fold validation
+control <- trainControl(method="repeatedcv", number=10, repeats=3)
 
+#random forest
+fit.rf <- train(Target~., data=train, method="rf", trControl=control)
+#boosting algorithm - Stochastic Gradient Boosting (Generalized Boosted Modeling)
+fit.gbm <- train(Target~., data=train, method="gbm", trControl=control)
+#svm
+fit.svm <- train(Target~., data=train, method="svmRadial", trControl=control)
+
+#------------------
+#compare models
+#------------------
+results <- resamples(list(gradboost = fit.gbm))
+
+summary(fit.gbm)
+# boxplot comparison
+bwplot(results)
+# Dot-plot comparison
+dotplot(results)
+
+test_scores <- predict(fit.gbm, test)
+confusionMatrix(test_scores, test$Target)
