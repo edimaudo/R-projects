@@ -69,19 +69,14 @@ test <- subset(df_new, sample==FALSE)
 #cross fold validation
 control <- trainControl(method="repeatedcv", number=10, repeats=3)
 
-#modelnames <- paste(names(getModelInfo()), collapse=',  ') #get model names
-#adaboost
-#fit.adaboost <- train(Target~., data=train, method="adaboost", trControl=control)
-#adabag
-#fit.adabag <- train(Target~., data=train, method="adaBag", trControl=control)
+
 #random forest
 fit.rf <- train(Target~., data=train, method="rf", trControl=control)
 #boosting algorithm - Stochastic Gradient Boosting (Generalized Boosted Modeling)
 fit.gbm <- train(Target~., data=train, method="gbm", trControl=control)
 #svm
 fit.svm <- train(Target~., data=train, method="svmRadial", trControl=control)
-#gbm h20
-fit.gbmh2o <- train(Target~., data=train, method="gbm_h2o", trControl=control)
+
 
 #------------------
 #compare models
