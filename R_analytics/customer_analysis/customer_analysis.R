@@ -13,7 +13,7 @@ for (package in packages) {
 }
 
 #load data
-df <- read_excel(file.choose()) #data3
+df <- read_excel(file.choose()) #main in customer analysis folder
 
 glimpse(df)
 
@@ -30,7 +30,7 @@ print(missing_data)
 ggplot(df,aes(x=as.factor(TNPS_Answer_NLP))) + geom_bar() #data is unbalanced
 
 #data cleanup
-#remove first column
+#remove user id
 df[1] <- NULL
 
 #get month from data
@@ -38,36 +38,17 @@ df$TNPS_date <- as.Date(df$TNPS_date)
 df$month <- months(df$TNPS_date)
 df$TNPS_date <- NULL
 
+#target data - #TNPS_ANSWER_NLP
 Target <- df$TNPS_Answer_NLP
-
 df$TNPS_Answer_NLP <- NULL
 
+#categorical data
 df_cat <- df[,c()]
-df_cts <- df[, -df_cat] 
-
-
-# 
-# n<-ncol(df)
-# output<- df$TNPS_Answer_NLP
-# output<-as.factor(output)
-# input<- df[ ,-c(2)]
-# input$TNPS_date <- as.character(input$TNPS_date)
-# View(input)
-# 
-# #Balance the Dataset using ubSMOTE#
-# data<-ubBalance(X= input, Y=output, type="ubSMOTE", percOver=300, percUnder=150, verbose=TRUE)
-# View(data)
-
-#rebalance data
-
 
 #cts data
 
 #normalize cts data
-
-#categorical data
-
-#target data - #TNPS_ANSWER_NLP
+df_cts <- df[, -df_cat] 
 
 #combine columns
 
