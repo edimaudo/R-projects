@@ -42,10 +42,23 @@ df$TNPS_date <- NULL
 Target <- df$TNPS_Answer_NLP
 df$TNPS_Answer_NLP <- NULL
 
+#drop columns
+df$PRICE_PLAN_CODE <- NULL
+df$rateplan_name <- NULL
+df$activation_district <- NULL
+df$activation_region  <- NULL
+df$last_transaction_district  <- NULL
+df$last_transaction_region <- NULL
+
+
+
 #categorical data
-df_cat <- df[,c()]
+
+val <- c(1)
+df_cat <- df[,val]
 
 #cts data
+df_cts <- df[,-val]
 
 #normalize cts data
 df_cts <- df[, -df_cat] 
