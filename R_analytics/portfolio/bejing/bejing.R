@@ -14,8 +14,9 @@ df <- read.csv(file.choose(), header = TRUE) #bejing data
 
 glimpse(df)
 
-#colnames(df) <- c("No",'Year',"Month","Day","Hour","PM25","dwep",'temp','pres','cbwd',
-#                  'lws','lr','ls')
+colnames(df) <- c("No",'Year',"Month","Day","Hour","PM25","dwep",'temp','pres','cbwd',
+                  'lws','lr','ls')
+
 
 df.backup <- df
 
@@ -30,21 +31,17 @@ Target <- df$PM25
 df$PM25 <- NULL
 
 #categorical variables
-df_cat <- df[,c(9)]
+df_cat <- df[,c(8)]
 #df_cat <- lapply(df_cat, function(x) as.factor(as.character(x)))
 df_cat_new <- dummy.data.frame(as.data.frame(df_cat), sep = "_")
-df <- df[,-c(9)]
+df <- df[,-c(8)]
 
 #CTS variables
-
-
-
-
 #normalize data
 normalize <- function(x) {
   return ((x - min(x)) / (max(x) - min(x)))
 }
-df_cts <- df[,3:12]
-df_cts <- as.data.frame(lapply(df_cts, normalize))
+df[,c(5,6,8,9,10)] <- as.data.frame(lapply(df[,c(5,6,8,9,10)], normalize))
 
-df <- cbind(df,df_cat)
+df <- cbind(df,df_cat_new,Target)
+
