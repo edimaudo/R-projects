@@ -92,3 +92,5 @@ pred1 <- predict(results, newdata = test)
 error <- pred1 - test$Target
 MAE2 <- mae(error)
 R22=summary(fit)$r.squared
+
+
