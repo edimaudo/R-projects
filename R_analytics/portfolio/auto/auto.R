@@ -24,18 +24,21 @@ summary(df)
 df['car_name'] <- NULL
 
 #one hot encode cylinders, model_year
-df_cat <- df[,c(1:10,12:17,19:20)]
+df_cat <- df[,c(2,7,8)]
 df_cat <- lapply(df_cat, function(x) as.factor(as.character(x)))
 df_cat_new <- dummy.data.frame(as.data.frame(df_cat), sep = "_")
 #drop columns
+df_cat_new[21] <- NULL
+df_cat_new[5] <- NULL
+df_cat_new[4] <- NULL
 
 
 #scale data
 normalize <- function(x) {
   return ((x - min(x)) / (max(x) - min(x)))
 }
-df_cts <- df[,1:8]
-df_cts <- as.data.frame(lapply(df_cts, normalize))
+df_cts <- df[,c(3,4,5,6)]
+df_cts <- as.data.frame(lapply(df_cts, normalize)) <- fix
 
 #combine data
 strength <- as.data.frame(df[,9])
