@@ -72,7 +72,7 @@ mae <- function(error)
 #models lm
 fit <- lm(mpg ~., data=train)
 summary(fit)
-#get accuracy and MSE
+#get accuracy and MAE
 pred1 <- predict(fit, newdata = test)
 
 error <- pred1 - test$mpg
@@ -91,8 +91,7 @@ predictors(results)
 # plot the results
 plot(results, type=c("g", "o"))
 
-#get accuracy and MSE
+#get accuracy and MAE
 pred1 <- predict(results, newdata = test)
 error <- pred1 - test$mpg
 MAE2 <- mae(error)
-R22=summary(fit)$r.squared
