@@ -97,12 +97,50 @@ MAE2 <- mae(error)
 #==================
 #predict cooling
 #==================
+#one hot encode X6,X8
+df_cat <- df[,c(6,8)]
+df_cat <- lapply(df_cat, function(x) as.factor(as.character(x)))
+df_cat_new <- dummy.data.frame(as.data.frame(df_cat), sep = "_")
+#drop columns
+df_cat_new[10] <- NULL
+df_cat_new[4] <- NULL
+
+#scale data
+normalize <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x)))
+}
+df_cts <- df[,c(1,2,3,4,5,7)]
+df_cts <- lapply(df_cts, function(x) as.double(x))
+df_cts <- as.data.frame(lapply(df_cts, normalize))
+
+#combine data
+df_new <- cbind(df_cat_new,df_cts, cold)
+
+#fine tune model
+# # calculate correlation matrix
+correlationMatrix <- cor(df_new[,1:length(df_new)-1])
+# # summarize the correlation matrix
+# print(correlationMatrix)
+# # find attributes that are highly corrected (ideally >0.75)
+highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.75)
+# # print indexes of highly correlated attributes
+print(highlyCorrelated)
+
+df_new <- df_new[,-c(highlyCorrelated)]
+
+#split data
+set.seed(123)
+sample <- sample.split(df_new,SplitRatio = 0.75)
+train <- subset(df_new,sample ==TRUE)
+test <- subset(df_new, sample==FALSE)
+
+
 fit <- lm(Y2 ~., data=train)
 summary(fit)
 #get accuracy and MSE
 pred1 <- predict(fit, newdata = test)
 
-error <- pred1 - test$Y1
+error <- pred1 - test$Y2
 MAE <- mae(error)
 R2=summary(fit)$r.squared
 
