@@ -17,7 +17,7 @@ glimpse(df)
 summary(df)
 
 df.backup <- df
-df <- df.backup
+
 
 #recode y
 df[,21] <- ifelse(df[,21] == "no", "0", "1")
@@ -65,29 +65,29 @@ control <- trainControl(method="repeatedcv", number=10, repeats=3)
 
 #modelnames <- paste(names(getModelInfo()), collapse=',  ') #get model names
 #adaboost
-fit.adaboost <- train(y~., data=train, method="adaboost", trControl=control)
+#fit.adaboost <- train(y~., data=train, method="adaboost", trControl=control)
 #adabag
-fit.adabag <- train(y~., data=train, method="adaBag", trControl=control)
+#fit.adabag <- train(y~., data=train, method="adaBag", trControl=control)
 #random forest
-fit.rf <- train(y~., data=train, method="rf", trControl=control)
+#fit.rf <- train(y~., data=train, method="rf", trControl=control)
 #boosting algorithm - Stochastic Gradient Boosting (Generalized Boosted Modeling)
 fit.gbm <- train(y~., data=train, method="gbm", trControl=control)
 #svm
-fit.svm <- train(y~., data=train, method="svmRadial", trControl=control)
+#fit.svm <- train(y~., data=train, method="svmRadial", trControl=control)
 #gbm h20
-fit.gbmh2o <- train(y~., data=train, method="gbm_h2o", trControl=control)
-
-#------------------
-#compare models
-#------------------
-results <- resamples(list(randomforest = fit.rf, gradboost = fit.gbm, svm = fit.svm))
-
-summary(results)
-# boxplot comparison
-bwplot(results)
-# Dot-plot comparison
-dotplot(results)
+# fit.gbmh2o <- train(y~., data=train, method="gbm_h2o", trControl=control)
+# 
+# #------------------
+# #compare models
+# #------------------
+# results <- resamples(list(gradboost = fit.gbm))
+# 
+# summary(results)
+# # boxplot comparison
+# bwplot(results)
+# # Dot-plot comparison
+# dotplot(results)
 
 test_scores <- predict(fit.gbm, test)
-confusionMatrix(test_scores, test$Target)
+confusionMatrix(test_scores, test$y)
 
