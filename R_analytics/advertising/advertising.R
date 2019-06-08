@@ -24,4 +24,8 @@ print(missing_data)
 #descriptive stats
 summary(df)
 
-#density plot of 
+#density plot of age
+ggplot(df, aes(x=Age)) + 
+  geom_density()
+
+#scatterplot of Daily Time Spent on Site', 'Age','Area Income', 'Daily Internet Usage
