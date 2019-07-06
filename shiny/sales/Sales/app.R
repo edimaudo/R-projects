@@ -12,7 +12,7 @@ for (package in packages) {
 
 #load data
 file_path <- "Sample - Superstore.xls"
-superstore <- readxl(file.choose())
+superstore <- read_excel(file_path)
 
 
 
