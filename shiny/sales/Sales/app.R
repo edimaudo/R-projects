@@ -36,10 +36,9 @@ ui <- fluidPage(
     
     # Create a spot for the barplot
     mainPanel(
-      plotOutput("salesCategory")#,
-      #plotOutput("heightWeight"),
-      #plotOutput('gameMedalCount'), 
-      #plotOutput("sportMedalCount")
+      plotOutput("salesCategory"),
+      plotOutput("salesProfit"),
+      plotOutput('salesSubCategory')
     )
     
   )
@@ -50,12 +49,24 @@ server <- function(input, output) {
   output$salesCategory <- renderPlot({
     graphdata <- newdata %>%
       filter(State %in% input$nameInfo)
-    
     ggplot(data=graphdata, aes(x=Category, y=Sales)) + 
       ggtitle("Sales by Category") + theme_bw()
-
   })
   
+  output$salesProfit <- renderPlot({
+    graphdata <- newdata %>%
+      filter(State %in% input$nameInfo)
+    ggplot(data=graphdata, aes(x=Category, y=Profit)) + 
+      ggtitle("Profit by Category") + theme_bw()    
+  })
+
+  output$salesSubCategory <- renderPlot({
+    graphdata <- newdata %>%
+      filter(State %in% input$nameInfo)
+    ggplot(data=graphdata, aes(x=`Sub-Category`, y=Sales)) + 
+      ggtitle("Sales by Category") + theme_bw()    
+  })  
+
   }
 
 shinyApp(ui, server)
