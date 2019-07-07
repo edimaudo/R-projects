@@ -57,6 +57,7 @@ server <- function(output,input){
         filter(Country %in% input$nameInfo)
       ggplot(data=graphdata, aes(x=Age, na.rm=TRUE)) + geom_bar(aes(fill = Sex)) + xlab("Age") + 
         ggtitle("Age Vs Sex") + theme_bw()
+      
 
     })
     
