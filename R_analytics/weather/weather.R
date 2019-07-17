@@ -41,6 +41,11 @@ X_test <- test[,c(1,2,3,4,5,6,7,8)]
 y_test <- test$y
 
 
+#error message
+#Couldn't import dot_parser, loading of dot files will not be possible.
+#Error: Keras loaded from tensorflow v1.5, however version 1.9 is required. 
+#Please update with tensorflow::install_tensorflow().
+
 #build model 
 model <- keras_model_sequential() 
 
@@ -63,3 +68,22 @@ model %>% fit(
   batch_size = 5,
   validation_split = 0.3
 )
+
+summary(model)
+
+model %>% evaluate(X_test, y_test)
+
+#model loss
+plot(history$metrics$loss, main="Model Loss", xlab = "epoch", ylab="loss", col="orange", type="l")
+lines(history$metrics$val_loss, col="skyblue")
+legend("topright", c("Training","Testing"), col=c("orange", "skyblue"), lty=c(1,1))
+
+#model accuracy
+plot(history$metrics$acc, main="Model Accuracy", xlab = "epoch", ylab="accuracy", col="orange", type="l")
+lines(history$metrics$val_acc, col="skyblue")
+legend("topleft", c("Training","Testing"), col=c("orange", "skyblue"), lty=c(1,1))
+
+#prediction
+predictions <- model %>% predict_classes(X_test)
+
+#load confusion matrix
