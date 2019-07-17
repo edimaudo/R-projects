@@ -16,13 +16,16 @@ df_train <- read.table(file.choose(),sep = ",",header = TRUE)#read.delim(file.ch
 df_test <- read.table(file.choose(),sep = ",",header = TRUE)
 
 #get summary
-
-
-#combine train and test
+summary(df_train)
+summary(df_test)
 
 #remove missing data
+df_train <- na.omit(df_train)
+df_test <- na.omit(df_test)
 
 #drop unncessary columns
+df_train[1] <- NULL
+df_test[1] <- NULL
 
 #recode categorical data
 
