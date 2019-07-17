@@ -17,8 +17,15 @@ df <- read_csv(file.choose())
 glimpse(df)
 
 #check for missing data
+missing_data <- apply(df, 2, function(x) any(is.na(x))) #no missing data
+print(missing_data)
+
+df.backup <- df
 
 #scale data
+df[,c(1,2,3,4,5,6,7)] <- scale(df[,c(1,2,3,4,5,6,7)])
+
+
 
 #set y as factor
 
