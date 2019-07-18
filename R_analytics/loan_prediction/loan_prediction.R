@@ -12,7 +12,7 @@ for (package in packages) {
 }
 
 #load data
-df_train <- read.table(file.choose(),sep = ",",header = TRUE)#read.delim(file.choose(),delim,header = TRUE)
+df_train <- read.table(file.choose(),sep = ",",header = TRUE)
 df_test <- read.table(file.choose(),sep = ",",header = TRUE)
 
 #get summary
@@ -28,4 +28,17 @@ df_train[1] <- NULL
 df_test[1] <- NULL
 
 #recode categorical data
+df_train_cat <- df_train[,c(1,2,3,4,5,11)]
+df_train_cat_new <- dummy.data.frame(as.data.frame(df_train_cat), sep = "_")
 
+df_train_cts <- df_train[,c(6,7,8,9,10)]
+
+Loan_status <- as.factor(df_train$Loan_Status)
+
+df_train_new <- cbind(df_train_cat_new, df_train_cts,Loan_status)
+
+#TEST
+df_test_cat <- df_test[,c(1,2,3,4,5,11)]
+df_test_cat_new <- dummy.data.frame(as.data.frame(df_test_cat), sep = "_")
+df_test_cts <- df_test[,c(6,7,8,9,10)]
+df_test_new <- cbind(df_test_cat_new, df_test_cts)
