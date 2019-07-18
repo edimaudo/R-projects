@@ -87,3 +87,6 @@ legend("topleft", c("Training","Testing"), col=c("orange", "skyblue"), lty=c(1,1
 predictions <- model %>% predict_classes(X_test)
 
 #load confusion matrix
+#table(factor(predictions, levels=min(final.test$Kyphosis_present):max(final.test$Kyphosis_present)),
+#      factor(final.test$Kyphosis_present)))
+                                                                                                           levels=min(final.test$Kyphosis_present):max(final.test$Kyphosis_present)))
