@@ -2,7 +2,9 @@
 rm(list=ls())
 #load libraries
 #packages
-packages <- c("tidyverse",'shiny','shinydashboard')
+packages <- c("tidyverse",'shiny','shinydashboard','ggplot2', 'corrplot','caret','mice', 'caTools',
+              'dummies',
+              'cluster','factoextra','psy','lattice','nFactors','scales','NbClust')
 
 #load packages
 for (package in packages) {
@@ -15,10 +17,12 @@ for (package in packages) {
 options <- c(2,3,4,5,6,7,8,9,10)
 
 #load data
-df_train <- read.table("train.txt",sep = ",",header = TRUE)
-df_test <- read.table("text.txt",sep = ",",header = TRUE)
+file_path <- "train.txt"
+file_path2 <- "test.txt"
+df_train <- read.table(file_path,sep = ",",header = TRUE)
+df_test <- read.table(file_path2,sep = ",",header = TRUE)
 
-#combine train and test
+# #combine train and test
 df_train <- df_train[,c(1:12)]
 df <- rbind(df_train,df_test)
 
