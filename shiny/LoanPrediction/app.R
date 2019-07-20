@@ -25,6 +25,18 @@ df_test <- read.table(file_path2,sep = ",",header = TRUE)
 # #combine train and test
 df_train <- df_train[,c(1:12)]
 df <- rbind(df_train,df_test)
+#delete first column
+df[1] <- NULL
+
+#recode categorical data
+df_cat <- df[,c(1,2,3,4,5,11)]
+df_cat_new <- dummy.data.frame(as.data.frame(df_cat), sep = "_")
+
+df_cts <- df[,c(6,7,8,9,10)]
+
+df_new <- cbind(df_cat_new, df_cts)
+
+df_new <- scale(df_new)
 
 # Use a fluid Bootstrap layout
 ui <- fluidPage(    
@@ -41,13 +53,8 @@ ui <- fluidPage(
                   choices=options)
     ),
     
-    # Create a spot for the barplot
     mainPanel(
-      #plotOutput("ageSex"),
-      #plotOutput("heightWeight"),
-      #plotOutput("medalCount"),
-      #plotOutput('gameMedalCount'), 
-      #plotOutput("sportMedalCount")
+      plotOutput("clustering")
     )
     
   )
@@ -55,6 +62,11 @@ ui <- fluidPage(
 
 
 server <- function(output,input){
+  output$clustering <- renderPlot({
+    main_data <- df_new
+    k = kmeans(main_data, centers = as.numeric(input$nameInfo), nstart = 25) 
+    fviz_cluster(k, geom = "point", data = df_new) + ggtitle("k = " + input$nameInfo)
+  })
   
 }
 
