@@ -4,7 +4,7 @@
 rm(list=ls())
 #packages
 packages <- c('ggplot2', 'corrplot','tidyverse','caret','mlbench','mice', 'caTools','dummies',
-              'lubridate','randomForest')
+              'lubridate','randomForest','gvlma')
 #load packages
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
@@ -99,6 +99,7 @@ summary(reg1)
 #check performance of model
 Prediction_1<- predict(reg1, newdata= test)
 rmse(test$Target - Prediction_1)
+gvlma(reg1)
 
 #random forest model
 reg2<- randomForest(Target~.,data= train)
