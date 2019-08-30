@@ -113,3 +113,50 @@ df_cts <- as.data.frame(lapply(df_cts, normalize))
 
 #combine data frame
 df_new <- cbind(df_cat_new, df_cts,Target)
+
+
+#remove highly correlated columns
+# # calculate correlation matrix
+correlationMatrix <- cor(df_new[,1:length(df_new)-1])
+# # summarize the correlation matrix
+# print(correlationMatrix)
+# # find attributes that are highly corrected (ideally >0.75)
+highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.75)
+# # print indexes of highly correlated attributes
+print(highlyCorrelated)
+
+#split data
+set.seed(123)
+sample <- sample.split(df_new,SplitRatio = 0.75)
+train <- subset(df_new,sample ==TRUE)
+test <- subset(df_new, sample==FALSE)
+
+#cross fold validation
+control <- trainControl(method="repeatedcv", number=10, repeats=5)
+
+
+#random forest
+fit.rf <- train(Target~., data=train, method="rf", trControl=control)
+Stochastic Gradient Boosting (Generalized Boosted Modeling)
+fit.gbm <- train(Target~., data=train, method="gbm", trControl=control)
+#svm
+fit.svm <- train(Target~., data=train, method="svmRadial", trControl=control)
+#nnet
+fit.nnet <- train(Target~., data=train, method="nnet", trControl=control)
+
+
+#------------------
+#compare models
+#------------------
+results <- resamples(list(randomforest = fit.rf, gradboost = fit.gbm, svm = fit.svm, nnet = fit.nnet))
+
+summary(results)
+# boxplot comparison
+bwplot(results)
+# Dot-plot comparison
+dotplot(results)
+
+#use test data
+
+test_scores <- predict(fit.gbm, test)
+confusionMatrix(test_scores, test$Target)
