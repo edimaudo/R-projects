@@ -137,13 +137,12 @@ control <- trainControl(method="repeatedcv", number=10, repeats=5)
 
 #random forest
 fit.rf <- train(Target~., data=train, method="rf", trControl=control)
-Stochastic Gradient Boosting (Generalized Boosted Modeling)
+#Stochastic Gradient Boosting (Generalized Boosted Modeling)
 fit.gbm <- train(Target~., data=train, method="gbm", trControl=control)
 #svm
 fit.svm <- train(Target~., data=train, method="svmRadial", trControl=control)
 #nnet
 fit.nnet <- train(Target~., data=train, method="nnet", trControl=control)
-
 
 #------------------
 #compare models
