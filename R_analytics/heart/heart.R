@@ -66,6 +66,50 @@ names(df) <- c('age','sex','chest_pain_type','resting_blood_pressure',"serum_cho
                'thal','disease')
 
 
+df.backup <- df
+
+summary(df)
+
+glimpse(df)
+
 #check for imbalanced data
 ggplot(data=df, aes(x=factor(disease))) +
-  geom_bar() + theme_classic() + xlab("Number of heart diseases")  
+  geom_bar() + theme_classic() + xlab("Number of heart diseases")  # fairly balanced
+
+#check correlation
+corinfo <- df[,1:13]
+corrplot(cor(corinfo), method="number")
+
+#check for data
+missing_data <- apply(df, 2, function(x) any(is.na(x))) #no missing data
+print(missing_data)
+
+#remove empty data
+df <- na.omit(df)
+
+#normalize data function
+normalize <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x)))
+}
+
+df$disease <- recode_factor(df$disease, "1" = "0", "2" = "1")
+
+Target <- df$disease
+
+#categorical variables
+df_cat <- df[,c(2,3,6,7,9,11,12,13)]
+
+#one hot encoding
+df_cat_new <- dummy.data.frame(as.data.frame(df_cat), sep = "_")
+
+
+#normalize data
+normalize <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x)))
+}
+
+df_cts <- df[,c(1,4,5,8,10)]
+df_cts <- as.data.frame(lapply(df_cts, normalize))
+
+#combine data frame
+df_new <- cbind(df_cat_new, df_cts,Target)
