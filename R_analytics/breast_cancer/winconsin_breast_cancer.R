@@ -10,7 +10,7 @@ for (package in packages) {
   }
 }
 
-df <- read.csv(file.choose(), header = FALSE)
+df <- read.csv(file.choose())
 
 glimpse(df)
 
