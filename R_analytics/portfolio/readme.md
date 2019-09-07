@@ -1,1 +1,0 @@
-Showcase of data science skills using R to solve different business problems
