@@ -144,3 +144,6 @@ plot(aucrf2, ylim=c(0,1), print.thres=TRUE,
      main=paste('Random Forest AUC:',round(aucrf2$auc[[1]],3)),col = 'blue')
 
 #pretty much the same as the original
+
+
+#alternative
