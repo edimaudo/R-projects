@@ -2,7 +2,7 @@
 rm(list=ls())
 #packages 
 packages <- c('ggplot2', 'corrplot','tidyverse','caret','mlbench','mice', 
-              'caTools','dummies','ggfortify)')
+              'caTools','dummies','ggfortify','proxy','reshape2','recommenderlab')
 #load packages
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
@@ -19,17 +19,19 @@ uniqueTitle <- unique(books$bookTitle)
 uniqueAuthor <- unique(books$bookAuthor)
 
 
-movie_recommendation <- function(input,input2,input3) {
-  row_num <- which(movies2[,2] == input)
-  row_num2 <- which(movies2[,2] == input2)
-  row_num3 <- which(movies2[,2] == input3)
+
+
+book_recommendation <- function(input,input2,input3) {
+  row_num <- which(books[,2] == input)
+  row_num2 <- which(books[,2] == input2)
+  row_num3 <- which(books[,2] == input3)
   userSelect <- matrix(NA,8552)
   userSelect[row_num] <- 5 #hard code first selection to rating 5
   userSelect[row_num2] <- 4 #hard code second selection to rating 4
   userSelect[row_num3] <- 3 #hard code third selection to rating 3
   userSelect <- t(userSelect)
   
-  ratingmat <- dcast(ratings, userId~movieId, value.var = "rating", na.rm=FALSE)
+  ratingmat <- dcast(ratings, userID~ISBN, value.var = "bookRating", na.rm=FALSE)
   ratingmat <- ratingmat[,-1]
   colnames(userSelect) <- colnames(ratingmat)
   ratingmat2 <- rbind(userSelect,ratingmat)
@@ -50,6 +52,7 @@ movie_recommendation <- function(input,input2,input3) {
   return(recom_result)
 }
 
+book_recommendation(uniqueTitle[1:1000],uniqueTitle[1:1000],uniqueTitle[1:1000])
 #uniquePublisher <- unique(books$publisher)
 #uniqueYear <- unique(books$yearOfPublication)
 
