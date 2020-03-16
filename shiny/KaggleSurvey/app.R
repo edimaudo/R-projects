@@ -15,13 +15,30 @@ for (package in packages) {
   }
 }
 
-
+#load data
+multipleChoice <- read_csv("multiple_choice_responses.csv")
+otherText <- read_csv("other_text_responses.csv")
+questions <- read_csv("questions_only.csv")
+surveySchema<- read_csv("survey_schema.csv")
 
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
+  navbarPage("2019 Kaggle and Machine Learning Survey",
+             tabsetPanel(
+               tabPanel("Intro",
+                        
+                        includeMarkdown("intro.md"),
+                        hr()),
+               tabPanel("Intro",
+                        includeMarkdown("intro.md"),
+                        hr()),
+               tabPanel("Intro",
+                        includeMarkdown("intro.md"),
+                        hr())
+               
    
- 
+             ))
 )
 
 # Define server logic required to draw a histogram
