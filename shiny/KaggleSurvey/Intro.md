@@ -1,8 +1,6 @@
 ## 2019 Kaggle Data Science Machine Learning Survey
 ***
 
-![Image of Data Science image](data-scientist.png)
-
 ### What is this app?
 
 The app allows a user to get a better understanding of the state of data science and ML in 2019 based on the Kaggle platform. 
