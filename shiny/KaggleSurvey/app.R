@@ -22,7 +22,7 @@ questions <- read_csv("questions_only.csv")
 surveySchema<- read_csv("survey_schema.csv")
 
 
-# Define UI for application that draws a histogram
+
 ui <- fluidPage(
   navbarPage("2019 Kaggle and Machine Learning Survey",
              tabsetPanel(
