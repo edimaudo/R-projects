@@ -5,7 +5,8 @@
 
 #packages 
 packages <- c('ggplot2', 'corrplot','tidyverse','caret','mlbench','mice', 
-              'caTools','dummies','ggfortify','shiny')
+              'caTools','dummies','ggfortify','shiny','ggalluvial','ggeffects',
+              'viridis','countrycode','highcharter','magrittr')
 #load packages
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
@@ -19,6 +20,28 @@ multipleChoice <- read_csv("multiple_choice_responses.csv")
 otherText <- read_csv("other_text_responses.csv")
 questions <- read_csv("questions_only.csv")
 surveySchema<- read_csv("survey_schema.csv")
+
+set.seed(0)
+
+#update multiple choice responses
+responses <- multipleChoice %>% 
+  slice(2:n()) %>% 
+  rename("duration" = `Time from Start to Finish (seconds)`) %>% 
+  mutate(Q3 = str_replace_all(Q3, c("United Kingdom of Great Britain and Northern Ireland" = "UK" ,
+                                    "United States of America" = "USA",
+                                    "Hong Kong \\(S\\.A\\.R\\.\\)" = "Hong Kong",
+                                    "Iran, Islamic Republic of..." = "Iran"))) 
+
+
+reorder_within <- function(x, by, within, fun = mean, sep = "___", ...) {
+  new_x <- paste(x, within, sep = sep)
+  stats::reorder(new_x, by, FUN = fun)
+}
+
+scale_x_reordered <- function(..., sep = "___") {
+  reg <- paste0(sep, ".+$")
+  ggplot2::scale_x_discrete(labels = function(x) gsub(reg, "", x), ...)
+}
 
 #gender
 
