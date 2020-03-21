@@ -27,7 +27,8 @@ set.seed(0)
 responses <- multipleChoice %>% 
   slice(2:n()) %>% 
   rename("duration" = `Time from Start to Finish (seconds)`) %>% 
-  mutate(Q3 = str_replace_all(Q3, c("United Kingdom of Great Britain and Northern Ireland" = "UK" ,
+  mutate(Q3 = str_replace_all(Q3, 
+        c("United Kingdom of Great Britain and Northern Ireland" = "UK" ,
                                     "United States of America" = "USA",
                                     "Hong Kong \\(S\\.A\\.R\\.\\)" = "Hong Kong",
                                     "Iran, Islamic Republic of..." = "Iran"))) 
