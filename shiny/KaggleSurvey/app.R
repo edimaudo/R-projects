@@ -26,7 +26,31 @@ surveySchema<- read_csv("survey_schema.csv")
 
 #Country
 
-#Education
+#Education degrees
+
+#Education learning
+
+#time spent learning to code
+
+#time spent machine leanring
+
+#how data scientist spend their time
+
+#company size
+
+#data scienc team size
+
+#Enterprise machine learning adoption
+
+#Spending
+
+#IDE usage
+
+#Methods and algorithms usage
+
+#Framework usage
+
+#Enterprise tools usage
 
 ui <- fluidPage(
   navbarPage("2019 Kaggle and Machine Learning Survey",
