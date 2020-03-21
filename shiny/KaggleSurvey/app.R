@@ -52,38 +52,47 @@ surveySchema<- read_csv("survey_schema.csv")
 
 #Enterprise tools usage
 
+
+#country comparison
+#add side bar panel
+#add two drop downs with county information sorted in ascending order
+#add a submit button
+
+#create headers
+#create sections for the differnet countries
+
 ui <- fluidPage(
   navbarPage("2019 Kaggle and Machine Learning Survey",
              tabsetPanel(
-               tabPanel("Intro",
+               tabPanel("Introduction",
                         includeMarkdown("intro.md"),
                         hr()),
-               tabPanel("Key Insights",
-                        h1("Data Scientist Profile",style = "color:blue"),
+               tabPanel("Survey Key Insights",
+                        h1("Data Scientist Profile",style = "color:#008abc"),
                         h3("Gender"),
                         h3("Age"),
                         h3("Country"),
-                        h1("Education",style = "color:blue"),
+                        h1("Education",style = "color:#008abc"),
                         h3("Education degrees"),
                         h3("Learning Channels"),
                         h1("Data Science & Machine learning experience",
-                           style ="color:blue"),
+                           style ="color:#008abc"),
                         h3("Time spent learning to code"),
                         h3("Time spend learning machine learning"),
-                        h1("Employment",style = "color:blue"),
+                        h1("Employment",style = "color:#008abc"),
                         h3("Pay"),
                         h3("Time spent"),
                         h3("Company information"),
                         h3("Data Science teams"),
                         h3("Enterprise machine learning adoption"),
                         h3("Spending"),
-                        h1("Technology",style = "color:blue"),
+                        h1("Technology",style = "color:#008abc"),
                         h3("IDE usage"),
                         h3("Methods and algorithms usage"),
                         h3("Framework usage"),
                         h3("Enterprise tools usage"),
                         hr()),
-               tabPanel("Contry Comparison",
+               tabPanel("Country Comparison",
                         hr())
              ))
 )
