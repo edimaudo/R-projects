@@ -1,9 +1,8 @@
 #
 # This is a Shiny web application that uses the Kaggle 2019 Data
-# Science and Machine learning survery
+# Science and Machine learning survey
 #
-#remove old data
-#rm(list=ls())
+
 #packages 
 packages <- c('ggplot2', 'corrplot','tidyverse','caret','mlbench','mice', 
               'caTools','dummies','ggfortify','shiny')
@@ -43,7 +42,8 @@ ui <- fluidPage(
                         h1("Education",style = "color:blue"),
                         h3("Education degrees"),
                         h3("Learning Channels"),
-                        h1("Data Science & Machine learning experience",style = "color:blue"),
+                        h1("Data Science & Machine learning experience",
+                           style ="color:blue"),
                         h3("Time spent learning to code"),
                         h3("Time spend learning machine learning"),
                         h1("Employment",style = "color:blue"),
@@ -60,10 +60,7 @@ ui <- fluidPage(
                         h3("Enterprise tools usage"),
                         hr()),
                tabPanel("Contry Comparison",
-                       
                         hr())
-               
-   
              ))
 )
 
