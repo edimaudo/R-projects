@@ -34,56 +34,23 @@ responses <- multipleChoice %>%
 
 
 
-#gender
-genderinfo <- responses %>%
-  select(Q2) %>%
-  group_by(Q2) %>%
-  summarize(freq = n()) %>%
-  arrange(desc(freq)) 
 
-ggplot(data=genderinfo, aes(x=reorder(Q2,-freq), y=freq)) +
-  geom_bar(stat="identity",fill="steelblue") + theme_classic() + labs(x = "Gender", y = "Count") +
-  theme(axis.text.x = element_text(angle = 0, hjust = 1),
-        legend.position="none") 
-
-#Age
-
-#Country
-
-#Education degrees
-
-#Education learning
-
-#time spent learning to code
-
-#time spent machine leanring
-
-#how data scientist spend their time
-
-#company size
-
-#data scienc team size
-
-#Enterprise machine learning adoption
-
-#Spending
-
-#IDE usage
-
-#Methods and algorithms usage
-
-#Framework usage
-
-#Enterprise tools usage
-
-
+#Monday
+#add code for second tab
+#clean up code for different columns that had fix code
 #country comparison
 #add side bar panel
 #add two drop downs with county information sorted in ascending order
 #add a submit button
 
+#Tuesday
 #create headers
 #create sections for the differnet countries
+#Build code for the sections
+
+#Wednesday
+#add code for the section
+#finalize build + complete
 
 ui <- fluidPage(
   navbarPage("2019 Kaggle and Machine Learning Survey",
@@ -125,6 +92,8 @@ ui <- fluidPage(
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
+  
+  #gender
   output$genderplot <- renderPlot({
     genderinfo <- responses %>%
       select(Q2) %>%
@@ -138,7 +107,7 @@ server <- function(input, output) {
             legend.position="none") 
   })
   
-  
+  #age
   output$ageplot <- renderPlot({
     ageinfo <- responses %>%
       select(Q1) %>%
@@ -148,8 +117,9 @@ server <- function(input, output) {
     ggplot(data=ageinfo, aes(x=Q1, y=freq)) +
       geom_bar(stat="identity",fill="steelblue") + theme_classic() + labs(x = "Age", y = "Count") +
       theme(axis.text.x = element_text(angle = 0, hjust = 1),legend.position="none")
-    
   })
+  
+  output$ageplot <- renderPlot({})
 
 }
 
