@@ -5,8 +5,7 @@
 
 #packages 
 packages <- c('ggplot2', 'corrplot','tidyverse','caret','mlbench','mice', 
-              'caTools','dummies','ggfortify','shiny','ggalluvial','ggeffects',
-              'viridis','countrycode','highcharter','magrittr')
+              'caTools','dummies','ggfortify','shiny','countrycode','highcharter')
 #load packages
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
@@ -34,17 +33,18 @@ responses <- multipleChoice %>%
                                     "Iran, Islamic Republic of..." = "Iran"))) 
 
 
-reorder_within <- function(x, by, within, fun = mean, sep = "___", ...) {
-  new_x <- paste(x, within, sep = sep)
-  stats::reorder(new_x, by, FUN = fun)
-}
-
-scale_x_reordered <- function(..., sep = "___") {
-  reg <- paste0(sep, ".+$")
-  ggplot2::scale_x_discrete(labels = function(x) gsub(reg, "", x), ...)
-}
 
 #gender
+genderinfo <- responses %>%
+  select(Q2) %>%
+  group_by(Q2) %>%
+  summarize(freq = n()) %>%
+  arrange(desc(freq)) 
+
+ggplot(data=genderinfo, aes(x=reorder(Q2,-freq), y=freq)) +
+  geom_bar(stat="identity",fill="steelblue") + theme_classic() + labs(x = "Gender", y = "Count") +
+  theme(axis.text.x = element_text(angle = 0, hjust = 1),
+        legend.position="none") 
 
 #Age
 
@@ -94,7 +94,9 @@ ui <- fluidPage(
                tabPanel("Survey Key Insights",
                         h1("Data Scientist Profile",style = "color:#008abc"),
                         h3("Gender"),
+                        plotOutput("genderplot"),
                         h3("Age"),
+                        plotOutput("ageplot"),
                         h3("Country"),
                         h1("Education",style = "color:#008abc"),
                         h3("Education degrees"),
@@ -123,7 +125,31 @@ ui <- fluidPage(
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
-   
+  output$genderplot <- renderPlot({
+    genderinfo <- responses %>%
+      select(Q2) %>%
+      group_by(Q2) %>%
+      summarize(freq = n()) %>%
+      arrange(desc(freq)) 
+    
+    ggplot(data=genderinfo, aes(x=reorder(Q2,-freq), y=freq)) +
+      geom_bar(stat="identity",fill="steelblue") + theme_classic() + labs(x = "Gender", y = "Count") +
+      theme(axis.text.x = element_text(angle = 0, hjust = 1),
+            legend.position="none") 
+  })
+  
+  
+  output$ageplot <- renderPlot({
+    ageinfo <- responses %>%
+      select(Q1) %>%
+      group_by(Q1) %>%
+      summarise(freq = n())
+    
+    ggplot(data=ageinfo, aes(x=Q1, y=freq)) +
+      geom_bar(stat="identity",fill="steelblue") + theme_classic() + labs(x = "Age", y = "Count") +
+      theme(axis.text.x = element_text(angle = 0, hjust = 1),legend.position="none")
+    
+  })
 
 }
 
