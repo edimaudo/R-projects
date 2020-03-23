@@ -1,13 +1,13 @@
 #Monday
 #move working code to tab two and test
 #clean up code for different columns that had fix code
-#finalize visualiation
 #add side bar panel for country comparison tab
 #add two drop downs with county information sorted in ascending order for country comparison tab
 
 
 #Tuesday
 #change size of the graphs of all the visualizations
+#finalize visualiation
 #add a submit button
 #create headers for third tab
 #create sections for the differnet countries
