@@ -40,10 +40,12 @@ responses <- multipleChoice %>%
 #add visualization for the second column
 #add side bar panel for country comparison tab
 #add two drop downs with county information sorted in ascending order for country comparison tab
-#add a submit button
+
 
 #Tuesday
-#create headers
+#change size of the graphs of all the visualizations
+#add a submit button
+#create headers for third tab
 #create sections for the differnet countries
 #Build code for the sections
 
