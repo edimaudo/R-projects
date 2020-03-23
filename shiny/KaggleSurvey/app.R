@@ -1,21 +1,17 @@
 #Monday
-#move working code to tab two and test
-#clean up code for different columns that had fix code
 #add side bar panel for country comparison tab
 #add two drop downs with county information sorted in ascending order for country comparison tab
-
+#add a submit button
 
 #Tuesday
+#clean up code for different columns that had fix code
 #change size of the graphs of all the visualizations
-#finalize visualiation
-#add a submit button
 #create headers for third tab
-#create sections for the differnet countries
-#Build code for the sections
+
 
 #Wednesday
-#add code for the section
-#finalize build + complete
+#Build code for the sections
+#final testing
 
 
 #
@@ -51,6 +47,17 @@ responses <- multipleChoice %>%
                                     "Hong Kong \\(S\\.A\\.R\\.\\)" = "Hong Kong",
                                     "Iran, Islamic Republic of..." = "Iran"))) 
 
+
+#country 
+country <- responses %>% 
+  group_by(Q3) %>% 
+  filter(Q3 != "Other") %>%
+  arrange(Q3) %>%
+  select(Q3)
+
+country <- unique(country)
+  
+
 ui <- fluidPage(
   navbarPage("2019 Kaggle and Machine Learning Survey",
              tabsetPanel(
@@ -64,7 +71,7 @@ ui <- fluidPage(
                         h3("Age"),
                         plotOutput("ageplot"),
                         h3("Country"),
-                        plotOutput("countryplot"),
+                        highchartOutput("countryplot"),
                         h1("Education",style = "color:#008abc"),
                         h3("Education degrees"),
                         plotOutput("educationplot"),
@@ -100,6 +107,15 @@ ui <- fluidPage(
                         plotOutput('enterpriseusage'),
                         hr()),
                tabPanel("Country Comparison",
+                        sidebarLayout(
+                          sidebarPanel(
+                            selectInput("countryInput", "Country",choices=country)
+                          )),
+                        mainPanel(
+                          plotOutput("coolplot"),
+                          br(), br()
+                          
+                        ),
                         hr())
              ))
 )
@@ -133,7 +149,7 @@ server <- function(input, output) {
       theme(axis.text.x = element_text(angle = 0, hjust = 1),legend.position="none")
   })
   
-  output$countryplot <- renderPlot({
+  output$countryplot <- renderHighchart({
     #country
     highchart(type = "map") %>%
       hc_add_series_map(worldgeojson,
@@ -287,6 +303,9 @@ server <- function(input, output) {
   
   #enterprise tool usage
   output$enterpriseusage <- renderPlot({})
+  
+  #plot placeholder
+  output$coolplot <- renderPlot({})
 }
 
 # Run the application 
