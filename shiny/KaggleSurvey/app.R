@@ -36,11 +36,10 @@ responses <- multipleChoice %>%
 
 
 #Monday
-#add code for second tab
 #clean up code for different columns that had fix code
-#country comparison
-#add side bar panel
-#add two drop downs with county information sorted in ascending order
+#add visualization for the second column
+#add side bar panel for country comparison tab
+#add two drop downs with county information sorted in ascending order for country comparison tab
 #add a submit button
 
 #Tuesday
