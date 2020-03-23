@@ -139,6 +139,7 @@ server <- function(input, output) {
       hc_add_series_map(worldgeojson,
                         responses %>% 
                           group_by(Q3) %>% 
+                          filter(Q3 != "Other") %>%
                           summarise(total = n()) %>% 
                           ungroup() %>%
                           mutate(iso2 = countrycode(Q3, origin="country.name", destination="iso2c")),
