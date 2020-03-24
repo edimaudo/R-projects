@@ -160,6 +160,20 @@ salaryinfo <- responses %>%
   summarise(freq = n())
 salaryinfo <- na.omit(salaryinfo)
 
+#company size
+companysizeinfo <- responses %>%
+  select(Q6) %>%
+  group_by(Q6) %>%
+  summarise(freq = n())
+companysizeinfo <- na.omit(companysizeinfo)
+
+#data science team size
+companydatasizeinfo <- responses %>%
+  select(Q7) %>%
+  group_by(Q7) %>%
+  summarise(freq = n())
+companydatasizeinfo <- na.omit(companydatasizeinfo)
+
 # Define server logic
 server <- function(input, output) {
   
@@ -227,7 +241,7 @@ server <- function(input, output) {
       theme(axis.text.x = element_text(angle = 45, hjust = 1),legend.position="none") + coord_flip()
   })
   
-  #salary -- clean up code
+  #salary
   output$salaryplot <- renderPlot({
 
     ggplot(data=salaryinfo, 
@@ -249,27 +263,21 @@ server <- function(input, output) {
     
   })
   
-  #company size -- clean up code
+  #company size
   output$companysizeplot <- renderPlot({
-    companysizeinfo <- responses %>%
-      select(Q6) %>%
-      group_by(Q6) %>%
-      summarise(freq = n())
-    companysizeinfo <- na.omit(companysizeinfo)
-    ggplot(data=companysizeinfo, aes(x=Q6, y=freq)) +
+
+    ggplot(data=companysizeinfo, aes(x=factor(Q6,levels=c("0-49 employees","50-249 employees",
+                                                          "250-999 employees","1000-9,999 employees",
+                                                          "> 10,000 employees")), y=freq)) +
       geom_bar(stat="identity",fill="steelblue") + theme_classic() + labs(x = "# of Employees", 
                                                                           y = "Count") +
       theme(axis.text.x = element_text(angle = 45, hjust = 1),legend.position="none") + coord_flip()
   })
   
-  #data science team size -- fix code
+  #data science team size
   output$datascienceteamsize <- renderPlot({
-    companydatasizeinfo <- responses %>%
-      select(Q7) %>%
-      group_by(Q7) %>%
-      summarise(freq = n())
-    companydatasizeinfo <- na.omit(companydatasizeinfo)
-    ggplot(data=companydatasizeinfo, aes(x=Q7, y=freq)) +
+    ggplot(data=companydatasizeinfo, aes(x=factor(Q7,levels = c("0","1-2","3-4","5-9","10-14",
+                                                                "15-19","20+")), y=freq)) +
       geom_bar(stat="identity",fill="steelblue") + theme_classic() + 
       labs(x = "# of Employees in Data Science team", 
            y = "Count") +
