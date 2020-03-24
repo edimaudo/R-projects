@@ -1,10 +1,11 @@
 #Tuesday
-#clean up code for different columns that had fix code
-#change size of the graphs of all the visualizations
-#create headers for third tab
-
+#change size of the graphs of all the visualizations - done
+#get code for merging different columns
+#clean up code for areas that have different factors
+#move data manuipulation out of server function
 
 #Wednesday
+#create headers for third tab
 #Build code for the sections
 #final testing
 
@@ -14,6 +15,7 @@
 # Science and Machine learning survey
 #
 
+#rm(list=ls())
 #packages 
 packages <- c('ggplot2', 'corrplot','tidyverse','caret','mlbench','mice', 
               'caTools','dummies','ggfortify','shiny','countrycode','highcharter')
@@ -103,7 +105,7 @@ ui <- fluidPage(
                         hr()),
                tabPanel("Country Comparison",
                           sidebarPanel(
-                            helpText("Select a country from the two drop down lists"),
+                            helpText("Select countries from the drop down lists"),
                             selectInput("countryInput1", "Country 1",choices=country),
                             selectInput("countryInput2", "Country 2",choices=country),
                             br(),
@@ -160,7 +162,7 @@ server <- function(input, output) {
     ggplot(data=genderinfo, aes(x=reorder(Q2,-freq), y=freq)) +
       geom_bar(stat="identity",fill="steelblue") + theme_classic() + labs(x = "Gender", y = "Count") +
       theme(axis.text.x = element_text(angle = 0, hjust = 1),
-            legend.position="none") 
+            legend.position="none") + coord_flip()
   })
   
   #age
@@ -189,7 +191,7 @@ server <- function(input, output) {
   output$educationplot <- renderPlot({
     ggplot(data=educationinfo, aes(x=reorder(Q4,-freq), y=freq)) +
       geom_bar(stat="identity",fill="steelblue") + theme_classic() + labs(x = "Degree", y = "Count") +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1),legend.position="none") 
+      theme(axis.text.x = element_text(angle = 45, hjust = 1),legend.position="none") + coord_flip()
     
   })
   
@@ -203,7 +205,7 @@ server <- function(input, output) {
     ggplot(data=timeleanringinfo, aes(x=reorder(Q15,-freq), y=freq)) +
       geom_bar(stat="identity",fill="steelblue") + theme_classic() + labs(x = "Time learning to code", 
                                                                           y = "Count") +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1),legend.position="none")
+      theme(axis.text.x = element_text(angle = 45, hjust = 1),legend.position="none") + coord_flip()
   })
   
   #time machine learning
@@ -211,7 +213,7 @@ server <- function(input, output) {
     ggplot(data=timeleanringmachineinfo, aes(x=reorder(Q23,-freq), y=freq)) +
       geom_bar(stat="identity",fill="steelblue") + theme_classic() + labs(x = "Time spent machine learning", 
                                                                           y = "Count") +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1),legend.position="none") 
+      theme(axis.text.x = element_text(angle = 45, hjust = 1),legend.position="none") + coord_flip()
   })
   
   #salary -- clean up code
@@ -239,7 +241,6 @@ server <- function(input, output) {
       select(Q6) %>%
       group_by(Q6) %>%
       summarise(freq = n())
-    
     companysizeinfo <- na.omit(companysizeinfo)
     ggplot(data=companysizeinfo, aes(x=Q6, y=freq)) +
       geom_bar(stat="identity",fill="steelblue") + theme_classic() + labs(x = "# of Employees", 
@@ -253,7 +254,6 @@ server <- function(input, output) {
       select(Q7) %>%
       group_by(Q7) %>%
       summarise(freq = n())
-    
     companydatasizeinfo <- na.omit(companydatasizeinfo)
     ggplot(data=companydatasizeinfo, aes(x=Q7, y=freq)) +
       geom_bar(stat="identity",fill="steelblue") + theme_classic() + 
