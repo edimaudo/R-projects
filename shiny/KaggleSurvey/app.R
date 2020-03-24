@@ -1,8 +1,4 @@
-#Tuesday
 
-#get code for merging different columns
-#move data manuipulation out of server function
-#change font sizes
 
 #Wednesday
 #create headers for third tab
@@ -117,6 +113,7 @@ enterprisespendinginfo  <- responses %>%
   select(Q11) %>%
   group_by(Q11) %>%
   summarise(freq = n())
+enterprisespendinginfo<- na.omit(enterprisespendinginfo)
 
 
 ui <- fluidPage(
@@ -136,8 +133,6 @@ ui <- fluidPage(
                         h1("Education",style = "color:#008abc"),
                         h3("Education degrees"),
                         plotOutput("educationplot"),
-                        h3("Learning Channels"),
-                        plotOutput("educationlearningplot"),
                         h1("Data Science & Machine learning experience",
                            style ="color:#008abc"),
                         h3("Time spent learning to code"),
@@ -147,8 +142,6 @@ ui <- fluidPage(
                         h1("Employment",style = "color:#008abc"),
                         h3("Pay"),
                         plotOutput("salaryplot"),
-                        h3("Time spent"),
-                        plotOutput("datasciencetimespent"),
                         h3("Company information"),
                         plotOutput("companysizeplot"),
                         h3("Data Science teams"),
@@ -157,15 +150,6 @@ ui <- fluidPage(
                         plotOutput("mladoption"),
                         h3("Spending"),
                         plotOutput("spending"),
-                        h1("Technology",style = "color:#008abc"),
-                        h3("IDE usage"),
-                        plotOutput("ideusage"),
-                        h3("Methods and algorithms usage"),
-                        plotOutput("algorithmusage"),
-                        h3("Framework usage"),
-                        plotOutput("frameworkusage"),
-                        h3("Enterprise tools usage"),
-                        plotOutput('enterpriseusage'),
                         hr()),
                tabPanel("Country Comparison",
                         sidebarPanel(
@@ -200,8 +184,9 @@ server <- function(input, output) {
   output$ageplot <- renderPlot({
     ggplot(data=ageinfo, aes(x=Q1, y=freq)) +
       geom_bar(stat="identity",fill="steelblue") + theme_classic() + labs(x = "Age", y = "Count") +
-      theme(axis.text.x = element_text(angle = 0, hjust = 1),legend.position="none",
-            axis.title = element_text(size = 50))
+      theme(axis.text.x = element_text(angle = 0, hjust = 1),
+            legend.position="none",axis.title = element_text(size = 25),
+            axis.text = element_text(size = 15))
   })
   
   output$countryplot <- renderHighchart({
@@ -223,14 +208,12 @@ server <- function(input, output) {
   output$educationplot <- renderPlot({
     ggplot(data=educationinfo, aes(x=reorder(Q4,-freq), y=freq)) +
       geom_bar(stat="identity",fill="steelblue") + theme_classic() + labs(x = "Degree", y = "Count") +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1),legend.position="none") + coord_flip()
+      theme(axis.text.x = element_text(angle = 0, hjust = 1),
+            legend.position="none",axis.title = element_text(size = 25),
+            axis.text = element_text(size = 15)) + coord_flip()
     
   })
   
-  #education learning -- clean up code
-  output$educationlearningplot <- renderPlot({
-    
-  })
   
   #time learning to code
   output$timelearningcodeplot <- renderPlot({
@@ -240,7 +223,9 @@ server <- function(input, output) {
                                                           "20+ years")), y=freq)) +
       geom_bar(stat="identity",fill="steelblue") + theme_classic() + labs(x = "Time learning to code", 
                                                                           y = "Count") +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1),legend.position="none") + coord_flip()
+      theme(axis.text.x = element_text(angle = 0, hjust = 1),
+            legend.position="none",axis.title = element_text(size = 25),
+            axis.text = element_text(size = 15)) + coord_flip()
   })
   
   #time machine learning 
@@ -248,10 +233,12 @@ server <- function(input, output) {
     ggplot(data=timeleanringmachineinfo, aes(x=reorder(Q23,-freq), y=freq)) +
       geom_bar(stat="identity",fill="steelblue") + theme_classic() + labs(x = "Time spent machine learning", 
                                                                           y = "Count") +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1),legend.position="none") + coord_flip()
+      theme(axis.text.x = element_text(angle = 0, hjust = 1),
+            legend.position="none",axis.title = element_text(size = 25),
+            axis.text = element_text(size = 15)) + coord_flip()
   })
   
-  #salary
+  #salary/pay
   output$salaryplot <- renderPlot({
 
     ggplot(data=salaryinfo, 
@@ -266,13 +253,11 @@ server <- function(input, output) {
                y=freq)) +
       geom_bar(stat="identity",fill="steelblue") + theme_classic() + labs(x = "Salaries", 
                                                                           y = "Count") +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1),legend.position="none")
+      theme(axis.text.x = element_text(angle = 45, hjust = 1),
+            legend.position="none",axis.title = element_text(size = 25),
+            axis.text = element_text(size = 15))
   })
   
-  #how data scientist spend their time -- clean up code
-  output$datasciencetimespent <- renderPlot({
-    
-  })
   
   #company size
   output$companysizeplot <- renderPlot({
@@ -281,7 +266,9 @@ server <- function(input, output) {
                                                           "> 10,000 employees")), y=freq)) +
       geom_bar(stat="identity",fill="steelblue") + theme_classic() + labs(x = "# of Employees", 
                                                                           y = "Count") +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1),legend.position="none") + coord_flip()
+      theme(axis.text.x = element_text(angle = 0, hjust = 1),
+            legend.position="none",axis.title = element_text(size = 25),
+            axis.text = element_text(size = 15)) + coord_flip()
   })
   
   #data science team size
@@ -289,9 +276,11 @@ server <- function(input, output) {
     ggplot(data=companydatasizeinfo, aes(x=factor(Q7,levels = c("0","1-2","3-4","5-9","10-14",
                                                                 "15-19","20+")), y=freq)) +
       geom_bar(stat="identity",fill="steelblue") + theme_classic() + 
-      labs(x = "# of Employees in Data Science team", 
+      labs(x = "Data Science team size", 
            y = "Count") +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1),legend.position="none") + coord_flip()
+      theme(axis.text.x = element_text(angle = 0, hjust = 1),
+            legend.position="none",axis.title = element_text(size = 25),
+            axis.text = element_text(size = 15)) + coord_flip()
     
   })
   
@@ -301,40 +290,28 @@ server <- function(input, output) {
       geom_bar(stat="identity",fill="steelblue") + theme_classic() + 
       labs(x = "Enterprise machine learning adoption", 
            y = "Count") +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1),legend.position="none") + coord_flip()
+      theme(axis.text.x = element_text(angle = 0, hjust = 1),
+            legend.position="none",axis.title = element_text(size = 15),
+            axis.text = element_text(size = 5)) + coord_flip()
   })
   
   #spending
   output$spending <- renderPlot({
-    enterprisespendinginfo<- na.omit(enterprisespendinginfo)
-    ggplot(data=enterprisespendinginfo, aes(x=factors(Q11,levels=c("$0 (USD)","$1-$99",
+    
+    ggplot(data=enterprisespendinginfo, aes(x=factor(Q11,levels=c("$0 (USD)","$1-$99",
                                                                    "$100-$999","$1000-$9,999",
                                                                    "$10,000-$99,999","> $100,000 ($USD)")), 
                                             y=freq)) +
       geom_bar(stat="identity",fill="steelblue") + theme_classic() + labs(x = "Enterprise spending", 
                                                                           y = "Count") +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1),legend.position="none") + coord_flip()
+      theme(axis.text.x = element_text(angle = 0, hjust = 1),
+            legend.position="none",axis.title = element_text(size = 25),
+            axis.text = element_text(size = 15)) + coord_flip()
   })
   
-  #ide usage --clean up code
-  output$ideusage <- renderPlot({
-    
-  })
+
   
-  #algorithm usage
-  output$algorithmusage <- renderPlot({
-    
-  })
-  
-  #framework usage --clean up code
-  output$frameworkusage <- renderPlot({
-    
-  })
-  
-  #enterprise tool usage --clean up code
-  output$enterpriseusage <- renderPlot({
-    
-  })
+
   
   #plot placeholder
   output$coolplot <- renderPlot({})
