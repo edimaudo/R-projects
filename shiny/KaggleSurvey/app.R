@@ -1,5 +1,5 @@
 #Tuesday
-#clean up code for areas that have different factors
+
 #get code for merging different columns
 #move data manuipulation out of server function
 #change font sizes
@@ -29,10 +29,6 @@ for (package in packages) {
 
 #load data
 multipleChoice <- read_csv("multiple_choice_responses.csv")
-#otherText <- read_csv("other_text_responses.csv")
-#questions <- read_csv("questions_only.csv")
-#surveySchema<- read_csv("survey_schema.csv")
-#set.seed(0)
 
 #update multiple choice responses
 responses <- multipleChoice %>% 
@@ -51,73 +47,8 @@ country <- responses %>%
   filter(Q3 != "Other") %>%
   arrange(Q3) %>%
   select(Q3)
-
 country <- as.vector(unique(country$Q3))
   
-
-ui <- fluidPage(
-  navbarPage("2019 Kaggle and Machine Learning Survey",
-             tabsetPanel(
-               tabPanel("Introduction",
-                        includeMarkdown("intro.md"),
-                        hr()),
-               tabPanel("Survey Key Insights",
-                        h1("Data Scientist Profile",style = "color:#008abc"),
-                        h3("Gender"),
-                        plotOutput("genderplot"),
-                        h3("Age"),
-                        plotOutput("ageplot"),
-                        h3("Country"),
-                        highchartOutput("countryplot"),
-                        h1("Education",style = "color:#008abc"),
-                        h3("Education degrees"),
-                        plotOutput("educationplot"),
-                        h3("Learning Channels"),
-                        plotOutput("educationlearningplot"),
-                        h1("Data Science & Machine learning experience",
-                           style ="color:#008abc"),
-                        h3("Time spent learning to code"),
-                        plotOutput("timelearningcodeplot"),
-                        h3("Time spend learning machine learning"),
-                        plotOutput("timemachinelearningplot"),
-                        h1("Employment",style = "color:#008abc"),
-                        h3("Pay"),
-                        plotOutput("salaryplot"),
-                        h3("Time spent"),
-                        plotOutput("datasciencetimespent"),
-                        h3("Company information"),
-                        plotOutput("companysizeplot"),
-                        h3("Data Science teams"),
-                        plotOutput("datascienceteamsize"),
-                        h3("Enterprise machine learning adoption"),
-                        plotOutput("mladoption"),
-                        h3("Spending"),
-                        plotOutput("spending"),
-                        h1("Technology",style = "color:#008abc"),
-                        h3("IDE usage"),
-                        plotOutput("ideusage"),
-                        h3("Methods and algorithms usage"),
-                        plotOutput("algorithmusage"),
-                        h3("Framework usage"),
-                        plotOutput("frameworkusage"),
-                        h3("Enterprise tools usage"),
-                        plotOutput('enterpriseusage'),
-                        hr()),
-               tabPanel("Country Comparison",
-                          sidebarPanel(
-                            helpText("Select countries from the drop down lists"),
-                            selectInput("countryInput1", "Country 1",choices=country),
-                            selectInput("countryInput2", "Country 2",choices=country),
-                            br(),
-                            submitButton("Submit")
-                          ),
-                        mainPanel(
-                          plotOutput("coolplot"),
-                          br(), br()
-                        ),
-                        hr())
-             ))
-)
 
 #gender
 genderinfo <- responses %>%
@@ -186,6 +117,72 @@ enterprisespendinginfo  <- responses %>%
   select(Q11) %>%
   group_by(Q11) %>%
   summarise(freq = n())
+
+
+ui <- fluidPage(
+  navbarPage("2019 Kaggle and Machine Learning Survey",
+             tabsetPanel(
+               tabPanel("Introduction",
+                        includeMarkdown("intro.md"),
+                        hr()),
+               tabPanel("Survey Key Insights",
+                        h1("Data Scientist Profile",style = "color:#008abc"),
+                        h3("Gender"),
+                        plotOutput("genderplot"),
+                        h3("Age"),
+                        plotOutput("ageplot"),
+                        h3("Country"),
+                        highchartOutput("countryplot"),
+                        h1("Education",style = "color:#008abc"),
+                        h3("Education degrees"),
+                        plotOutput("educationplot"),
+                        h3("Learning Channels"),
+                        plotOutput("educationlearningplot"),
+                        h1("Data Science & Machine learning experience",
+                           style ="color:#008abc"),
+                        h3("Time spent learning to code"),
+                        plotOutput("timelearningcodeplot"),
+                        h3("Time spend learning machine learning"),
+                        plotOutput("timemachinelearningplot"),
+                        h1("Employment",style = "color:#008abc"),
+                        h3("Pay"),
+                        plotOutput("salaryplot"),
+                        h3("Time spent"),
+                        plotOutput("datasciencetimespent"),
+                        h3("Company information"),
+                        plotOutput("companysizeplot"),
+                        h3("Data Science teams"),
+                        plotOutput("datascienceteamsize"),
+                        h3("Enterprise machine learning adoption"),
+                        plotOutput("mladoption"),
+                        h3("Spending"),
+                        plotOutput("spending"),
+                        h1("Technology",style = "color:#008abc"),
+                        h3("IDE usage"),
+                        plotOutput("ideusage"),
+                        h3("Methods and algorithms usage"),
+                        plotOutput("algorithmusage"),
+                        h3("Framework usage"),
+                        plotOutput("frameworkusage"),
+                        h3("Enterprise tools usage"),
+                        plotOutput('enterpriseusage'),
+                        hr()),
+               tabPanel("Country Comparison",
+                        sidebarPanel(
+                          helpText("Select countries from the drop down lists"),
+                          selectInput("countryInput1", "Country 1",choices=country),
+                          selectInput("countryInput2", "Country 2",choices=country),
+                          br(),
+                          submitButton("Submit")
+                        ),
+                        mainPanel(
+                          plotOutput("coolplot"),
+                          br(), br()
+                        ),
+                        hr())
+             ))
+)
+
 
 # Define server logic
 server <- function(input, output) {
@@ -263,7 +260,8 @@ server <- function(input, output) {
                                         "15,000-19,999","20,000-24,999","25,000-29,999","30,000-39,999",
                                         "40,000-49,999","50,000-59,999","60,000-69,999","70,000-79,999",
                                         "80,000-89,999","90,000-99,999","100,000-124,999", "125,000-149,999", 
-                                        "150,000-199,999","200,000-249,999","250,000-299,999","300,000-500,000",
+                                        "150,000-199,999","200,000-249,999",
+                                        "250,000-299,999","300,000-500,000",
                                         "> $500,000")),
                y=freq)) +
       geom_bar(stat="identity",fill="steelblue") + theme_classic() + labs(x = "Salaries", 
@@ -278,7 +276,6 @@ server <- function(input, output) {
   
   #company size
   output$companysizeplot <- renderPlot({
-
     ggplot(data=companysizeinfo, aes(x=factor(Q6,levels=c("0-49 employees","50-249 employees",
                                                           "250-999 employees","1000-9,999 employees",
                                                           "> 10,000 employees")), y=freq)) +
@@ -319,19 +316,25 @@ server <- function(input, output) {
       theme(axis.text.x = element_text(angle = 45, hjust = 1),legend.position="none") + coord_flip()
   })
   
-  #ide usage
-  output$ideusage <- renderPlot({})
+  #ide usage --clean up code
+  output$ideusage <- renderPlot({
+    
+  })
   
   #algorithm usage
   output$algorithmusage <- renderPlot({
     
   })
   
-  #framework usage
-  output$frameworkusage <- renderPlot({})
+  #framework usage --clean up code
+  output$frameworkusage <- renderPlot({
+    
+  })
   
-  #enterprise tool usage
-  output$enterpriseusage <- renderPlot({})
+  #enterprise tool usage --clean up code
+  output$enterpriseusage <- renderPlot({
+    
+  })
   
   #plot placeholder
   output$coolplot <- renderPlot({})
