@@ -208,7 +208,7 @@ server <- function(input, output) {
   output$educationplot <- renderPlot({
     ggplot(data=educationinfo, aes(x=reorder(Q4,-freq), y=freq)) +
       geom_bar(stat="identity",fill="steelblue") + theme_classic() + labs(x = "Degree", y = "Count") +
-      theme(axis.text.x = element_text(angle = 0, hjust = 1),
+      theme(axis.text.x = element_text(angle = 45, hjust = 1),
             legend.position="none",axis.title = element_text(size = 25),
             axis.text = element_text(size = 15)) + coord_flip()
     
@@ -288,11 +288,11 @@ server <- function(input, output) {
   output$mladoption <- renderPlot({
     ggplot(data=enterpriseinfo, aes(x=Q8, y=freq)) +
       geom_bar(stat="identity",fill="steelblue") + theme_classic() + 
-      labs(x = "Enterprise machine learning adoption", 
+      labs(x = "machine learning adoption", 
            y = "Count") +
-      theme(axis.text.x = element_text(angle = 0, hjust = 1),
-            legend.position="none",axis.title = element_text(size = 15),
-            axis.text = element_text(size = 5)) + coord_flip()
+      theme(axis.text.x = element_text(angle = 45, hjust = 1),
+            legend.position="none",axis.title = element_text(size = 25),
+            axis.text = element_text(size = 10)) + coord_flip()
   })
   
   #spending
