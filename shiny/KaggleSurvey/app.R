@@ -174,6 +174,19 @@ companydatasizeinfo <- responses %>%
   summarise(freq = n())
 companydatasizeinfo <- na.omit(companydatasizeinfo)
 
+#enterprise adoption
+enterpriseinfo  <- responses %>%
+  select(Q8) %>%
+  group_by(Q8) %>%
+  summarise(freq = n())
+enterpriseinfo <- na.omit(enterpriseinfo)
+
+#enterprise spending
+enterprisespendinginfo  <- responses %>%
+  select(Q11) %>%
+  group_by(Q11) %>%
+  summarise(freq = n())
+
 # Define server logic
 server <- function(input, output) {
   
@@ -245,13 +258,13 @@ server <- function(input, output) {
   output$salaryplot <- renderPlot({
 
     ggplot(data=salaryinfo, 
-           aes(x=factor(Q10, levels = c("0-999","1,000-1,999","2,000-2,999","3,000-3,999",
+           aes(x=factor(Q10, levels = c("$0-999","1,000-1,999","2,000-2,999","3,000-3,999",
                                         "4,000-4,999","5,000-7,499","7,500-9,999","10,000-14,999",
                                         "15,000-19,999","20,000-24,999","25,000-29,999","30,000-39,999",
                                         "40,000-49,999","50,000-59,999","60,000-69,999","70,000-79,999",
                                         "80,000-89,999","90,000-99,999","100,000-124,999", "125,000-149,999", 
                                         "150,000-199,999","200,000-249,999","250,000-299,999","300,000-500,000",
-                                        "> 500,000")),
+                                        "> $500,000")),
                y=freq)) +
       geom_bar(stat="identity",fill="steelblue") + theme_classic() + labs(x = "Salaries", 
                                                                           y = "Count") +
@@ -287,12 +300,6 @@ server <- function(input, output) {
   
   #enterprise machine learning adoption
   output$mladoption <- renderPlot({
-    enterpriseinfo  <- responses %>%
-      select(Q8) %>%
-      group_by(Q8) %>%
-      summarise(freq = n())
-    enterpriseinfo <- na.omit(enterpriseinfo)
-    
     ggplot(data=enterpriseinfo, aes(x=Q8, y=freq)) +
       geom_bar(stat="identity",fill="steelblue") + theme_classic() + 
       labs(x = "Enterprise machine learning adoption", 
@@ -300,15 +307,13 @@ server <- function(input, output) {
       theme(axis.text.x = element_text(angle = 45, hjust = 1),legend.position="none") + coord_flip()
   })
   
-  #spending -- clean up code
+  #spending
   output$spending <- renderPlot({
-    enterprisespendinginfo  <- responses %>%
-      select(Q11) %>%
-      group_by(Q11) %>%
-      summarise(freq = n())
-    
     enterprisespendinginfo<- na.omit(enterprisespendinginfo)
-    ggplot(data=enterprisespendinginfo, aes(x=Q11, y=freq)) +
+    ggplot(data=enterprisespendinginfo, aes(x=factors(Q11,levels=c("$0 (USD)","$1-$99",
+                                                                   "$100-$999","$1000-$9,999",
+                                                                   "$10,000-$99,999","> $100,000 ($USD)")), 
+                                            y=freq)) +
       geom_bar(stat="identity",fill="steelblue") + theme_classic() + labs(x = "Enterprise spending", 
                                                                           y = "Count") +
       theme(axis.text.x = element_text(angle = 45, hjust = 1),legend.position="none") + coord_flip()
