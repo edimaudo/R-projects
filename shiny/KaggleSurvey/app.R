@@ -1,8 +1,8 @@
 #Tuesday
-#change size of the graphs of all the visualizations - done
-#get code for merging different columns
 #clean up code for areas that have different factors
+#get code for merging different columns
 #move data manuipulation out of server function
+#change font sizes
 
 #Wednesday
 #create headers for third tab
@@ -153,6 +153,12 @@ timeleanringmachineinfo <- responses %>%
   summarise(freq = n())
 timeleanringmachineinfo <- na.omit(timeleanringmachineinfo)
 
+#salary
+salaryinfo <- responses %>%
+  select(Q10) %>%
+  group_by(Q10) %>%
+  summarise(freq = n())
+salaryinfo <- na.omit(salaryinfo)
 
 # Define server logic
 server <- function(input, output) {
@@ -161,7 +167,7 @@ server <- function(input, output) {
   output$genderplot <- renderPlot({
     ggplot(data=genderinfo, aes(x=reorder(Q2,-freq), y=freq)) +
       geom_bar(stat="identity",fill="steelblue") + theme_classic() + labs(x = "Gender", y = "Count") +
-      theme(axis.text.x = element_text(angle = 0, hjust = 1,),
+      theme(axis.text.x = element_text(angle = 0, hjust = 1),
             legend.position="none",axis.title = element_text(size = 25),
             axis.text = element_text(size = 15)) + coord_flip()
   })
@@ -202,15 +208,18 @@ server <- function(input, output) {
     
   })
   
-  #time learning to code #reorder(Q15,-freq)
+  #time learning to code
   output$timelearningcodeplot <- renderPlot({
-    ggplot(data=timeleanringinfo, aes(x=factor(Q15), y=freq)) +
+    ggplot(data=timeleanringinfo, aes(x=factor(Q15,
+                                               levels = c("I have never written code","< 1 years","1-2 years",
+                                                          "3-5 years","5-10 years","10-20 years",
+                                                          "20+ years")), y=freq)) +
       geom_bar(stat="identity",fill="steelblue") + theme_classic() + labs(x = "Time learning to code", 
                                                                           y = "Count") +
       theme(axis.text.x = element_text(angle = 45, hjust = 1),legend.position="none") + coord_flip()
   })
   
-  #time machine learning
+  #time machine learning 
   output$timemachinelearningplot <- renderPlot({
     ggplot(data=timeleanringmachineinfo, aes(x=reorder(Q23,-freq), y=freq)) +
       geom_bar(stat="identity",fill="steelblue") + theme_classic() + labs(x = "Time spent machine learning", 
@@ -220,13 +229,16 @@ server <- function(input, output) {
   
   #salary -- clean up code
   output$salaryplot <- renderPlot({
-    salaryinfo <- responses %>%
-      select(Q10) %>%
-      group_by(Q10) %>%
-      summarise(freq = n())
-    
-    salaryinfo <- na.omit(salaryinfo)
-    ggplot(data=salaryinfo, aes(x=Q10, y=freq)) +
+
+    ggplot(data=salaryinfo, 
+           aes(x=factor(Q10, levels = c("0-999","1,000-1,999","2,000-2,999","3,000-3,999",
+                                        "4,000-4,999","5,000-7,499","7,500-9,999","10,000-14,999",
+                                        "15,000-19,999","20,000-24,999","25,000-29,999","30,000-39,999",
+                                        "40,000-49,999","50,000-59,999","60,000-69,999","70,000-79,999",
+                                        "80,000-89,999","90,000-99,999","100,000-124,999", "125,000-149,999", 
+                                        "150,000-199,999","200,000-249,999","250,000-299,999","300,000-500,000",
+                                        "> 500,000")),
+               y=freq)) +
       geom_bar(stat="identity",fill="steelblue") + theme_classic() + labs(x = "Salaries", 
                                                                           y = "Count") +
       theme(axis.text.x = element_text(angle = 45, hjust = 1),legend.position="none")
