@@ -161,15 +161,17 @@ server <- function(input, output) {
   output$genderplot <- renderPlot({
     ggplot(data=genderinfo, aes(x=reorder(Q2,-freq), y=freq)) +
       geom_bar(stat="identity",fill="steelblue") + theme_classic() + labs(x = "Gender", y = "Count") +
-      theme(axis.text.x = element_text(angle = 0, hjust = 1),
-            legend.position="none") + coord_flip()
+      theme(axis.text.x = element_text(angle = 0, hjust = 1,),
+            legend.position="none",axis.title = element_text(size = 25),
+            axis.text = element_text(size = 15)) + coord_flip()
   })
   
   #age
   output$ageplot <- renderPlot({
     ggplot(data=ageinfo, aes(x=Q1, y=freq)) +
       geom_bar(stat="identity",fill="steelblue") + theme_classic() + labs(x = "Age", y = "Count") +
-      theme(axis.text.x = element_text(angle = 0, hjust = 1),legend.position="none")
+      theme(axis.text.x = element_text(angle = 0, hjust = 1),legend.position="none",
+            axis.title = element_text(size = 50))
   })
   
   output$countryplot <- renderHighchart({
@@ -200,9 +202,9 @@ server <- function(input, output) {
     
   })
   
-  #time learning to code
+  #time learning to code #reorder(Q15,-freq)
   output$timelearningcodeplot <- renderPlot({
-    ggplot(data=timeleanringinfo, aes(x=reorder(Q15,-freq), y=freq)) +
+    ggplot(data=timeleanringinfo, aes(x=factor(Q15), y=freq)) +
       geom_bar(stat="identity",fill="steelblue") + theme_classic() + labs(x = "Time learning to code", 
                                                                           y = "Count") +
       theme(axis.text.x = element_text(angle = 45, hjust = 1),legend.position="none") + coord_flip()
