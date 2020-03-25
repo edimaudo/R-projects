@@ -35,6 +35,13 @@ country <- responses %>%
   arrange(Q3) %>%
   select(Q3)
 country <- as.vector(unique(country$Q3))
+
+country1 <- responses %>% 
+  group_by(Q3) %>% 
+  filter(Q3 != "Other") %>%
+  arrange(desc(Q3)) %>%
+  select(Q3)
+country1 <- as.vector(unique(country1$Q3))
   
 
 #gender
@@ -146,7 +153,7 @@ ui <- fluidPage(
                         sidebarPanel(
                           helpText("Select countries from the drop down lists"),
                           selectInput("countryInput1", "Country 1",choices=country),
-                          selectInput("countryInput2", "Country 2",choices=country),
+                          selectInput("countryInput2", "Country 2",choices=country1),
                           br(),
                           submitButton("Submit")
                         ),
@@ -355,11 +362,41 @@ server <- function(input, output) {
       summarise(freq = n())
     educationcountryinfo <- na.omit(educationcountryinfo)
     
+    ggplot(data=educationcountryinfo, aes(x=reorder(Q4,-freq), y=freq, fill=Q3)) +
+      geom_bar(stat="identity",position=position_dodge(),width = 0.8) + theme_classic() + 
+      labs(x = "Degree", y = "Count")  +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1),legend.text = element_text(size = 15),
+            legend.title = element_text(size = 15),
+            axis.title = element_text(size = 20),axis.text = element_text(size = 10)) + 
+      labs(fill = "Country") + scale_y_continuous(breaks = c(20,40,60,80,100))
+    
   })
-  output$salarycountryplot <- renderPlot({})
-  
-
-  
+  output$salarycountryplot <- renderPlot({
+    salarycountryinfo <- responses %>%
+      select(Q10,Q3) %>%
+      filter(Q3 %in% c(input$countryInput1,input$countryInput2)) %>%
+      group_by(Q10,Q3) %>%
+      summarise(freq = n())
+    salarycountryinfo <- na.omit(salarycountryinfo)
+    
+    ggplot(data=salarycountryinfo, 
+           aes(x=factor(Q10, levels = c("$0-999","1,000-1,999","2,000-2,999","3,000-3,999",
+                                        "4,000-4,999","5,000-7,499","7,500-9,999","10,000-14,999",
+                                        "15,000-19,999","20,000-24,999","25,000-29,999","30,000-39,999",
+                                        "40,000-49,999","50,000-59,999","60,000-69,999","70,000-79,999",
+                                        "80,000-89,999","90,000-99,999","100,000-124,999", "125,000-149,999", 
+                                        "150,000-199,999","200,000-249,999",
+                                        "250,000-299,999","300,000-500,000",
+                                        "> $500,000")),
+               y=freq,fill=Q3)) +
+      geom_bar(stat="identity",position=position_dodge(),width = 0.8) + theme_classic() + 
+      labs(x = "Salary", y = "Count")  +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1),legend.text = element_text(size = 15),
+            legend.title = element_text(size = 15),
+            axis.title = element_text(size = 20),axis.text = element_text(size = 10)) + 
+      labs(fill = "Country") 
+    
+  })
   
 }
 
