@@ -1,20 +1,11 @@
-
-
-#Wednesday
-#create headers for third tab
-#Build code for the sections
-#final testing
-
-
 #
 # This is a Shiny web application that uses the Kaggle 2019 Data
 # Science and Machine learning survey
 #
 
-#rm(list=ls())
 #packages 
 packages <- c('ggplot2', 'corrplot','tidyverse','caret','mlbench','mice', 
-              'caTools','dummies','ggfortify','shiny','countrycode','highcharter')
+              'caTools','dummies','ggfortify','shiny','countrycode','highcharter',"gridExtra")
 #load packages
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
@@ -160,7 +151,15 @@ ui <- fluidPage(
                           submitButton("Submit")
                         ),
                         mainPanel(
-                          plotOutput("coolplot"),
+                          h1("Country Comparisons"),
+                          h3("Gender"),
+                          plotOutput("gendercountryplot"),
+                          h3("Age"),
+                          plotOutput("agecountryplot"), 
+                          h3("Education Degrees"),
+                          plotOutput("educationcountryplot"),
+                          h3("Salary"),
+                          plotOutput("salarycountryplot"),
                           br(), br()
                         ),
                         hr())
@@ -311,10 +310,57 @@ server <- function(input, output) {
   
 
   
-
+  #countryInput1 and countryInput2
   
   #plot placeholder
-  output$coolplot <- renderPlot({})
+  output$gendercountryplot <- renderPlot({
+    gendercountryinfo <- responses %>%
+      select(Q2,Q3) %>%
+      filter(Q2 %in% c('Male','Female')) %>%
+      filter(Q3 %in% c(input$countryInput1,input$countryInput2)) %>%
+      group_by(Q2,Q3) %>%
+      summarize(freq = n()) %>%
+      arrange(desc(freq)) 
+    
+    ggplot(data=gendercountryinfo, aes(x=reorder(Q2,-freq), y=freq, fill=Q3)) +
+      geom_bar(stat="identity",position=position_dodge(),width = 0.8) + theme_classic() + 
+      labs(x = "Gender", y = "Count") +
+      theme(legend.text = element_text(size = 15),
+            legend.title = element_text(size = 15),
+            axis.title = element_text(size = 20),axis.text = element_text(size = 15)) + 
+      labs(fill = "Country")
+    
+    
+  })
+  output$agecountryplot <- renderPlot({
+    agecountryinfo <- responses %>%
+      select(Q1,Q3) %>%
+      filter(Q3 %in% c(input$countryInput1,input$countryInput2)) %>%
+      group_by(Q1,Q3) %>%
+      summarise(freq = n())
+    
+    ggplot(data=agecountryinfo, aes(x=reorder(Q1,-freq), y=freq, fill=Q3)) +
+      geom_bar(stat="identity",position=position_dodge(),width = 0.8) + theme_classic() + 
+      labs(x = "Age", y = "Count") +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1),legend.text = element_text(size = 15),
+            legend.title = element_text(size = 15),
+            axis.title = element_text(size = 20),axis.text = element_text(size = 15)) + 
+      labs(fill = "Country")
+  })
+  output$educationcountryplot <- renderPlot({
+    educationcountryinfo <- responses %>%
+      select(Q4,Q3) %>%
+      filter(Q3 %in% c(input$countryInput1,input$countryInput2)) %>%
+      group_by(Q4,Q3) %>%
+      summarise(freq = n())
+    educationcountryinfo <- na.omit(educationcountryinfo)
+    
+  })
+  output$salarycountryplot <- renderPlot({})
+  
+
+  
+  
 }
 
 # Run the application 
