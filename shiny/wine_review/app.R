@@ -14,6 +14,10 @@ for (package in packages) {
   }
 }
 
+#load data
+wine_data <- load("wine_dfR.RData")
+
+
 # Define UI for application that draws a histogram
 ui <- fluidPage(
    
