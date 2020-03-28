@@ -30,6 +30,7 @@ ui <- dashboardPage(skin = "blue",
       menuItem("Ratings", tabName = "Ratings", icon = icon("th")),
       menuItem("Price", tabName = "Price", icon = icon("th")),
       menuItem("Variety", tabName = "Variety", icon = icon("th")),
+      menuItem("Country", tabName = "Country", icon = icon("th")),
       menuItem("WineSelector", tabName = "Wine Selector", icon = icon("th")),
       menuItem("WineRecommender", tabName = "Wine Recommender", icon = icon("th"))
     )
@@ -46,7 +47,13 @@ ui <- dashboardPage(skin = "blue",
       ),
       tabItem(tabName = "Background",
        h1("Background Information") 
-      )
+      ), 
+      tabItem(tabName = "Ratings"),
+      tabItem(tabName = "Price"),
+      tabItem(tabName = "Variety"),
+      tabItem(tabName = "Country"),
+      tabItem(tabName = "WineSelector"),
+      tabItem(tabName = "WineRecommender")
     
     )
   )
