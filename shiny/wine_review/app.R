@@ -46,14 +46,14 @@ ui <- dashboardPage(skin = "blue",
               )
       ),
       tabItem(tabName = "Background",
-       h1("Background Information"),
+       #h1("Background Information"),
        fluidRow(
          valueBoxOutput("reviewBox"),
          valueBoxOutput("tasterBox"),
          valueBoxOutput("wineBox"),
          valueBoxOutput("countryBox"),
          valueBoxOutput("ratingBox"),
-         valueBoxOutput("winePriceBox"),
+         valueBoxOutput("winePriceBox")
        )
  
       ), 
@@ -71,7 +71,12 @@ ui <- dashboardPage(skin = "blue",
 # Define server logic required to draw a histogram
 server <- function(input, output) {
    
-  
+  output$reviewBox <- renderValueBox({})
+  output$tasterBox <- renderValueBox({})
+  output$wineBox <- renderValueBox({})
+  output$countryBox <- renderValueBox({})
+  output$ratingBox <- renderValueBox({})
+  output$winePriceBox <- renderValueBox({})
 }
 
 # Run the application 
