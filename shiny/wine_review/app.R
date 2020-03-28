@@ -17,6 +17,7 @@ for (package in packages) {
 #load data
 wine_data <- load("wine_dfR.RData")
 
+variety <- as.vector(unique(wine_df$variety))
 
 # Define UI for application that draws a histogram
 ui <- dashboardPage(skin = "blue",
@@ -46,7 +47,7 @@ ui <- dashboardPage(skin = "blue",
               )
       ),
       tabItem(tabName = "Background",
-       #h1("Background Information"),
+       h3("Background Information"),
        fluidRow(
          valueBoxOutput("reviewBox"),
          valueBoxOutput("tasterBox"),
@@ -61,10 +62,45 @@ ui <- dashboardPage(skin = "blue",
       tabItem(tabName = "Price"),
       tabItem(tabName = "Variety"),
       tabItem(tabName = "Country"),
-      tabItem(tabName = "WineSelector"),
+      tabItem(tabName = "WineSelector",
+      h3("Top 10 wine selections based on Pricing, Rating and Variety"),
+      fluidRow(
+        box(
+          selectInput("variety", 
+                      label = "Choose a variety:",
+                      choices = variety,
+                      selected = "All"),
+          radioButtons("pricerange", 
+                       label = "Select a price range:",
+                       choices = list(#"Any" = 0,
+                         "< $10" = 1, 
+                         "$10 - $25" = 2, 
+                         "$25 - $50" = 3,
+                         "$50 - $100" = 4, 
+                         "$100 - $500" = 5, 
+                         "> $500" = 6), 
+                       selected = 1),
+          checkboxGroupInput("pointcategory",
+                             label = "Select desired rating(s):",
+                             choices = list("Classic",
+                                            "Superb",
+                                            "Excellent",
+                                            "Very Good",
+                                            "Good",
+                                            "Acceptable"),
+                             selected = list("Classic",
+                                             "Superb",
+                                             "Excellent",
+                                             "Very Good",
+                                             "Good",
+                                             "Acceptable")),
+          width = 2, 
+          height = 600),
+        box(DT::dataTableOutput("selected_wines"), width = 10)
+      )
+      ),
       tabItem(tabName = "WineRecommender")
-    
-    )
+    )  
   )
 )
 
