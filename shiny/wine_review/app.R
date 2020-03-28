@@ -46,7 +46,16 @@ ui <- dashboardPage(skin = "blue",
               )
       ),
       tabItem(tabName = "Background",
-       h1("Background Information") 
+       h1("Background Information"),
+       fluidRow(
+         valueBoxOutput("reviewBox"),
+         valueBoxOutput("tasterBox"),
+         valueBoxOutput("wineBox"),
+         valueBoxOutput("countryBox"),
+         valueBoxOutput("ratingBox"),
+         valueBoxOutput("winePriceBox"),
+       )
+ 
       ), 
       tabItem(tabName = "Ratings"),
       tabItem(tabName = "Price"),
