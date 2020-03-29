@@ -59,9 +59,65 @@ ui <- dashboardPage(skin = "blue",
  
       ), 
       tabItem(tabName = "Ratings"),
+      sidebarPanel(
+        helpText("Select Ratings from the dropdown"),
+        selectInput("ratingInput", "Ratings",choices=c("","")),
+        br()
+      ),
+      mainPanel(
+        h1("Ratings Information"),
+        h3("Price"),
+        plotOutput("priceRatingplot"),
+        h3("Variety"),
+        plotOutput("varietyRatingplot"), 
+        h3("Country"),
+        plotOutput("countryRatingplot")
+      ),
       tabItem(tabName = "Price"),
+      sidebarPanel(
+        helpText("Select Prices from the dropdown"),
+        selectInput("priceInput", "Prices",choices=c("","")),
+        br()
+      ),
+      mainPanel(
+        h1("Price Information"),
+        h3("Rating"),
+        plotOutput("ratingPriceplot"),
+        h3("Variety"),
+        plotOutput("varietypPricelot"), 
+        h3("Country"),
+        plotOutput("countryPriceplot")
+      ),
       tabItem(tabName = "Variety"),
+      sidebarPanel(
+        helpText("Select Variety from the dropdown"),
+        selectInput("varietyInput", "Varieties",choices=c("","")),
+        br()
+      ),
+      mainPanel(
+        h1("Varieties Information"),
+        h3("Price"),
+        plotOutput("priceVarietyplot"),
+        h3("Rating"),
+        plotOutput("ratingVarietyplot"), 
+        h3("Country"),
+        plotOutput("countryVarietyplot")
+      ),
       tabItem(tabName = "Country"),
+      sidebarPanel(
+        helpText("Select Country from the dropdown"),
+        selectInput("countryInput", "Ratings",choices=c("","")),
+        br()
+      ),
+      mainPanel(
+        h1("Country Information"),
+        h3("Price"),
+        plotOutput("priceCountryplot"),
+        h3("Rating"),
+        plotOutput("ratingCountryplot"), 
+        h3("Variety"),
+        plotOutput("varietyCountryplot")
+      ),
       tabItem(tabName = "WineSelector",
       h3("Top 10 wine selections based on Pricing, Rating and Variety"),
       fluidRow(
