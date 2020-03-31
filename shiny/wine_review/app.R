@@ -56,8 +56,20 @@ ui <- dashboardPage(skin = "blue",
          valueBoxOutput("ratingBox"),
          valueBoxOutput("winePriceBox")
        )
+      ),tabItem(tabName = "Ratings",
+      h1("Ratings Information"),
+      fluidRow(
+        box(selectInput("varietal", 
+                    label = "Ratings",
+                    choices =c("","")),width = 5, height = 200),
+        h3("Prices"),
+        box(plotOutput("priceRatingplot", height = 550),width = 25),br(),
+        h3("Variety")
+        # box(plotOutput("varietyRatinglot", height = 550),width = 25),br(),
+        # h3("Country"),
+        # box(plotOutput("countryRatingplot", height = 550),width = 25)
       )
-  
+      )
     )
   )
 )
