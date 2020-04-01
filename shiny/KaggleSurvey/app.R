@@ -224,7 +224,8 @@ server <- function(input, output) {
   #time learning to code
   output$timelearningcodeplot <- renderPlot({
     ggplot(data=timeleanringinfo, aes(x=factor(Q15,
-                                               levels = c("I have never written code","< 1 years","1-2 years",
+                                               levels = c("I have never written code",
+                                                          "< 1 years","1-2 years",
                                                           "3-5 years","5-10 years","10-20 years",
                                                           "20+ years")), y=freq)) +
       geom_bar(stat="identity",fill="steelblue") + theme_classic() + labs(x = "Time learning to code", 
@@ -314,10 +315,6 @@ server <- function(input, output) {
             legend.position="none",axis.title = element_text(size = 25),
             axis.text = element_text(size = 15)) + coord_flip()
   })
-  
-
-  
-  #countryInput1 and countryInput2
   
   #plot placeholder
   output$gendercountryplot <- renderPlot({
