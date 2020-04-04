@@ -46,32 +46,74 @@ ui <- dashboardPage(skin = "blue",
                 )
               )
       ),
-      tabItem(tabName = "Background",
-       h3("Background Information"),
-       fluidRow(
-         valueBoxOutput("reviewBox"),
-         valueBoxOutput("tasterBox"),
-         valueBoxOutput("wineBox"),
-         valueBoxOutput("countryBox"),
-         valueBoxOutput("ratingBox"),
-         valueBoxOutput("winePriceBox")
-       )
-      ),tabItem(tabName = "Ratings",
-          h1("Ratings Information"),
-          fluidRow(
-            box(selectInput("ratingInput", 
-                        label = "Ratings",
-                        choices =c("","")), height = 100,width = 25)),br(),
-            box(h3("Price"),
-              plotOutput("priceRatingplot", height = 200, width = 5)),
-            box(h3("Variety"),
-                plotOutput("varietyRatingplot", height = 200,width = 5)),
-            box(h3("Country"),
-                plotOutput("countryRatingplot", height = 200,width = 5))
-          )
+      tabItem(
+          tabName = "Background",
+         h3("Background Information"),
+         fluidRow(
+           valueBoxOutput("reviewBox"),
+           valueBoxOutput("tasterBox"),
+           valueBoxOutput("wineBox"),
+           valueBoxOutput("countryBox"),
+           valueBoxOutput("ratingBox"),
+           valueBoxOutput("winePriceBox")
+         )
+      ),tabItem(
+              tabName = "Ratings",
+              h1("Ratings Information"),
+              fluidRow(
+                box(selectInput("ratingInput", 
+                            label = "Ratings",
+                            choices =c("","")), height = 100,width = 25)),br(),
+                box(h3("Price"),
+                  plotOutput("priceRatingplot", height = 200, width = 5)),
+                box(h3("Variety"),
+                    plotOutput("varietyRatingplot", height = 200,width = 5)),
+                box(h3("Country"),
+                    plotOutput("countryRatingplot", height = 200,width = 5))
+      ),tabItem(
+                tabName = "Price",
+                h1("Price Information"),
+                fluidRow(
+                  box(selectInput("priceInput", 
+                                  label = "Prices",
+                                  choices =c("","")), height = 100,width = 25)),br(),
+                box(h3("Rating"),
+                    plotOutput("ratingPriceplot", height = 200, width = 5)),
+                box(h3("Variety"),
+                    plotOutput("varietyPriceplot", height = 200,width = 5)),
+                box(h3("Country"),
+                    plotOutput("countryPriceplot", height = 200,width = 5))
+      ),tabItem(
+                tabName = "Variety",
+                h1("Variety Information"),
+                fluidRow(
+                  box(selectInput("varietyInput", 
+                                  label = "Variety",
+                                  choices =c("","")), height = 100,width = 25)),br(),
+                box(h3("Rating"),
+                    plotOutput("ratingVarietyplot", height = 200, width = 5)),
+                box(h3("Price"),
+                    plotOutput("priceVarietyplot", height = 200,width = 5)),
+                box(h3("Country"),
+                    plotOutput("countryVarietyplot", height = 200,width = 5))
+      ), tabItem(
+                tabName = "Country",
+                h1("Country Information"),
+                fluidRow(
+                  box(selectInput("countryInput", 
+                                  label = "Country",
+                                  choices =c("","")), height = 100,width = 25)),br(),
+                box(h3("Rating"),
+                    plotOutput("ratingCountryplot", height = 200, width = 5)),
+                box(h3("Price"),
+                    plotOutput("priceCountryplot", height = 200,width = 5)),
+                box(h3("Variety"),
+                    plotOutput("varietyCountryplot", height = 200,width = 5))        
       )
-      )
+      
     )
+  )
+)
   
 
 
