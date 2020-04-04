@@ -19,7 +19,7 @@ wine_data <- load("wine_dfR.RData")
 
 variety <- as.vector(unique(wine_df$variety))
 
-# Define UI for application that draws a histogram
+# Define UI for wine app
 ui <- dashboardPage(skin = "blue",
   dashboardHeader(title = "Wined"),
   dashboardSidebar(
@@ -57,24 +57,25 @@ ui <- dashboardPage(skin = "blue",
          valueBoxOutput("winePriceBox")
        )
       ),tabItem(tabName = "Ratings",
-      h1("Ratings Information"),
-      fluidRow(
-        box(selectInput("varietal", 
-                    label = "Ratings",
-                    choices =c("","")),width = 5, height = 200),
-        h3("Prices"),
-        box(plotOutput("priceRatingplot", height = 550),width = 25),br(),
-        h3("Variety")
-        # box(plotOutput("varietyRatinglot", height = 550),width = 25),br(),
-        # h3("Country"),
-        # box(plotOutput("countryRatingplot", height = 550),width = 25)
+          h1("Ratings Information"),
+          fluidRow(
+            box(selectInput("ratingInput", 
+                        label = "Ratings",
+                        choices =c("","")), height = 100,width = 25)),br(),
+            box(h3("Price"),
+              plotOutput("priceRatingplot", height = 200, width = 5)),
+            box(h3("Variety"),
+                plotOutput("varietyRatingplot", height = 200,width = 5)),
+            box(h3("Country"),
+                plotOutput("countryRatingplot", height = 200,width = 5))
+          )
       )
       )
     )
-  )
-)
+  
 
-# Define server logic required to draw a histogram
+
+# Define server logic for the wine app
 server <- function(input, output) {
    
   # output$reviewBox <- renderValueBox({})
