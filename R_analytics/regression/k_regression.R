@@ -39,7 +39,9 @@ mydata$Education <- ifelse(mydata$Education == "Masters", 1, 0)
 unique(mydata$Employment)
 mydata <- mydata %>%
   mutate(Employment = as.factor(Employment))
-mydata$Employment <- recode_factor(mydata$Employment,"Full time" = '5',  "Unemployed" = '1', "Student" = '2',  "Master" = '3', "Part time" = '4')
+mydata$Employment <- recode_factor(mydata$Employment,"Full time" = '5', 
+                                   "Unemployed" = '1', "Student" = '2',  "Master" = '3', 
+                                   "Part time" = '4')
 
 #create regression model
 #simple linear regression
