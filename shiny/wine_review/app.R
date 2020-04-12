@@ -110,14 +110,14 @@ ui <- dashboardPage(skin = "blue",
                 box(h3("Variety"),
                     plotOutput("varietyCountryplot", height = 200,width = 5))        
       ),tabItem(tabName = "WineSelector",
-                h3("Select the right wine for you"),
+                h3("Top 10 wine selections based on Pricing, Rating and Variety"),
                 fluidRow(
                   box(
                     selectInput("variety", 
                                 label = "Choose a variety:",
-                                choices = c("",""),
+                                choices = variety,
                                 selected = "All"),
-                    radioButtons("priceRange", 
+                    radioButtons("pricerange", 
                                  label = "Select a price range:",
                                  choices = list(#"Any" = 0,
                                    "< $10" = 1, 
@@ -127,7 +127,7 @@ ui <- dashboardPage(skin = "blue",
                                    "$100 - $500" = 5, 
                                    "> $500" = 6), 
                                  selected = 1),
-                    checkboxGroupInput("pointCategory",
+                    checkboxGroupInput("pointcategory",
                                        label = "Select desired rating(s):",
                                        choices = list("Classic",
                                                       "Superb",
@@ -144,9 +144,6 @@ ui <- dashboardPage(skin = "blue",
                     width = 2, 
                     height = 600),
                   box(DT::dataTableOutput("selected_wines"), width = 10))        
-      ), 
-      tabItem(
-        tabName = "WineRecommender"
       )
       
     )
