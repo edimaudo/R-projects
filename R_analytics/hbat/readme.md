@@ -10,7 +10,6 @@ To help HBAT marketing unit, the management has hired Crimson Consulting Co. (Cr
 The data consists of 100 observations on 18 separate variables, is based on a market segmentation study of HBAT customers. As you already know, HBAT sells paper products to two market segments: the newsprint industry and the magazine industry. The paper products are sold to these market segments either directly to the customer, or indirectly through broker.
 Two types of information were collected in the surveys. The first type of information was perceptions of HBAT’s performance on 13 attributes. These attributes, developed through focus groups, a pretest, and variables used in previous studies, are considered to be the most influential in the selection of suppliers in the paper industry. Respondents included purchasing managers of firms buying from HBAT, and they rated HBAT on each of the 13 attributes using a 0-10 scale, with 10 being “Excellent” and 0 being “Poor”. The second type of information relates to purchase outcomes and business relationships (e.g., satisfaction with HBAT and whether the firm would consider a strategic alliance / partnership with HBAT).
 
-
 X1 Customer Type
 X2 Industry Type
 X3 Firm Size
