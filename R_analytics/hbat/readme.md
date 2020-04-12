@@ -39,23 +39,21 @@ X21 Likelihood of Future Purchase
 X22 Current Purchase/ Usage Level
 X23 Consider Strategic Alliance/ Partnership in Future
 
-X1 
-Length of time a particular customer has been buying from HBAT:
+***
+
+X1 Length of time a particular customer has been buying from HBAT:
 1= Less than one year
 2= Between 1 and 5 years 3= Longer than 5 years
 
-X2
-Type of industry that purchases HBAT’s paper products: 
+X2 Type of industry that purchases HBAT’s paper products: 
 0= Magazine industry
 1= Newsprint industry
 
-X3
-Employee size:
+X3 Employee size:
 0= Small firm, fewer than 500 employees 
 1= Large firm, 500 or more employees
 
-X4
-Customer Location:
+X4 Customer Location:
 0= USA / North America 
 1= Outside North America
 
@@ -80,7 +78,38 @@ X10 Advertising
 Perceptions of HBAT’s advertising campaigns in all types of media
 
 X11 Product Line
-Depth and breath of HBAT’s product line to meet
+Depth and breath of HBAT’s product line to meet customer needs
+
+X12 Sales Force Image
+Overall image of HBAT’s sales force
+
+X13 Competitive Pricing
+Extent to which HBAT offers competitive prices 
+
+X14 Warranty and Claims
+Extent to which HBAT stands behind its product/ service warranties and claims
+
+X15 New Products
+Extent to which HBAT develops and sells new products
+
+X16 Ordering and Billing
+Perceptions that ordering and billing is handled efficiently and correctly
+
+X17 Price Flexibility
+Perceived willingness of HBAT sales reps to negotiate price on purchases of paper products
+
+X18 Delivery Speed
+Amount of time it takes to deliver the paper products once an order has been confirmed
+
+Outcome/ Relationship Measures
+
+
+
+
+
+
+
+ 
 
 
 
