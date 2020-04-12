@@ -102,7 +102,22 @@ X18 Delivery Speed
 Amount of time it takes to deliver the paper products once an order has been confirmed
 
 Outcome/ Relationship Measures
+X19 Customer Satisfaction
+Customer satisfaction with past purchases from HABT, measured on a 10-point graphic rating scale
 
+X20 Likelihood of Recommending HBAT
+Likelihood of recommending HBAT to other firms as a supplier of paper products, measured on a 10-point graphic rating scale
+
+X21 Likelihood of Future Purchases from HBAT
+Likelihood of purchasing paper products from HBAT in the future, measured on a 10-point graphic rating scale 
+
+X22 Percentage of Purchases from HBAT
+Percentage of the responding firm’s paper needs purchased from HBAT, measured on a 100-point percentage scale
+
+X23 Perception of Future Relationship with HBAT
+Extent to which the customer/ respondent perceives his or her firm would engage in strategic alliance / partnership with HBAT:
+0= Would not consider
+1= Yes, would consider strategic alliance or partnership
 
 
 
