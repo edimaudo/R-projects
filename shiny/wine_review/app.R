@@ -9,12 +9,21 @@
 #build introduction - done
 #create reminaing tabs layout - done
 #- add it with centered layout - done
-#have rating drop down + visualization for prcies, country & variety layout + code + test
-#have price drop down + visualization for rating, country & variety layout + code + test
-#have variety dropdown + visualization for rating, country, prices layout + code + test
+#layout
+#have variety dropdown + visualization for rating, country, prices - done
+#have price drop down + visualization for rating, country & variety - done
+#have rating drop down + visualization for prcies, country & variety - done
+#have country drop down + visualization for prcies, country & variety - done
+
+#code & #test
+#have variety dropdown + visualization for rating, country, prices
+#have price drop down + visualization for rating, country & variety
+#have rating drop down + visualization for prcies, country & variety
+#have country drop down + visualization for prcies, country & variety
 
 
-#wine selector varietal + price + rating + top 10 outputs table layout + code 
+#wine selector varietal + price + rating + top 10 outputs table layout 
+#wine selector varietal + price + rating + top 10 outputs table code
 
 
 
@@ -42,7 +51,14 @@ for (package in packages) {
 #load data
 wine_data <- load("wine_dfR.RData")
 
-variety <- as.vector(unique(wine_df$variety))
+#column info
+variety <- sort(as.vector(unique(wine_df$variety)))
+rating <- c("Good","Very Good","Superb","Excellent")
+country <- sort(as.vector(unique(wine_df$country)))
+price <- sort(as.vector(unique(wine_df$price_range)))
+
+
+#add column for ratings "Superb","Excellent","Very Good","Good" using point range
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -58,30 +74,85 @@ ui <- fluidPage(
      tabPanel("Prices",
               h1("Prices",style="text-align: center;"), 
               sidebarPanel(
-                selectInput("ratingInput", 
-                            label = "Ratings",
-                            choices =c("",""))
+                selectInput("priceInput", 
+                            label = "Prices",
+                            choices = price )
               ),
               mainPanel(
-                h3("Price"),
-                plotOutput("priceRatingplot", height = 200, width = 5),
+                h3("Ratings"),
+                plotOutput("ratingPriceplot", height = 200, width = 5),
                 h3("Variety"),
-                plotOutput("varietyRatingplot", height = 200,width = 5),
+                plotOutput("varietyPriceplot", height = 200,width = 5),
                 h3("Country"),
-                plotOutput("countryRatingplot", height = 200,width = 5)
+                plotOutput("countryPriceplot", height = 200,width = 5)
               )
      ), 
      tabPanel("Ratings",
-            h1("Ratings",style="text-align: center;")          
+            h1("Ratings",style="text-align: center;"),
+            sidebarPanel(
+              selectInput("ratingInput", 
+                          label = "Ratings",
+                          choices = rating )
+            ),
+            mainPanel(
+              h3("Price"),
+              plotOutput("priceRatingplot", height = 200, width = 5),
+              h3("Variety"),
+              plotOutput("varietyRatingplot", height = 200,width = 5),
+              h3("Country"),
+              plotOutput("countryRatingplot", height = 200,width = 5)
+            )
     ),
     tabPanel("Variety",
-      h1("Variety",style="text-align: center;")
+          h1("Variety",style="text-align: center;"),
+          sidebarPanel(
+            selectInput("varietyInput", 
+                        label = "Variety",
+                        choices =variety )
+          ),
+          mainPanel(
+            h3("Price"),
+            plotOutput("priceVarietyplot", height = 200, width = 5),
+            h3("Rating"),
+            plotOutput("ratingVarietyplot", height = 200,width = 5),
+            h3("Country"),
+            plotOutput("countryVarietyplot", height = 200,width = 5)
+          )
     ),
     tabPanel("Country",
-      h1("Country",style="text-align: center;")
+          h1("Country",style="text-align: center;"),
+          sidebarPanel(
+            selectInput("countryInput", 
+                        label = "Country",
+                        choices =country )
+          ),
+          mainPanel(
+            h3("Price"),
+            plotOutput("priceCountryplot", height = 200, width = 5),
+            h3("Variety"),
+            plotOutput("varietyCountryplot", height = 200,width = 5),
+            h3("Ratings"),
+            plotOutput("ratingCountryplot", height = 200,width = 5)
+          )
     ),
     tabPanel("Wine Selector",
-      h1("Wine Selector",style="text-align: center;")
+      h1("Wine Selector",style="text-align: center;"),
+      sidebarPanel(
+        selectInput("variety", 
+                    label = "Choose a variety:",
+                    choices = variety,
+                    selected = "All"),
+        radioButtons("pricerange", 
+                     label = "Select a price range:",
+                     choices = price),
+        checkboxGroupInput("pointcategory",
+                           label = "Select desired rating(s):",
+                           choices = rating,
+                           selected = rating
+      ), 
+      mainPanel(
+        dataTableOutput("selected_wines"), width = 10)
+      )
     ),
     tabPanel("Wine Recommendation",
       h1("Wine Recommendation",style="text-align: center;")
