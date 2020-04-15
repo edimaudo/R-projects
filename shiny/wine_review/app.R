@@ -51,12 +51,13 @@ for (package in packages) {
 #load data
 wine_data <- load("wine_dfR.RData")
 
-#column info
+#dropdown information
 variety <- sort(as.vector(unique(wine_df$variety)))
 rating <- c("Good","Very Good","Superb","Excellent")
 country <- sort(as.vector(unique(wine_df$country)))
-price <- sort(as.vector(unique(wine_df$price_range)))
+price <- c('< $10','$10-$25','$25-$50', '$50-$100','$100-$500', '> $500 ')
 
+  
 
 #add column for ratings "Superb","Excellent","Very Good","Good" using point range
 
