@@ -1,41 +1,36 @@
-# review data - 
-# review what other people did - 
-# design what visualization is needed 
-# design readme - 
-# design about section for the app - 
-# Review libraries to use - 
-# Design the layout of the app - 
-# build initial layout - 
-#build introduction - 
-#create reminaing tabs layout - 
-#build background - add it with centered layout - 
-#use boxes and summary information layout for the background - 
-#wine selector varietal + price + rating + top 10 outputs table layout - 
-#have rating drop down + visualization for prcies, country & variety layout - 
-#have price drop down + visualization for rating, country & variety layout - 
-#have variety checkboxes + visualization for rating, country, prices layout - 
-#debug issues for layouts + test - sat - 
-#wine selector varietal + price + rating + top 10 outputs table layout 
+# review data - doen
+# review what other people did - done
+# design what visualization is needed - done
+# design readme - done
+# design about section for the app - done
+# Review libraries to use - done
+# Design the layout of the app - done 
+# build initial layout - done
+#build introduction - done
+#create reminaing tabs layout - done
+#- add it with centered layout - done
+#have rating drop down + visualization for prcies, country & variety layout + code + test
+#have price drop down + visualization for rating, country & variety layout + code + test
+#have variety dropdown + visualization for rating, country, prices layout + code + test
 
-#wine selector varietal + price + rating + top 10 outputs table code 
 
-#use boxes and summary information layout + code + test 
+#wine selector varietal + price + rating + top 10 outputs table layout + code 
 
-#have rating drop down + visualization for prcies, country & variety code + test
-#have price drop down + visualization for rating, country & variety code + test
-#have variety dropdown + visualization for rating, country, prices code + test
+
+
+#use boxes and summary information layout + code + test
 
 #wine recommendation using user layout + recommendation code + test
 
 
-#
-# Shiny web app that insights into prices, ratings, 
+#================================================================================
+# Shiny web app which provides insights into prices, ratings, 
 # descriptions, and geographic distribution of the world's most esteemed wines
-#
+# using data from wineenthusisat
+#================================================================================
 
 #packages 
-packages <- c('ggplot2', 'corrplot','tidyverse','shiny',
-              'shinydashboard','countrycode','highcharter',"gridExtra")
+packages <- c('ggplot2', 'corrplot','tidyverse','shiny','countrycode','highcharter',"gridExtra")
 #load packages
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
@@ -51,7 +46,47 @@ variety <- as.vector(unique(wine_df$variety))
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
-   
+   tabsetPanel(
+     
+     tabPanel("Introduction",
+       includeMarkdown("intro.md")
+      
+     ),
+     tabPanel("Background",
+              h1("Background",style="text-align: center;")
+     ),
+     tabPanel("Prices",
+              h1("Prices",style="text-align: center;"), 
+              sidebarPanel(
+                selectInput("ratingInput", 
+                            label = "Ratings",
+                            choices =c("",""))
+              ),
+              mainPanel(
+                h3("Price"),
+                plotOutput("priceRatingplot", height = 200, width = 5),
+                h3("Variety"),
+                plotOutput("varietyRatingplot", height = 200,width = 5),
+                h3("Country"),
+                plotOutput("countryRatingplot", height = 200,width = 5)
+              )
+     ), 
+     tabPanel("Ratings",
+            h1("Ratings",style="text-align: center;")          
+    ),
+    tabPanel("Variety",
+      h1("Variety",style="text-align: center;")
+    ),
+    tabPanel("Country",
+      h1("Country",style="text-align: center;")
+    ),
+    tabPanel("Wine Selector",
+      h1("Wine Selector",style="text-align: center;")
+    ),
+    tabPanel("Wine Recommendation",
+      h1("Wine Recommendation",style="text-align: center;")
+    )
+   )
 
 )
 
