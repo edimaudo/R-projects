@@ -22,7 +22,7 @@
 #have country drop down + visualization for prcies, country & variety
 
 
-#wine selector varietal + price + rating + top 10 outputs table layout 
+#wine selector varietal + price + rating + top 10 outputs table layout - done
 #wine selector varietal + price + rating + top 10 outputs table code
 
 
