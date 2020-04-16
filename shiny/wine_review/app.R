@@ -39,6 +39,8 @@ variety <- sort(as.vector(unique(wine_df$variety)))
 rating <- c("Good","Very Good","Superb","Excellent")
 country <- sort(as.vector(unique(wine_df$country)))
 price_ranges <- c('< $10','$10-$25','$25-$50', '$50-$100','$100-$500', '> $500')
+
+#refactor price ranges
 wine_df$price_range <- factor(wine_df$price_range,levels = price_ranges)
 
 #add rating column
@@ -49,7 +51,7 @@ wine_df <- wine_df %>%
                              wine_df$point_range == '95-100' ~ 'Superb'))
   
 
-# Define UI for application that draws a histogram
+# Define UI for application
 ui <- fluidPage(
    tabsetPanel(
      
@@ -152,22 +154,41 @@ ui <- fluidPage(
 
 
 
+
+
 # Define server logic 
 server <- function(input, output) {
    
   output$ratingPriceplot <- renderPlot({
-     
-     wine_df_ratings <- wine_df %>%
-       select(price_range,country,ratings) %>%
-       filter(price_range == input$priceInput)
+    wine_df_ratings <- wine_df %>%
+      select(price_range,country,ratings, variety) %>%
+      filter(price_range == input$priceInput)
     
-     ggplot(wine_df_rating, aes(x = factor(ratings, levels=rating))) + 
+      ggplot(wine_df_ratings, aes(x = factor(ratings, levels=rating))) + 
        geom_bar(width = 0.5, fill="steelblue") + theme_classic() + 
        labs(x = "Rating", y = "Count") +
        theme(legend.text = element_text(size = 15),
              legend.title = element_text(size = 15),
              axis.title = element_text(size = 20),axis.text = element_text(size = 15))
    })
+  
+  output$varietyPriceplot <- renderPlot({})
+  
+  
+  
+  output$priceRatingplot <- renderPlot({})
+  
+  output$varietyRatingplot <- renderPlot({})
+  
+  output$priceVarietyplot <- renderPlot({})
+  
+  output$ratingVarietyplot <- renderPlot({})
+  
+  output$priceCountryplot <- renderPlot({})
+  
+  output$varietyCountryplot <- renderPlot({})
+  
+  output$ratingCountryplot <- renderPlot({})
 
 }
 
