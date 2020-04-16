@@ -1,20 +1,4 @@
-# review data - doen
-# review what other people did - done
-# design what visualization is needed - done
-# design readme - done
-# design about section for the app - done
-# Review libraries to use - done
-# Design the layout of the app - done 
-# build initial layout - done
-#build introduction - done
-#create reminaing tabs layout - done
-#- add it with centered layout - done
-#layout
-#have variety dropdown + visualization for rating, country, prices - done
-#have price drop down + visualization for rating, country & variety - done
-#have rating drop down + visualization for prcies, country & variety - done
-#have country drop down + visualization for prcies, country & variety - done
-#wine selector varietal + price + rating + top 10 outputs table layout - done
+
 
 #code & #test
 #have variety dropdown + visualization for rating,  prices
@@ -59,7 +43,7 @@ wine_df$price_range <- factor(wine_df$price_range,levels = price_ranges)
 
 #add rating column
 wine_df <- wine_df %>%
-  mutate(Ratings = case_when(wine_df$point_range == '< 85' ~ 'Good',
+  mutate(ratings = case_when(wine_df$point_range == '< 85' ~ 'Good',
                              wine_df$point_range == '85-90' ~ 'Very Good',
                              wine_df$point_range == '90-95' ~ 'Excellent',
                              wine_df$point_range == '95-100' ~ 'Superb'))
@@ -85,11 +69,11 @@ ui <- fluidPage(
               ),
               mainPanel(
                 h3("Ratings"),
-                plotOutput("ratingPriceplot", height = 200, width = 5),
+                plotOutput("ratingPriceplot"),
                 h3("Variety"),
-                plotOutput("varietyPriceplot", height = 200,width = 5),
+                plotOutput("varietyPriceplot"),
                 h3("Country"),
-                plotOutput("countryPriceplot", height = 200,width = 5)
+                plotOutput("countryPriceplot")
               )
      ), 
      tabPanel("Ratings",
@@ -101,11 +85,11 @@ ui <- fluidPage(
             ),
             mainPanel(
               h3("Price"),
-              plotOutput("priceRatingplot", height = 200, width = 5),
+              plotOutput("priceRatingplot"),
               h3("Variety"),
-              plotOutput("varietyRatingplot", height = 200,width = 5),
+              plotOutput("varietyRatingplot"),
               h3("Country"),
-              plotOutput("countryRatingplot", height = 200,width = 5)
+              plotOutput("countryRatingplot")
             )
     ),
     tabPanel("Variety",
@@ -117,11 +101,11 @@ ui <- fluidPage(
           ),
           mainPanel(
             h3("Price"),
-            plotOutput("priceVarietyplot", height = 200, width = 5),
+            plotOutput("priceVarietyplot"),
             h3("Rating"),
-            plotOutput("ratingVarietyplot", height = 200,width = 5),
+            plotOutput("ratingVarietyplot"),
             h3("Country"),
-            plotOutput("countryVarietyplot", height = 200,width = 5)
+            plotOutput("countryVarietyplot")
           )
     ),
     tabPanel("Country",
@@ -133,11 +117,11 @@ ui <- fluidPage(
           ),
           mainPanel(
             h3("Price"),
-            plotOutput("priceCountryplot", height = 200, width = 5),
+            plotOutput("priceCountryplot"),
             h3("Variety"),
-            plotOutput("varietyCountryplot", height = 200,width = 5),
+            plotOutput("varietyCountryplot"),
             h3("Ratings"),
-            plotOutput("ratingCountryplot", height = 200,width = 5)
+            plotOutput("ratingCountryplot")
           )
     ),
     tabPanel("Wine Selector",
@@ -166,15 +150,20 @@ ui <- fluidPage(
 
 )
 
-# Define server logic required to draw a histogram
+
+
+# Define server logic 
 server <- function(input, output) {
-   output$ratingPriceplot <- renderPlot({
+   
+  output$ratingPriceplot <- renderPlot({
+     
      wine_df_ratings <- wine_df %>%
+       select(price_range,country,ratings) %>%
        filter(price_range == input$priceInput)
-       
-     ggplot(wine_df_ratings, aes(x = price_range)) + 
-       geom_bar(aes(fill = ratings),width = 0.5) + theme_classic() + 
-       labs(x = "Prices", y = "Count") +
+    
+     ggplot(wine_df_rating, aes(x = factor(ratings, levels=rating))) + 
+       geom_bar(width = 0.5, fill="steelblue") + theme_classic() + 
+       labs(x = "Rating", y = "Count") +
        theme(legend.text = element_text(size = 15),
              legend.title = element_text(size = 15),
              axis.title = element_text(size = 20),axis.text = element_text(size = 15))
