@@ -4,17 +4,12 @@
 #have variety dropdown + visualization for rating,  prices
 #have price drop down + visualization for rating, & variety
 #have rating drop down + visualization for prcies,  & variety
-#have country drop down + visualization for prcies,  & variety
 
 #country plot for rating, prices and variety sections
 #wine selector varietal + price + rating + top 10 outputs table code
 
-
 #use boxes and summary information layout + code + test
-
 #wine recommendation using user layout + recommendation code + test
-
-
 #================================================================================
 # Shiny web app which provides insights into prices, ratings, 
 # descriptions, and geographic distribution of the world's most esteemed wines
@@ -172,7 +167,14 @@ server <- function(input, output) {
              axis.title = element_text(size = 20),axis.text = element_text(size = 15))
    })
   
-  output$varietyPriceplot <- renderPlot({})
+  output$varietyPriceplot <- renderPlot({
+    wine_info <- wine_df %>%
+      select(price_range,country,ratings, variety) %>%
+      filter(price_range == input$priceInput)
+    
+    ggplot(wine_info, aes(variety, price_range)) + geom_tile(aes(fill = variety), colour = "white") 
+  })
+  
   
   output$priceRatingplot <- renderPlot({
     wine_info <- wine_df %>%
@@ -187,15 +189,21 @@ server <- function(input, output) {
             axis.title = element_text(size = 20),axis.text = element_text(size = 15))
   })
   
+  
   output$varietyRatingplot <- renderPlot({})
+  
   
   output$priceVarietyplot <- renderPlot({})
   
+  
   output$ratingVarietyplot <- renderPlot({})
+  
   
   output$priceCountryplot <- renderPlot({})
   
+  
   output$varietyCountryplot <- renderPlot({})
+  
   
   output$ratingCountryplot <- renderPlot({})
 
