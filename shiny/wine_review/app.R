@@ -56,9 +56,13 @@ rating <- c("Good","Very Good","Superb","Excellent")
 country <- sort(as.vector(unique(wine_df$country)))
 price <- c('< $10','$10-$25','$25-$50', '$50-$100','$100-$500', '> $500 ')
 
+#add rating column
+wine_df <- wine_df %>%
+  mutate(Ratings = case_when(wine_df$point_range == '< 85' ~ 'Good',
+                             wine_df$point_range == '85-90' ~ 'Very Good',
+                             wine_df$point_range == '90-95' ~ 'Excellent',
+                             wine_df$point_range == '95-100' ~ 'Superb'))
   
-
-#add column for ratings "Superb","Excellent","Very Good","Good" using point range
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
