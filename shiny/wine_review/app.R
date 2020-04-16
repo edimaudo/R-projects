@@ -14,17 +14,16 @@
 #have price drop down + visualization for rating, country & variety - done
 #have rating drop down + visualization for prcies, country & variety - done
 #have country drop down + visualization for prcies, country & variety - done
+#wine selector varietal + price + rating + top 10 outputs table layout - done
 
 #code & #test
-#have variety dropdown + visualization for rating, country, prices
-#have price drop down + visualization for rating, country & variety
-#have rating drop down + visualization for prcies, country & variety
-#have country drop down + visualization for prcies, country & variety
+#have variety dropdown + visualization for rating,  prices
+#have price drop down + visualization for rating, & variety
+#have rating drop down + visualization for prcies,  & variety
+#have country drop down + visualization for prcies,  & variety
 
-
-#wine selector varietal + price + rating + top 10 outputs table layout - done
+#country plot for rating, prices and variety sections
 #wine selector varietal + price + rating + top 10 outputs table code
-
 
 
 #use boxes and summary information layout + code + test
