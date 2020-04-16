@@ -160,11 +160,11 @@ ui <- fluidPage(
 server <- function(input, output) {
    
   output$ratingPriceplot <- renderPlot({
-    wine_df_ratings <- wine_df %>%
+    wine_info <- wine_df %>%
       select(price_range,country,ratings, variety) %>%
       filter(price_range == input$priceInput)
     
-      ggplot(wine_df_ratings, aes(x = factor(ratings, levels=rating))) + 
+      ggplot(wine_info, aes(x = factor(ratings, levels=rating))) + 
        geom_bar(width = 0.5, fill="steelblue") + theme_classic() + 
        labs(x = "Rating", y = "Count") +
        theme(legend.text = element_text(size = 15),
@@ -174,9 +174,18 @@ server <- function(input, output) {
   
   output$varietyPriceplot <- renderPlot({})
   
-  
-  
-  output$priceRatingplot <- renderPlot({})
+  output$priceRatingplot <- renderPlot({
+    wine_info <- wine_df %>%
+      select(price_range,country,ratings, variety) %>%
+      filter(ratings == input$ratingInput)
+    
+    ggplot(wine_info, aes(x = factor(price_range, levels=price_ranges))) + 
+      geom_bar(width = 0.5, fill="steelblue") + theme_classic() + 
+      labs(x = "Prices", y = "Count") +
+      theme(legend.text = element_text(size = 15),
+            legend.title = element_text(size = 15),
+            axis.title = element_text(size = 20),axis.text = element_text(size = 15))
+  })
   
   output$varietyRatingplot <- renderPlot({})
   
