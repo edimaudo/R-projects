@@ -48,13 +48,14 @@ for (package in packages) {
 }
 
 #load data
-wine_data <- load("wine_dfR.RData")
+load("wine_dfR.RData")
 
 #dropdown information
 variety <- sort(as.vector(unique(wine_df$variety)))
 rating <- c("Good","Very Good","Superb","Excellent")
 country <- sort(as.vector(unique(wine_df$country)))
-price <- c('< $10','$10-$25','$25-$50', '$50-$100','$100-$500', '> $500 ')
+price_ranges <- c('< $10','$10-$25','$25-$50', '$50-$100','$100-$500', '> $500')
+wine_df$price_range <- factor(wine_df$price_range,levels = price_ranges)
 
 #add rating column
 wine_df <- wine_df %>%
@@ -80,7 +81,7 @@ ui <- fluidPage(
               sidebarPanel(
                 selectInput("priceInput", 
                             label = "Prices",
-                            choices = price )
+                            choices = price_ranges)
               ),
               mainPanel(
                 h3("Ratings"),
@@ -148,7 +149,7 @@ ui <- fluidPage(
                     selected = "All"),
         radioButtons("pricerange", 
                      label = "Select a price range:",
-                     choices = price),
+                     choices = price_ranges),
         checkboxGroupInput("pointcategory",
                            label = "Select desired rating(s):",
                            choices = rating,
@@ -167,7 +168,17 @@ ui <- fluidPage(
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
-   
+   output$ratingPriceplot <- renderPlot({
+     wine_df_ratings <- wine_df %>%
+       filter(price_range == input$priceInput)
+       
+     ggplot(wine_df_ratings, aes(x = price_range)) + 
+       geom_bar(aes(fill = ratings),width = 0.5) + theme_classic() + 
+       labs(x = "Prices", y = "Count") +
+       theme(legend.text = element_text(size = 15),
+             legend.title = element_text(size = 15),
+             axis.title = element_text(size = 20),axis.text = element_text(size = 15))
+   })
 
 }
 
