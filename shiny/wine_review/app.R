@@ -1,12 +1,12 @@
-
+#country plot for rating, prices and variety sections
+#wine selector varietal + price + rating + top 10 outputs table code
 
 #code & #test
 #have variety dropdown + visualization for rating,  prices
 #have price drop down + visualization for rating, & variety
 #have rating drop down + visualization for prcies,  & variety
 
-#country plot for rating, prices and variety sections
-#wine selector varietal + price + rating + top 10 outputs table code
+
 
 #use boxes and summary information layout + code + test
 #wine recommendation using user layout + recommendation code + test
@@ -17,7 +17,8 @@
 #================================================================================
 
 #packages 
-packages <- c('ggplot2', 'corrplot','tidyverse','shiny','countrycode','highcharter',"gridExtra")
+packages <- c('ggplot2', 'corrplot','tidyverse','shiny','countrycode',
+              'highcharter',"gridExtra")
 #load packages
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
@@ -172,7 +173,8 @@ server <- function(input, output) {
       select(price_range,country,ratings, variety) %>%
       filter(price_range == input$priceInput)
     
-    ggplot(wine_info, aes(variety, price_range)) + geom_tile(aes(fill = variety), colour = "white") 
+    ggplot(wine_info, aes(variety, price_range)) + geom_tile(aes(fill = variety), 
+                                                             colour = "white") 
   })
   
   
