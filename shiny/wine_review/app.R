@@ -50,6 +50,8 @@ wine_df <- wine_df %>%
 
 # Define UI for application
 ui <- fluidPage(
+   includeCSS("www/main.css"),
+   
    tabsetPanel(
      
      tabPanel("Introduction",
@@ -59,7 +61,11 @@ ui <- fluidPage(
      tabPanel("Background",
               h1("Background",style="text-align: center;"),
               mainPanel(
-                
+                br(),
+                h4("* Over 120,000 reviews, 20 different wine tasters"),
+                h4("* More than 110,000 different wines from 42 countries"),
+                h4("* 691 wines were rated"),
+                h4("* Wines priced at $4-$3300 per bottle")
               )
      ),
      tabPanel("Prices",
