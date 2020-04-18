@@ -9,6 +9,7 @@
 
 
 #use boxes and summary information layout + code + test
+
 #wine recommendation using user layout + recommendation code + test
 #================================================================================
 # Shiny web app which provides insights into prices, ratings, 
@@ -56,7 +57,10 @@ ui <- fluidPage(
       
      ),
      tabPanel("Background",
-              h1("Background",style="text-align: center;")
+              h1("Background",style="text-align: center;"),
+              mainPanel(
+                
+              )
      ),
      tabPanel("Prices",
               h1("Prices",style="text-align: center;"), 
