@@ -7,9 +7,6 @@
 #have rating drop down + visualization for prcies,  & variety
 
 
-
-#use boxes and summary information layout + code + test
-
 #wine recommendation using user layout + recommendation code + test
 #================================================================================
 # Shiny web app which provides insights into prices, ratings, 
@@ -178,20 +175,13 @@ server <- function(input, output) {
              axis.title = element_text(size = 20),axis.text = element_text(size = 15))
    })
   
-  output$varietyPriceplot <- renderPlot({
-    wine_info <- wine_df %>%
-      select(price_range,country,ratings, variety) %>%
-      filter(price_range == input$priceInput)
-    
-    ggplot(wine_info, aes(variety, price_range)) + geom_tile(aes(fill = variety), 
-                                                             colour = "white") 
-  })
+  output$varietyPriceplot <- renderPlot({})
   
   
   output$priceRatingplot <- renderPlot({
     wine_info <- wine_df %>%
       select(price_range,country,ratings, variety) %>%
-      filter(ratings == input$ratingInput)
+      filter(country == input$countryInput)
     
     ggplot(wine_info, aes(x = factor(price_range, levels=price_ranges))) + 
       geom_bar(width = 0.5, fill="steelblue") + theme_classic() + 
@@ -205,19 +195,63 @@ server <- function(input, output) {
   output$varietyRatingplot <- renderPlot({})
   
   
-  output$priceVarietyplot <- renderPlot({})
+  output$priceVarietyplot <- renderPlot({
+    wine_info <- wine_df %>%
+      select(price_range,country,ratings, variety) %>%
+      filter(variety == input$varietyInput)
+    
+    ggplot(wine_info, aes(x = factor(price_range, levels=price_ranges))) + 
+      geom_bar(width = 0.5, fill="steelblue") + theme_classic() + 
+      labs(x = "Prices", y = "Count") +
+      theme(legend.text = element_text(size = 15),
+            legend.title = element_text(size = 15),
+            axis.title = element_text(size = 20),axis.text = element_text(size = 15))
+  })
   
   
-  output$ratingVarietyplot <- renderPlot({})
+  output$ratingVarietyplot <- renderPlot({
+    wine_info <- wine_df %>%
+      select(price_range,country,ratings, variety) %>%
+      filter(variety == input$varietyInput)
+    
+    ggplot(wine_info, aes(x = factor(ratings, levels=rating))) + 
+      geom_bar(width = 0.5, fill="steelblue") + theme_classic() + 
+      labs(x = "Rating", y = "Count") +
+      theme(legend.text = element_text(size = 15),
+            legend.title = element_text(size = 15),
+            axis.title = element_text(size = 20),axis.text = element_text(size = 15))  
+  })
   
   
-  output$priceCountryplot <- renderPlot({})
+  output$priceCountryplot <- renderPlot({
+    wine_info <- wine_df %>%
+      select(price_range,country,ratings, variety) %>%
+      filter(country == input$countryInput)
+    
+    ggplot(wine_info, aes(x = factor(price_range, levels=price_ranges))) + 
+      geom_bar(width = 0.5, fill="steelblue") + theme_classic() + 
+      labs(x = "Prices", y = "Count") +
+      theme(legend.text = element_text(size = 15),
+            legend.title = element_text(size = 15),
+            axis.title = element_text(size = 20),axis.text = element_text(size = 15))
+  })
   
   
   output$varietyCountryplot <- renderPlot({})
   
   
-  output$ratingCountryplot <- renderPlot({})
+  output$ratingCountryplot <- renderPlot({
+    wine_info <- wine_df %>%
+      select(price_range,country,ratings, variety) %>%
+      filter(country == input$countryInput)
+    
+    ggplot(wine_info, aes(x = factor(ratings, levels=rating))) + 
+      geom_bar(width = 0.5, fill="steelblue") + theme_classic() + 
+      labs(x = "Rating", y = "Count") +
+      theme(legend.text = element_text(size = 15),
+            legend.title = element_text(size = 15),
+            axis.title = element_text(size = 20),axis.text = element_text(size = 15))
+  })
 
 }
 
