@@ -163,6 +163,7 @@ ui <- fluidPage(
 server <- function(input, output) {
    
   output$ratingPriceplot <- renderPlot({
+    
     wine_info <- wine_df %>%
       select(price_range,country,ratings, variety) %>%
       filter(price_range == input$priceInput)
@@ -177,8 +178,11 @@ server <- function(input, output) {
   
   output$varietyPriceplot <- renderPlot({})
   
+  output$countryPriceplot <- renderPlot({})
+  
   
   output$priceRatingplot <- renderPlot({
+    
     wine_info <- wine_df %>%
       select(price_range,country,ratings, variety) %>%
       filter(country == input$countryInput)
@@ -196,6 +200,7 @@ server <- function(input, output) {
   
   
   output$priceVarietyplot <- renderPlot({
+    
     wine_info <- wine_df %>%
       select(price_range,country,ratings, variety) %>%
       filter(variety == input$varietyInput)
@@ -210,6 +215,7 @@ server <- function(input, output) {
   
   
   output$ratingVarietyplot <- renderPlot({
+    
     wine_info <- wine_df %>%
       select(price_range,country,ratings, variety) %>%
       filter(variety == input$varietyInput)
@@ -224,6 +230,7 @@ server <- function(input, output) {
   
   
   output$priceCountryplot <- renderPlot({
+    
     wine_info <- wine_df %>%
       select(price_range,country,ratings, variety) %>%
       filter(country == input$countryInput)
@@ -237,10 +244,26 @@ server <- function(input, output) {
   })
   
   
-  output$varietyCountryplot <- renderPlot({})
+  output$varietyCountryplot <- renderPlot({
+    wine_info <- wine_df %>%
+      select(price_range,country,ratings, variety) %>%
+      filter(country == input$countryInput) %>%
+      top_n(200) %>%
+      arrange(desc(variety))
+    
+    ggplot(wine_info, aes(x = variety)) + 
+      geom_bar(width = 0.5, fill="steelblue") + theme_classic() + 
+      labs(x = "Variety", y = "Count") +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
+      theme(legend.text = element_text(size = 15),
+            legend.title = element_text(size = 15),
+            axis.title = element_text(size = 20),axis.text = element_text(size = 15))
+    
+  })
   
   
   output$ratingCountryplot <- renderPlot({
+    
     wine_info <- wine_df %>%
       select(price_range,country,ratings, variety) %>%
       filter(country == input$countryInput)
