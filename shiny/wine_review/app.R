@@ -47,7 +47,6 @@ wine_df <- wine_df %>%
 
 # Define UI for application
 ui <- fluidPage(
-   includeCSS("www/main.css"),
    
    tabsetPanel(
      
@@ -156,31 +155,53 @@ ui <- fluidPage(
 )
 
 
-
-
-
 # Define server logic 
 server <- function(input, output) {
-   
+  
+  #Price 
+  #plotOutput("ratingPriceplot"),
   output$ratingPriceplot <- renderPlot({
     
     wine_info <- wine_df %>%
       select(price_range,country,ratings, variety) %>%
       filter(price_range == input$priceInput)
     
-      ggplot(wine_info, aes(x = factor(ratings, levels=rating))) + 
-       geom_bar(width = 0.5, fill="steelblue") + theme_classic() + 
-       labs(x = "Rating", y = "Count") +
-       theme(legend.text = element_text(size = 15),
-             legend.title = element_text(size = 15),
-             axis.title = element_text(size = 20),axis.text = element_text(size = 15))
-   })
+    ggplot(wine_info, aes(x = factor(ratings, levels=rating))) + 
+      geom_bar(width = 0.5, fill="steelblue") + theme_classic() + 
+      labs(x = "Rating", y = "Count") +
+      theme(legend.text = element_text(size = 15),
+            legend.title = element_text(size = 15),
+            axis.title = element_text(size = 20),axis.text = element_text(size = 15))
+  })
   
+  #plotOutput("varietyPriceplot"),
   output$varietyPriceplot <- renderPlot({})
   
-  output$countryPriceplot <- renderPlot({})
   
+  #plotOutput("countryPriceplot")
+  output$countryPriceplot <- renderPlot({
+    wine_info <- wine_df %>%
+      select(price_range,country) %>%
+      filter(price_range == input$priceInput)
+    
+    wine_info <- wine_info %>%
+    mutate(country = str_replace_all(country, c("England" = "UK")))
+    
+    highchart(type = "map") %>%
+      hc_add_series_map(worldgeojson,
+                        wine_info %>% 
+                          group_by(country,price_range) %>% 
+                          summarise(total = n()) %>% 
+                          ungroup() %>%
+                          mutate(iso2 = countrycode(country, origin="country.name", destination="iso2c")),
+                        value = "total", joinBy = "iso2") %>%
+      hc_title(text = "Prices by Country") %>%
+      hc_colorAxis(minColor = "steelblue", maxColor = "blue")
+    
+  })
   
+  #Rating
+  #plotOutput("priceRatingplot"),
   output$priceRatingplot <- renderPlot({
     
     wine_info <- wine_df %>%
@@ -196,9 +217,16 @@ server <- function(input, output) {
   })
   
   
+  #plotOutput("varietyRatingplot"),
   output$varietyRatingplot <- renderPlot({})
   
   
+  #plotOutput("countryRatingplot")
+  output$countryRatingplot <- renderPlot({})
+  
+  
+  #Variety
+  #plotOutput("priceVarietyplot"),
   output$priceVarietyplot <- renderPlot({
     
     wine_info <- wine_df %>%
@@ -214,21 +242,17 @@ server <- function(input, output) {
   })
   
   
-  output$ratingVarietyplot <- renderPlot({
-    
-    wine_info <- wine_df %>%
-      select(price_range,country,ratings, variety) %>%
-      filter(variety == input$varietyInput)
-    
-    ggplot(wine_info, aes(x = factor(ratings, levels=rating))) + 
-      geom_bar(width = 0.5, fill="steelblue") + theme_classic() + 
-      labs(x = "Rating", y = "Count") +
-      theme(legend.text = element_text(size = 15),
-            legend.title = element_text(size = 15),
-            axis.title = element_text(size = 20),axis.text = element_text(size = 15))  
-  })
+  #plotOutput("ratingVarietyplot"),
+  output$ratingVarietyplot <- renderPlot({})
   
   
+  #plotOutput("countryVarietyplot")
+  output$countryVarietyplot <- renderPlot({})  
+  
+  
+  
+  #Country
+  #plotOutput("priceCountryplot"),
   output$priceCountryplot <- renderPlot({
     
     wine_info <- wine_df %>%
@@ -241,9 +265,9 @@ server <- function(input, output) {
       theme(legend.text = element_text(size = 15),
             legend.title = element_text(size = 15),
             axis.title = element_text(size = 20),axis.text = element_text(size = 15))
-  })
-  
-  
+  }) 
+   
+  #plotOutput("varietyCountryplot"),
   output$varietyCountryplot <- renderPlot({
     wine_info <- wine_df %>%
       select(price_range,country,ratings, variety) %>%
@@ -260,8 +284,8 @@ server <- function(input, output) {
             axis.title = element_text(size = 20),axis.text = element_text(size = 15))
     
   })
-  
-  
+    
+  #plotOutput("ratingCountryplot")
   output$ratingCountryplot <- renderPlot({
     
     wine_info <- wine_df %>%
@@ -275,7 +299,7 @@ server <- function(input, output) {
             legend.title = element_text(size = 15),
             axis.title = element_text(size = 20),axis.text = element_text(size = 15))
   })
-
+  
 }
 
 # Run the application 
