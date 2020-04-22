@@ -159,7 +159,6 @@ ui <- fluidPage(
 server <- function(input, output) {
   
   #Price 
-  #plotOutput("ratingPriceplot"),
   output$ratingPriceplot <- renderPlot({
     
     wine_info <- wine_df %>%
@@ -178,7 +177,6 @@ server <- function(input, output) {
   output$varietyPriceplot <- renderPlot({})
   
   
-  #plotOutput("countryPriceplot")
   output$countryPriceplot <- renderPlot({
     wine_info <- wine_df %>%
       select(price_range,country) %>%
@@ -206,7 +204,7 @@ server <- function(input, output) {
     
     wine_info <- wine_df %>%
       select(price_range,country,ratings, variety) %>%
-      filter(country == input$countryInput)
+      filter(ratings == input$ratingInput)
     
     ggplot(wine_info, aes(x = factor(price_range, levels=price_ranges))) + 
       geom_bar(width = 0.5, fill="steelblue") + theme_classic() + 
@@ -222,7 +220,25 @@ server <- function(input, output) {
   
   
   #plotOutput("countryRatingplot")
-  output$countryRatingplot <- renderPlot({})
+  output$countryRatingplot <- renderPlot({
+    wine_info <- wine_df %>%
+      select(ratings,country) %>%
+      filter(ratings == input$ratingInput)
+    
+    wine_info <- wine_info %>%
+      mutate(country = str_replace_all(country, c("England" = "UK")))
+    
+    highchart(type = "map") %>%
+      hc_add_series_map(worldgeojson,
+                        wine_info %>% 
+                          group_by(country,ratings) %>% 
+                          summarise(total = n()) %>% 
+                          ungroup() %>%
+                          mutate(iso2 = countrycode(country, origin="country.name", destination="iso2c")),
+                        value = "total", joinBy = "iso2") %>%
+      hc_title(text = "Ratings by Country") %>%
+      hc_colorAxis(minColor = "steelblue", maxColor = "blue")
+  })
   
   
   #Variety
