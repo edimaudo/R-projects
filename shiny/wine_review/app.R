@@ -219,7 +219,6 @@ server <- function(input, output) {
   output$varietyRatingplot <- renderPlot({})
   
   
-  #plotOutput("countryRatingplot")
   output$countryRatingplot <- renderPlot({
     wine_info <- wine_df %>%
       select(ratings,country) %>%
@@ -242,7 +241,6 @@ server <- function(input, output) {
   
   
   #Variety
-  #plotOutput("priceVarietyplot"),
   output$priceVarietyplot <- renderPlot({
     
     wine_info <- wine_df %>%
@@ -263,12 +261,29 @@ server <- function(input, output) {
   
   
   #plotOutput("countryVarietyplot")
-  output$countryVarietyplot <- renderPlot({})  
+  output$countryVarietyplot <- renderPlot({
+    wine_info <- wine_df %>%
+      select(country, variety) %>%
+      filter(variety == input$varietyInput)
+    
+    wine_info <- wine_info %>%
+      mutate(country = str_replace_all(country, c("England" = "UK")))
+    
+    highchart(type = "map") %>%
+      hc_add_series_map(worldgeojson,
+                        wine_info %>% 
+                          group_by(country,variety) %>% 
+                          summarise(total = n()) %>% 
+                          ungroup() %>%
+                          mutate(iso2 = countrycode(country, origin="country.name", destination="iso2c")),
+                        value = "total", joinBy = "iso2") %>%
+      hc_title(text = "Variety by Country") %>%
+      hc_colorAxis(minColor = "steelblue", maxColor = "blue")
+  })  
   
   
   
   #Country
-  #plotOutput("priceCountryplot"),
   output$priceCountryplot <- renderPlot({
     
     wine_info <- wine_df %>%
@@ -283,7 +298,6 @@ server <- function(input, output) {
             axis.title = element_text(size = 20),axis.text = element_text(size = 15))
   }) 
    
-  #plotOutput("varietyCountryplot"),
   output$varietyCountryplot <- renderPlot({
     wine_info <- wine_df %>%
       select(price_range,country,ratings, variety) %>%
@@ -301,7 +315,6 @@ server <- function(input, output) {
     
   })
     
-  #plotOutput("ratingCountryplot")
   output$ratingCountryplot <- renderPlot({
     
     wine_info <- wine_df %>%
