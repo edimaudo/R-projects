@@ -199,7 +199,7 @@ server <- function(input, output) {
   })
   
   #Rating
-  #plotOutput("priceRatingplot"),
+
   output$priceRatingplot <- renderPlot({
     
     wine_info <- wine_df %>%
@@ -260,7 +260,7 @@ server <- function(input, output) {
   output$ratingVarietyplot <- renderPlot({})
   
   
-  #plotOutput("countryVarietyplot")
+  
   output$countryVarietyplot <- renderPlot({
     wine_info <- wine_df %>%
       select(country, variety) %>%
