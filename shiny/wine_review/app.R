@@ -167,7 +167,22 @@ server <- function(input, output) {
   })
   
   #plotOutput("varietyPriceplot"),
-  output$varietyPriceplot <- renderPlot({})
+  output$varietyPriceplot <- renderPlot({
+    wine_info <- wine_df %>%
+      select(price_range,country,ratings, variety) %>%
+      filter(price_range == input$priceInput) %>%
+      summarise(total_count=n())
+    
+    ggplot(wine_info, aes(x = variety,y=total_count)) + 
+      geom_tile(color = "black", size = 0.5) +
+      theme(panel.border = element_rect(size = 2),
+            plot.title = element_text(size = rel(1.2)),
+            axis.text = element_blank(),
+            axis.title = element_blank(),
+            axis.ticks = element_blank(),
+            legend.title = element_blank(),
+            legend.position = "right")
+  })
   
   
   output$countryPriceplot <- renderPlot({
