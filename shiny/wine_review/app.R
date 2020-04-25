@@ -1,13 +1,6 @@
-#country plot for rating, prices and variety sections
+
 #wine selector varietal + price + rating + top 10 outputs table code
-
-#code & #test
-#have variety dropdown + visualization for rating,  prices
-#have price drop down + visualization for rating, & variety
-#have rating drop down + visualization for prcies,  & variety
-
-
-#wine recommendation using user layout + recommendation code + test
+#wine recommendation using user layout + recommendation
 #================================================================================
 # Shiny web app which provides insights into prices, ratings, 
 # descriptions, and geographic distribution of the world's most esteemed wines
