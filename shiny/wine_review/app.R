@@ -168,12 +168,13 @@ server <- function(input, output) {
   
   #plotOutput("varietyPriceplot"),
   output$varietyPriceplot <- renderPlot({
+    
     wine_info <- wine_df %>%
-      select(price_range,country,ratings, variety) %>%
+      group_by(price_range, variety) %>%
       filter(price_range == input$priceInput) %>%
       summarise(total_count=n())
     
-    ggplot(wine_info, aes(x = variety,y=total_count)) + 
+    ggplot(wine_info, aes(x = variety,y=total_count,fill = variety )) + 
       geom_tile(color = "black", size = 0.5) +
       theme(panel.border = element_rect(size = 2),
             plot.title = element_text(size = rel(1.2)),
@@ -223,8 +224,24 @@ server <- function(input, output) {
   })
   
   
-  #plotOutput("varietyRatingplot"),
-  output$varietyRatingplot <- renderPlot({})
+  output$varietyRatingplot <- renderPlot({
+    
+    wine_info <- wine_df %>%
+      group_by(ratings, variety) %>%
+      filter(ratings == input$ratingInput) %>%
+      summarise(total_count=n())
+    
+    ggplot(wine_info, aes(x = variety,y=total_count,fill = variety )) + 
+      geom_tile(color = "black", size = 0.5) +
+      theme(panel.border = element_rect(size = 2),
+            plot.title = element_text(size = rel(1.2)),
+            axis.text = element_blank(),
+            axis.title = element_blank(),
+            axis.ticks = element_blank(),
+            legend.title = element_blank(),
+            legend.position = "right")
+    
+  })
   
   
   output$countryRatingplot <- renderPlot({
@@ -265,7 +282,18 @@ server <- function(input, output) {
   
   
   #plotOutput("ratingVarietyplot"),
-  output$ratingVarietyplot <- renderPlot({})
+  output$ratingVarietyplot <- renderPlot({
+    wine_info <- wine_df %>%
+      select(price_range,country,ratings, variety) %>%
+      filter(variety == input$varietyInput)
+    
+    ggplot(wine_info, aes(x = factor(price_range, levels=price_ranges))) + 
+      geom_bar(width = 0.5, fill="steelblue") + theme_classic() + 
+      labs(x = "Prices", y = "Count") +
+      theme(legend.text = element_text(size = 15),
+            legend.title = element_text(size = 15),
+            axis.title = element_text(size = 20),axis.text = element_text(size = 15))
+  })
   
   
   
