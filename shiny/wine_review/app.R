@@ -8,8 +8,8 @@
 #================================================================================
 
 #packages 
-packages <- c('ggplot2', 'corrplot','tidyverse','shiny','countrycode',
-              'highcharter',"gridExtra")
+packages <- c('ggplot2', 'corrplot','tidyverse','shiny','countrycode','highcharter',"gridExtra",
+              'scales','ggfortify')
 #load packages
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
@@ -63,12 +63,8 @@ ui <- fluidPage(
                   plotOutput("ratingPriceplot"),
                 ),
                 fluidRow(
-                  h3("Variety",style="text-align: center;"),
-                  #plotOutput("varietyPriceplot"),
-                ),
-                fluidRow(
-                  h3("Country",style="text-align: center;"),
-                  plotOutput("countryPriceplot")
+                  h3("Top 10 Varieties",style="text-align: center;"),
+                  plotOutput("varietyPriceplot"),
                 )
               )
      ), 
@@ -78,12 +74,15 @@ ui <- fluidPage(
               selectInput("ratingInput", label = "Ratings",choices = rating )
             ),
             mainPanel(
-              h3("Price",style="text-align: center;"),
-              #plotOutput("priceRatingplot"),
-              h3("Variety",style="text-align: center;"),
-              #plotOutput("varietyRatingplot"),
-              h3("Country",style="text-align: center;"),
-              #plotOutput("countryRatingplot")
+              fluidRow(
+                h3("Price",style="text-align: center;"),
+                #plotOutput("priceRatingplot")           
+              ),
+              fluidRow(
+                h3("Variety",style="text-align: center;"),
+                #plotOutput("varietyRatingplot")              
+              )
+  
             )
     ),
     tabPanel("Variety",
@@ -144,7 +143,7 @@ ui <- fluidPage(
 # Define server logic 
 server <- function(input, output) {
   
-  #Price 
+  #Rating & Price
   output$ratingPriceplot <- renderPlot({
     
     wine_info <- wine_df %>%
@@ -160,46 +159,29 @@ server <- function(input, output) {
             axis.text = element_text(size = 15))
   })
   
-#variety & price
+  #variety & price
   output$varietyPriceplot <- renderPlot({
     
     wine_info <- wine_df %>%
-      group_by(price_range, variety) %>%
+      group_by(variety) %>%
       filter(price_range == input$priceInput) %>%
-      summarise(total_count=n())
+      summarise(total_count=n()) %>%
+      select(variety,total_count) %>%
+      arrange(desc(total_count)) %>%
+      top_n(10)
     
-    ggplot(wine_info, aes(x = variety,y=total_count,fill = variety )) + 
-      geom_tile(color = "black", size = 0.5) +
-      theme(panel.border = element_rect(size = 2),
-            plot.title = element_text(size = rel(1.2)),
-            axis.text = element_blank(),
-            axis.title = element_blank(),
-            axis.ticks = element_blank(),
-            legend.title = element_blank(),
-            legend.position = "right")
+    ggplot(wine_info, aes(x = variety ,y = total_count)) + 
+      geom_bar(stat = "identity",width = 0.5, fill="steelblue") + theme_classic() + 
+      labs(x = "Variety", y = "Count") +
+      theme(legend.text = element_text(size = 15),
+            legend.title = element_text(size = 15),
+            axis.title = element_text(size = 20),
+            axis.text = element_text(size = 15),
+            axis.text.x = element_text(angle = 45, hjust = 1))
+       
+
   })
   
-  #country & price
-  output$countryPriceplot <- renderHighchart({
-    wine_info <- wine_df %>%
-      select(price_range,country) %>%
-      filter(price_range == input$priceInput)
-    
-    wine_info <- wine_info %>%
-    mutate(country = str_replace_all(country, c("England" = "UK")))
-    
-    highchart(type = "map") %>%
-      hc_add_series_map(worldgeojson,
-                        wine_info %>% 
-                          group_by(country,price_range) %>% 
-                          summarise(total = n()) %>% 
-                          ungroup() %>%
-                          mutate(iso2 = countrycode(country, origin="country.name", destination="iso2c")),
-                        value = "total", joinBy = "iso2") %>%
-      hc_title(text = "Prices by Country") %>%
-      hc_colorAxis(minColor = "steelblue", maxColor = "blue")
-    
-  })
   
   #Rating
 
