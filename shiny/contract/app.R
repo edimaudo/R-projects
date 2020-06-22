@@ -12,10 +12,13 @@ for (package in packages) {
 #load data
 df <- read_csv("Recent_Contract_Awards.csv")
 
+df <- df %>%
+  select(AgencyName,CategoryDescription,SelectionMethodDescription,ContractAmount)
+
 df <- na.omit(df)
 
 agency <- c(sort(unique(df$AgencyName)))
-category <- c(sort(unique(df$AgencyName)))
+category <- c(sort(unique(df$CategoryDescription)))
 selectMethod <- c(sort(unique(df$SelectionMethodDescription)))
 
 
@@ -95,18 +98,20 @@ ui <- dashboardPage(
 
 server <- function(input, output) {
   
-  agencyCategory_df <- df %>%
-    group_by(CategoryDescription) %>%
-    filter(AgencyName == input$agencyInfo) %>%
-    summarize(totalAmount = sum(ContractAmount)) %>%
-    arrange(desc(totalAmount)) %>%
-    top_n(10)
-  
   output$agencyCategoryOutput <- renderPlot({
+    
+    agencyCategory_df <- df %>%
+      group_by(CategoryDescription) %>%
+      filter(AgencyName == input$agencyInfo) %>%
+      summarize(totalAmount = sum(ContractAmount)) %>%
+      arrange(desc(totalAmount)) %>%
+      top_n(10) %>%
+      select(CategoryDescription,totalAmount)
+    
     ggplot(data=agencyCategory_df , aes(x=CategoryDescription, y=totalAmount)) +
       geom_bar(stat="identity", width = 0.4) + theme_classic() +
       labs(x = "Category Description", y = "Contract Amount ($)") +
-      #scale_y_continuous(labels = comma) +
+      scale_y_continuous(labels = comma) +
       scale_x_discrete() +
       theme(legend.text = element_text(size = 10),
             legend.title = element_text(size = 10),
