@@ -1,4 +1,4 @@
-
+#clean up price,variety, country, ratings sections
 #wine selector varietal + price + rating + top 10 outputs table code
 #wine recommendation using user layout + recommendation
 #================================================================================
@@ -20,16 +20,13 @@ for (package in packages) {
 
 #load data
 load("wine_dfR.RData")
-
 #dropdown information
 variety <- sort(as.vector(unique(wine_df$variety)))
 rating <- c("Good","Very Good","Superb","Excellent")
 country <- sort(as.vector(unique(wine_df$country)))
 price_ranges <- c('< $10','$10-$25','$25-$50', '$50-$100','$100-$500', '> $500')
-
 #refactor price ranges
 wine_df$price_range <- factor(wine_df$price_range,levels = price_ranges)
-
 #add rating column
 wine_df <- wine_df %>%
   mutate(ratings = case_when(wine_df$point_range == '< 85' ~ 'Good',
@@ -40,12 +37,9 @@ wine_df <- wine_df %>%
 
 # Define UI for application
 ui <- fluidPage(
-   
    tabsetPanel(
-     
      tabPanel("Introduction",
        includeMarkdown("intro.md")
-      
      ),
      tabPanel("Background",
               h1("Background",style="text-align: center;"),
@@ -60,71 +54,64 @@ ui <- fluidPage(
      tabPanel("Prices",
               h1("Prices",style="text-align: center;"), 
               sidebarPanel(
-                selectInput("priceInput", 
-                            label = "Prices",
-                            choices = price_ranges)
+                helpText("Select a Price"),
+                selectInput("priceInput", label = "Prices",choices = price_ranges)
               ),
               mainPanel(
                 fluidRow(
-                  h3("Ratings"),
+                  h3("Ratings",style="text-align: center;"),
                   plotOutput("ratingPriceplot"),
                 ),
                 fluidRow(
-                  h3("Variety"),
-                  plotOutput("varietyPriceplot"),
+                  h3("Variety",style="text-align: center;"),
+                  #plotOutput("varietyPriceplot"),
                 ),
                 fluidRow(
-                  h3("Country"),
-                  #plotOutput("countryPriceplot")
+                  h3("Country",style="text-align: center;"),
+                  plotOutput("countryPriceplot")
                 )
               )
      ), 
      tabPanel("Ratings",
             h1("Ratings",style="text-align: center;"),
             sidebarPanel(
-              selectInput("ratingInput", 
-                          label = "Ratings",
-                          choices = rating )
+              selectInput("ratingInput", label = "Ratings",choices = rating )
             ),
             mainPanel(
-              h3("Price"),
-              plotOutput("priceRatingplot"),
-              h3("Variety"),
-              plotOutput("varietyRatingplot"),
-              h3("Country"),
-              plotOutput("countryRatingplot")
+              h3("Price",style="text-align: center;"),
+              #plotOutput("priceRatingplot"),
+              h3("Variety",style="text-align: center;"),
+              #plotOutput("varietyRatingplot"),
+              h3("Country",style="text-align: center;"),
+              #plotOutput("countryRatingplot")
             )
     ),
     tabPanel("Variety",
           h1("Variety",style="text-align: center;"),
           sidebarPanel(
-            selectInput("varietyInput", 
-                        label = "Variety",
-                        choices =variety )
+            selectInput("varietyInput", label = "Variety",choices =variety )
           ),
           mainPanel(
-            h3("Price"),
-            plotOutput("priceVarietyplot"),
-            h3("Rating"),
-            plotOutput("ratingVarietyplot"),
-            h3("Country"),
-            plotOutput("countryVarietyplot")
+            h3("Price",style="text-align: center;"),
+            #plotOutput("priceVarietyplot"),
+            h3("Rating",style="text-align: center;"),
+            #plotOutput("ratingVarietyplot"),
+            h3("Country",style="text-align: center;"),
+            #plotOutput("countryVarietyplot")
           )
     ),
     tabPanel("Country",
           h1("Country",style="text-align: center;"),
           sidebarPanel(
-            selectInput("countryInput", 
-                        label = "Country",
-                        choices =country )
+            selectInput("countryInput", label = "Country",choices =country )
           ),
           mainPanel(
-            h3("Price"),
-            plotOutput("priceCountryplot"),
-            h3("Variety"),
-            plotOutput("varietyCountryplot"),
-            h3("Ratings"),
-            plotOutput("ratingCountryplot")
+            h3("Price",style="text-align: center;"),
+            #plotOutput("priceCountryplot"),
+            h3("Variety",style="text-align: center;"),
+            #plotOutput("varietyCountryplot"),
+            h3("Ratings",style="text-align: center;"),
+            #plotOutput("ratingCountryplot")
           )
     ),
     tabPanel("Wine Selector",
@@ -173,7 +160,7 @@ server <- function(input, output) {
             axis.text = element_text(size = 15))
   })
   
-  #plotOutput("varietyPriceplot"),
+#variety & price
   output$varietyPriceplot <- renderPlot({
     
     wine_info <- wine_df %>%
@@ -192,8 +179,8 @@ server <- function(input, output) {
             legend.position = "right")
   })
   
-  
-  output$countryPriceplot <- renderPlot({
+  #country & price
+  output$countryPriceplot <- renderHighchart({
     wine_info <- wine_df %>%
       select(price_range,country) %>%
       filter(price_range == input$priceInput)
