@@ -65,12 +65,18 @@ ui <- fluidPage(
                             choices = price_ranges)
               ),
               mainPanel(
-                h3("Ratings"),
-                plotOutput("ratingPriceplot"),
-                h3("Variety"),
-                plotOutput("varietyPriceplot"),
-                h3("Country"),
-                plotOutput("countryPriceplot")
+                fluidRow(
+                  h3("Ratings"),
+                  plotOutput("ratingPriceplot"),
+                ),
+                fluidRow(
+                  h3("Variety"),
+                  plotOutput("varietyPriceplot"),
+                ),
+                fluidRow(
+                  h3("Country"),
+                  #plotOutput("countryPriceplot")
+                )
               )
      ), 
      tabPanel("Ratings",
@@ -163,7 +169,8 @@ server <- function(input, output) {
       labs(x = "Rating", y = "Count") +
       theme(legend.text = element_text(size = 15),
             legend.title = element_text(size = 15),
-            axis.title = element_text(size = 20),axis.text = element_text(size = 15))
+            axis.title = element_text(size = 20),
+            axis.text = element_text(size = 15))
   })
   
   #plotOutput("varietyPriceplot"),
