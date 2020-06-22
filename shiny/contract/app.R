@@ -12,6 +12,8 @@ for (package in packages) {
 #load data
 df <- read_csv("Recent_Contract_Awards.csv")
 
+df <- na.omit(df)
+
 agency <- c(sort(unique(df$AgencyName)))
 category <- c(sort(unique(df$AgencyName)))
 selectMethod <- c(sort(unique(df$SelectionMethodDescription)))
@@ -40,7 +42,7 @@ ui <- dashboardPage(
                 mainPanel(
                   fluidRow(
                     h2("Top 10 Categories",style="text-align: center;"),
-                    #plotOutput("agencyCategoryOutput")
+                    plotOutput("agencyCategoryOutput")
                   ),
                   fluidRow(
                     h2("Top 10 Selection Methods",style="text-align: center;"),
@@ -96,15 +98,15 @@ server <- function(input, output) {
   agencyCategory_df <- df %>%
     group_by(CategoryDescription) %>%
     filter(AgencyName == input$agencyInfo) %>%
-    summarise(totalAmount = sum(ContractAmount)) %>%
+    summarize(totalAmount = sum(ContractAmount)) %>%
     arrange(desc(totalAmount)) %>%
     top_n(10)
   
   output$agencyCategoryOutput <- renderPlot({
     ggplot(data=agencyCategory_df , aes(x=CategoryDescription, y=totalAmount)) +
       geom_bar(stat="identity", width = 0.4) + theme_classic() +
-      labs(x = "Category Description", y = "Contact Amount ($)") +
-      scale_y_continuous(labels = comma) +
+      labs(x = "Category Description", y = "Contract Amount ($)") +
+      #scale_y_continuous(labels = comma) +
       scale_x_discrete() +
       theme(legend.text = element_text(size = 10),
             legend.title = element_text(size = 10),
