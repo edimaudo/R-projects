@@ -8,7 +8,7 @@
 #================================================================================
 
 #packages 
-packages <- c('ggplot2', 'corrplot','tidyverse','shiny','countrycode','highcharter',"gridExtra",
+packages <- c('ggplot2', 'corrplot','tidyverse','shiny',
               'scales','ggfortify')
 #load packages
 for (package in packages) {
@@ -22,6 +22,8 @@ for (package in packages) {
 load("wine_dfR.RData")
 #dropdown information
 variety <- sort(as.vector(unique(wine_df$variety)))
+variety <- na.omit(variety)
+
 rating <- c("Good","Very Good","Superb","Excellent")
 country <- sort(as.vector(unique(wine_df$country)))
 price_ranges <- c('< $10','$10-$25','$25-$50', '$50-$100','$100-$500', '> $500')
@@ -76,11 +78,11 @@ ui <- fluidPage(
             mainPanel(
               fluidRow(
                 h3("Price",style="text-align: center;"),
-                #plotOutput("priceRatingplot")           
+                plotOutput("priceRatingplot")           
               ),
               fluidRow(
-                h3("Variety",style="text-align: center;"),
-                #plotOutput("varietyRatingplot")              
+                h3("Top 10 Varieties",style="text-align: center;"),
+                plotOutput("varietyRatingplot")              
               )
   
             )
@@ -92,11 +94,9 @@ ui <- fluidPage(
           ),
           mainPanel(
             h3("Price",style="text-align: center;"),
-            #plotOutput("priceVarietyplot"),
+            plotOutput("priceVarietyplot"),
             h3("Rating",style="text-align: center;"),
-            #plotOutput("ratingVarietyplot"),
-            h3("Country",style="text-align: center;"),
-            #plotOutput("countryVarietyplot")
+            plotOutput("ratingVarietyplot"),
           )
     ),
     tabPanel("Country",
@@ -106,31 +106,31 @@ ui <- fluidPage(
           ),
           mainPanel(
             h3("Price",style="text-align: center;"),
-            #plotOutput("priceCountryplot"),
-            h3("Variety",style="text-align: center;"),
-            #plotOutput("varietyCountryplot"),
+            plotOutput("priceCountryplot"),
+            h3("Top 10 Varieties",style="text-align: center;"),
+            plotOutput("varietyCountryplot"),
             h3("Ratings",style="text-align: center;"),
-            #plotOutput("ratingCountryplot")
+            plotOutput("ratingCountryplot")
           )
     ),
     tabPanel("Wine Selector",
-      h1("Wine Selector",style="text-align: center;"),
+      h1("Top 10 Wines",style="text-align: center;"),
       sidebarPanel(
-        selectInput("variety", 
+        selectInput("varietyAllInput", 
                     label = "Choose a variety:",
                     choices = variety,
                     selected = "All"),
-        radioButtons("pricerange", 
+        radioButtons("pricerangeInput", 
                      label = "Select a price range:",
                      choices = price_ranges),
-        checkboxGroupInput("pointcategory",
+        checkboxGroupInput("pointcategoryInput",
                            label = "Select desired rating(s):",
                            choices = rating,
-                           selected = rating
+                           selected = rating),
+        br(),
+        submitButton("Submit")
       ), 
-      mainPanel(
-        dataTableOutput("selected_wines"), width = 10)
-      )
+      mainPanel(fluidRow(column(12,tableOutput("selectedWinesOutput"))))
     ),
     tabPanel("Wine Recommendation",
       h1("Wine Recommendation",style="text-align: center;")
@@ -178,15 +178,11 @@ server <- function(input, output) {
             axis.title = element_text(size = 20),
             axis.text = element_text(size = 15),
             axis.text.x = element_text(angle = 45, hjust = 1))
-       
-
   })
   
   
-  #Rating
-
+  #Rating & Price
   output$priceRatingplot <- renderPlot({
-    
     wine_info <- wine_df %>%
       select(price_range,country,ratings, variety) %>%
       filter(ratings == input$ratingInput)
@@ -199,49 +195,28 @@ server <- function(input, output) {
             axis.title = element_text(size = 20),axis.text = element_text(size = 15))
   })
   
-  
+  #Variety & Rating
   output$varietyRatingplot <- renderPlot({
-    
     wine_info <- wine_df %>%
-      group_by(ratings, variety) %>%
+      group_by(variety) %>%
       filter(ratings == input$ratingInput) %>%
-      summarise(total_count=n())
+      summarise(total_count=n()) %>%
+      select(variety,total_count) %>%
+      arrange(desc(total_count)) %>%
+      top_n(10)
     
-    ggplot(wine_info, aes(x = variety,y=total_count,fill = variety )) + 
-      geom_tile(color = "black", size = 0.5) +
-      theme(panel.border = element_rect(size = 2),
-            plot.title = element_text(size = rel(1.2)),
-            axis.text = element_blank(),
-            axis.title = element_blank(),
-            axis.ticks = element_blank(),
-            legend.title = element_blank(),
-            legend.position = "right")
-    
+    ggplot(wine_info, aes(x = variety ,y = total_count)) + 
+      geom_bar(stat = "identity",width = 0.5, fill="steelblue") + theme_classic() + 
+      labs(x = "Variety", y = "Count") +
+      theme(legend.text = element_text(size = 15),
+            legend.title = element_text(size = 15),
+            axis.title = element_text(size = 20),
+            axis.text = element_text(size = 15),
+            axis.text.x = element_text(angle = 45, hjust = 1))    
   })
   
   
-  output$countryRatingplot <- renderPlot({
-    wine_info <- wine_df %>%
-      select(ratings,country) %>%
-      filter(ratings == input$ratingInput)
-    
-    wine_info <- wine_info %>%
-      mutate(country = str_replace_all(country, c("England" = "UK")))
-    
-    highchart(type = "map") %>%
-      hc_add_series_map(worldgeojson,
-                        wine_info %>% 
-                          group_by(country,ratings) %>% 
-                          summarise(total = n()) %>% 
-                          ungroup() %>%
-                          mutate(iso2 = countrycode(country, origin="country.name", destination="iso2c")),
-                        value = "total", joinBy = "iso2") %>%
-      hc_title(text = "Ratings by Country") %>%
-      hc_colorAxis(minColor = "steelblue", maxColor = "blue")
-  })
-  
-  
-  #Variety
+  #Variety & Price
   output$priceVarietyplot <- renderPlot({
     
     wine_info <- wine_df %>%
@@ -257,7 +232,7 @@ server <- function(input, output) {
   })
   
   
-  #plotOutput("ratingVarietyplot"),
+  # Variety & Rating
   output$ratingVarietyplot <- renderPlot({
     wine_info <- wine_df %>%
       select(price_range,country,ratings, variety) %>%
@@ -272,30 +247,7 @@ server <- function(input, output) {
   })
   
   
-  
-  output$countryVarietyplot <- renderPlot({
-    wine_info <- wine_df %>%
-      select(country, variety) %>%
-      filter(variety == input$varietyInput)
-    
-    wine_info <- wine_info %>%
-      mutate(country = str_replace_all(country, c("England" = "UK")))
-    
-    highchart(type = "map") %>%
-      hc_add_series_map(worldgeojson,
-                        wine_info %>% 
-                          group_by(country,variety) %>% 
-                          summarise(total = n()) %>% 
-                          ungroup() %>%
-                          mutate(iso2 = countrycode(country, origin="country.name", destination="iso2c")),
-                        value = "total", joinBy = "iso2") %>%
-      hc_title(text = "Variety by Country") %>%
-      hc_colorAxis(minColor = "steelblue", maxColor = "blue")
-  })  
-  
-  
-  
-  #Country
+  #Country & Price
   output$priceCountryplot <- renderPlot({
     
     wine_info <- wine_df %>%
@@ -309,12 +261,13 @@ server <- function(input, output) {
             legend.title = element_text(size = 15),
             axis.title = element_text(size = 20),axis.text = element_text(size = 15))
   }) 
-   
+  
+  #Country & Variety
   output$varietyCountryplot <- renderPlot({
     wine_info <- wine_df %>%
       select(price_range,country,ratings, variety) %>%
       filter(country == input$countryInput) %>%
-      top_n(200) %>%
+      top_n(10) %>%
       arrange(desc(variety))
     
     ggplot(wine_info, aes(x = variety)) + 
@@ -327,6 +280,7 @@ server <- function(input, output) {
     
   })
     
+  #Country & Rating
   output$ratingCountryplot <- renderPlot({
     
     wine_info <- wine_df %>%
@@ -339,6 +293,22 @@ server <- function(input, output) {
       theme(legend.text = element_text(size = 15),
             legend.title = element_text(size = 15),
             axis.title = element_text(size = 20),axis.text = element_text(size = 15))
+  })
+  
+  #Wine selector
+  output$selectedWinesOutput <- renderTable({
+   
+      wine_info <- wine_df %>%
+      filter(variety == input$varietyAllInput, 
+             price_range == input$pricerangeInput, 
+             ratings %in% input$pointCategoryInput) %>%
+      group_by(title) %>%
+      summarize(total = n()) %>%
+      arrange(desc(total)) %>%
+      mutate("Wines" = title) %>%
+      select(Wines) %>%
+      top_n(10)
+      
   })
   
 }
