@@ -1,5 +1,3 @@
-#clean up price,variety, country, ratings sections
-#wine selector varietal + price + rating + top 10 outputs table code
 #wine recommendation using user layout + recommendation
 #================================================================================
 # Shiny web app which provides insights into prices, ratings, 
@@ -8,8 +6,7 @@
 #================================================================================
 
 #packages 
-packages <- c('ggplot2', 'corrplot','tidyverse','shiny',
-              'scales','ggfortify')
+packages <- c('ggplot2', 'corrplot','tidyverse','shiny','scales','ggfortify','DT')
 #load packages
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
@@ -20,10 +17,9 @@ for (package in packages) {
 
 #load data
 load("wine_dfR.RData")
-#dropdown information
+
 variety <- sort(as.vector(unique(wine_df$variety)))
 variety <- na.omit(variety)
-
 rating <- c("Good","Very Good","Superb","Excellent")
 country <- sort(as.vector(unique(wine_df$country)))
 price_ranges <- c('< $10','$10-$25','$25-$50', '$50-$100','$100-$500', '> $500')
@@ -35,7 +31,18 @@ wine_df <- wine_df %>%
                              wine_df$point_range == '85-90' ~ 'Very Good',
                              wine_df$point_range == '90-95' ~ 'Excellent',
                              wine_df$point_range == '95-100' ~ 'Superb'))
-  
+
+top_countries <- c("US","Canada",'France',"Israel","Italy")
+
+top_wine_info <- wine_df %>%
+  filter (country %in%  top_countries) %>%
+  group_by(variety,country,price_range, ratings) %>%
+  summarize(total = n()) %>%
+  arrange(desc(total)) %>%
+  select(variety,country,price_range, ratings,total) 
+
+top_wines_variety <- c(sort(as.vector(unique(top_wine_info$variety))))
+
 
 # Define UI for application
 ui <- fluidPage(
@@ -118,19 +125,23 @@ ui <- fluidPage(
       sidebarPanel(
         selectInput("varietyAllInput", 
                     label = "Choose a variety:",
-                    choices = variety,
-                    selected = "All"),
+                    choices = top_wines_variety),
+        selectInput("countryAllInput", 
+                    label = "Choose a Country:",
+                    choices = top_countries),
         radioButtons("pricerangeInput", 
                      label = "Select a price range:",
                      choices = price_ranges),
         checkboxGroupInput("pointcategoryInput",
                            label = "Select desired rating(s):",
                            choices = rating,
-                           selected = rating),
-        br(),
-        submitButton("Submit")
+                           selected = rating)#,
+        #br(),
+        #submitButton("Submit")
       ), 
-      mainPanel(fluidRow(column(12,tableOutput("selectedWinesOutput"))))
+      #mainPanel(fluidRow(column(12,tableOutput("selectedWinesOutput"))))
+      #DT::dataTableOutput("table")
+      mainPanel(DT::dataTableOutput("selectedWinesOutput"))
     ),
     tabPanel("Wine Recommendation",
       h1("Wine Recommendation",style="text-align: center;")
@@ -295,21 +306,22 @@ server <- function(input, output) {
             axis.title = element_text(size = 20),axis.text = element_text(size = 15))
   })
   
+
+  
   #Wine selector
-  output$selectedWinesOutput <- renderTable({
-   
-      wine_info <- wine_df %>%
+  output$selectedWinesOutput <- DT::renderDataTable(DT::datatable({
+    wine_info <- wine_df %>%
       filter(variety == input$varietyAllInput, 
-             price_range == input$pricerangeInput, 
-             ratings %in% input$pointCategoryInput) %>%
+             #price_range == input$pricerangeInput, 
+             ratings %in% input$pointCategoryInput, 
+             country == input$countryAllInput) %>%
       group_by(title) %>%
       summarize(total = n()) %>%
       arrange(desc(total)) %>%
       mutate("Wines" = title) %>%
       select(Wines) %>%
-      top_n(10)
-      
-  })
+      top_n(10) 
+  }))
   
 }
 
