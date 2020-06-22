@@ -32,16 +32,11 @@ wine_df <- wine_df %>%
                              wine_df$point_range == '90-95' ~ 'Excellent',
                              wine_df$point_range == '95-100' ~ 'Superb'))
 
-top_countries <- c("US","Canada",'France',"Israel","Italy")
+rating_info <- c(sort(unique(wine_df$ratings)))
 
-top_wine_info <- wine_df %>%
-  filter (country %in%  top_countries) %>%
-  group_by(variety,country,price_range, ratings) %>%
-  summarize(total = n()) %>%
-  arrange(desc(total)) %>%
-  select(variety,country,price_range, ratings,total) 
 
-top_wines_variety <- c(sort(as.vector(unique(top_wine_info$variety))))
+
+
 
 
 # Define UI for application
@@ -121,33 +116,25 @@ ui <- fluidPage(
           )
     ),
     tabPanel("Wine Selector",
-      h1("Top 10 Wines",style="text-align: center;"),
+      h1("Wine selector",style="text-align: center;"),
       sidebarPanel(
-        selectInput("varietyAllInput", 
-                    label = "Choose a variety:",
-                    choices = top_wines_variety),
         selectInput("countryAllInput", 
                     label = "Choose a Country:",
-                    choices = top_countries),
+                    choices = country),
         radioButtons("pricerangeInput", 
                      label = "Select a price range:",
                      choices = price_ranges),
-        checkboxGroupInput("pointcategoryInput",
+        checkboxGroupInput("ratingAllInput",
                            label = "Select desired rating(s):",
-                           choices = rating,
-                           selected = rating)#,
-        #br(),
-        #submitButton("Submit")
+                           choices = rating_info,
+                           selected = rating_info)
       ), 
-      #mainPanel(fluidRow(column(12,tableOutput("selectedWinesOutput"))))
-      #DT::dataTableOutput("table")
       mainPanel(DT::dataTableOutput("selectedWinesOutput"))
     ),
     tabPanel("Wine Recommendation",
       h1("Wine Recommendation",style="text-align: center;")
     )
    )
-
 )
 
 
@@ -311,16 +298,16 @@ server <- function(input, output) {
   #Wine selector
   output$selectedWinesOutput <- DT::renderDataTable(DT::datatable({
     wine_info <- wine_df %>%
-      filter(variety == input$varietyAllInput, 
-             #price_range == input$pricerangeInput, 
-             ratings %in% input$pointCategoryInput, 
+      filter( price_range == input$pricerangeInput, 
+             ratings %in% input$ratingAllInput, 
              country == input$countryAllInput) %>%
-      group_by(title) %>%
+      group_by(title, variety) %>%
       summarize(total = n()) %>%
       arrange(desc(total)) %>%
       mutate("Wines" = title) %>%
-      select(Wines) %>%
-      top_n(10) 
+      top_n(20) %>%
+      select(Wines,variety)
+      
   }))
   
 }
