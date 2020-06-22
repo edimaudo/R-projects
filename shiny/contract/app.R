@@ -48,8 +48,8 @@ ui <- dashboardPage(
                     plotOutput("agencyCategoryOutput")
                   ),
                   fluidRow(
-                    h2("Top 10 Selection Methods",style="text-align: center;"),
-                    #plotOutput("")
+                    h2("Selection Methods",style="text-align: center;"),
+                    plotOutput("agencySelectionMethodOutput")
                   )
                 )
               )
@@ -62,12 +62,12 @@ ui <- dashboardPage(
                 ),
                 mainPanel(
                   fluidRow(
-                    h2("Top 10 Agencies",style="text-align: center;"),
-                    #plotOutput("")
+                    h2("Agencies",style="text-align: center;"),
+                    plotOutput("CategoryAgencyOutput")
                   ),
                   fluidRow(
-                    h2("Top 10 Selection Methods",style="text-align: center;"),
-                    #plotOutput("")
+                    h2("Selection Methods",style="text-align: center;"),
+                    plotOutput("CategorySelectionMethodOutput")
                   )
                 )
               )
@@ -80,12 +80,12 @@ ui <- dashboardPage(
                 ),
                 mainPanel(
                   fluidRow(
-                    h2("Top 10 Agencies",style="text-align: center;"),
-                    #plotOutput("")
+                    h2("Agencies",style="text-align: center;"),
+                    plotOutput("electionMethodAgencyOutput")
                   ),
                   fluidRow(
-                    h2("Top 10 Categories",style="text-align: center;"),
-                    #plotOutput("")
+                    h2("Categories",style="text-align: center;"),
+                    plotOutput("SelectionMethodCategoryOutput")
                   )
                 )
             )
@@ -105,7 +105,6 @@ server <- function(input, output) {
       filter(AgencyName == input$agencyInfo) %>%
       summarize(totalAmount = sum(ContractAmount)) %>%
       arrange(desc(totalAmount)) %>%
-      top_n(10) %>%
       select(CategoryDescription,totalAmount)
     
     ggplot(data=agencyCategory_df , aes(x=CategoryDescription, y=totalAmount)) +
@@ -119,6 +118,119 @@ server <- function(input, output) {
             axis.text = element_text(size = 10),
             axis.text.x = element_text(angle = 45, hjust = 1))
   })
+  
+  
+  output$agencySelectionMethodOutput <- renderPlot({
+    
+    agencySelectionMethod_df <- df %>%
+      group_by(SelectionMethodDescription) %>%
+      filter(AgencyName == input$agencyInfo) %>%
+      summarize(totalAmount = sum(ContractAmount)) %>%
+      arrange(desc(totalAmount),desc(SelectionMethodDescription)) %>%
+      select(SelectionMethodDescription,totalAmount)
+    
+    ggplot(data=agencySelectionMethod_df , aes(x=as.factor(SelectionMethodDescription), y=totalAmount)) +
+      geom_bar(stat="identity", width = 0.4) + theme_classic() +
+      labs(x = "Selection Method", y = "Contract Amount ($)") +
+      scale_y_continuous(labels = comma) +
+      scale_x_discrete() +
+      theme(legend.text = element_text(size = 10),
+            legend.title = element_text(size = 10),
+            axis.title = element_text(size = 15),
+            axis.text = element_text(size = 10),
+            axis.text.x = element_text(angle = 45, hjust = 1))
+  })
+  
+
+  
+  output$CategoryAgencyOutput <- renderPlot({
+    
+    agencyCategory_df <- df %>%
+      group_by(AgencyName) %>%
+      filter(CategoryDescription == input$categoryInfo) %>%
+      summarize(totalAmount = sum(ContractAmount)) %>%
+      arrange(desc(totalAmount)) %>%
+      select(AgencyName,totalAmount)
+    
+    ggplot(data=agencyCategory_df , aes(x=AgencyName, y=totalAmount)) +
+      geom_bar(stat="identity", width = 0.4) + theme_classic() +
+      labs(x = "Agency", y = "Contract Amount ($)") +
+      scale_y_continuous(labels = comma) +
+      scale_x_discrete() +
+      theme(legend.text = element_text(size = 10),
+            legend.title = element_text(size = 10),
+            axis.title = element_text(size = 15),
+            axis.text = element_text(size = 10),
+            axis.text.x = element_text(angle = 45, hjust = 1))
+  })
+  
+  
+  output$CategorySelectionMethodOutput <- renderPlot({
+    
+    agencySelectionMethod_df <- df %>%
+      group_by(SelectionMethodDescription) %>%
+      filter(CategoryDescription == input$categoryInfo) %>%
+      summarize(totalAmount = sum(ContractAmount)) %>%
+      arrange(desc(totalAmount),desc(SelectionMethodDescription)) %>%
+      select(SelectionMethodDescription,totalAmount)
+    
+    ggplot(data=agencySelectionMethod_df , aes(x=as.factor(SelectionMethodDescription), y=totalAmount)) +
+      geom_bar(stat="identity", width = 0.4) + theme_classic() +
+      labs(x = "Selection Method", y = "Contract Amount ($)") +
+      scale_y_continuous(labels = comma) +
+      scale_x_discrete() +
+      theme(legend.text = element_text(size = 10),
+            legend.title = element_text(size = 10),
+            axis.title = element_text(size = 15),
+            axis.text = element_text(size = 10),
+            axis.text.x = element_text(angle = 45, hjust = 1))
+  })
+  
+
+  output$SelectionMethodAgencyOutput <- renderPlot({
+    
+    agencyCategory_df <- df %>%
+      group_by(AgencyName) %>%
+      filter(SelectionMethodDescription == input$selectionInput) %>%
+      summarize(totalAmount = sum(ContractAmount)) %>%
+      arrange(desc(totalAmount)) %>%
+      select(AgencyName,totalAmount)
+    
+    ggplot(data=agencyCategory_df , aes(x=AgencyName, y=totalAmount)) +
+      geom_bar(stat="identity", width = 0.4) + theme_classic() +
+      labs(x = "Agency", y = "Contract Amount ($)") +
+      scale_y_continuous(labels = comma) +
+      scale_x_discrete() +
+      theme(legend.text = element_text(size = 10),
+            legend.title = element_text(size = 10),
+            axis.title = element_text(size = 15),
+            axis.text = element_text(size = 10),
+            axis.text.x = element_text(angle = 45, hjust = 1))
+  })
+  
+  
+  output$SelectionMethodCategoryOutput <- renderPlot({
+    
+    agencySelectionMethod_df <- df %>%
+      group_by(CategoryDescription) %>%
+      filter(SelectionMethodDescription == input$selectionInput) %>%
+      summarize(totalAmount = sum(ContractAmount)) %>%
+      arrange(desc(totalAmount),desc(SelectionMethodDescription)) %>%
+      select(CategoryDescription,totalAmount)
+    
+    ggplot(data=agencySelectionMethod_df , aes(x=as.factor(CategoryDescription), y=totalAmount)) +
+      geom_bar(stat="identity", width = 0.4) + theme_classic() +
+      labs(x = "Selection Method", y = "Contract Amount ($)") +
+      scale_y_continuous(labels = comma) +
+      scale_x_discrete() +
+      theme(legend.text = element_text(size = 10),
+            legend.title = element_text(size = 10),
+            axis.title = element_text(size = 15),
+            axis.text = element_text(size = 10),
+            axis.text.x = element_text(angle = 45, hjust = 1))
+  })
+  
+  
   
   
   }
