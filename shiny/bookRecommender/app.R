@@ -49,7 +49,7 @@ book_recommendation <- function(input,input2,input3) {
   recom_list <- as(recom, "list")
   recom_result <- data.frame(matrix(NA,10))
   for (i in c(1:10)){
-    recom_result[i,1] <- movies2[as.integer(recom_list[[1]][i]),2]
+    recom_result[i,1] <- bookTitles[as.integer(recom_list[[1]][i]),2]
   }
   colnames(recom_result) <- "User-Based Collaborative Filtering Recommended Titles"
   return(recom_result)
@@ -57,7 +57,6 @@ book_recommendation <- function(input,input2,input3) {
 
 
 ui <- fluidPage(
-    navbarPage("Book Recommendation System",
     tabsetPanel(
       tabPanel("Intro",
                includeMarkdown("intro.md"),
@@ -80,7 +79,7 @@ ui <- fluidPage(
                      column(7,
                             h3("You Might Like These Too!"),
                             tableOutput("table"))
-                     ))))))
+                     )))))
   
 server = function(input, output) {
   output$table <- renderTable({
