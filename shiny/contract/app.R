@@ -31,9 +31,60 @@ ui <- dashboardPage(
   dashboardBody(
     tabItems(
       tabItem(tabName = "Introduction",includeMarkdown("readme.md"),hr()),
-      tabItem(tabName = "agency",),
-      tabItem(tabName = "category",),
-      tabItem(tabName = "selectionMethod",)
+      tabItem(tabName = "agency",
+              sidebarLayout(
+                sidebarPanel(
+                  helpText("Select Agency information"),
+                  selectInput("agencyInfo", "Agency",choices=agency),
+                ), 
+                mainPanel(
+                  fluidRow(
+                    h2("Top 10 Categories",style="text-align: center;"),
+                    plotOutput("agencyCategory")
+                  ),
+                  fluidRow(
+                    h2("Top 10 Selection Methods",style="text-align: center;"),
+                    plotOutput("")
+                  )
+                )
+              )
+              ),
+      tabItem(tabName = "category",
+              sidebarLayout(
+                sidebarPanel(
+                  helpText("Select Category information"),
+                  selectInput("categoryInfo","Category",choices = category)
+                ),
+                mainPanel(
+                  fluidRow(
+                    h2("Top 10 Agencies",style="text-align: center;"),
+                    plotOutput("")
+                  ),
+                  fluidRow(
+                    h2("Top 10 Selection Methods",style="text-align: center;"),
+                    plotOutput("")
+                  )
+                )
+              )
+              ),
+      tabItem(tabName = "selectionMethod",
+              sidebarLayout(
+                sidebarPanel(
+                  helpText("Select Selection Method"),
+                  selectInput("selectionInput","Selection Method",choices = selectMethod)
+                ),
+                mainPanel(
+                  fluidRow(
+                    h2("Top 10 Agencies",style="text-align: center;"),
+                    plotOutput("")
+                  ),
+                  fluidRow(
+                    h2("Top 10 Categories",style="text-align: center;"),
+                    plotOutput("")
+                  )
+                )
+              )
+              )
     )
   )
 )
@@ -41,7 +92,27 @@ ui <- dashboardPage(
 
 
 server <- function(input, output) {
-
+  
+  agencyCategory_df <- df %>%
+    group_by(CategoryDescription) %>%
+    filter(AgencyName == input$agencyInfo) %>%
+    summarise(totalAmount = sum(ContractAmount)) %>%
+    arrange(desc()) %>%
+    top_n(10)
+  
+  output$agencyCategory <- renderPlot({
+    ggplot(data=agencyCategory_df , aes(x=CategoryDescription, y=totalAmount)) +
+      geom_bar(stat="identity", width = 0.4) + theme_classic() +
+      labs(x = "Category Description", y = "Contact Amount ($)") +
+      scale_y_continuous(labels = comma) +
+      scale_x_discrete() +
+      theme(legend.text = element_text(size = 10),
+            legend.title = element_text(size = 10),
+            axis.title = element_text(size = 15),
+            axis.text = element_text(size = 10),
+            axis.text.x = element_text(angle = 45, hjust = 1))
+  })
+  
   
   }
 
