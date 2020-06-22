@@ -1,6 +1,6 @@
 
 #packages 
-packages <- c('ggplot2', 'corrplot','tidyverse','shiny','shinydashboard')
+packages <- c('ggplot2', 'corrplot','tidyverse','shiny','shinydashboard','scales')
 #load packages
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
@@ -44,7 +44,7 @@ ui <- dashboardPage(
                 ), 
                 mainPanel(
                   fluidRow(
-                    h2("Top 10 Categories",style="text-align: center;"),
+                    h2("Categories",style="text-align: center;"),
                     plotOutput("agencyCategoryOutput")
                   ),
                   fluidRow(
