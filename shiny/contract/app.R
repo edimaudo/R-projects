@@ -40,11 +40,11 @@ ui <- dashboardPage(
                 mainPanel(
                   fluidRow(
                     h2("Top 10 Categories",style="text-align: center;"),
-                    plotOutput("agencyCategory")
+                    #plotOutput("agencyCategoryOutput")
                   ),
                   fluidRow(
                     h2("Top 10 Selection Methods",style="text-align: center;"),
-                    plotOutput("")
+                    #plotOutput("")
                   )
                 )
               )
@@ -58,11 +58,11 @@ ui <- dashboardPage(
                 mainPanel(
                   fluidRow(
                     h2("Top 10 Agencies",style="text-align: center;"),
-                    plotOutput("")
+                    #plotOutput("")
                   ),
                   fluidRow(
                     h2("Top 10 Selection Methods",style="text-align: center;"),
-                    plotOutput("")
+                    #plotOutput("")
                   )
                 )
               )
@@ -76,15 +76,15 @@ ui <- dashboardPage(
                 mainPanel(
                   fluidRow(
                     h2("Top 10 Agencies",style="text-align: center;"),
-                    plotOutput("")
+                    #plotOutput("")
                   ),
                   fluidRow(
                     h2("Top 10 Categories",style="text-align: center;"),
-                    plotOutput("")
+                    #plotOutput("")
                   )
                 )
-              )
-              )
+            )
+        )
     )
   )
 )
@@ -97,10 +97,10 @@ server <- function(input, output) {
     group_by(CategoryDescription) %>%
     filter(AgencyName == input$agencyInfo) %>%
     summarise(totalAmount = sum(ContractAmount)) %>%
-    arrange(desc()) %>%
+    arrange(desc(totalAmount)) %>%
     top_n(10)
   
-  output$agencyCategory <- renderPlot({
+  output$agencyCategoryOutput <- renderPlot({
     ggplot(data=agencyCategory_df , aes(x=CategoryDescription, y=totalAmount)) +
       geom_bar(stat="identity", width = 0.4) + theme_classic() +
       labs(x = "Category Description", y = "Contact Amount ($)") +
