@@ -1,3 +1,8 @@
+#============================
+#Generates visualizations
+#Does RFM
+#Does Cohort analysis
+#============================
 rm(list = ls())
 
 #packages 
@@ -155,5 +160,83 @@ rfm_heatmap(rfm_result)
 rfm_segment(rfm_result)
 
 #cohort analysis
+cohort_data <- na.omit(conversion_attribution_df)
+cohort_data <- cohort_data %>%
+  select(User_ID,Conv_Date,year) %>%
+  filter(year==2017) %>%
+  distinct()
+
+#cohort creation
+join.date <- aggregate(Conv_Date~User_ID,cohort_data,min, na.rm = TRUE)
+colnames(join.date)[2] <- "Join_Date"
+cohort_data <- merge(cohort_data, join.date, by.x = "User_ID",by.y = "User_ID", all.x = TRUE)
+cohort_data$Cohort <- as.numeric(format(cohort_data$Join_Date, "%m"))
+rm(join.date)
+
+#cohort age
+cohort_data$Age_by_Day <- as.numeric(difftime(cohort_data$Conv_Date,cohort_data$Join_Date,units = c("days")))
+cohort_data$Age_by_Month <- floor(cohort_data$Age_by_Day/30)
+# Dumping the day element from the join date column
+cohort_data$Join_Date <- format(cohort_data$Join_Date, "%Y-%m")
+# this Cohort Analysis is based on monthly activity.
+cohort_data$Conv_Date <- format(cohort_data$Conv_Date, "%Y-%m")
+
+groups <- c("Jan Cohorts","Feb Cohorts","Mar Cohorts","Apr Cohorts",
+            "May Cohorts","Jun Cohorts","Jul Cohorts","Aug Cohorts",
+            "Sep Cohorts","Oct Cohorts","Nov Cohorts","Dec Cohorts")
+
+for(i in 1:12){
+  cohort_data[cohort_data$Cohort==i,"Cohort"] <- groups[i]
+}
+rm(i,groups)
+
+cohort_data$Cohort <- factor(cohort_data$Cohort,ordered = T,levels =c("Jan Cohorts",
+                                                                      "Feb Cohorts",
+                                                                      "Mar Cohorts",
+                                                                      "Apr Cohorts",
+                                                                      "May Cohorts",
+                                                                      "Jun Cohorts",
+                                                                      "Jul Cohorts",
+                                                                      "Aug Cohorts",
+                                                                      "Sep Cohorts",
+                                                                      "Oct Cohorts",
+                                                                      "Nov Cohorts",
+                                                                      "Dec Cohorts"))
 
 
+dupes <- which(duplicated(cohort_data[,c(-5,-6)]))
+
+# Removing the duplicate observations
+cohorts2011 <- cohort_data[-dupes,]
+rm(dupes)
+
+
+# Creating rows for each cohort group
+# Creating columns for each value in the Age_by_Month column;0-11
+# The default aggregation setup for dcast is, fun.aggregate = length
+cohorts.wide <- reshape2::dcast(cohort_data,Cohort~Age_by_Month,
+                                value.var="User_ID",
+                                fun.aggregate = length)
+
+cw.retention <- cohorts.wide
+cw.churn <- cohorts.wide
+
+# Creating 19 breaks and 20 rgb color values ranging from blue to white
+breaks <- quantile(cohorts.wide[,3:13], probs = seq(.05, .95, .05), na.rm = TRUE)
+colors <- sapply(round(seq(155, 80, length.out = length(breaks) + 1), 0),
+                 function(x){ rgb(x,x,155, maxColorValue = 155) } )
+
+
+# The Retention Mixpanel with counts
+DT::datatable(cohorts.wide,
+              class = 'cell-border stripe',
+              rownames = FALSE,
+              options = list(
+                ordering=F,
+                dom = 't',
+                pageLength = 12) ) %>%
+  formatStyle("0",
+              backgroundColor = 'lightgrey',
+              fontWeight = 'bold') %>%
+  formatStyle(names(cohorts.wide[c(-1,-2)]),fontWeight = 'bold',
+              color = 'white', backgroundColor = styleInterval(breaks,colors))
