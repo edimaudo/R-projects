@@ -76,27 +76,70 @@ ggplot(data=revenue_year_channel, aes(x=as.factor(year), y=total_revenue, fill=C
 
 
 #revenue by year month and channel
-revenue_year_channel <- conversion_attribution_df %>%
-  group_by(year,Channel) %>%
+revenue_year_month_channel <- conversion_attribution_df %>%
+  group_by(year_month,Channel) %>%
   summarise(total_revenue = sum(Revenue)) %>%
-  select(year,Channel,total_revenue)
+  select(year_month,Channel,total_revenue)
 
 
-ggplot(data=revenue_year_channel, aes(x=as.factor(year), y=total_revenue, fill=Channel)) +
+ggplot(data=revenue_year_month_channel, 
+       aes(x=as.factor(year_month), y=total_revenue, fill=Channel)) +
   geom_bar(stat="identity",width = 0.4) + theme_classic() + 
-  labs(x = "Year", y = "Total revenue ($)") +
+  labs(x = "Year-month", y = "Total revenue ($)") +
+  scale_y_continuous(labels = comma) +
+  scale_x_discrete() +
+  theme(legend.text = element_text(size = 10),
+        legend.title = element_text(size = 10),
+        axis.title = element_text(size = 15),
+        axis.text = element_text(size = 10),
+        axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(fill = "Channel")
+
+ggplot(data=revenue_year_channel, aes(x=as.factor(Channel), y=total_revenue, fill=as.factor(year))) +
+  geom_bar(stat="identity",width = 0.4) + theme_classic() + 
+  labs(x = "Channel", y = "Total revenue ($)") +
   scale_y_continuous(labels = comma) +
   scale_x_discrete() +
   theme(legend.text = element_text(size = 10),
         legend.title = element_text(size = 10),
         axis.title = element_text(size = 15),
         axis.text = element_text(size = 10)) +
-  labs(fill = "Channel")
-
+  labs(fill = "Year")
 
 #Revenues by Channel
+revenue_channel <- conversion_attribution_df %>%
+  group_by(Channel) %>%
+  summarise(total_revenue = sum(Revenue)) %>%
+  select(Channel,total_revenue)
+
+ggplot(data=revenue_channel , aes(x=as.factor(Channel), y=total_revenue)) +
+  geom_bar(stat="identity", width = 0.4,fill="steelblue") + theme_classic() +
+  labs(x = "Channel", y = "Total revenue ($)") +
+  scale_y_continuous(labels = comma) +
+  scale_x_discrete() +
+  theme(legend.text = element_text(size = 10),
+        legend.title = element_text(size = 10),
+        axis.title = element_text(size = 15),
+        axis.text = element_text(size = 10))
+
+
 
 #channels by users
+channel_user <- conversion_attribution_df %>%
+  group_by(Channel,User_ID,year) %>%
+  summarise(user_count = n()) %>%
+  select(User_ID, Channel,user_count, year)
+
+ggplot(data=channel_user , aes(x=as.factor(Channel), y=user_count, fill=as.factor(year))) +
+  geom_bar(stat="identity", width = 0.4) + theme_classic() +
+  labs(x = "Channel", y = "User count") +
+  scale_y_continuous(labels = comma) +
+  scale_x_discrete() +
+  theme(legend.text = element_text(size = 10),
+        legend.title = element_text(size = 10),
+        axis.title = element_text(size = 15),
+        axis.text = element_text(size = 10)) +
+  labs(fill = "Year")
 
 #RFM analysis
 
