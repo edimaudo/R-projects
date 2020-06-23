@@ -1,4 +1,4 @@
-#wine recommendation using user layout + recommendation
+
 #================================================================================
 # Shiny web app which provides insights into prices, ratings, 
 # descriptions, and geographic distribution of the world's most esteemed wines
@@ -33,10 +33,6 @@ wine_df <- wine_df %>%
                              wine_df$point_range == '95-100' ~ 'Superb'))
 
 rating_info <- c(sort(unique(wine_df$ratings)))
-
-
-
-
 
 
 # Define UI for application
@@ -130,9 +126,6 @@ ui <- fluidPage(
                            selected = rating_info)
       ), 
       mainPanel(DT::dataTableOutput("selectedWinesOutput"))
-    ),
-    tabPanel("Wine Recommendation",
-      h1("Wine Recommendation",style="text-align: center;")
     )
    )
 )
@@ -305,7 +298,7 @@ server <- function(input, output) {
       summarize(total = n()) %>%
       arrange(desc(total)) %>%
       mutate("Wines" = title) %>%
-      top_n(20) %>%
+      #top_n(20) %>%
       select(Wines,variety)
       
   }))
