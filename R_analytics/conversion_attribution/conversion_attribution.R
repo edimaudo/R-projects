@@ -1,7 +1,8 @@
 rm(list = ls())
 
 #packages 
-packages <- c('ggplot2', 'corrplot','tidyverse','scales',"DT","ggfortify")
+packages <- c('ggplot2', 'corrplot','tidyverse','scales',"DT","ggfortify",'rfm',
+              'lubridate')
 #load packages
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
@@ -74,13 +75,11 @@ ggplot(data=revenue_year_channel, aes(x=as.factor(year), y=total_revenue, fill=C
         axis.text = element_text(size = 10)) +
   labs(fill = "Channel")
 
-
 #revenue by year month and channel
 revenue_year_month_channel <- conversion_attribution_df %>%
   group_by(year_month,Channel) %>%
   summarise(total_revenue = sum(Revenue)) %>%
   select(year_month,Channel,total_revenue)
-
 
 ggplot(data=revenue_year_month_channel, 
        aes(x=as.factor(year_month), y=total_revenue, fill=Channel)) +
@@ -131,7 +130,7 @@ channel_user <- conversion_attribution_df %>%
   select(User_ID, Channel,user_count, year)
 
 ggplot(data=channel_user , aes(x=as.factor(Channel), y=user_count, fill=as.factor(year))) +
-  geom_bar(stat="identity", width = 0.4) + theme_classic() +
+  geom_bar(stat="identity", width = 0.4,position=position_dodge(),) + theme_classic() +
   labs(x = "Channel", y = "User count") +
   scale_y_continuous(labels = comma) +
   scale_x_discrete() +
@@ -142,6 +141,18 @@ ggplot(data=channel_user , aes(x=as.factor(Channel), y=user_count, fill=as.facto
   labs(fill = "Year")
 
 #RFM analysis
+rfm_data <- na.omit(conversion_attribution_df)
+rfm_data_orders <- rfm_data %>%
+  mutate("customer_id" = User_ID, "order_date" = Conv_Date, "revenue" = Revenue) %>%
+  select(customer_id, order_date, revenue) %>%
+  distinct()
+
+analysis_date <- lubridate::as_date("2019-01-01")
+rfm_result <- rfm_table_order(rfm_data_orders, customer_id, order_date, revenue, analysis_date)
+
+rfm_heatmap(rfm_result)
+
+rfm_segment(rfm_result)
 
 #cohort analysis
 
