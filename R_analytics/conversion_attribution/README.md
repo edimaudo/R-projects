@@ -25,26 +25,13 @@ given conversion which is attributed to a certain channel, sums up to 1.0 for ev
 
 ## Task
 list of points you might consider in your analysis:
-
 * general overview over the time period (interesting KPIs are: revenue, number customers, fraction of return customer)
 * performance and impact of different channels and how it changes over time
 * most influential channels for every user
+* Customer segmentation (RFM, LTV, clustering)
 * cohort analysis
-* customer journey statistics
-* do we see a development within customers?
-* some customer segmentation
-* ...
-
-
-### Deliverable & Remarks:
-* well commented and easy to follow code for analysis
-* if possible some insightful (!) charts with explanations (use of powerBI would be great to see)
 
 
 
-
-### Please use only Python, powerBI for your solution!
-* including some visualization powerBI in form or views or reports is a big plus
-* also by using: classes, functions, etc.
 
 
