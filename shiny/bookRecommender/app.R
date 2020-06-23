@@ -6,7 +6,7 @@
 #remove old data
 rm(list=ls())
 #packages 
-packages <- c('ggplot2', 'corrplot','tidyverse','caret','mlbench','mice', 
+packages <- c('ggplot2', 'corrplot','tidyverse','caret','mlbench','mice', "DT",
               'caTools','dummies','ggfortify','shiny', 'recommenderlab','proxy','reshape2')
 #load packages
 for (package in packages) {
@@ -68,23 +68,25 @@ ui <- fluidPage(
                             selectInput("select", 
                                         label = h3("Choose Three books You Like"),
                                         choices = as.character(bookTitles[1:1000])),
-                            
                             selectInput("select2", label = NA,
                                         choices = as.character(bookTitles[1:1000])),
-                            
                             selectInput("select3", label = NA,
                                         choices = as.character(bookTitles[1:1000])),
-                            
-                            submitButton("Submit")),
-                     column(7,
+                            submitButton("Submit")
+                      ),
+                  ),
+                     fluidRow(
                             h3("You Might Like These Too!"),
-                            tableOutput("table"))
-                     )))))
+                            DT::dataTableOutput("table"))
+                     )
+      )
+    )
+)
   
 server = function(input, output) {
-  output$table <- renderTable({
+  output$table <- DT::renderDataTable(DT::datatable({
     book_recommendation(input$select, input$select2, input$select3)
-  })
+  })) 
 }
 
 
