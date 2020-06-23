@@ -24,11 +24,11 @@ given conversion which is attributed to a certain channel, sums up to 1.0 for ev
 
 
 ## Task
-list of points you might consider in your analysis:
-* general overview over the time period (interesting KPIs are: revenue, number customers, fraction of return customer)
+
+* general overview over the time period (interesting KPIs are: revenue)
 * performance and impact of different channels and how it changes over time
 * most influential channels for every user
-* Customer segmentation (RFM, LTV, clustering)
+* Customer segmentation (RFM,LTV)
 * cohort analysis
 
 
