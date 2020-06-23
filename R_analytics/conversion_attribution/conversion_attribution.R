@@ -18,6 +18,7 @@ attribution <- read_csv("attribution.csv")
 conversion_attribution_df <- conversion %>%
   inner_join(attribution,"Conv_ID")
 
+#update date information
 conversion_attribution_df$year = as.numeric(format(conversion_attribution_df$Conv_Date , "%Y"))
 conversion_attribution_df$month = (format(conversion_attribution_df$Conv_Date , "%m"))
 conversion_attribution_df$year_month = as.factor(format(conversion_attribution_df$Conv_Date , "%Y-%m"))
@@ -98,8 +99,6 @@ ggplot(data=revenue_year_channel, aes(x=as.factor(year), y=total_revenue, fill=C
 #channels by users
 
 #RFM analysis
-
-#LTV analysis
 
 #cohort analysis
 
