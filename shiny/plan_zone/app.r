@@ -19,12 +19,13 @@ ui <- fluidPage(
     h1("Unit analysis",style="text-align: center;"), 
     sidebarPanel(
         helpText("Select a Date"),
-        dateInput("date", "Date:", value = "2020-01-01"),
-        helpText("Select a"),
-        selectInput("priceInput", label = "Prices",choices = price_ranges),
-        helpText("Select a region"),
+        dateInput("date", "Date", value = "2020-01-01"),
+        checkboxGroupInput("pytpeInput",
+                           label = "Select Ptype",
+                           choices = ptype,
+                           selected = ptype),
         checkboxGroupInput("regionInput",
-                           label = "Select Region:",
+                           label = "Select Region",
                            choices = region,
                            selected = region)
     ),
