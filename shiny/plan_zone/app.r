@@ -11,9 +11,23 @@ for (package in packages) {
 #load data
 df <- read_excel("zone_data.xlsx")
 
-#pytpe
+df <- df%>%
+    select(region, zone, p_type, s_type, plan_zone_date, expected_zone_date) %>%
+    na.omit()
+
+df$plan_zone_week <- lubridate::week(mdy(df$plan_zone_date))
+df$expected_zone_week <- lubridate::week(mdy(df$expected_zone_date))
+
+
+#input information
 ptype <- c(sort(unique(df$p_type)))
 region <- c(sort(unique(df$region)))
+
+week_generator <- function(dateInfo){
+    week <- lubridate::week(mdy(dateInfo))
+    
+    return ""
+}
 
 ui <- fluidPage(
     h1("Unit analysis",style="text-align: center;"), 
