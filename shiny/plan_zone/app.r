@@ -18,20 +18,38 @@ region <- c(sort(unique(df$region)))
 ui <- fluidPage(
     h1("Unit analysis",style="text-align: center;"), 
     sidebarPanel(
-        helpText("Select a Price"),
+        helpText("Select a Date"),
+        dateInput("date", "Date:", value = "2020-01-01"),
+        helpText("Select a"),
         selectInput("priceInput", label = "Prices",choices = price_ranges)
     ),
     mainPanel(
         fluidRow(
             h3("Ratings",style="text-align: center;"),
-            plotOutput("ratingPriceplot"),
+            DT::dataTableOutput("")
         )
     )
 )
 
 
 # Define server logic 
-server <- function(input, output) {}
+server <- function(input, output) {
+    #Wine selector
+    output$selectedWinesOutput <- DT::renderDataTable(DT::datatable({
+        wine_info <- wine_df %>%
+            filter( price_range == input$pricerangeInput, 
+                    ratings %in% input$ratingAllInput, 
+                    country == input$countryAllInput) %>%
+            group_by(title, variety) %>%
+            summarize(total = n()) %>%
+            arrange(desc(total)) %>%
+            mutate("Wines" = title) %>%
+            #top_n(20) %>%
+            select(Wines,variety)
+        
+    }))
+    
+}
 
 # Run the application 
 shinyApp(ui = ui, server = server)
