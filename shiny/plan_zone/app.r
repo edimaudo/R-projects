@@ -15,8 +15,8 @@ df <- df%>%
     select(region, zone, p_type, s_type, plan_zone_date, expected_zone_date) %>%
     na.omit()
 
-df$plan_zone_week <- lubridate::week(mdy(df$plan_zone_date))
-df$expected_zone_week <- lubridate::week(mdy(df$expected_zone_date))
+df$plan_zone_week <- lubridate::isoweek(mdy(df$plan_zone_date))
+df$expected_zone_week <- lubridate::isoweek(mdy(df$expected_zone_date))
 
 
 #input information
@@ -25,8 +25,8 @@ region <- c(sort(unique(df$region)))
 
 week_generator <- function(dateInfo){
     week <- lubridate::week(mdy(dateInfo))
-    
-    return ""
+    output <- c()
+    return output
 }
 
 ui <- fluidPage(
