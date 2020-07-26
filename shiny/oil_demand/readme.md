@@ -1,6 +1,5 @@
-###Mobility Trends
+### Mobility Trends
 ***
-
 
 ### Overview
 Changes in requests for directions by transportation type for all available countries/regions.
