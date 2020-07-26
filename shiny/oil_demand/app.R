@@ -58,7 +58,7 @@ ui <- dashboardPage(
         tabItem(tabName = "Introduction", includeMarkdown("readme.md"), hr()),
         tabItem(tabName = "trends",
                 sidebarLayout(
-                    sidebarPanel(selectInput("agencyInfo", "Agency", choices = agency),),
+                    sidebarPanel(selectInput("regionInfo", "Country", choices = region_info),),
                     mainPanel(fluidRow(
                         #Change in routing requests since January 13, 2020
                         h2("Mobility Trends", style = "text-align: center;"),
