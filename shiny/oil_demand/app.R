@@ -1,4 +1,7 @@
-
+#steps
+#add dynamic dropdown - #https://www.google.com/search?client=opera&q=dynamic+dropdown+r&sourceid=opera&ie=UTF-8&oe=UTF-8
+#add graphs
+#clean up
 
 #packages
 packages <-
@@ -23,7 +26,6 @@ df <-
     select (
         df,
         -c(
-            'geo_type',
             'alternative_name',
             'country',
             'sub-region',
@@ -42,7 +44,7 @@ mobility_df <- df %>%
 region_info <- sort(unique(df$region))
 transportation_type_info <- sort(unique(df$transportation_type))
 day_info <- sort(unique(mobility_df$date_info))
-
+geo_info <- sort(unique(df$geo_type))
 
 ui <- dashboardPage(
     dashboardHeader(title = "Mobility Trends"),
@@ -58,8 +60,15 @@ ui <- dashboardPage(
         tabItem(tabName = "Introduction", includeMarkdown("readme.md"), hr()),
         tabItem(tabName = "trends",
                 sidebarLayout(
-                    sidebarPanel(selectInput("regionInfo", "Country", choices = region_info),),
-                    mainPanel(fluidRow(
+                    sidebarPanel(
+                    selectInput("geoInput", "Geography type", choices = geo_info),
+                    selectInput("regionInput", "Region", choices = region_info),
+                    checkboxGroupInput("transportationInput",
+                                       label = "Transportation types",
+                                       choices = transportation_type_info,
+                                       selected = transportation_type_info)),
+                    mainPanel(
+                        fluidRow(
                         #Change in routing requests since January 13, 2020
                         h2("Mobility Trends", style = "text-align: center;"),
                         plotOutput("countryOutput")
