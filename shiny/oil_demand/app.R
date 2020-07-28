@@ -43,7 +43,6 @@ mobility_df <- df %>%
 
 region_info <- sort(unique(df$region))
 transportation_type_info <- sort(unique(df$transportation_type))
-#day_info <- sort(unique(mobility_df$date_info))
 geo_info <- sort(unique(df$geo_type))
 
 ui <- dashboardPage(
@@ -62,7 +61,7 @@ ui <- dashboardPage(
                 sidebarLayout(
                     sidebarPanel(
                     selectInput("geoInput", "Geography type", choices = geo_info),
-                    #selectInput("regionInput", "Region", choices = region_info),
+                    selectInput("regionInput", "Region", choices = NULL),
                     checkboxGroupInput("transportationInput",
                                        label = "Transportation types",
                                        choices = transportation_type_info,
@@ -76,10 +75,38 @@ ui <- dashboardPage(
                 ))
     ))
 )
-server <- function(input, output) {
+server <- function(input, output, session) {
+    
+  region_df <- reactive({
+    region_df <- mobility_df %>%
+      filter(geo_type == input$geoInput) %>%
+      select(region) %>%
+      distinct()
+  })  
+  
+  
+  observe({
+    updateSelectInput(session = session, inputId = "regionInput", choices = region_df())
+  })
+      
     
     output$countryOutput <- renderPlot({
-        
+       data_df <- mobility_df %>%
+         filter(geo_type == input$geoInput) %>%
+         filter(region == input$regionInput) %>%
+         filter(transportation_type %in% input$transportationInput)
+         
+         
+         ggplot(data_df, aes(x=date_info, y=sum, group=transportation_type)) +
+         geom_line(aes(color=transportation_type))+
+         geom_point(aes(color=transportation_type)) + theme_classic() + 
+         theme(legend.text = element_text(size = 10),
+               legend.title = element_text(size = 10),
+               axis.title = element_text(size = 15),
+               axis.text = element_text(size = 10),
+               axis.text.x = element_text(angle = 45, hjust = 1)) +
+         labs(x = "Date", y = "Distance") +
+         labs (fill = "Transportation type")
     })
     
 }
