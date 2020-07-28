@@ -1,9 +1,9 @@
-#steps
-#add dynamic dropdown - #https://www.google.com/search?client=opera&q=dynamic+dropdown+r&sourceid=opera&ie=UTF-8&oe=UTF-8
-#add graphs
-#clean up
+# Objective
+# create a visualization that shows
+# the current state of world mobility as it pertains 
+# to energy consumption, but also allows a user to drill down into details. 
+# https://www.apple.com/covid19/mobility
 
-#packages
 packages <-
     c('ggplot2',
       'corrplot',
@@ -11,6 +11,7 @@ packages <-
       'shiny',
       'shinydashboard',
       'scales')
+
 #load packages
 for (package in packages) {
     if (!require(package, character.only = T, quietly = T)) {
@@ -25,8 +26,7 @@ df <- read_csv("applemobilitytrends-2020-07-23.csv")
 df <-
     select (
         df,
-        -c(
-            'alternative_name',
+        -c('alternative_name',
             'country',
             'sub-region',
             'country',
@@ -37,13 +37,13 @@ df <-
 
 
 mobility_df <- df %>%
-    pivot_longer(-c(region, transportation_type),
-                 names_to = "date_info",
-                 values_to = "sum")
+  pivot_longer(-c(geo_type, region, transportation_type),
+               names_to = "date_info",
+               values_to = "sum")
 
 region_info <- sort(unique(df$region))
 transportation_type_info <- sort(unique(df$transportation_type))
-day_info <- sort(unique(mobility_df$date_info))
+#day_info <- sort(unique(mobility_df$date_info))
 geo_info <- sort(unique(df$geo_type))
 
 ui <- dashboardPage(
@@ -62,7 +62,7 @@ ui <- dashboardPage(
                 sidebarLayout(
                     sidebarPanel(
                     selectInput("geoInput", "Geography type", choices = geo_info),
-                    selectInput("regionInput", "Region", choices = region_info),
+                    #selectInput("regionInput", "Region", choices = region_info),
                     checkboxGroupInput("transportationInput",
                                        label = "Transportation types",
                                        choices = transportation_type_info,
