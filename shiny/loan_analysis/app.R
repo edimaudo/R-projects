@@ -10,6 +10,36 @@ for (package in packages) {
 }
 
 
+ui <- dashboardPage(
+    dashboardHeader(title = "Loan Analysis"),
+    dashboardSidebar(sidebarMenu(
+        menuItem(
+            "Introduction",
+            tabName = "Introduction",
+            icon = icon("dashboard")
+        ),
+        menuItem("Loan analysis", tabName = "analysis", icon = icon("th"))
+    )),
+    dashboardBody(tabItems(
+        tabItem(tabName = "Introduction", includeMarkdown("readme.md"), hr()),
+        tabItem(tabName = "analysis",
+                sidebarLayout(
+                    sidebarPanel(
+                        selectInput("geoInput", "Geography type", choices = geo_info),
+                        selectInput("regionInput", "Region", choices = NULL),
+                        checkboxGroupInput("transportationInput",
+                                           label = "Transportation types",
+                                           choices = transportation_type_info,
+                                           selected = transportation_type_info)),
+                    mainPanel(
+                        fluidRow(
+                            h2("Loan Analysis", style = "text-align: center;"),
+                            DT::dataTableOutput("selectedWinesOutput")
+                        ))
+                ))
+    ))
+)
+
 
 
 server <- function(input, output, session) {}
