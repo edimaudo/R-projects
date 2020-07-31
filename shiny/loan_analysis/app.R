@@ -1,5 +1,5 @@
 packages <-
-    c('tidyverse','shiny','shinydashboard','scales','DT','dplyr')
+    c('tidyverse', 'shiny', 'shinydashboard', 'scales', 'DT', 'dplyr')
 
 #load packages
 for (package in packages) {
@@ -9,7 +9,8 @@ for (package in packages) {
     }
 }
 
-
+loan_data <- c(250, 500, 750, 1000, 1250)
+payment_data <- c("weekly", 'bi-weekly', 'monthly')
 ui <- dashboardPage(
     dashboardHeader(title = "Loan Analysis"),
     dashboardSidebar(sidebarMenu(
@@ -25,25 +26,50 @@ ui <- dashboardPage(
         tabItem(tabName = "analysis",
                 sidebarLayout(
                     sidebarPanel(
-                        selectInput("geoInput", "Geography type", choices = geo_info),
-                        selectInput("regionInput", "Region", choices = NULL),
-                        checkboxGroupInput("transportationInput",
-                                           label = "Transportation types",
-                                           choices = transportation_type_info,
-                                           selected = transportation_type_info)),
-                    mainPanel(
-                        fluidRow(
-                            h2("Loan Analysis", style = "text-align: center;"),
-                            DT::dataTableOutput("selectedWinesOutput")
-                        ))
+                        selectInput("paymentTypeInput", "Payment Period", choices = payment_data),
+                        dateInput("dateInput", "Loan Orignination Date", value = "2020-01-01"),
+                        sliderInput(
+                            "loanTermInput",
+                            "Loan Term (in weeks)",
+                            min = 0,
+                            max = 360,
+                            value = 36
+                        ),
+                        sliderInput(
+                            "loanInput",
+                            "Loan Amount ($)",
+                            min = 250,
+                            max = 1000,
+                            value = 500
+                        ),
+                        sliderInput(
+                            "subscriptionInput",
+                            "Subscription ($)",
+                            min = 0,
+                            max = 50,
+                            value = 10
+                        ),
+                        sliderInput(
+                            "aprInput",
+                            "APR (%)",
+                            min = 0,
+                            max = 100,
+                            value = 20
+                        )
+                    ),
+                    mainPanel(fluidRow(
+                        h2("Loan Analysis", style = "text-align: center;"),
+                        DT::dataTableOutput("selectedWinesOutput")
+                    ))
                 ))
     ))
 )
 
 
 
-server <- function(input, output, session) {}
+server <- function(input, output, session) {
+}
 
 
-# Run the application 
+# Run the application
 shinyApp(ui = ui, server = server)
