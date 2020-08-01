@@ -79,18 +79,9 @@ payment_schedule <- function(paymentType, dateBegin, loanTerm, subscriptionAmoun
 }
 
 server <- function(input, output, session) {
-    # for (num in 1:input$loanTermInput) {
-    #     if (input$paymentTypeInfo == "weekly"){
-    #         
-    #     } else if (input$paymentTypeInfo == "bi-weekly"){
-    #         
-    #     } else if (input$paymentTypeInfo == "monthly"){
-    #         
-    #     }
-    # }
     
     output$summaryOutput <- DT::renderDataTable(DT::datatable({
-        
+        payment_schedule()
     }))
     
     output$mainOutput <- DT::renderDataTable(DT::datatable({
