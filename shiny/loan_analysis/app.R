@@ -59,7 +59,8 @@ ui <- dashboardPage(
                     ),
                     mainPanel(fluidRow(
                         h2("Loan Analysis", style = "text-align: center;"),
-                        DT::dataTableOutput("selectedWinesOutput")
+                        DT::dataTableOutput("summaryOutput"),
+                        DT::dataTableOutput("mainOutput"),
                     ))
                 ))
     ))
@@ -68,6 +69,17 @@ ui <- dashboardPage(
 
 
 server <- function(input, output, session) {
+    for (num in 1:input$loanTermInput) {
+        
+    }
+    
+    output$summaryOutput <- DT::renderDataTable(DT::datatable({
+        
+    }))
+    
+    output$mainOutput <- DT::renderDataTable(DT::datatable({
+        
+    }))
 }
 
 
