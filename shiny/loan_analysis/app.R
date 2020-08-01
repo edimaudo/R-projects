@@ -11,6 +11,7 @@ for (package in packages) {
 
 loan_data <- c(250, 500, 750, 1000, 1250)
 payment_data <- c("weekly", 'bi-weekly', 'monthly')
+
 ui <- dashboardPage(
     dashboardHeader(title = "Loan Analysis"),
     dashboardSidebar(sidebarMenu(
@@ -66,12 +67,27 @@ ui <- dashboardPage(
     ))
 )
 
+#generate function to perform calculation it will have a for loop + 5 inputs
+#
 
-
-server <- function(input, output, session) {
-    for (num in 1:input$loanTermInput) {
+payment_schedule <- function(paymentType, dateBegin, loanTerm, subscriptionAmount, loaAmount, 
+                             subscriptionAmount, apr){
+    for (num in 0:loanTerm){
         
     }
+    
+}
+
+server <- function(input, output, session) {
+    # for (num in 1:input$loanTermInput) {
+    #     if (input$paymentTypeInfo == "weekly"){
+    #         
+    #     } else if (input$paymentTypeInfo == "bi-weekly"){
+    #         
+    #     } else if (input$paymentTypeInfo == "monthly"){
+    #         
+    #     }
+    # }
     
     output$summaryOutput <- DT::renderDataTable(DT::datatable({
         
