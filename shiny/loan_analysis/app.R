@@ -60,7 +60,9 @@ ui <- dashboardPage(
                     ),
                     mainPanel(fluidRow(
                         h2("Loan Analysis", style = "text-align: center;"),
+                        h3("Summary",style="text-align: center;"),
                         DT::dataTableOutput("summaryOutput"),
+                        h3("Details",style="text-align: center;"),
                         DT::dataTableOutput("mainOutput"),
                     ))
                 ))
