@@ -89,10 +89,16 @@ payment_schedule <- function(paymentType, dateBegin, loanTerm, subscriptionAmoun
     
     for (num in 0:loanTerm){
         
-        payment_data_day <- data.frame()
+        if (num == 0){
+            payment_data_day <- data.frame(dateInfo,dailyOpeningBalance,payment,dailyClosingBalance,
+                                           dailyInterest, subscription)
+            
+        }
+        else {
+            
+        }
         colnames(payment_data_day ) <- payment_data_colinfo
-        
-        player_facts_all <- rbind(payment_data,payment_data_day)
+        payment_data <- rbind(payment_data,payment_data_day)
     }
     
 }
