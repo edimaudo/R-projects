@@ -72,6 +72,19 @@ ui <- dashboardPage(
 
 payment_schedule <- function(paymentType, dateBegin, loanTerm, subscriptionAmount, loaAmount, 
                              subscriptionAmount, apr){
+    
+    payment_data_colinfo <- c()
+    payment_data <- data.frame(matrix(ncol = 6, nrow = 0))
+    colnames(payment_data) <- payment_data_colinfo
+    #starting values
+    dayCount <- 0
+    dateInfo <- dateBegin
+    dailyOpeningBalance <- 0
+    payment <- 0
+    dailyClosingBalance <- loanAmount + subscriptionAmount
+    dailyInterest <- dailyClosingBalance * ((apr*0.01)/365)
+    subscription <- subscriptionAmount
+    
     for (num in 0:loanTerm){
         
     }
