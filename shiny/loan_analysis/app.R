@@ -73,9 +73,11 @@ ui <- dashboardPage(
 payment_schedule <- function(paymentType, dateBegin, loanTerm, subscriptionAmount, loaAmount, 
                              subscriptionAmount, apr){
     
-    payment_data_colinfo <- c()
+    payment_data_colinfo <- c('Date','Daily_Opening_Balance','Payment','Daily_Closing_Balance','Daily_Interest',
+                              'Subscription')
     payment_data <- data.frame(matrix(ncol = 6, nrow = 0))
     colnames(payment_data) <- payment_data_colinfo
+    
     #starting values
     dayCount <- 0
     dateInfo <- dateBegin
@@ -87,6 +89,10 @@ payment_schedule <- function(paymentType, dateBegin, loanTerm, subscriptionAmoun
     
     for (num in 0:loanTerm){
         
+        payment_data_day <- data.frame()
+        colnames(payment_data_day ) <- payment_data_colinfo
+        
+        player_facts_all <- rbind(payment_data,payment_data_day)
     }
     
 }
