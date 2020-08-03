@@ -90,17 +90,26 @@ payment_schedule <- function(paymentType, dateBegin, loanTerm, subscriptionAmoun
     subscription <- subscriptionAmount
     
     for (num in 0:loanTerm){
-        
         if (num == 0){
             payment_data_day <- data.frame(dateInfo,dailyOpeningBalance,payment,dailyClosingBalance,
                                            dailyInterest, subscription)
+            colnames(payment_data_day ) <- payment_data_colinfo
+            payment_data <- rbind(payment_data,payment_data_day)
             
+        } else {
+            if (paymentType == 'weekly'){
+                
+            } else if (paymentType == "bi-weekly"){
+                
+            } else if (paymentType = "monthly"){
+                
+            }
+            payment_data_day <- data.frame(dateInfo,dailyOpeningBalance,payment,dailyClosingBalance,
+                                           dailyInterest, subscription)
+            colnames(payment_data_day ) <- payment_data_colinfo
+            payment_data <- rbind(payment_data,payment_data_day)
         }
-        else {
-            
-        }
-        colnames(payment_data_day ) <- payment_data_colinfo
-        payment_data <- rbind(payment_data,payment_data_day)
+
     }
     
 }
