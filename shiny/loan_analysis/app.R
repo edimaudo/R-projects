@@ -72,11 +72,11 @@ ui <- dashboardPage(
 #generate function to perform calculation it will have a for loop + 5 inputs
 #
 
-payment_schedule <- function(paymentType, dateBegin, loanTerm, subscriptionAmount, loaAmount, 
-                             subscriptionAmount, apr){
+payment_schedule <- function(paymentType, dateBegin, loanTerm, subscriptionAmount, 
+                             loanAmount, apr){
     
-    payment_data_colinfo <- c('Date','Daily_Opening_Balance','Payment','Daily_Closing_Balance','Daily_Interest',
-                              'Subscription')
+    payment_data_colinfo <- c('Date','Daily_Opening_Balance','Payment',
+                              'Daily_Closing_Balance','Daily_Interest','Subscription')
     payment_data <- data.frame(matrix(ncol = 6, nrow = 0))
     colnames(payment_data) <- payment_data_colinfo
     
