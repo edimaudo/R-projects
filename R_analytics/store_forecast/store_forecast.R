@@ -5,7 +5,7 @@
 #The model should incorporate multiple seasonalities 
 #and lags for the promotional periods. 
 #There are over 1100 different stores, with 4 categories. 
-#The model(s) should be able to make forecast based on the store and type of store. 
+#The model(s) should be able to make forecast based on the store and type of store* - maybe look at categotity 
 #validate the model trend, multiple seasonalities, and lags 
 
 
