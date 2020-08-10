@@ -1,3 +1,5 @@
+rm(list=ls())
+
 packages <-
     c('tidyverse', 'shiny', 'shinydashboard', 'scales', 'DT', 'dplyr')
 
