@@ -99,7 +99,8 @@ ggplot(mushroom, aes(x = edibility, y = odor, col = edibility)) +
 
 #modeling
 set.seed(1810)
-mushsample <- caret::createDataPartition(y = mushroom$edibility, times = 1, p = 0.8, list = FALSE)
+mushsample <- caret::createDataPartition(y = mushroom$edibility, 
+                                         times = 1, p = 0.8, list = FALSE)
 train_mushroom <- mushroom[mushsample, ]
 test_mushroom <- mushroom[-mushsample, ]
 
