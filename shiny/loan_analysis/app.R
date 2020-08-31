@@ -103,7 +103,7 @@ payment_schedule <- function(paymentType, dateBegin, loanTerm, subscriptionAmoun
                 
             } else if (paymentType == "bi-weekly"){
                 
-            } else if (paymentType = "monthly"){
+            } else if (paymentType == "monthly"){
                 
             }
             payment_data_day <- data.frame(dateInfo,dailyOpeningBalance,payment,dailyClosingBalance,
