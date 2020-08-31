@@ -119,7 +119,7 @@ payment_schedule <- function(paymentType, dateBegin, loanTerm, subscriptionAmoun
 server <- function(input, output, session) {
     
     output$summaryOutput <- DT::renderDataTable(DT::datatable({
-        payment_schedule()
+        #payment_schedule()
     }))
     
     output$mainOutput <- DT::renderDataTable(DT::datatable({
