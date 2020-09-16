@@ -55,6 +55,11 @@ summary(mba_all_rules)
 ```
 
 ## Plot
+```{r item frequency set, echo=FALSE}
+itemFrequencyPlot(mba_all_trans, topN = 10, type = 'absolute', col = rainbow(10))
+```
+
+
 
 ```{r mba rules, echo=FALSE}
 plot(mba_all_rules)
