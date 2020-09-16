@@ -1,0 +1,37 @@
+---
+title: "Market Basket Analysis"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+## Analysis
+
+
+
+```{r cars}
+packages <- c('ggplot2', 'corrplot','tidyverse',
+              'dplyr','tidyr','readr','mbar',
+              'stringr','colorspace','arules','arulesViz')
+for (package in packages) {
+  if (!require(package, character.only=T, quietly=T)) {
+    install.packages(package)
+    library(package, character.only=T)
+  }
+}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+
