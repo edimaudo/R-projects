@@ -39,6 +39,9 @@ mba_all <- as.data.frame(df2)
 mba_all_trans <- as(split(mba_all[,"SkuName"], 
                           unique(mba_all[,"InvoiceID"])), "transactions")
 
+#item frequency set
+itemFrequencyPlot(mba_all_trans, topN = 10, type = 'absolute', col = rainbow(10))
+
 #rules using apriori
 mba_all_rules <- apriori(mba_all_trans, 
                          parameter = list(supp = 0.001, conf = 0.002,
