@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 
-```{r cars}
+```{r Analysis}
 packages <- c('ggplot2', 'corrplot','tidyverse',
               'dplyr','tidyr','readr','mbar',
               'stringr','colorspace','arules','arulesViz')
@@ -23,15 +23,47 @@ for (package in packages) {
     library(package, character.only=T)
   }
 }
-summary(cars)
+
+# =======================================================
+# load data
+# =======================================================
+df <- read.delim("Dataset.txt",header = TRUE, sep = ",") #dataset
+hierarchy <- read.csv("MasterHierachy_New¬.csv")
+
+df2 <- df %>%
+  inner_join(hierarchy,"MasterBarcodeKey")
+
+# =======================================================
+# Market Basket analysis
+# =======================================================
+
+set.seed(123) #for reproducibility
+#change to dataframe
+mba_all <- as.data.frame(df2)
+
+#prep data for apriori algorithm
+mba_all_trans <- as(split(mba_all[,"SkuName"], 
+                          unique(mba_all[,"InvoiceID"])), "transactions")
+
+#rules using apriori
+mba_all_rules <- apriori(mba_all_trans, 
+                         parameter = list(supp = 0.001, conf = 0.002,
+                                          target = "rules", minlen = 2))
+
+#mba summary for overall
+summary(mba_all_rules)
 ```
 
-## Including Plots
+## Plot
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r mba rules, echo=FALSE}
+plot(mba_all_rules)
+```
+```{r mba plot by lift, echo=FALSE}
+plot(head(sort(mba_all_rules, by = "lift"), n=25), method="graph", control=list(cex=.8))
 ```
 
+```{r mba plot by confidence, echo=FALSE}
+plot(head(sort(mba_all_rules, by = "confidence"), n=25), method="graph", control=list(cex=.8))
+```
 
