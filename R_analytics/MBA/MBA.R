@@ -41,7 +41,7 @@ mba_all_trans <- as(split(mba_all[,"SkuName"],
 
 #rules using apriori
 mba_all_rules <- apriori(mba_all_trans, 
-                         parameter = list(supp = 0.001, conf = 0.079,
+                         parameter = list(supp = 0.001, conf = 0.002,
                                           target = "rules", minlen = 2))
 
 #worked supp 0.001 and confidence 0.002
@@ -59,7 +59,7 @@ inspect(sort(mba_all_rules, by = "lift")[1:25])
 plot(mba_all_rules)
 
 #view graphically by lift
-plot(head(sort(mba_all_rules, by = "lift"), n=25), method="graph", control=list(cex=.8))
+plot(head(sort(mba_all_rules, by = "lift"), n=200), method="graph", control=list(cex=.8))
 
 #view graphically by confidence
 plot(head(sort(mba_all_rules, by = "confidence"), n=25), method="graph", control=list(cex=.8))
