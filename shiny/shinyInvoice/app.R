@@ -1,6 +1,6 @@
 #packages 
 packages <- c('ggplot2', 'corrplot','tidyverse','shiny','shinydashboard',
-              'DT','data.table','readxl')
+              'DT','data.table','readxl','dplyr')
 #load packages
 for (package in packages) {
     if (!require(package, character.only=T, quietly=T)) {
@@ -14,7 +14,7 @@ df <- read_excel("Sales Detail Report.xlsx")
 invoice <- sort(as.vector(unique(as.integer(df$SaleID))))
 
 ui <- dashboardPage(
-    dashboardHeader(title = "Side Project SaaS Price Generator"),
+    dashboardHeader(title = "Sales Invoice Generator"),
     dashboardSidebar(
         sidebarMenu(
             menuItem("Sales Invoice", tabName = "salesInvoice", icon = icon("th"))
@@ -22,16 +22,16 @@ ui <- dashboardPage(
     ),
     dashboardBody(
         tabItems(
-            tabItem(tabName = "priceGenerator",
+            tabItem(tabName = "salesInvoice",
                     sidebarLayout(
                         sidebarPanel(
-                            selectInput("yearInput", "Year:", choices = yearData),
+                            selectInput("saleID", "SaleID:", choices = invoice),
                             br(),
                             submitButton("Submit")
                         ),
                         mainPanel(fluidRow(
-                            h2("Text mining insights", style = "text-align: center;"),
-                            plotOutput("generateProgramSentiment")
+                            h2("Sales Invoice", style = "text-align: center;"),
+                            DT::dataTableOutput("salesOutput")
                         ))
                     )
             )
@@ -40,7 +40,11 @@ ui <- dashboardPage(
 )
 
 server <- function(input, output, session) {
-    
+    output$salesOutput <- DT::renderDataTable(DT::datatable({
+        data <- df %>%
+            filter(SaleID == input$saleID)
+            
+    }))
 }
 
 shinyApp(ui, server)
