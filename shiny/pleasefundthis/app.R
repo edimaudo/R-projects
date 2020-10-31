@@ -15,14 +15,20 @@ for (package in packages) {
 #load data
 df <- read.csv("PleaseFundThis.csv")
 
+no_success <- df %>%
+    select(project_success)%>%
+    filter(project_success == TRUE)%>%
+    summarise(count_success = n())
+
+
+
 # Define UI for application
 ui <- dashboardPage(
-    dashboardHeader(title = "Kickstarter.com Analysis"),
+    dashboardHeader(title = "Kickstarter Analysis"),
     dashboardSidebar(
         sidebarMenu(
             menuItem("About", tabName = "about", icon = icon("dashboard")),
             menuItem("Summary", tabName = "summary", icon = icon("th")),
-            menuItem("Country Analysis", tabName = "country", icon = icon("th")),
             menuItem("City Analysis", tabName = "city", icon = icon("th"))
         )
     ),
@@ -32,20 +38,17 @@ ui <- dashboardPage(
             tabItem(tabName = "summary",
                     mainPanel(
                         h2("Summary",style="text-align: center;"),
+                        fluidRow(infoBoxOutput("countryOutput"),
+                                 infoBoxOutput("ciytOutput")),
                         fluidRow(
-                            valueBoxOutput("monthlyPriceOutput"),
+                            infoBoxOutput("categoryOutput"),
+                            infoBoxOutput("subCategoryOutput")
                         ),
-                        h3("Explanation",style="text-align: center;"),
-                        fluidRow(
-                            infoBoxOutput("rateOutput")
-                        ),
-                        fluidRow(
-                            infoBoxOutput("projectCostOuput") 
-                        ),
-                        fluidRow(
-                            infoBoxOutput("userCostOutput")
+                        fluidRow(infoBoxOutput("amountRaisedOutput"),
+                                 infoBoxOutput("percentofSuccessfulProjectsOutput")
                         )
-                    )),
+                    )
+            ),
             tabItem(tabName = "country",),
             tabItem(tabName = "city",)
         )
@@ -54,12 +57,54 @@ ui <- dashboardPage(
 
 # Define server logic 
 server <- function(input, output,session) {
-    output$monthlyPriceOutput <- renderValueBox({
+    
+    output$countryOutput <- renderValueBox({
         infoBox(
-            "You should charge your users: ", paste0(""), icon = icon("list"),
+            "# of Countries: ", paste0(length(unique(df$region))), icon = icon("list"),
             color = "blue"
         )
     })
+
+    output$cityOutput <- renderValueBox({
+        infoBox(
+            "# of cities: ", paste0(length(unique(df$city))), icon = icon("list"),
+            color = "blue"
+        )
+    })
+
+    output$categoryOutput <- renderValueBox({
+        infoBox(
+            "# of categories: ", paste0(length(unique(df$major_category))), icon = icon("list"),
+            color = "blue"
+        )
+    })
+    
+    output$subCategoryOutput <- renderValueBox({
+        infoBox(
+            "# of sub-categories: ", paste0(length(unique(df$minor_category))), icon = icon("list"),
+            color = "blue"
+        )
+    })
+    
+
+    output$amountRaisedOutput <- renderValueBox({
+        infoBox(
+            "Amount raised: $", paste0(sum(df$amt_pledged_.)), icon = icon("list"),
+            color = "blue"
+        )
+    })
+    
+    output$percentofSuccessfulProjectsOutput <- renderValueBox({
+        infoBox(
+            "% of successful projects ", paste0(no_success / length(df$project_success)), icon = icon("list"),
+            color = "blue"
+        )
+    })
+    
+
+
+    
+    
 }
 
 shinyApp(ui, server)
