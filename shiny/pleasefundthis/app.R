@@ -1,49 +1,69 @@
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
+#kickstarter analysis
+rm(list = ls())
+#packages 
+packages <- c('ggplot2', 'corrplot','tidyverse','shiny','shinydashboard',
+              'caret','dummies','mlbench','tidyr','Matrix',
+              'data.table','vtreat', 'rsample')
+#load packages
+for (package in packages) {
+    if (!require(package, character.only=T, quietly=T)) {
+        install.packages(package)
+        library(package, character.only=T)
+    }
+}
 
-library(shiny)
+#load data
+df <- read.csv("PleaseFundThis.csv")
 
-# Define UI for application that draws a histogram
-ui <- fluidPage(
-
-    # Application title
-    titlePanel("Old Faithful Geyser Data"),
-
-    # Sidebar with a slider input for number of bins 
-    sidebarLayout(
-        sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
-        ),
-
-        # Show a plot of the generated distribution
-        mainPanel(
-           plotOutput("distPlot")
+# Define UI for application
+ui <- dashboardPage(
+    dashboardHeader(title = "Kickstarter.com Analysis"),
+    dashboardSidebar(
+        sidebarMenu(
+            menuItem("About", tabName = "about", icon = icon("dashboard")),
+            menuItem("Summary", tabName = "summary", icon = icon("th")),
+            menuItem("Country Analysis", tabName = "country", icon = icon("th")),
+            menuItem("City Analysis", tabName = "city", icon = icon("th"))
+        )
+    ),
+    dashboardBody(
+        tabItems(
+            tabItem(tabName = "about",includeMarkdown("readme.md"),hr()),
+            tabItem(tabName = "summary",
+                    mainPanel(
+                        h2("Summary",style="text-align: center;"),
+                        fluidRow(
+                            valueBoxOutput("monthlyPriceOutput"),
+                        ),
+                        h3("Explanation",style="text-align: center;"),
+                        fluidRow(
+                            infoBoxOutput("rateOutput")
+                        ),
+                        fluidRow(
+                            infoBoxOutput("projectCostOuput") 
+                        ),
+                        fluidRow(
+                            infoBoxOutput("userCostOutput")
+                        )
+                    )),
+            tabItem(tabName = "country",),
+            tabItem(tabName = "city",)
         )
     )
 )
 
-# Define server logic required to draw a histogram
-server <- function(input, output) {
-
-    output$distPlot <- renderPlot({
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white')
+# Define server logic 
+server <- function(input, output,session) {
+    output$monthlyPriceOutput <- renderValueBox({
+        infoBox(
+            "You should charge your users: ", paste0(""), icon = icon("list"),
+            color = "blue"
+        )
     })
 }
 
-# Run the application 
-shinyApp(ui = ui, server = server)
+shinyApp(ui, server)
+            
+
+
+
