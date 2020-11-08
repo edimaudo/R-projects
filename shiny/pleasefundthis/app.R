@@ -3,7 +3,7 @@ rm(list = ls())
 #packages 
 packages <- c('ggplot2', 'corrplot','tidyverse','shiny','shinydashboard',
               'caret','dummies','mlbench','tidyr','Matrix',
-              'data.table','vtreat', 'rsample')
+              'data.table','vtreat', 'rsample','scales')
 #load packages
 for (package in packages) {
     if (!require(package, character.only=T, quietly=T)) {
@@ -28,7 +28,7 @@ ui <- dashboardPage(
     dashboardSidebar(
         sidebarMenu(
             menuItem("About", tabName = "about", icon = icon("dashboard")),
-            menuItem("Summary", tabName = "summary", icon = icon("th")),
+            menuItem("Summary", tabName = "summary", icon = icon("list-alt")),
             menuItem("City Analysis", tabName = "city", icon = icon("th"))
         )
     ),
@@ -38,18 +38,17 @@ ui <- dashboardPage(
             tabItem(tabName = "summary",
                     mainPanel(
                         h2("Summary",style="text-align: center;"),
-                        fluidRow(infoBoxOutput("countryOutput"),
-                                 infoBoxOutput("ciytOutput")),
+                        fluidRow(valueBoxOutput("countryOutput"),
+                                 valueBoxOutput("ciytOutput")),
                         fluidRow(
-                            infoBoxOutput("categoryOutput"),
-                            infoBoxOutput("subCategoryOutput")
+                            valueBoxOutput("categoryOutput"),
+                            valueBoxOutput("subCategoryOutput")
                         ),
-                        fluidRow(infoBoxOutput("amountRaisedOutput"),
-                                 infoBoxOutput("percentofSuccessfulProjectsOutput")
+                        fluidRow(valueBoxOutput("amountRaisedOutput"),
+                                 valueBoxOutput("percentofSuccessfulProjectsOutput")
                         )
                     )
             ),
-            tabItem(tabName = "country",),
             tabItem(tabName = "city",)
         )
     )
@@ -59,49 +58,61 @@ ui <- dashboardPage(
 server <- function(input, output,session) {
     
     output$countryOutput <- renderValueBox({
-        infoBox(
-            "# of Countries: ", paste0(length(unique(df$region))), icon = icon("list"),
+        valueBox(
+            paste0(length(unique(df$region))),"# of Countries", 
+            icon = icon("list"),
+            width = 12,
             color = "blue"
         )
     })
 
-    output$cityOutput <- renderValueBox({
-        infoBox(
-            "# of cities: ", paste0(length(unique(df$city))), icon = icon("list"),
+    output$ciytOutput <- renderValueBox({
+        valueBox(
+            paste0(length(unique(df$city))),"# of cities",
+            icon = icon("list"),
+            width = 12,
             color = "blue"
         )
     })
 
     output$categoryOutput <- renderValueBox({
-        infoBox(
-            "# of categories: ", paste0(length(unique(df$major_category))), icon = icon("list"),
-            color = "blue"
+        valueBox(
+            paste0(length(unique(df$major_category))),"# of categories", icon = icon("list"),
+            width = 12,
+            color = "aqua"
         )
     })
     
     output$subCategoryOutput <- renderValueBox({
-        infoBox(
-            "# of sub-categories: ", paste0(length(unique(df$minor_category))), icon = icon("list"),
-            color = "blue"
+        valueBox(
+            paste0(length(unique(df$minor_category))),"# of sub-categories", icon = icon("list"),
+            width = 12,
+            color = "aqua"
         )
     })
     
 
     output$amountRaisedOutput <- renderValueBox({
-        infoBox(
-            "Amount raised: $", paste0(sum(df$amt_pledged_.)), icon = icon("list"),
+        value1 = round(sum(df$amt_pledged_.),0)
+        valueBox(
+            paste0(value1),"Amount raised in $", 
+            icon = icon("credit-card"),
+            width = 12,
             color = "blue"
         )
     })
     
     output$percentofSuccessfulProjectsOutput <- renderValueBox({
-        infoBox(
-            "% of successful projects ", paste0(no_success / length(df$project_success)), icon = icon("list"),
+        value1 <- no_success / length(df$project_success)
+        valueBox(
+            paste0(round(value1*100 , 2),"%"), "% of successful projects ",
+            icon = icon("thumbs-up"),
+            width = 12,
             color = "blue"
         )
     })
     
-
+    
 
     
     
