@@ -92,3 +92,19 @@ cohorts2019$Cohort <- factor(cohorts2019$Cohort,ordered = T,levels =c("Jan Cohor
                                                                       "Nov Cohorts",
                                                                       "Dec Cohorts"))
 
+dupes <- which(duplicated(cohorts2019[,c(-5,-6)]))
+
+# Removing the duplicate observations
+cohorts2011 <- cohorts2019[-dupes,]
+
+# Dropping to the dupes vector
+# for memory efficiency
+rm(dupes)
+
+
+# Creating rows for each cohort group
+# Creating columns for each value in the Age_by_Month column;0-11
+# The default aggregation setup for dcast is, fun.aggregate = length
+cohorts.wide <- reshape2::dcast(cohorts2019,Cohort~Age_by_Month,
+                                value.var="User_id",
+                                fun.aggregate = length)
