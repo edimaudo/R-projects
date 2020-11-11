@@ -22,6 +22,8 @@ no_success <- df %>%
 
 cities <- sort(as.vector(unique(df$city)))
 
+categories <- sort(as.vector(unique(df$major_category)))
+
 # Define UI for application
 ui <- dashboardPage(
     dashboardHeader(title = "Kickstarter Analysis"),
@@ -52,7 +54,8 @@ ui <- dashboardPage(
             tabItem(tabName = "city",
                     sidebarLayout(
                         sidebarPanel(
-                            selectInput("cityInput", "City", choices = cities)
+                            selectInput("cityInput", "City", choices = cities),
+                            selectInput("categoryInput", "Category", choices = categories)
                         ),
                         mainPanel(
                             h2("City Analysis",style="text-align: center;"), 
@@ -122,6 +125,17 @@ server <- function(input, output,session) {
         )
     })
     
+    # number of pledges by year
+    
+    #amount pledge by year
+    
+    #project success by year 
+    
+    #goal by year
+    
+    #amount pledged by year
+    
+    #avd duration per year
     
 
     
