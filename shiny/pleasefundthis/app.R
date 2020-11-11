@@ -20,7 +20,7 @@ no_success <- df %>%
     filter(project_success == TRUE)%>%
     summarise(count_success = n())
 
-
+cities <- sort(as.vector(unique(df$city)))
 
 # Define UI for application
 ui <- dashboardPage(
@@ -49,10 +49,20 @@ ui <- dashboardPage(
                         )
                     )
             ),
-            tabItem(tabName = "city",)
+            tabItem(tabName = "city",
+                    sidebarLayout(
+                        sidebarPanel(
+                            selectInput("cityInput", "City", choices = cities)
+                        ),
+                        mainPanel(
+                            h2("City Analysis",style="text-align: center;"), 
+                        )
+                    )
         )
     )
+    )
 )
+
 
 # Define server logic 
 server <- function(input, output,session) {
