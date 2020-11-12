@@ -59,6 +59,8 @@ ui <- dashboardPage(
                             fluidRow(
                             h3("Amount pledged",style="text-align: center;"),
                             plotOutput("pledgeYearOutput"),
+                            h3("# of pledges",style="text-align: center;"),
+                            plotOutput("pledgenumYearOutput")
                             #plotOutput(""),
                             )
                         )
@@ -127,18 +129,18 @@ server <- function(input, output,session) {
     })
     
     # number of pledges by year
-    output$pledgeYearOutput <- renderPlot({
+    output$pledgenumYearOutput <- renderPlot({
         
         data_df <- df %>%
             filter(city == input$cityInput) %>%
             filter(major_category == input$categoryInput) %>%
             group_by(year) %>%
-            summarise(total_pledges = sum(amt_pledged_.))
+            summarise(total_pledges = sum(number_of_pledgers))
         
         ggplot(data = data_df,aes(x = as.factor(year),y = total_pledges)) +
             geom_bar(stat = "identity", width = 0.3) + theme_light() +
             labs(x = "Years",
-                 y = "Amount Pledged ($)") +
+                 y = "Total # of Pledges") +
             scale_y_continuous(labels = comma) +
             scale_x_discrete() +
             theme(
@@ -180,17 +182,9 @@ server <- function(input, output,session) {
         
     })
     
-    #project success by year 
-    # no_success <- df %>%
-    #     select(project_success)%>%
-    #     filter(project_success == TRUE)%>%
-    #     summarise(count_success = n())
+
     
-    #goal by year
-    
-    #amount pledged by year
-    
-    #avg duration per year
+
     
 
     
