@@ -2,7 +2,7 @@
 rm(list = ls())
 #packages 
 packages <- c('ggplot2', 'corrplot','tidyverse','shiny','shinydashboard',
-              'caret','dummies','mlbench','tidyr','Matrix',
+              'caret','dummies','mlbench','tidyr','Matrix','lubridate',
               'data.table','vtreat', 'rsample','scales')
 #load packages
 for (package in packages) {
@@ -15,14 +15,11 @@ for (package in packages) {
 #load data
 df <- read.csv("PleaseFundThis.csv")
 
-no_success <- df %>%
-    select(project_success)%>%
-    filter(project_success == TRUE)%>%
-    summarise(count_success = n())
-
 cities <- sort(as.vector(unique(df$city)))
-
 categories <- sort(as.vector(unique(df$major_category)))
+
+df$date_launched <- as.Date(df$date_launched, format = "%d/%m/%Y")
+df$year <- as.numeric(format(df$date_launched, '%Y'))
 
 # Define UI for application
 ui <- dashboardPage(
@@ -59,6 +56,11 @@ ui <- dashboardPage(
                         ),
                         mainPanel(
                             h2("City Analysis",style="text-align: center;"), 
+                            fluidRow(
+                            h3("Amount pledged",style="text-align: center;"),
+                            plotOutput("pledgeYearOutput"),
+                            #plotOutput(""),
+                            )
                         )
                     )
         ) # prediction model
@@ -104,7 +106,6 @@ server <- function(input, output,session) {
         )
     })
     
-
     output$amountRaisedOutput <- renderValueBox({
         value1 = round(sum(df$amt_pledged_.),0)
         valueBox(
@@ -126,10 +127,64 @@ server <- function(input, output,session) {
     })
     
     # number of pledges by year
+    output$pledgeYearOutput <- renderPlot({
+        
+        data_df <- df %>%
+            filter(city == input$cityInput) %>%
+            filter(major_category == input$categoryInput) %>%
+            group_by(year) %>%
+            summarise(total_pledges = sum(amt_pledged_.))
+        
+        ggplot(data = data_df,aes(x = as.factor(year),y = total_pledges)) +
+            geom_bar(stat = "identity", width = 0.3) + theme_light() +
+            labs(x = "Years",
+                 y = "Amount Pledged ($)") +
+            scale_y_continuous(labels = comma) +
+            scale_x_discrete() +
+            theme(
+                legend.text = element_text(size = 10),
+                legend.title = element_text(size = 10),
+                axis.title = element_text(size = 15),
+                axis.text = element_text(size = 10),
+                axis.text.x = element_text(angle = 45, hjust = 1)
+            )
+        
+        
+        
+    })
     
     #amount pledge by year
+    output$pledgeYearOutput <- renderPlot({
+        
+        data_df <- df %>%
+            filter(city == input$cityInput) %>%
+            filter(major_category == input$categoryInput) %>%
+            group_by(year) %>%
+            summarise(total_pledges = sum(amt_pledged_.))
+        
+        ggplot(data = data_df,aes(x = as.factor(year),y = total_pledges)) +
+            geom_bar(stat = "identity", width = 0.3) + theme_light() +
+            labs(x = "Years",
+                 y = "Amount Pledged ($)") +
+            scale_y_continuous(labels = comma) +
+            scale_x_discrete() +
+            theme(
+                legend.text = element_text(size = 10),
+                legend.title = element_text(size = 10),
+                axis.title = element_text(size = 15),
+                axis.text = element_text(size = 10),
+                axis.text.x = element_text(angle = 45, hjust = 1)
+            )
+        
+        
+        
+    })
     
     #project success by year 
+    # no_success <- df %>%
+    #     select(project_success)%>%
+    #     filter(project_success == TRUE)%>%
+    #     summarise(count_success = n())
     
     #goal by year
     
