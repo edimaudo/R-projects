@@ -61,7 +61,7 @@ ui <- dashboardPage(
                             h2("City Analysis",style="text-align: center;"), 
                         )
                     )
-        )
+        ) # prediction model
     )
     )
 )
@@ -135,7 +135,7 @@ server <- function(input, output,session) {
     
     #amount pledged by year
     
-    #avd duration per year
+    #avg duration per year
     
 
     
