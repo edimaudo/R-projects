@@ -5,7 +5,7 @@ rm(list = ls()) #clear environment
 
 # libraries
 packages <- c('ggplot2', 'corrplot','tidyverse',"caret","dummies","fastDummies"
-              ,'FactoMineR','factoextra','readxl','scales','dplyr',
+              ,'FactoMineR','factoextra','readxl','scales','dplyr','mlbench','caTools',
               'gridExtra','lubridate')#,'doParallel','cvms','ml_test', "rJava",'extraTrees')
 # load packages
 for (package in packages) {
@@ -166,23 +166,6 @@ colnames(crimes_data_model)[colnames(crimes_data_model) == 'crimes_data$crime'] 
 
 
 str(crimes_data_model)
-
-#------------------
-## Using label encoder
-#------------------
-#Label Encoder
-enc<-function(x){
-  as.numeric(factor(x))-1
-}
-crime_info <- crimes_data[,c(1,3)]
-crime_info2 <- crimes_data[,c(2,4,5,6,7,8)]
-crime_info2$Gender <- enc(crime_info2$Gender)
-
-crime_info2$Gender <- enc(crime_info2$Gender)
-crime_info2$Marital.Status <- enc(crime_info2$Marital.Status)
-crime_info2$Educational.Level <- enc(crime_info2$Educational.Level)
-crime_info2$Religion <- enc(crime_info2$Religion)
-crime_info2$Gender <- enc(crime_info2$Gender)
 
 
 
@@ -361,5 +344,85 @@ plot_confusion_matrix(conf_mat)
 
 #model update
 
-# model 
+#------------------
+## Using label encoder
+#------------------
+#Label Encoder
+enc<-function(x){
+  as.numeric(factor(x))-1
+}
+
+#normalize data
+normalize <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x)))
+}
+
+crime_info <- crimes_data[,c(1,3)]
+crime_info2 <- crimes_data[,c(2,4,5,6,7,8)]
+
+df_cts <- as.data.frame(lapply(crime_info, normalize))
+df_cat <- as.data.frame(lapply(crime_info2, enc))
+
+df_new <- cbind(df_cts,df_cat)
+
+set.seed(2020)
+
+sample <- sample.split(df_new,SplitRatio = 0.75)
+train <- subset(df_new,sample ==TRUE)
+test <- subset(df_new, sample==FALSE)
+
+cl <- makePSOCKcluster(4) # Put here the number of cores in the Processor used for computation
+models <- c("svmRadial", "xgbTree", "rf", "kknn", "nnet", "naive_bayes")
+
+registerDoParallel(cl) # We do parallel computing for faster computation
+
+# Training the model
+for(model in models){
+  model_train <- train(
+    as.factor(crime) ~., 
+    data = train, 
+    method = model,
+    trControl = trainControl("cv", 
+                             number = 3)
+  )
+  saveRDS(model_train, paste0("model_", model, ".RDS"))
+  cat(paste0("\nFinished: ", model))
+  rm(model_train)
+}
+stopCluster(cl)
+
+accuracies <- list()
+cpt <- 1
+
+# Computing the accuracies
+for(model in models){
+  model_train <- readRDS(paste0("model_", model, ".RDS"))
+  y_pred <- predict(model_train, newdata = test)
+  accuracy <- sum(y_pred == test$crime)/nrow(test)
+  accuracies[[cpt]] <- accuracy
+  cpt <- cpt + 1
+  cat(paste0("\nAccuracy of the model: ", model))
+  print(accuracy)
+  rm(model_train)
+}
+
+
+install.packages("ml_test")
+accuracies <- unlist(accuracies)
+evaluation_data <- data.frame(
+  Model = models,
+  Accuracy = accuracies
+)
+
+# png("evaluation.png")
+evaluation_data %>%
+  ggplot(aes(x = reorder(Model, -Accuracy), y = Accuracy, fill = Model)) + 
+  geom_bar(stat = "identity", position = "dodge") + 
+  guides(fill = FALSE) + 
+  xlab("Model")
+# dev.off()
+
+
+
+
 #checking for crime variable imbalance
