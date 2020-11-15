@@ -76,6 +76,12 @@ fit.rf <- train(Target~., data=train, method="rf", trControl=control)
 fit.gbm <- train(Target~., data=train, method="gbm", trControl=control)
 #svm
 fit.svm <- train(Target~., data=train, method="svmRadial", trControl=control)
+#nnet
+fit.nnet <- train(Target~., data=train, method="nnet", trControl=control)
+#naive
+fit.naive <- train(Target~., data=train, method="naive_bayes", trControl=control)
+#extreme gradient boosting
+fit.xgb <- train(Target~., data=train, method="xgbTree", trControl=control)
 
 
 #------------------
