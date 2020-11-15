@@ -1,12 +1,12 @@
 #===================
-## Load Libraries:
+## Load Libraries
 #===================
 rm(list = ls()) #clear environment
 
 # libraries
-packages <- c('ggplot2', 'corrplot','tidyverse',"caret","dummies","fastDummies",
-              'doParallel','extraTrees','FactoMineR','factoextra','readxl','scales',
-              'gridExtra','lubridate')
+packages <- c('ggplot2', 'corrplot','tidyverse',"caret","dummies","fastDummies"
+              ,'FactoMineR','factoextra','readxl','scales','dplyr',
+              'gridExtra','lubridate')#,'doParallel','cvms','ml_test', "rJava",'extraTrees')
 # load packages
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
@@ -18,8 +18,9 @@ for (package in packages) {
 #===================
 ## Load Data
 #===================
-crimes_data <- read.csv("number-of-crimes-committed-against-persons-disturbing-crimes-by-sex-age-marital-status-etc.csv", sep = ";")%>%
-  rename(year = ?..Year) %>% # This can be removed according to the names given to Year after loading the dataset
+crimes_data <- read.csv("uae_crime.csv", sep=";")
+
+crimes_data <- crimes_data %>%
   mutate(Age = as.numeric(Age)) %>% # Convert age to numerical
   dplyr::select(-Description.of.the.charge) %>% # Remove the description of the charge variable
   mutate_if(is.character, as.factor) # Convert character type variable to factor type
@@ -154,28 +155,54 @@ crimes_data_model <- crimes_data %>%
   dummy_cols(c("Gender", "Marital.Status", 
                "Educational.Level", "Religion", "Job"),
              remove_first_dummy = TRUE) %>%
+  # dplyr::select(-c("Gender", "Marital.Status", "Educational.Level",
+  #                  "Religion", "Job", "Number", "Year")) %>%
   dplyr::select(-c("Gender", "Marital.Status", "Educational.Level",
-                   "Religion", "Job", "Number", "year")) %>%
+                   "Religion", "Job", "Number","crime")) %>%
   na.omit
+
+crimes_data_model <- cbind(crimes_data_model,crimes_data$crime)
+colnames(crimes_data_model)[colnames(crimes_data_model) == 'crimes_data$crime'] <- 'crime'
 
 
 str(crimes_data_model)
+
+#------------------
+## Using label encoder
+#------------------
+#Label Encoder
+enc<-function(x){
+  as.numeric(factor(x))-1
+}
+crime_info <- crimes_data[,c(1,3)]
+crime_info2 <- crimes_data[,c(2,4,5,6,7,8)]
+crime_info2$Gender <- enc(crime_info2$Gender)
+
+crime_info2$Gender <- enc(crime_info2$Gender)
+crime_info2$Marital.Status <- enc(crime_info2$Marital.Status)
+crime_info2$Educational.Level <- enc(crime_info2$Educational.Level)
+crime_info2$Religion <- enc(crime_info2$Religion)
+crime_info2$Gender <- enc(crime_info2$Gender)
+
+
+
+
 
 #-------------
 # RFE Method
 #-------------
 
-registerDoSEQ()
+#registerDoSEQ()
 control <- rfeControl(functions=rfFuncs,
                       method="cv", 
                       number=10)
 # run the RFE algorithm
-cl <- makePSOCKcluster(4)
-registerDoParallel(cl)
+#cl <- makePSOCKcluster(4)
+#registerDoParallel(cl)
 results <- rfe(crimes_data_model %>% select(-crime), 
                crimes_data_model$crime, sizes=c(1:8),
                rfeControl=control)
-stopCluster(cl)
+#stopCluster(cl)
 # summarize the results
 print(results)
 # list the chosen features
@@ -231,6 +258,19 @@ fviz_pca_ind(pca_crime,
 )
 # dev.off()
 
+
+#-------------
+# calculate correlation matrix
+#-------------
+# # calculate correlation matrix
+correlationMatrix <- cor(crimes_data_model[,1:length(crimes_data_model)-1])
+# # summarize the correlation matrix
+# print(correlationMatrix)
+# # find attributes that are highly corrected (ideally >0.75)
+highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.5)
+# # print indexes of highly correlated attributes
+print(highlyCorrelated)
+
 #===================
 ## Modeling
 #===================
@@ -252,6 +292,74 @@ index_train <- createDataPartition(crimes_data_model$crime, p = 0.75)
 train_crimeData <- crimes_data_model[index_train$Resample1, ]
 test_crimeData <- crimes_data_model[-index_train$Resample1, ]
 
+set.seed(2020)
+
+cl <- makePSOCKcluster(4) # Put here the number of cores in the Processor used for computation
+models <- c("svmRadial", "xgbTree", "rf", "kknn", "nnet", "naive_bayes")
+
+
+
+registerDoParallel(cl) # We do parallel computing for faster computation
+
+# Training the model
+for(model in models){
+  model_train <- train(
+    as.factor(crime) ~., 
+    data = train_crimeData, 
+    method = model,
+    trControl = trainControl("cv", 
+                             number = 3)
+  )
+  saveRDS(model_train, paste0("model_", model, ".RDS"))
+  cat(paste0("\nFinished: ", model))
+  rm(model_train)
+}
+stopCluster(cl)
+
+accuracies <- list()
+cpt <- 1
+
+# Computing the accuracies
+for(model in models){
+  model_train <- readRDS(paste0("model_", model, ".RDS"))
+  y_pred <- predict(model_train, newdata = test_crimeData)
+  accuracy <- sum(y_pred == test_crimeData$crime)/nrow(test_crimeData)
+  accuracies[[cpt]] <- accuracy
+  cpt <- cpt + 1
+  cat(paste0("\nAccuracy of the model: ", model))
+  print(accuracy)
+  rm(model_train)
+}
+
+accuracies <- unlist(accuracies)
+
+evaluation_data <- data.frame(
+  Model = models,
+  Accuracy = accuracies
+)
+
+# png("evaluation.png")
+evaluation_data %>%
+  ggplot(aes(x = reorder(Model, -Accuracy), y = Accuracy, fill = Model)) + 
+  geom_bar(stat = "identity", position = "dodge") + 
+  guides(fill = FALSE) + 
+  xlab("Model")
+# dev.off()
+
+# Confusion matrix of the neural network algorithm:
+model_train <- readRDS(paste0("model_", "nnet", ".RDS"))
+y_pred <- predict(model_train, newdata = test_crimeData)
+conf_mat <- confusion_matrix(targets = test_crimeData$crime,
+                             predictions = y_pred)
+
+# png("cm_nnet.png", width = 600, height = 600)
+plot_confusion_matrix(conf_mat)
+# dev.off()
 
 
 # dev.off()
+
+#model update
+
+# model 
+#checking for crime variable imbalance
