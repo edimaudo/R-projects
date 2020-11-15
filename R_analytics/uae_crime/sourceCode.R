@@ -278,7 +278,8 @@ test_crimeData <- crimes_data_model[-index_train$Resample1, ]
 set.seed(2020)
 
 cl <- makePSOCKcluster(4) # Put here the number of cores in the Processor used for computation
-models <- c("svmRadial", "xgbTree", "rf", "kknn", "nnet", "naive_bayes")
+models <- c("svmRadial", "xgbTree", "rf", "kknn",
+            "nnet", "naive_bayes",'treebag','nodeHarvest')
 
 
 
@@ -372,7 +373,8 @@ train <- subset(df_new,sample ==TRUE)
 test <- subset(df_new, sample==FALSE)
 
 cl <- makePSOCKcluster(4) # Put here the number of cores in the Processor used for computation
-models <- c("svmRadial", "xgbTree", "rf", "kknn", "nnet", "naive_bayes")
+models <- c("svmRadial", "xgbTree", "rf", "kknn",
+            "nnet", "naive_bayes",'treebag','nodeHarvest')
 
 registerDoParallel(cl) # We do parallel computing for faster computation
 
@@ -426,3 +428,12 @@ evaluation_data %>%
 
 
 #checking for crime variable imbalance
+
+library(ROSE)
+BalancedData <- ovun.sample(MinorityClassi~, ImbalancedData, method="over", p=0.5, subset=options("subset")$subset, na.action=options("na.action")$na.action, seed)
+index = createDataPartition(y=BalancedData$Class, p=0.7, list=FALSE)
+train = BalancedData[index,]
+test = BalancedData[-index,]
+BalTrain <- droplevels.data.frame(train) 
+BalTest <- droplevels.data.frame(test)
+
