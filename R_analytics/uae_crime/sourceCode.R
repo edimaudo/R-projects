@@ -6,7 +6,7 @@ rm(list = ls()) #clear environment
 # libraries
 packages <- c('ggplot2', 'corrplot','tidyverse',"caret","dummies","fastDummies"
               ,'FactoMineR','factoextra','readxl','scales','dplyr','mlbench','caTools',
-              'gridExtra','lubridate')#,'doParallel','cvms','ml_test', "rJava",'extraTrees')
+              'gridExtra','doParallel','ml_test')#,,'cvms', "rJava",'extraTrees')
 # load packages
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
@@ -238,6 +238,37 @@ fviz_pca_ind(pca_crime,
 # dev.off()
 
 
+#---------------
+# New models ensemble & decision tree
+#---------------
+#ensemble
+cl <- makePSOCKcluster(4)
+registerDoParallel(cl) 
+
+model_ensemble <- train(
+  as.factor(crime) ~.,data = train_crimeData, 
+  method ='nodeHarvest' ,trControl = trainControl("cv", 
+                                                  number = 3))
+saveRDS(model_ensemble, paste0("model_", "model_ensemble", ".RDS"))
+stopCluster(cl)
+y_pred <- predict(model_ensemble, newdata = test_crimeData)
+cat(paste0("\nAccuracy of the model: ", "ensemble"))
+accuracy <- sum(y_pred == test_crimeData$crime)/nrow(test_crimeData)
+
+#decision tree  
+cl <- makePSOCKcluster(4)
+registerDoParallel(cl)
+
+model_decisiontree <- train(
+  as.factor(crime) ~.,data = train_crimeData, 
+  method = "C5.0Tree",trControl = trainControl("cv", 
+                                               number = 3))
+saveRDS(model_decisiontree, paste0("model_", "model_decisiontree", ".RDS"))
+stopCluster(cl)
+y_pred <- predict(model_decisiontree, newdata = test_crimeData)
+cat(paste0("\nAccuracy of the model: ", "decision tree"))
+accuracy <- sum(y_pred == test_crimeData$crime)/nrow(test_crimeData)
+
 #-------------
 # calculate correlation matrix
 #-------------
@@ -339,9 +370,16 @@ plot_confusion_matrix(conf_mat)
 
 #model update
 
+
 #------------------
 ## model update
 #------------------
+
+
+
+
+
+  
 #Label Encoder
 labelEncoder <-function(x){
   as.numeric(factor(x))-1
@@ -351,51 +389,25 @@ labelEncoder <-function(x){
 normalize <- function(x) {
   return ((x - min(x)) / (max(x) - min(x)))
 }
-
+  
 crime_info <- crimes_data[,c(1,3)]
 crime_info2 <- crimes_data[,c(2,4,5,6,7,8)]
-
+  
 df_cts <- as.data.frame(lapply(crime_info, normalize))
 df_cat <- as.data.frame(lapply(crime_info2, labelEncoder))
-
+  
 df_new <- cbind(df_cts,df_cat)
-
+  
 set.seed(2020)
-
+  
 sample <- sample.split(df_new,SplitRatio = 0.75)
 train <- subset(df_new,sample ==TRUE)
 test <- subset(df_new, sample==FALSE)
-
+  
 cl <- makePSOCKcluster(4) # Put here the number of cores in the Processor used for computation
 registerDoParallel(cl) # We do parallel computing for faster computation
 models <- c("svmRadial", "xgbTree", "rf", "kknn",
-            "nnet", "naive_bayes",'treebag','nodeHarvest')
-
-#ensemble model
-model_ensemble <- train(
-    as.factor(crime) ~.,data = train_crimeData, 
-    method ='nodeHarvest' ,trControl = trainControl("cv", 
-                                            number = 3)
-  )
-  saveRDS(model_ensemble, paste0("model_", "model_ensemble", ".RDS"))
-  stopCluster(cl)
-  y_pred <- predict(model_ensemble, newdata = test_crimeData)
-  cat(paste0("\nAccuracy of the model: ", "ensemble"))
-  accuracy <- sum(y_pred == test_crimeData$crime)/nrow(test_crimeData)
-  
-  #decision tree
-  model_decisiontree <- train(
-    as.factor(crime) ~.,data = train_crimeData, 
-    method = "C5.0Tree",trControl = trainControl("cv", 
-                                            number = 3)
-  )
-  saveRDS(model_decisontree, paste0("model_", "model_decisiontree", ".RDS"))
-  stopCluster(cl)
-  y_pred <- predict(model_decisiontree, newdata = test_crimeData)
-  cat(paste0("\nAccuracy of the model: ", "ensemble"))
-  accuracy <- sum(y_pred == test_crimeData$crime)/nrow(test_crimeData)
-
-
+              "nnet", "naive_bayes",'treebag','nodeHarvest','C5.0Tree')
 # model traning
 for(model in models){
   model_train <- train(
@@ -440,14 +452,29 @@ evaluation_data %>%
 # dev.off()
 
 
-# results <- resamples(list(lda=fit.lda, logistic=fit.glm, glmnet=fit.glmnet,
-#                           svm=fit.svmRadial, knn=fit.knn, nb=fit.nb, cart=fit.cart, c50=fit.c50,
-#                           bagging=fit.treebag, rf=fit.rf, gbm=fit.gbm))
-# # Table comparison
-# summary(results)
-
 #checking for crime variable imbalance
+df_crimes <- crimes_data %>%
+  group_by(crime) %>%
+  summarise(crime_count = n()) %>%
+  select(crime, crime_count)
 
+ggplot(data = df_crimes,aes(x = as.factor(crime),y = crime_count)) +
+  geom_bar(stat = "identity", width = 0.3) + theme_light() +
+  labs(x = "Crime",
+       y = "Amount of crime") +
+  scale_y_continuous(labels = comma) +
+  scale_x_discrete() +
+  theme(
+    legend.text = element_text(size = 10),
+    legend.title = element_text(size = 10),
+    axis.title = element_text(size = 15),
+    axis.text = element_text(size = 10),
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+
+#data is skewed to thefting, assault, burglary, murder
+
+#try and fix data imbalance
 library(ROSE)
 BalancedData <- ovun.sample(MinorityClassi~, 
                             ImbalancedData, method="over", p=0.5, 
