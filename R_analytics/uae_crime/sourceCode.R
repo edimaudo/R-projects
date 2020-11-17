@@ -167,10 +167,6 @@ colnames(crimes_data_model)[colnames(crimes_data_model) == 'crimes_data$crime'] 
 
 str(crimes_data_model)
 
-
-
-
-
 #-------------
 # RFE Method
 #-------------
@@ -275,8 +271,6 @@ index_train <- createDataPartition(crimes_data_model$crime, p = 0.75)
 train_crimeData <- crimes_data_model[index_train$Resample1, ]
 test_crimeData <- crimes_data_model[-index_train$Resample1, ]
 
-set.seed(2020)
-
 cl <- makePSOCKcluster(4) # Put here the number of cores in the Processor used for computation
 models <- c("svmRadial", "xgbTree", "rf", "kknn",
             "nnet", "naive_bayes",'treebag','nodeHarvest')
@@ -346,10 +340,10 @@ plot_confusion_matrix(conf_mat)
 #model update
 
 #------------------
-## Using label encoder
+## model update
 #------------------
 #Label Encoder
-enc<-function(x){
+labelEncoder <-function(x){
   as.numeric(factor(x))-1
 }
 
@@ -362,7 +356,7 @@ crime_info <- crimes_data[,c(1,3)]
 crime_info2 <- crimes_data[,c(2,4,5,6,7,8)]
 
 df_cts <- as.data.frame(lapply(crime_info, normalize))
-df_cat <- as.data.frame(lapply(crime_info2, enc))
+df_cat <- as.data.frame(lapply(crime_info2, labelEncoder))
 
 df_new <- cbind(df_cts,df_cat)
 
@@ -373,24 +367,47 @@ train <- subset(df_new,sample ==TRUE)
 test <- subset(df_new, sample==FALSE)
 
 cl <- makePSOCKcluster(4) # Put here the number of cores in the Processor used for computation
+registerDoParallel(cl) # We do parallel computing for faster computation
 models <- c("svmRadial", "xgbTree", "rf", "kknn",
             "nnet", "naive_bayes",'treebag','nodeHarvest')
 
-registerDoParallel(cl) # We do parallel computing for faster computation
+#ensemble model
+model_ensemble <- train(
+    as.factor(crime) ~.,data = train_crimeData, 
+    method ='nodeHarvest' ,trControl = trainControl("cv", 
+                                            number = 3)
+  )
+  saveRDS(model_ensemble, paste0("model_", "model_ensemble", ".RDS"))
+  stopCluster(cl)
+  y_pred <- predict(model_ensemble, newdata = test_crimeData)
+  cat(paste0("\nAccuracy of the model: ", "ensemble"))
+  accuracy <- sum(y_pred == test_crimeData$crime)/nrow(test_crimeData)
+  
+  #decision tree
+  model_decisiontree <- train(
+    as.factor(crime) ~.,data = train_crimeData, 
+    method = "C5.0Tree",trControl = trainControl("cv", 
+                                            number = 3)
+  )
+  saveRDS(model_decisontree, paste0("model_", "model_decisiontree", ".RDS"))
+  stopCluster(cl)
+  y_pred <- predict(model_decisiontree, newdata = test_crimeData)
+  cat(paste0("\nAccuracy of the model: ", "ensemble"))
+  accuracy <- sum(y_pred == test_crimeData$crime)/nrow(test_crimeData)
 
-# Training the model
+
+# model traning
 for(model in models){
   model_train <- train(
-    as.factor(crime) ~., 
-    data = train, 
-    method = model,
-    trControl = trainControl("cv", 
+    as.factor(crime) ~.,data = train, 
+    method = model,trControl = trainControl("cv", 
                              number = 3)
   )
   saveRDS(model_train, paste0("model_", model, ".RDS"))
   cat(paste0("\nFinished: ", model))
   rm(model_train)
 }
+
 stopCluster(cl)
 
 accuracies <- list()
@@ -408,8 +425,6 @@ for(model in models){
   rm(model_train)
 }
 
-
-install.packages("ml_test")
 accuracies <- unlist(accuracies)
 evaluation_data <- data.frame(
   Model = models,
@@ -425,12 +440,19 @@ evaluation_data %>%
 # dev.off()
 
 
-
+# results <- resamples(list(lda=fit.lda, logistic=fit.glm, glmnet=fit.glmnet,
+#                           svm=fit.svmRadial, knn=fit.knn, nb=fit.nb, cart=fit.cart, c50=fit.c50,
+#                           bagging=fit.treebag, rf=fit.rf, gbm=fit.gbm))
+# # Table comparison
+# summary(results)
 
 #checking for crime variable imbalance
 
 library(ROSE)
-BalancedData <- ovun.sample(MinorityClassi~, ImbalancedData, method="over", p=0.5, subset=options("subset")$subset, na.action=options("na.action")$na.action, seed)
+BalancedData <- ovun.sample(MinorityClassi~, 
+                            ImbalancedData, method="over", p=0.5, 
+                            subset=options("subset")$subset, 
+                            na.action=options("na.action")$na.action, seed)
 index = createDataPartition(y=BalancedData$Class, p=0.7, list=FALSE)
 train = BalancedData[index,]
 test = BalancedData[-index,]
