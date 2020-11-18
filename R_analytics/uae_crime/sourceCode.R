@@ -399,20 +399,39 @@ df_cat <- as.data.frame(lapply(crime_info2, labelEncoder))
 df_new <- cbind(df_cts,df_cat)
   
 set.seed(2020)
-  
+
 sample <- sample.split(df_new,SplitRatio = 0.75)
 train <- subset(df_new,sample ==TRUE)
 test <- subset(df_new, sample==FALSE)
-  
+
 cl <- makePSOCKcluster(4)
 registerDoParallel(cl) 
-models <- c("svmRadial", "xgbTree", "rf", "kknn",
-              "nnet", "naive_bayes",'treebag','nodeHarvest','C5.0Tree')
+models <- c("svmRadial", "xgbTree", "rf", "kknn","nnet", "naive_bayes",'treebag')
+
+fit.test <- train(as.factor(crime) ~.,data = train, 
+method = "nnet",metric="Accuracy",
+trControl = trainControl("cv", number = 5, sampling = "up"))
+
+# display results
+print(fit.test)
+
+
+# Make predictions on the test data
+predictions <- predict(fit.test, test)
+#prediction.probabilities <- predictions$posterior[,2]
+predicted.classes <- predictions
+observed.classes <- test$crime
+table(observed.classes, predicted.classes)
+accuracy <- mean(observed.classes == predicted.classes)
+confusionMatrix(predicted.classes, observed.classes,
+                positive = "pos")
+
 # model traning
 for(model in models){
   model_train <- train(
     as.factor(crime) ~.,data = train, 
-    method = model,trControl = trainControl("cv", number = 3,sampling = "down")
+    method = model,metric="Accuracy",
+    ,trControl = trainControl("cv", number = 3,sampling = "down")
   )
   saveRDS(model_train, paste0("model_", model, ".RDS"))
   cat(paste0("\nFinished: ", model))
@@ -437,10 +456,7 @@ for(model in models){
 }
 
 accuracies <- unlist(accuracies)
-evaluation_data <- data.frame(
-  Model = models,
-  Accuracy = accuracies
-)
+evaluation_data <- data.frame(Model = models,Accuracy = accuracies)
 
 # png("evaluation.png")
 evaluation_data %>%
@@ -449,6 +465,15 @@ evaluation_data %>%
   guides(fill = FALSE) + 
   xlab("Model")
 # dev.off()
+
+#upsampling
+# Accuracy of the model: svmRadial[1] 0.255102
+# Accuracy of the model: xgbTree[1] 0.3214286
+# Accuracy of the model: rf[1] 0.3214286
+# Accuracy of the model: kknn[1] 0.3129252
+# Accuracy of the model: nnet[1] 0.1760204
+# Accuracy of the model: naive_bayes[1] 0.255102
+# Accuracy of the model: treebag[1] 0.3197279
 
 
 #checking for crime variable imbalance
