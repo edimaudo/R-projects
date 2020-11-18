@@ -404,16 +404,15 @@ sample <- sample.split(df_new,SplitRatio = 0.75)
 train <- subset(df_new,sample ==TRUE)
 test <- subset(df_new, sample==FALSE)
   
-cl <- makePSOCKcluster(4) # Put here the number of cores in the Processor used for computation
-registerDoParallel(cl) # We do parallel computing for faster computation
+cl <- makePSOCKcluster(4)
+registerDoParallel(cl) 
 models <- c("svmRadial", "xgbTree", "rf", "kknn",
               "nnet", "naive_bayes",'treebag','nodeHarvest','C5.0Tree')
 # model traning
 for(model in models){
   model_train <- train(
     as.factor(crime) ~.,data = train, 
-    method = model,trControl = trainControl("cv", 
-                             number = 3)
+    method = model,trControl = trainControl("cv", number = 3,sampling = "down")
   )
   saveRDS(model_train, paste0("model_", model, ".RDS"))
   cat(paste0("\nFinished: ", model))
