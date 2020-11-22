@@ -20,7 +20,9 @@ for (package in packages) {
 #===================
 crimes_data <- read.csv("uae_crime.csv", sep=";")
 
+
 crimes_data <- crimes_data %>%
+  na.omit() %>%
   mutate(Age = as.numeric(Age)) %>% # Convert age to numerical
   dplyr::select(-Description.of.the.charge) %>% # Remove the description of the charge variable
   mutate_if(is.character, as.factor) # Convert character type variable to factor type
@@ -286,17 +288,25 @@ print(highlyCorrelated)
 #===================
 
 # Logistic regression model:
-logistic_regression_model <- glm(as.numeric(crime) ~ ., 
+logistic_regression_model <- nnet::multinom(crime ~ ., 
                                  data = crimes_data_model %>% 
                                    select(Gender_Male, Age,
                                           `Marital.Status_Not Specified`,
-                                          Marital.Status_Single,
-                                          crime))
+                                          Marital.Status_Single, crime))
+
+
 
 summary(logistic_regression_model)
+# Make predictions
+predicted.classes <- logistic_regression_model %>% predict(test)
+head(predicted.classes)
+# Model accuracy
+mean(predicted.classes == test$crime)
 
 # Split into training and testing dataset:
 set.seed(2020)
+crimes_data <- crimes_data%>%
+  na.omit()
 index_train <- createDataPartition(crimes_data_model$crime, p = 0.75)
 
 train_crimeData <- crimes_data_model[index_train$Resample1, ]
@@ -371,9 +381,10 @@ plot_confusion_matrix(conf_mat)
 #model update
 
 
-#------------------
+
+#===================
 ## model update
-#------------------
+#===================
 
 
 
@@ -389,7 +400,13 @@ labelEncoder <-function(x){
 normalize <- function(x) {
   return ((x - min(x)) / (max(x) - min(x)))
 }
-  
+
+#crimes_data <- crimes_data %>%
+#  filter(crime %in%  c("Assault","Burglary","Murder","Thefting"))
+
+
+table(crimes_data$crime)
+
 crime_info <- crimes_data[,c(1,3)]
 crime_info2 <- crimes_data[,c(2,4,5,6,7,8)]
   
@@ -397,7 +414,7 @@ df_cts <- as.data.frame(lapply(crime_info, normalize))
 df_cat <- as.data.frame(lapply(crime_info2, labelEncoder))
   
 df_new <- cbind(df_cts,df_cat)
-  
+
 set.seed(2020)
 
 sample <- sample.split(df_new,SplitRatio = 0.75)
@@ -410,7 +427,8 @@ models <- c("svmRadial", "xgbTree", "rf", "kknn","nnet", "naive_bayes",'treebag'
 
 fit.test <- train(as.factor(crime) ~.,data = train, 
 method = "nnet",metric="Accuracy",
-trControl = trainControl("cv", number = 5, sampling = "up"))
+trControl = trainControl("cv", number = 5))
+stopCluster(cl)
 
 # display results
 print(fit.test)
@@ -498,15 +516,5 @@ ggplot(data = df_crimes,aes(x = as.factor(crime),y = crime_count)) +
 
 #data is skewed to thefting, assault, burglary, murder
 
-#try and fix data imbalance
-library(ROSE)
-BalancedData <- ovun.sample(MinorityClassi~, 
-                            ImbalancedData, method="over", p=0.5, 
-                            subset=options("subset")$subset, 
-                            na.action=options("na.action")$na.action, seed)
-index = createDataPartition(y=BalancedData$Class, p=0.7, list=FALSE)
-train = BalancedData[index,]
-test = BalancedData[-index,]
-BalTrain <- droplevels.data.frame(train) 
-BalTest <- droplevels.data.frame(test)
+
 
