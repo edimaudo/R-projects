@@ -28,6 +28,16 @@ CatchupPause <- function(Secs){
 }
 
 #83 pages
-for (i in 1:83){
-  web_page<-read_html(player_url) 
-}
+#for (i in 1:83){
+  web_page<-read_html(url)
+  
+  main_selector <- "Dq9MAugU T870kzTX LnVzGwUB"
+  other_selector <- "_7PJap-I0 _3-JlUfTE"
+  
+
+key_info <- html_nodes(web_page,main_selector) %>% html_text() %>%
+    str_trim() %>% # Trim additional white space
+    as.character() %>%
+    as.data.frame()
+#  colnames(dob_info) <- c("all_data")
+#}
