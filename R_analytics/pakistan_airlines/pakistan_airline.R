@@ -15,10 +15,9 @@ for (package in packages) {
   }
 }
 
-#create player facts data frame
-player_facts_all <- data.frame(matrix(ncol = 8, nrow = 0))
-#column information for player facts
-player_fact_col <- c("player_id","date_of_birth",
-                     "place_of_birth","nation",
-                     "youth_team","position",'shoots','status')
-colnames(player_facts_all) <- player_fact_col
+#create review dataframe
+review_df <- data.frame(matrix(ncol = 4, nrow = 0))
+#column headers for review dataframe
+review_col <- c("title","description","date_information","rating",)
+colnames(review_df) <- review_col
+
