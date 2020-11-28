@@ -15,7 +15,7 @@ for (package in packages) {
 #create review dataframe
 review_df <- data.frame(matrix(ncol = 4, nrow = 0))
 #column headers for review dataframe
-review_col <- c("title","description","date_information","rating",)
+review_col <- c("title","description","date_information","rating")
 colnames(review_df) <- review_col
 
 url <- "https://www.tripadvisor.com/Airline_Review-d8729129-Reviews-or5-Pakistan-International-Airlines.html"
