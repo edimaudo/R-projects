@@ -4,9 +4,6 @@ rm(list = ls())
 #packages 
 packages <- c('ggplot2', 'corrplot','tidyverse','rvest','stringr',
               'lubridate','rebus','magrittr')
-
-
-
 #load packages
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
@@ -30,3 +27,7 @@ CatchupPause <- function(Secs){
   gc()
 }
 
+#83 pages
+for (i in 1:83){
+  web_page<-read_html(player_url) 
+}
