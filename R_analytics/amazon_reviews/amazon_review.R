@@ -1,12 +1,20 @@
 # =======================================================
-# clear environment
+# packages
 # =======================================================
 rm(list=ls())
-
-# =======================================================
-# load packages
-# =======================================================
 packages <- c('ggplot2', 'corrplot','tidyverse','dplyr','tidyr',
               'caret','mlbench','mice','scales','proxy','reshape2',
               'caTools','dummies','scales','catboost', 'Matrix',
               'stringr','reshape2','purrr','lubridate')
+# load packages
+for (package in packages) {
+  if (!require(package, character.only=T, quietly=T)) {
+    install.packages(package)
+    library(package, character.only=T)
+  }
+}
+
+#load data
+
+
+#
