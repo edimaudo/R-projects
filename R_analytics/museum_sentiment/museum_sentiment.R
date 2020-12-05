@@ -40,4 +40,9 @@ df <- df %>%
 
 table(df$rating) # lots of 4 and 5
 
+#clean up date
+df$date_of_experience <- lubridate::mdy(df$date_of_experience)
+df$year <- lubridate::year(df$date_of_experience)
+df$month <- lubridate::month(df$date_of_experience)
+
 
