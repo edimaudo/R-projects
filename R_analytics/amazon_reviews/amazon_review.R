@@ -90,35 +90,46 @@ clean_data <- function(df){
 train_df <- clean_data(train_df)
 test_df <- clean_data(test_df)
 
+train <- cbind(train[,c(1,2,3)], train_df)
+test <- cbind(test[,c(1,2,3)], test_df)
+
 #model training
 cl <- makePSOCKcluster(4)
 registerDoParallel(cl)
 
 #cross fold validation
-control <- trainControl(method="repeatedcv", number=10, repeats=3, classProbs = TRUE)
+control <- trainControl(method="repeatedcv", number=10, repeats=3, classProbs = FALSE)
 
 #glm
-fit.glm <- train(as.factor(y)~., data=train, method="multinom", metric = "Accuracy", trControl = control)
+fit.glm <- train(as.factor(y)~., data=train, method="multinom", metric = "Accuracy", 
+                 trControl = control)
 #random forest
-fit.rf <- train(as.factor(y)~., data=train, method="rf", metric = "Accuracy", trControl = control)
+fit.rf <- train(as.factor(y)~., data=train, method="rf", metric = "Accuracy", 
+                trControl = control)
 #boosting algorithm - Stochastic Gradient Boosting (Generalized Boosted Modeling)
-fit.gbm <- train(as.factor(y)~., data=train, method="gbm", metric = "Accuracy", trControl = control)
+fit.gbm <- train(as.factor(y)~., data=train, method="gbm", metric = "Accuracy", 
+                 trControl = control)
 #svm
-fit.svm <- train(as.factor(y)~., data=train, method="svmRadial", metric = "Accuracy", trControl = control)
+fit.svm <- train(as.factor(y)~., data=train, method="svmRadial", metric = "Accuracy", 
+                 trControl = control)
 #nnet
-fit.nnet <- train(as.factor(y)~., data=train, method="nnet", metric = "Accuracy", trControl = control)
+fit.nnet <- train(as.factor(y)~., data=train, method="nnet", metric = "Accuracy", 
+                  trControl = control)
 #naive
 fit.naive <- train(as.factor(y)~., data=train, method="naive_bayes", metric = "Accuracy", 
                    trControl = control)
 #extreme gradient boosting
-fit.xgb <- train(as.factor(y)~., data=train, method="xgbTree", metric = "Accuracy", trControl = control)
+fit.xgb <- train(as.factor(y)~., data=train, method="xgbTree", metric = "Accuracy", 
+                 trControl = control)
 #bagged cart
-fit.bg <- train(as.factor(y)~., data=train, method="treebag", metric = "Accuracy", trControl = control)
+fit.bg <- train(as.factor(y)~., data=train, method="treebag", metric = "Accuracy", 
+                trControl = control)
 #decision tree
-fit.dtree <- train(as.factor(y)~., data=train, method="C5.0", metric = "Accuracy", trControl = control)
+fit.dtree <- train(as.factor(y)~., data=train, method="C5.0", metric = "Accuracy", 
+                   trControl = control)
 #knn
-fit.knn <- train(as.factor(y)~., data=train, method="kknn", metric = "Accuracy", trControl = control)
-
+fit.knn <- train(as.factor(y)~., data=train, method="kknn", metric = "Accuracy", 
+                 trControl = control)
 
 stopCluster(cl)
 
@@ -142,8 +153,9 @@ bwplot(results)
 dotplot(results)
 
 # Model accuracy
-#mean(predicted.classes == test$crime)
-#test data accuracy
+mean(predicted.classes == test$y)
+
+# test data accuracy
 # Make predictions
 predicted.classes <- fit.xgb %>% predict(test)
-output <- confusionMatrix(data = predicted.classes, reference = test$crime, mode = "everything")
+output <- confusionMatrix(data = predicted.classes, reference = test$y, mode = "everything")
