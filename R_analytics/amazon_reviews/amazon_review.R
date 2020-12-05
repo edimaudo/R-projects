@@ -20,7 +20,7 @@ df <- read.csv(file.choose(),sep = ",")
 
 #check columns
 unique(df$Category)
-unique(df$Procuct)
+unique(df$PAccuracyuct)
 unique(df$Country)
 unique(df$Date)
 unique(df$Year)
@@ -28,7 +28,7 @@ unique(df$Verified)
 
 #select only needed columns
 df <- df %>%
-  select(Procuct,Country,Month,Year, Verified, Helpful,Title, Body, Rating) %>%
+  select(PAccuracyuct,Country,Month,Year, Verified, Helpful,Title, Body, Rating) %>%
   na.omit()
 
 #check for missing values
@@ -38,57 +38,112 @@ print(missing_data)
 New_df <- df %>%
   select(Body, Rating)
 
+#Label Encoder
+labelEncoder <-function(x){
+  as.numeric(factor(x))-1
+}
+
+New_df2 <- df %>%
+  select(Country, Month, Year)
+
+New_df2 <- as.data.frame(lapply(New_df2, labelEncoder))
+
+New_df <- cbind(New_df2, New_df)
+
 #split into train and test
 set.seed(123)
 sample <- sample.split(New_df,SplitRatio = 0.75)
 train <- subset(New_df,sample ==TRUE)
 test <- subset(New_df, sample==FALSE)
 
+train_df <- train %>%
+  select(Body, Rating)
+
+test_df <- test %>%
+  select(Body, Rating)
+
 clean_data <- function(df){
-  
+  corpus_df <- VCorpus(VectorSource(df$Body))
+  ##Removing Punctuation
+  corpus_df <- tm_map(corpus_df, content_transformer(removePunctuation))
+  ##Removing numbers
+  corpus_df <- tm_map(corpus_df, removeNumbers)
+  ##Converting to lower case
+  #corpus_df <- tm_map(corpus_df, content_transformer(tolower))
+  ##Removing stop words
+  corpus_df <- tm_map(corpus_df, content_transformer(removeWords), stopwords('english'))
+  ##Stemming
+  corpus_df <- tm_map(corpus_df, stemDocument)
+  ##Whitespace
+  corpus_df <- tm_map(corpus_df, stripWhitespace)
+  # Create Document Term Matrix
+  dtm_df <- DocumentTermMatrix(corpus_df)
+  corpus_df <- removeSparseTerms(dtm_df, 0.8)
+  dtm_df_matrix <- as.matrix(corpus_df)
+  dtm_df_matrix <- cbind(dtm_df_matrix,df$Rating)
+  colnames(dtm_df_matrix)[ncol(dtm_df_matrix)] <- "y"
+  final_df <- as.data.frame(dtm_df_matrix)
+  final_df$y <- as.factor(final_df$y)
+  return (final_df)
 }
 
-test_corpus <- VCorpus(VectorSource(test_dat$transcript))
-##Removing Punctuation
-test_corpus <- tm_map(test_corpus, content_transformer(removePunctuation))
-##Removing numbers
-test_corpus <- tm_map(test_corpus, removeNumbers)
-##Converting to lower case
-test_corpus <- tm_map(test_corpus, content_transformer(tolower))
-##Removing stop words
-test_corpus <- tm_map(test_corpus, content_transformer(removeWords), stopwords(“english”))
-##Stemming
-test_corpus <- tm_map(test_corpus, stemDocument)
-##Whitespace
-test_corpus <- tm_map(test_corpus, stripWhitespace)
-# Create Document Term Matrix
-dtm_test <- DocumentTermMatrix(test_corpus)
-test_corpus <- removeSparseTerms(dtm_test, 0.4)
-dtm_test_matrix <- as.matrix(test_corpus)
+train_df <- clean_data(train_df)
+test_df <- clean_data(test_df)
+
+#model training
+cl <- makePSOCKcluster(4)
+registerDoParallel(cl)
+
+#cross fold validation
+control <- trainControl(method="repeatedcv", number=10, repeats=3, classProbs = TRUE)
+
+#glm
+fit.glm <- train(as.factor(y)~., data=train, method="multinom", metric = "Accuracy", trControl = control)
+#random forest
+fit.rf <- train(as.factor(y)~., data=train, method="rf", metric = "Accuracy", trControl = control)
+#boosting algorithm - Stochastic Gradient Boosting (Generalized Boosted Modeling)
+fit.gbm <- train(as.factor(y)~., data=train, method="gbm", metric = "Accuracy", trControl = control)
+#svm
+fit.svm <- train(as.factor(y)~., data=train, method="svmRadial", metric = "Accuracy", trControl = control)
+#nnet
+fit.nnet <- train(as.factor(y)~., data=train, method="nnet", metric = "Accuracy", trControl = control)
+#naive
+fit.naive <- train(as.factor(y)~., data=train, method="naive_bayes", metric = "Accuracy", 
+                   trControl = control)
+#extreme gradient boosting
+fit.xgb <- train(as.factor(y)~., data=train, method="xgbTree", metric = "Accuracy", trControl = control)
+#bagged cart
+fit.bg <- train(as.factor(y)~., data=train, method="treebag", metric = "Accuracy", trControl = control)
+#decision tree
+fit.dtree <- train(as.factor(y)~., data=train, method="C5.0", metric = "Accuracy", trControl = control)
+#knn
+fit.knn <- train(as.factor(y)~., data=train, method="kknn", metric = "Accuracy", trControl = control)
 
 
+stopCluster(cl)
 
-dtm_train_matrix <- cbind(dtm_train_matrix, train_dat$highest_rating)
-colnames(dtm_train_matrix)[ncol(dtm_train_matrix)] <- “y”
-training_set_ted_talk <- as.data.frame(dtm_train_matrix)
-training_set_ted_talk$y <- as.factor(training_set_ted_talk$y)
+#------------------
+#compare models
+#------------------
+results <- resamples(list(randomforest = fit.rf, 
+                          `gradient boost` = fit.gbm, 
+                          `support vector machine` = fit.svm,
+                          baggedCart = fit.bg, 
+                          neuralnetwork = fit.nnet,
+                          xgboost = fit.xgb, 
+                          logisticregression = fit.glm, 
+                          `decision tree` = fit.dtree, 
+                          `naive bayes` = fit.naive))
 
+summary(results)
+# boxplot comparison
+bwplot(results)
+# Dot-plot comparison
+dotplot(results)
 
-review_ted_model <- train(y ~., data = training_set_ted_talk, method = ‘svmLinear3’)
-
-#Build the prediction 
-model_ted_talk_result <- predict(review_ted_model, newdata = dtm_test_matrix)
-check_accuracy <- as.data.frame(cbind(prediction = model_ted_talk_result, rating = test_dat$highest_rating))
-
-check_accuracy <- check_accuracy %>% mutate(prediction = as.integer(prediction) — 1)
-check_accuracy$accuracy <- if_else(check_accuracy$prediction == check_accuracy$rating, 1, 0)
-round(prop.table(table(check_accuracy$accuracy)), 3)
-
-classificationMetrics(as.integer(test_dat$highest_rating), model_ted_talk_result)
-most_common_misclassified_ratings = check_accuracy %>% filter(check_accuracy$accuracy == 0) %>%
-  group_by(rating) %>%
-  summarise(Count = n()) %>%
-  arrange(desc(Count)) %>%
-  head(3)
-##Most commong missclassified rating
-levels(train_dat$highest_rating)[most_common_misclassified_ratings$rating]
+# Model accuracy
+#mean(predicted.classes == test$crime)
+#test data accuracy
+# Make predictions
+predicted.classes <- fit.xgb %>% predict(test)
+output <- confusionMatrix(data = predicted.classes, reference = test$crime, mode = "everything")
