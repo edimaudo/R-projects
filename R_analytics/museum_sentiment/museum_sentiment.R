@@ -45,4 +45,30 @@ df$date_of_experience <- lubridate::mdy(df$date_of_experience)
 df$year <- lubridate::year(df$date_of_experience)
 df$month <- lubridate::month(df$date_of_experience)
 
+review_ratings_df <- df %>%
+  select(review_text, rating)
+
+cts_df <- df %>%
+  select(review_total_contributions)
+
+cat_df <- df %>%
+  select(reviewer_location, review_language)
+
+other_cat_df <- df %>%
+  select(year,month)
+
+#Label Encoder
+labelEncoder <-function(x){
+  as.numeric(factor(x))-1
+}
+#normalize data
+normalize <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x)))
+}
+
+cts_df <- as.data.frame(lapply(cts_df, normalize))
+cat_df  <- as.data.frame(lapply(cat_df , labelEncoder))
+
+#combine information
+new_df <- cbind(cat_df,cts_df,other_cat_df,review_ratings_df)
 
