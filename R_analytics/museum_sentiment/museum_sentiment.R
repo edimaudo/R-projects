@@ -72,3 +72,45 @@ cat_df  <- as.data.frame(lapply(cat_df , labelEncoder))
 #combine information
 new_df <- cbind(cat_df,cts_df,other_cat_df,review_ratings_df)
 
+#split into train and test
+set.seed(123)
+sample <- sample.split(new_df,SplitRatio = 0.75)
+train <- subset(new_df,sample ==TRUE)
+test <- subset(new_df, sample==FALSE)
+
+train_df <- train %>%
+  select(review_text, rating)
+
+test_df <- test %>% 
+  select(review_text, rating)
+
+clean_data <- function(df){
+  corpus_df <- VCorpus(VectorSource(df$review_text))
+  ##Removing Punctuation
+  corpus_df <- tm_map(corpus_df, content_transformer(removePunctuation))
+  ##Removing numbers
+  corpus_df <- tm_map(corpus_df, removeNumbers)
+  ##Converting to lower case
+  #corpus_df <- tm_map(corpus_df, content_transformer(tolower))
+  ##Removing stop words
+  corpus_df <- tm_map(corpus_df, content_transformer(removeWords), stopwords('english'))
+  ##Stemming
+  corpus_df <- tm_map(corpus_df, stemDocument)
+  ##Whitespace
+  corpus_df <- tm_map(corpus_df, stripWhitespace)
+  # Create Document Term Matrix
+  dtm_df <- DocumentTermMatrix(corpus_df)
+  corpus_df <- removeSparseTerms(dtm_df, 0.8)
+  dtm_df_matrix <- as.matrix(corpus_df)
+  dtm_df_matrix <- cbind(dtm_df_matrix,df$Rating)
+  colnames(dtm_df_matrix)[ncol(dtm_df_matrix)] <- "y"
+  final_df <- as.data.frame(dtm_df_matrix)
+  final_df$y <- as.factor(final_df$y)
+  return (final_df)
+}
+
+train_df <- clean_data(train_df)
+test_df <- clean_data(test_df)
+
+train <- cbind(train[,c(1,2,3,4,5)], train_df)
+test <- cbind(test[,c(1,2,3,4,5)], test_df)
