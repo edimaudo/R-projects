@@ -3,9 +3,10 @@
 # =======================================================
 rm(list=ls())
 packages <- c('ggplot2', 'corrplot','tidyverse','dplyr','tidyr',
-              'caret','mlbench','mice','scales','proxy','reshape2',
-              'caTools','dummies','scales','catboost', 'Matrix',
-              'stringr','reshape2','purrr','lubridate')
+              'caret','mlbench','scales','proxy','reshape2',
+              'caTools','doParallel','scales','catboost', 'Matrix',
+              'stringr','reshape2','purrr','lubridate','tidytext','gridExtra',
+              'wordcloud2','stringr')
 # load packages
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
@@ -15,6 +16,6 @@ for (package in packages) {
 }
 
 #load data
-
+df <- read.csv
 
 #
