@@ -31,6 +31,8 @@ df <- df %>%
   select(PAccuracyuct,Country,Month,Year, Verified, Helpful,Title, Body, Rating) %>%
   na.omit()
 
+table(df$Rating)
+
 #check for missing values
 missing_data <- apply(df, 2, function(x) any(is.na(x)))
 print(missing_data)
@@ -93,6 +95,8 @@ test_df <- clean_data(test_df)
 train <- cbind(train[,c(1,2,3)], train_df)
 test <- cbind(test[,c(1,2,3)], test_df)
 
+
+
 #model training
 cl <- makePSOCKcluster(4)
 registerDoParallel(cl)
@@ -151,9 +155,6 @@ summary(results)
 bwplot(results)
 # Dot-plot comparison
 dotplot(results)
-
-# Model accuracy
-mean(predicted.classes == test$y)
 
 # test data accuracy
 # Make predictions
