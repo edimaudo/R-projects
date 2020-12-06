@@ -63,11 +63,11 @@ vcov(fit) # covariance matrix for model parameters
 influence(fit) # regression diagnostics
 AIC(fit)
 BIC(fit)
+library(car)
+car::vif(fit) #find variables to remove.  if high might be worth removing
+
+library(Metrics)
+predictions <- fit %>% predict(new_df)
+rmse_cal <- rmse(new_df$RentTotal,predictions)
 
 plot(fit)
-
-
-
-
-
-
