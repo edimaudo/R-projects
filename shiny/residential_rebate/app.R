@@ -13,8 +13,27 @@ for (package in packages) {
 
 #load data
 
+#city information
+
+#fiscal year
+
 #app
 ui <- dashboardPage(
+    dashboardHeader(title = "Water Service Program"),
+    dashboardSidebar(
+        sidebarMenu(
+            menuItem("Introduction", tabName = "Introduction", icon = icon("th")),
+            menuItem("Summary", tabName = "Summary", icon = icon("dashboard")),
+            menuItem("Trends", tabName = "Trends", icon = icon("dashboard")),
+        )
+    ),
+    dashboardBody(
+        tabItems(
+            tabItem(tabName = "Introduction",includeMarkdown("intro.md"),hr()),
+            tabItem(tabName = "Summary"),
+            tabItem(tabName = "Trends")
+        )
+    )
     
 )
 
