@@ -11,14 +11,12 @@ for (package in packages) {
     }
 }
 
-#load data
-df <- read_excel("FY_Summary.xlsx")
-#replace na with 0
-df[is.na(df)] <- 0
 
-#city information
-
-#fiscal year
+df <- read_excel("FY_Summary.xlsx") #load data
+df[is.na(df)] <- 0 #replace na with 0
+area <- c(sort(unique(df$Area)))
+fiscal_year <- c(sort(unique(df$`Fiscal Year`)))
+rebate_type <- c(sort(unique(df$Type)))
 
 #app
 ui <- dashboardPage(
