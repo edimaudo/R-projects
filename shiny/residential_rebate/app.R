@@ -12,6 +12,9 @@ for (package in packages) {
 }
 
 #load data
+df <- read_excel("FY_Summary.xlsx")
+#replace na with 0
+df[is.na(df)] <- 0
 
 #city information
 
@@ -40,6 +43,9 @@ ui <- dashboardPage(
 #server info
 server <- function(input, output) {
     
+    #line chart trend for 2012 to 2020 using program type filters
+    #District Devices/		Gallons Saved		AF Saved		AF Saved by year
+    #funding by fiscal year
 }
 
 shinyApp(ui, server)
