@@ -17,9 +17,9 @@ df[is.na(df)] <- 0 #replace na with 0
 area <- c(sort(unique(df$Area)))
 fiscal_year <- c(sort(unique(df$`Fiscal Year`)))
 rebate_type <- c(sort(unique(df$Type)))
+#aggregate months
 colnms=c("July","August","September","October","November",
          "December","January","February","March","April","May","June")
-
 df$month_total <- rowSums(df[,colnms])
 
 #todo
