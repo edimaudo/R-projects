@@ -17,21 +17,9 @@ df[is.na(df)] <- 0 #replace na with 0
 area <- c(sort(unique(df$Area)))
 fiscal_year <- c(sort(unique(df$`Fiscal Year`)))
 rebate_type <- c(sort(unique(df$Type)))
-#aggregate months
 colnms=c("July","August","September","October","November",
          "December","January","February","March","April","May","June")
-df$month_total <- rowSums(df[,colnms])
-
-#todo
-# Introduction
-# - create readme & add it to introduction
-# Summary
-# - build summary table with fiscal year as the dropdown for Summary section
-#  - It should have a dataable with the different columns as per the excel sheet and the calculations
-# Trend
-#- line chart trend for 2012 to 2020 using program type filters
-#- District Devices/		Gallons Saved		AF Saved		AF Saved by year
-#- funding by fiscal year
+df$month_total <- rowSums(df[,colnms]) #aggregate months
 
 #app
 ui <- dashboardPage(
@@ -45,7 +33,7 @@ ui <- dashboardPage(
     ),
     dashboardBody(
         tabItems(
-            tabItem(tabName = "Introduction",includeMarkdown("intro.md"),hr()),
+            tabItem(tabName = "Introduction",includeMarkdown("readme.md"),hr()),
             tabItem(tabName = "Summary"),
             tabItem(tabName = "Trends")
         )
