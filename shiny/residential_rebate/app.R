@@ -26,16 +26,25 @@ ui <- dashboardPage(
     dashboardHeader(title = "Water Service Program"),
     dashboardSidebar(
         sidebarMenu(
-            menuItem("Introduction", tabName = "Introduction", icon = icon("th")),
-            menuItem("Summary", tabName = "Summary", icon = icon("dashboard")),
-            menuItem("Trends", tabName = "Trends", icon = icon("dashboard")),
+            menuItem("Introduction", tabName = "introduction", icon = icon("th")),
+            menuItem("Summary", tabName = "summary", icon = icon("dashboard"))
         )
     ),
     dashboardBody(
         tabItems(
-            tabItem(tabName = "Introduction",includeMarkdown("readme.md"),hr()),
-            tabItem(tabName = "Summary"),
-            tabItem(tabName = "Trends")
+            tabItem(tabName = "introduction",includeMarkdown("readme.md"),hr()),
+            tabItem(tabName = "summary",
+                    sidebarLayout(
+                        sidebarPanel(
+                            selectInput("fiscalYearInput", "Fiscal Year", 
+                                        choices = fiscal_year)
+                        ),
+                        mainPanel(
+                            h2("Rebate Summary",style="text-align: center;"), 
+                            dataTableOutput("rebateOutput")
+                        )
+                    )
+                    )
         )
     )
     
