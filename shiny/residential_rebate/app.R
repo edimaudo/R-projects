@@ -41,7 +41,7 @@ ui <- dashboardPage(
                         ),
                         mainPanel(
                             h2("Rebate Summary",style="text-align: center;"), 
-                            dataTableOutput("rebateOutput")
+                            DT::dataTableOutput("rebateOutput")
                         )
                     )
                     )
@@ -52,7 +52,14 @@ ui <- dashboardPage(
 
 #server info
 server <- function(input, output) {
-    
+
+    output$rebateOutput <- DT::renderDataTable({
+        df_output <- df %>%
+            group_by(Area,Type,`Fiscal Year`,`Type Detail`) %>%
+            filter(Area == input$areaInput,`Fiscal Year` == input$fiscalYearInput) %>%
+            summarise(total = sum(month_total))
+        DT::datatable(df_output)
+    })
 
 }
 
