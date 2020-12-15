@@ -36,8 +36,8 @@ ui <- dashboardPage(
             tabItem(tabName = "summary",
                     sidebarLayout(
                         sidebarPanel(
-                            selectInput("fiscalYearInput", "Fiscal Year", 
-                                        choices = fiscal_year)
+                            selectInput("fiscalYearInput", "Fiscal Year", choices = fiscal_year),
+                            selectInput("areaInput", "Area", choices = area)
                         ),
                         mainPanel(
                             h2("Rebate Summary",style="text-align: center;"), 
