@@ -1,11 +1,3 @@
-
-#create skeleton code
-#build layout
-#add readme
-#load data
-#build layout for SKU
-#build layout for MTD
-#build layout for Growth
 #build business logic for all three dashboard
 #test
 
@@ -24,9 +16,9 @@ for (package in packages) {
 
 #load data 
 last_year_source_data <- read_excel("BENEFIT NEW SALES TRACKER.xlsx",sheet = "LAST YEAR SOURCE")
-target_source <- read_excel("BENEFIT NEW SALES TRACKER.xlsx",sheet="TARGET SOURCE")
-mtd_source <- read_excel("BENEFIT NEW SALES TRACKER.xlsx",sheet="MTD SOURCE")
-mtd_daily <- read_excel("BENEFIT NEW SALES TRACKER.xlsx",sheet="MTD DAILY")
+target_source <- read_excel("BENEFIT NEW SALES TRACKER.xlsx", sheet = "TARGET SOURCE")
+mtd_source <- read_excel("BENEFIT NEW SALES TRACKER.xlsx", sheet = "MTD SOURCE")
+mtd_daily <- read_excel("BENEFIT NEW SALES TRACKER.xlsx", sheet = "MTD DAILY")
 
 
 # Define UI for application
