@@ -69,10 +69,14 @@ ui <- dashboardPage(
       tabItem(tabName ="growth",
               sidebarLayout(
                 sidebarPanel(
-                  
+                  selectInput("storeInput","Store",choices = c())
+                ),
+                mainPanel(
+                  h2("Daily Growth Dashboard",style="text-align: center;")
+                  #DT::dataTableOutput("rebateOutput")
                 )
               )
-              )
+      )
     )
   )
   
