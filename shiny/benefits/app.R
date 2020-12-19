@@ -50,11 +50,29 @@ ui <- dashboardPage(
                   selectInput("storeInput", "Store", choices = c())
                 ),
                 mainPanel(
-                  h2("Rebate Summary",style="text-align: center;"), 
+                  h2("SKU Analysis",style="text-align: center;")
                   #DT::dataTableOutput("rebateOutput")
                 )
               )
-      )
+      ), 
+      tabItem(tabName = "mtd",
+              sidebarLayout(
+                sidebarPanel(
+                  selectInput("storeInput","Store",choices=c())
+                ),
+                mainPanel(
+                  h2("Benefits Sales Dashboard",style="text-align: center;")
+                  #DT::dataTableOutput("rebateOutput")
+                )
+              )
+      ),
+      tabItem(tabName ="growth",
+              sidebarLayout(
+                sidebarPanel(
+                  
+                )
+              )
+              )
     )
   )
   
