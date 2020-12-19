@@ -1,49 +1,68 @@
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
 
-library(shiny)
+#create skeleton code
+#build layout
+#add readme
+#load data
+#build layout for SKU
+#build layout for MTD
+#build layout for Growth
+#build business logic for all three dashboard
+#test
 
-# Define UI for application that draws a histogram
-ui <- fluidPage(
+rm(list = ls())
 
-    # Application title
-    titlePanel("Old Faithful Geyser Data"),
-
-    # Sidebar with a slider input for number of bins 
-    sidebarLayout(
-        sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
-        ),
-
-        # Show a plot of the generated distribution
-        mainPanel(
-           plotOutput("distPlot")
-        )
-    )
-)
-
-# Define server logic required to draw a histogram
-server <- function(input, output) {
-
-    output$distPlot <- renderPlot({
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white')
-    })
+#packages 
+packages <- c('ggplot2', 'corrplot','tidyverse','shiny','shinydashboard',
+              'dplyr','readxl')
+#load packages
+for (package in packages) {
+  if (!require(package, character.only=T, quietly=T)) {
+    install.packages(package)
+    library(package, character.only=T)
+  }
 }
 
-# Run the application 
-shinyApp(ui = ui, server = server)
+#load data 
+last_year_source_data <- read_excel("BENEFIT NEW SALES TRACKER.xlsx",sheet = "LAST YEAR SOURCE")
+target_source <- read_excel("BENEFIT NEW SALES TRACKER.xlsx",sheet="TARGET SOURCE")
+mtd_source <- read_excel("BENEFIT NEW SALES TRACKER.xlsx",sheet="MTD SOURCE")
+mtd_daily <- read_excel("BENEFIT NEW SALES TRACKER.xlsx",sheet="MTD DAILY")
+
+
+# Define UI for application
+ui <- dashboardPage(
+  dashboardHeader(title = "Benefit New Sales Tracker"),
+  dashboardSidebar(
+    sidebarMenu(
+      menuItem("Introduction", tabName = "introduction", icon = icon("th")),
+      menuItem("SKU Analysis", tabName = "sku", icon = icon("dashboard")),
+      menuItem("MTD Dashboard", tabName = "mtd", icon = icon("dashboard")),
+      menuItem("Growth Dashboard", tabName = "growth", icon = icon("dashboard"))
+    )
+  ),
+  dashboardBody(
+    tabItems(
+      tabItem(tabName = "introduction",includeMarkdown("readme.md"),hr()),
+      tabItem(tabName = "sku",
+              sidebarLayout(
+                sidebarPanel(
+                  selectInput("classInput", "Class", choices = c()),
+                  selectInput("storeInput", "Store", choices = c())
+                ),
+                mainPanel(
+                  h2("Rebate Summary",style="text-align: center;"), 
+                  #DT::dataTableOutput("rebateOutput")
+                )
+              )
+      )
+    )
+  )
+  
+)
+
+#server info
+server <- function(input, output) {
+  
+}
+
+shinyApp(ui, server)
