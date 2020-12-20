@@ -23,6 +23,7 @@ mtd_daily <- read_excel("BENEFIT NEW SALES TRACKER.xlsx", sheet = "MTD DAILY")
 
 
 mtd_store <- c(sort(unique(mtd_daily$STORE)))
+mtd_subclass <- c(sort(unique(mtd_daily$SUBCLASS)))
 
 #=================================
 # Define UI for application
@@ -69,13 +70,13 @@ ui <- dashboardPage(
               sidebarLayout(
                 sidebarPanel(
                   selectInput("storeInput","Store",choices = mtd_store)
+                  selectInput("subClassInput","SubClass",choices = mtd_subclass)
                 ),
                 mainPanel(
                   h2("Daily Growth Dashboard",style="text-align: center;"),
                   #DT::dataTableOutput("rebateOutput")
                   fluidRow(
-                    DT::dataTableOutput('mtd_dailygrowth_makeup_Output'),
-                    DT::dataTableOutput('mtd_dailygrowth_skincare_Output')
+                    DT::dataTableOutput('mtd_dailygrowth_Output'),
                   )
                 )
               )
@@ -90,16 +91,14 @@ ui <- dashboardPage(
 #=================================
 server <- function(input, output) {
   
-  output$mtd_dailygrowth_makeup_Output <- DT::renderDataTable({
-    dailygrowth_makeup <- mtd_daily %>%
+  output$mtd_dailygrowth_Output <- DT::renderDataTable({
+    mtd_dailygrowth <- mtd_daily %>%
       
     
     DT::datatable(dailygrowth_makeup)
   })
   
-  output$mtd_dailygrowth_skincare_Output <- DT::renderDataTable({
-    
-  })
+
   
 }
 
