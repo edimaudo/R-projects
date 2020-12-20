@@ -4,7 +4,8 @@
 rm(list = ls())
 
 #packages 
-packages <- c('ggplot2', 'corrplot','tidyverse','shiny','shinydashboard',
+packages <- c('ggplot2', 'corrplot','tidyverse',
+              'shiny','shinydashboard','shinyWidgets',
               'dplyr','readxl')
 #load packages
 for (package in packages) {
@@ -21,6 +22,9 @@ mtd_source <- read_excel("BENEFIT NEW SALES TRACKER.xlsx", sheet = "MTD SOURCE")
 mtd_daily <- read_excel("BENEFIT NEW SALES TRACKER.xlsx", sheet = "MTD DAILY")
 
 
+mtd_store <- c(sort(unique(mtd_daily$STORE)))
+
+#=================================
 # Define UI for application
 ui <- dashboardPage(
   dashboardHeader(title = "Benefit New Sales Tracker"),
@@ -42,8 +46,11 @@ ui <- dashboardPage(
                   selectInput("storeInput", "Store", choices = c())
                 ),
                 mainPanel(
-                  h2("SKU Analysis",style="text-align: center;")
-                  #DT::dataTableOutput("rebateOutput")
+                  h2("SKU Analysis",style="text-align: center;"),
+                  fluidRow(
+                    #DT::dataTableOutput("rebateOutput"),
+                    #DT::dataTableOutput("rebateOutput")
+                  )
                 )
               )
       ), 
@@ -61,11 +68,15 @@ ui <- dashboardPage(
       tabItem(tabName ="growth",
               sidebarLayout(
                 sidebarPanel(
-                  selectInput("storeInput","Store",choices = c())
+                  selectInput("storeInput","Store",choices = mtd_store)
                 ),
                 mainPanel(
-                  h2("Daily Growth Dashboard",style="text-align: center;")
+                  h2("Daily Growth Dashboard",style="text-align: center;"),
                   #DT::dataTableOutput("rebateOutput")
+                  fluidRow(
+                    DT::dataTableOutput('mtd_dailygrowth_makeup_Output'),
+                    DT::dataTableOutput('mtd_dailygrowth_skincare_Output')
+                  )
                 )
               )
       )
@@ -74,8 +85,21 @@ ui <- dashboardPage(
   
 )
 
+#=================================
 #server info
+#=================================
 server <- function(input, output) {
+  
+  output$mtd_dailygrowth_makeup_Output <- DT::renderDataTable({
+    dailygrowth_makeup <- mtd_daily %>%
+      
+    
+    DT::datatable(dailygrowth_makeup)
+  })
+  
+  output$mtd_dailygrowth_skincare_Output <- DT::renderDataTable({
+    
+  })
   
 }
 
