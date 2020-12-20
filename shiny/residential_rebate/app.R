@@ -1,7 +1,8 @@
 rm(list = ls())
 
 #packages 
-packages <- c('ggplot2', 'corrplot','tidyverse','shiny','shinydashboard',
+packages <- c('ggplot2', 'corrplot','tidyverse',
+              'shiny','shinydashboard','shinyWidgets',
               'dplyr','readxl')
 #load packages
 for (package in packages) {
