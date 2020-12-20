@@ -26,14 +26,14 @@ crimes_data <- crimes_data %>%
   mutate_if(is.character, as.factor)# Convert character type variable to factor type
 
 #review values
-unique(crimes_data$Year)
-unique(crimes_data$Gender)
-unique(crimes_data$Age)
-unique(crimes_data$`Marital Status`)
-unique(crimes_data$`Educational Level`)
-unique(crimes_data$Religion)
-unique(crimes_data$Job)
-unique(crimes_data$crime)
+# unique(crimes_data$Year)
+#unique(crimes_data$Gender)
+# unique(crimes_data$Age)
+# unique(crimes_data$`Marital Status`)
+# unique(crimes_data$`Educational Level`)
+# unique(crimes_data$Religion)
+# unique(crimes_data$Job)
+# unique(crimes_data$crime)
 
 #people of age 0 to 14 where in the data with crimes associated with them
 crimes_data_model <- crimes_data %>%
@@ -49,10 +49,7 @@ normalize <- function(x) {
   return ((x - min(x)) / (max(x) - min(x)))
 }
 
-[1] "Year"               "Gender"             "Age"                "Marital Status"     "Education Level"   
-[6] "Religion"           "Job"                "Charge Descritpion" "Counts"             "Nationality"       
-[11] "Emirate"            "Target" 
-
+ 
 crime_info <- crimes_data_model %>%
   select(Year, Age)
 
@@ -70,8 +67,9 @@ df_new <- cbind(df_cts,df_cat,crime)
 colnames(df_new) <- c("Year","Age","Gender","Marital.Status","Education.Level",
                   'Religion','Job','Emirate','Nationality','crime')
 
-#df_new <- df_new %>%
-#  select(Gender, Job, Age, Year, Nationality_en) # based on variable Importance
+# df_new <- df_new %>%
+#   select(Age, Nationality)
+  #select(Gender, Job, Age, Year, Nationality) # based on variable Importance
 
 #create train and test data
 set.seed(2020)
