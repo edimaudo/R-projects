@@ -100,12 +100,12 @@ dotplot(results)
 
 
 # Make predictions
-predicted.classes <- fit.xgb %>% predict(test)
-output <- confusionMatrix(data = predicted.classes, reference = test$crime, mode = "everything")
+predicted.classes <- fit.dtree %>% predict(test)
+output <- confusionMatrix(data = predicted.classes, reference = test$Diagnosis, mode = "everything")
 
-caret::varImp(fit.xgb)
 #feature importance
-varImpPlot(model_rf_df$finalModel)
+caret::varImp(fit.dtree)
+#varImpPlot(fit.dtree)
 
 #plot confusion matrix
 output2 <- as.data.frame(output$table)
@@ -116,20 +116,21 @@ cm_d_p <-  ggplot(data =output2, aes(x = Predicted , y =  Actual, fill = Freq))+
   theme_light() +
   guides(fill=FALSE) 
 
-aucxgb <- roc(as.numeric(test$class), as.numeric(fit.xgb),  ci=TRUE)
-plot(aucxgb, ylim=c(0,1), print.thres=TRUE, 
-     main=paste('AUC:',round(auxgb$auc[[1]],3)),col = 'blue')
+#plot output
+cm_d_p 
+
+#AUC dtree
+aucdtree <- roc(as.numeric(test$Diagnosis), as.numeric(fit.dtree),  ci=TRUE)
+plot(aucdtree, ylim=c(0,1), print.thres=TRUE, 
+     main=paste('AUC:',round(auxdtree$auc[[1]],3)),col = 'blue')
 
 
-#AUC
-aucrf <- roc(as.numeric(testSplit$class), as.numeric(predrf),  ci=TRUE)
-plot(aucrf, ylim=c(0,1), print.thres=TRUE, 
-     main=paste('Random Forest AUC:',round(aucrf$auc[[1]],3)),col = 'blue')
 
-#compare ROC curves 
-plot(aucrf, ylim=c(0,1), main=paste('ROC Comparison : 
-                                    RF(blue),decision tree(green),Logistic(Red)'),col = 'blue')
-par(new = TRUE)
-plot(aucglm,col = "red")
-par(new = TRUE)
-plot(aucdt,col="green")
+
+# #compare ROC curves 
+# plot(aucrf, ylim=c(0,1), main=paste('ROC Comparison : 
+#                                     RF(blue),decision tree(green),Logistic(Red)'),col = 'blue')
+# par(new = TRUE)
+# plot(aucglm,col = "red")
+# par(new = TRUE)
+# plot(aucdt,col="green")
