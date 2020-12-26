@@ -82,7 +82,7 @@ registerDoParallel(cl)
 control <- trainControl(method="repeatedcv", number=10, repeats=10, classProbs = FALSE)
 
 #glm
-fit.glm <- train(as.factor(churn)~., data=train, method="multinom", metric = "Accuracy", trControl = control)
+fit.glm <- train(as.factor(Churn)~., data=train, method="multinom", metric = "Accuracy", trControl = control)
 #random forest
 fit.rf <- train(as.factor(Churn)~., data=train, method="rf", metric = "Accuracy", trControl = control)
 #boosting algorithm - Stochastic Gradient Boosting (Generalized Boosted Modeling)
@@ -124,3 +124,40 @@ summary(results)
 bwplot(results)
 # Dot-plot comparison
 dotplot(results)
+
+#ROC outcome
+dotplot(results, metric = "ROC")
+
+# Make predictions
+predicted.classes <- fit.dtree %>% predict(test)
+output <- confusionMatrix(data = predicted.classes, reference = test$Churn, mode = "everything")
+
+#feature importance
+caret::varImp(fit.dtree)
+
+#plot confusion matrix
+output2 <- as.data.frame(output$table)
+colnames(output2) <- c("Predicted",'Actual',"Freq")
+cm_d_p <-  ggplot(data =output2, aes(x = Predicted , y =  Actual, fill = Freq))+
+  geom_tile() +
+  geom_text(aes(label = paste("",Freq)), color = 'white', size = 8) +
+  theme_light() +
+  guides(fill=FALSE) 
+
+#plot output
+cm_d_p 
+
+
+#AUC dtree
+aucdtree <- roc(as.numeric(test$Diagnosis), as.numeric(fit.dtree),  ci=TRUE)
+plot(aucdtree, ylim=c(0,1), print.thres=TRUE, 
+     main=paste('AUC:',round(auxdtree$auc[[1]],3)),col = 'blue')
+
+
+# #compare ROC curves 
+# plot(aucrf, ylim=c(0,1), main=paste('ROC Comparison : 
+#                                     RF(blue),decision tree(green),Logistic(Red)'),col = 'blue')
+# par(new = TRUE)
+# plot(aucglm,col = "red")
+# par(new = TRUE)
+# plot(aucdt,col="green")
