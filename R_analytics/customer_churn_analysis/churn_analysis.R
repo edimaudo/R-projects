@@ -103,9 +103,7 @@ fit.dtree <- train(as.factor(Churn)~., data=train, method="C5.0", metric = "Accu
 #knn
 fit.knn <- train(as.factor(Churn)~., data=train, method="kknn", metric = "Accuracy", trControl = control)
 
-
 stopCluster(cl)
-
 #------------------
 #compare models
 #------------------
@@ -129,11 +127,11 @@ dotplot(results)
 dotplot(results, metric = "ROC")
 
 # Make predictions
-predicted.classes <- fit.dtree %>% predict(test)
+predicted.classes <- fit.xgb %>% predict(test)
 output <- confusionMatrix(data = predicted.classes, reference = test$Churn, mode = "everything")
 
 #feature importance
-caret::varImp(fit.dtree)
+caret::varImp(fit.Xgb)
 
 #plot confusion matrix
 output2 <- as.data.frame(output$table)
@@ -149,7 +147,7 @@ cm_d_p
 
 
 #AUC dtree
-aucdtree <- roc(as.numeric(test$Diagnosis), as.numeric(fit.dtree),  ci=TRUE)
+aucdtree <- roc(as.numeric(test$Churn), as.numeric(fit.dtree),  ci=TRUE)
 plot(aucdtree, ylim=c(0,1), print.thres=TRUE, 
      main=paste('AUC:',round(auxdtree$auc[[1]],3)),col = 'blue')
 
