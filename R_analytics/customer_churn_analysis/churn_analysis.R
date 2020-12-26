@@ -14,3 +14,13 @@ for (package in packages) {
     library(package, character.only=T)
   }
 }
+
+
+df <- read_csv("customer_churn.csv")
+
+#summary
+summary(df)
+
+#backup
+df.orig <- df
+
