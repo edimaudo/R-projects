@@ -24,3 +24,11 @@ summary(df)
 #backup
 df.orig <- df
 
+#check for missing values
+missing_data <- apply(df, 2, function(x) any(is.na(x))) 
+print("missing data")
+print(missing_data) # Total Charges
+
+#remove NAs
+df <- na.omit(df)
+
