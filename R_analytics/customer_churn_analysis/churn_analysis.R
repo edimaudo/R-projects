@@ -35,6 +35,9 @@ df <- na.omit(df)
 #convert from string to numeric
 df <- as.data.frame(df, stringsAsFactors=F)
 
+#check breakdown of Target variable
+table(df$Churn)
+
 #Label Encoder
 labelEncoder <-function(x){
   as.numeric(factor(x))-1
@@ -58,6 +61,66 @@ df_churn <- df %>%
   select(Churn)
 
 #recode data
+df_cts <- as.data.frame(lapply(df_cts, normalize))
+df_cat <- as.data.frame(lapply(df_cat, labelEncoder))
 
 #combine data
 df_new <- cbind(df_cts,df_cat,df_churn)
+
+#create train and test data
+set.seed(2020)
+sample <- sample.split(df_new,SplitRatio = 0.75)
+train <- subset(df_new,sample ==TRUE)
+test <- subset(df_new, sample==FALSE)
+
+
+#model training
+cl <- makePSOCKcluster(4)
+registerDoParallel(cl)
+
+#cross fold validation
+control <- trainControl(method="repeatedcv", number=10, repeats=10, classProbs = FALSE)
+
+#glm
+fit.glm <- train(as.factor(churn)~., data=train, method="multinom", metric = "Accuracy", trControl = control)
+#random forest
+fit.rf <- train(as.factor(Churn)~., data=train, method="rf", metric = "Accuracy", trControl = control)
+#boosting algorithm - Stochastic Gradient Boosting (Generalized Boosted Modeling)
+fit.gbm <- train(as.factor(Churn)~., data=train, method="gbm", metric = "Accuracy", trControl = control)
+#svm
+fit.svm <- train(as.factor(Churn)~., data=train, method="svmRadial", metric = "Accuracy", trControl = control)
+#nnet
+fit.nnet <- train(as.factor(Churn)~., data=train, method="nnet", metric = "Accuracy", trControl = control)
+#naive
+fit.naive <- train(as.factor(Churn)~., data=train, method="naive_bayes", metric = "Accuracy", 
+                   trControl = control)
+#extreme gradient boosting
+fit.xgb <- train(as.factor(Churn)~., data=train, method="xgbTree", metric = "Accuracy", trControl = control)
+#bagged cart
+fit.bg <- train(as.factor(Churn)~., data=train, method="treebag", metric = "Accuracy", trControl = control)
+#decision tree
+fit.dtree <- train(as.factor(Churn)~., data=train, method="C5.0", metric = "Accuracy", trControl = control)
+#knn
+fit.knn <- train(as.factor(Churn)~., data=train, method="kknn", metric = "Accuracy", trControl = control)
+
+
+stopCluster(cl)
+
+#------------------
+#compare models
+#------------------
+results <- resamples(list(randomforest = fit.rf, 
+                          `gradient boost` = fit.gbm, 
+                          `support vector machine` = fit.svm,
+                          baggedCart = fit.bg, 
+                          neuralnetwork = fit.nnet,
+                          xgboost = fit.xgb, 
+                          logisticregression = fit.glm, 
+                          `decision tree` = fit.dtree, 
+                          `naive bayes` = fit.naive))
+
+summary(results)
+# boxplot comparison
+bwplot(results)
+# Dot-plot comparison
+dotplot(results)
