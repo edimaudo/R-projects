@@ -134,7 +134,7 @@ dotplot(results)
 #mean(predicted.classes == test$crime)
 #test data accuracy
 # Make predictions
-predicted.classes <- fit.xgb %>% predict(test)
+predicted.classes <- fit.dtree %>% predict(test)
 output <- confusionMatrix(data = predicted.classes, reference = test$crime, mode = "everything")
 
 caret::varImp(fit.xgb)
@@ -156,3 +156,4 @@ cm_d_p <-  ggplot(data =output2, aes(x = Predicted , y =  Actual, fill = Freq))+
   theme_light() +
   guides(fill=FALSE) 
 
+cm_d_p
