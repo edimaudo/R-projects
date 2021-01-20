@@ -92,13 +92,12 @@ pheatmap::pheatmap(data.matrix(table(crimes_data_job$Job, crimes_data_job$Target
                    treeheight_row = 0,
                    treeheight_col = 0)
 
-
-
-
-#people of age 0 to 14 where in the data with crimes associated with them
+#check for missing information
 crimes_data_model <- crimes_data %>%
-  #filter(Age >= 15) %>%
   na.omit()
+
+
+
 
 #Label Encoder
 labelEncoder <-function(x){
