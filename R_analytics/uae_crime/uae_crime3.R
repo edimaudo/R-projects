@@ -35,6 +35,66 @@ crimes_data <- crimes_data %>%
 # unique(crimes_data$Job)
 # unique(crimes_data$crime)
 
+#crime per year
+crimes_data %>%
+  group_by(Year) %>%
+  summarize(Number = sum(Counts)) %>%
+  ggplot(aes(x = Year, y = Number)) + 
+  geom_line(color = "#6d031c") +
+  geom_point(color = "#a79086")+
+  scale_x_continuous(breaks = seq(2007, 2020, 1)) + 
+  scale_y_continuous(breaks = seq(100, 1000, 100)) + 
+  guides(fill = FALSE) + 
+  ggtitle("Evolution of the number of crimes") + 
+  xlab("Year") + 
+  ylab("Number of crimes")
+
+#Age boxplot
+# png("boxplot_age.png")
+boxplot(crimes_data$Age, horizontal = TRUE, col = "lightblue", main = "Boxplot of the Age")
+# dev.off()
+
+#victims by nationality
+crimes_data %>%
+  group_by(Nationality) %>%
+  summarize(Number = sum(Counts)) %>%
+  ggplot(aes(x = reorder(Nationality, Number), y = Number, fill = Nationality)) + 
+  geom_bar(stat = "identity", position = "dodge") + 
+  coord_flip() + 
+  guides(fill = FALSE) + 
+  ggtitle("Number of victims by Nationality") + 
+  xlab("Nationality") + 
+  ylab("Victims")
+
+#victims by job
+crimes_data %>% 
+  group_by(Job) %>%
+  summarize(Number = sum(Counts)) %>%
+  arrange(desc(Number)) %>%
+  top_n(20) %>%
+  ggplot(aes(x = reorder(Job, Number), y = Number, fill = Job)) + 
+  geom_bar(stat = "identity", position = "dodge") + 
+  coord_flip() + 
+  guides(fill = FALSE) + 
+  ggtitle("Number of victims by Job") + 
+  xlab("Job") + 
+  ylab("Victims")
+
+#victims by job category
+# Show the crimes related to which jobs
+crimes_data_job <- crimes_data %>%
+  mutate(Job = as.character(Job)) %>%
+  filter(Job %in% c("Not Specified", "Employee", "Maid", "Student", "Nanny", "House Wife"))
+
+# Plot the heatmap
+# png("heatmap.png")
+pheatmap::pheatmap(data.matrix(table(crimes_data_job$Job, crimes_data_job$Target)),
+                   treeheight_row = 0,
+                   treeheight_col = 0)
+
+
+
+
 #people of age 0 to 14 where in the data with crimes associated with them
 crimes_data_model <- crimes_data %>%
   #filter(Age >= 15) %>%
