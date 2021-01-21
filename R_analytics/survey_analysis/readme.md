@@ -1,0 +1,4 @@
+## Survey analysis
+***
+
+Survey results for a retail client, which have already been cleaned, aggregated by location (column A), and linked to external business outcomes. Columns B-U are survey items, with possible values of 0-100*. The header indicates the topic of the item, such as eSat for "How happy are you working at <Company Name>?" Column V is a regional identifier and column W is the number of employees at that location. Potential outcomes to look at are NPS (Net Promoter Score, which typically has a range of -100 to +100, but this client provided it as -1 to +1), Total Sales, and Sales YoY (a calculation of Sales as a percentage of previous year's sales).
