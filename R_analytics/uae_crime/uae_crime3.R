@@ -96,8 +96,46 @@ pheatmap::pheatmap(data.matrix(table(crimes_data_job$Job, crimes_data_job$Target
 crimes_data_model <- crimes_data %>%
   na.omit()
 
+#===================
+#dummy variable set up
+#===================
+crimes_data_model2 <- crimes_data %>%
+  dummy_cols(c("Marital Status", 
+               "Education Level", "Religion", "Job", 'Nationality', 'Emirate'),
+             remove_first_dummy = TRUE) %>%
+  # dplyr::select(-c("Gender", "Marital.Status", "Educational.Level",
+  #                  "Religion", "Job", "Number", "Year")) %>%
+  dplyr::select(-c("Marital Status", "Gender",
+                   "Education Level", "Religion", "Job", 'Nationality', 'Emirate','Age group','Counts')) %>%
+  na.omit
+
+crimes_data_model <- cbind(crimes_data_model,crimes_data$crime)
+colnames(crimes_data_model)[colnames(crimes_data_model) == 'crimes_data$crime'] <- 'crime'
+
+#===================
+#RFE
+#===================
+control <- rfeControl(functions=rfFuncs,
+                      method="cv", 
+                      number=10)
+# run the RFE algorithm
+cl <- makePSOCKcluster(4)
+registerDoParallel(cl)
+results <- rfe(crimes_data_model2 %>% select(-Target), 
+               crimes_data_model2$Target, sizes=c(1:8),
+               rfeControl=control)
+stopCluster(cl)
+# summarize the results
+print(results)
+# list the chosen features
+predictors(results)
+# plot the results
+# png("plot.png")
+plot(results, type=c("g", "o"))
+# dev.off()
 
 
+#PCA
 
 #Label Encoder
 labelEncoder <-function(x){
