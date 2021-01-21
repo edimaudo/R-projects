@@ -134,8 +134,59 @@ predictors(results)
 plot(results, type=c("g", "o"))
 # dev.off()
 
-
+#===================
 #PCA
+#===================
+pca_crime <- prcomp(crimes_data_model2%>%dplyr::select(-c(Target)),
+                    center = TRUE, 
+                    scale = TRUE)
+
+png("variance_plot.png")
+fviz_eig(pca_crime, addlabels = TRUE,
+         ylim = c(0, 2)) + 
+  ggtitle("Variance over the different dimensions") + 
+  theme(plot.title  = element_text(size = 20))
+dev.off()
+
+
+pca_table <- as.data.frame(pca_crime$x)
+
+# Plot how the diagnosis variable is distributed along the first four dimensions:
+dim_1 <- ggplot(pca_table, aes(x=PC1, fill=as.factor(crimes_data_model2$Target))) + 
+  geom_density(alpha=0.25) + 
+  scale_fill_brewer(name = "Crime type", palette = "RdYlBu")
+dim_2 <- ggplot(pca_table, aes(x=PC2, fill=as.factor(crimes_data_model2$Target))) +
+  geom_density(alpha=0.25) + 
+  scale_fill_brewer(name = "Crime type", palette = "RdYlBu")
+dim_3 <- ggplot(pca_table, aes(x=PC3, fill=as.factor(crimes_data_model2$Target))) +
+  geom_density(alpha=0.25) + 
+  scale_fill_brewer(name = "Crime type", palette = "RdYlBu")
+dim_4 <- ggplot(pca_table, aes(x=PC4, fill=as.factor(crimes_data_model2$Target))) +
+  geom_density(alpha=0.25) + 
+  scale_fill_brewer(name = "Crime type", palette = "RdYlBu")
+
+# png("plot_pca.png", width = 1000, height = 800)
+grid.arrange(dim_1, dim_2, dim_3, dim_4, nrow=2, ncol = 2)
+# dev.off()
+
+
+# 2D plot
+# png("pca_2d.png", width = 1000, height = 1000)
+fviz_pca_ind(pca_crime,
+             geom.ind = "point", # show points only (nbut not "text")
+             col.ind = as.factor(crimes_data_model2$Target), # color by groups
+             addEllipses = TRUE, # Concentration ellipses
+             legend.title = "Crime type"
+)
+# dev.off()
+
+
+#
+
+
+#=================
+#main model
+#=================
 
 #Label Encoder
 labelEncoder <-function(x){
