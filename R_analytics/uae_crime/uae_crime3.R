@@ -181,7 +181,18 @@ fviz_pca_ind(pca_crime,
 # dev.off()
 
 
-#
+#logistic regression
+logistic_regression_model <- nnet::multinom(crime ~ ., 
+                                            data = crimes_data_model2 %>% 
+                                              select(Year, Age,`Job_House Wife`,`Job_Maid`,
+                                                     `Marital Status_Single`,
+                                                     Nationality_UAE, Target))
+summary(logistic_regression_model)
+
+#=================
+#other models
+#=================
+
 
 
 #=================
