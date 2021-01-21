@@ -192,7 +192,21 @@ summary(logistic_regression_model)
 #=================
 #other models
 #=================
+cl <- makePSOCKcluster(4)
+registerDoParallel(cl)
 
+model_svm <- train(
+  as.factor(Target) ~.,
+  data = train_crimeData, 
+  method = "svmRadial",
+  trControl = trainControl("cv",
+                           number = 3)
+)
+saveRDS(model_svm, paste0("model_","svm",".RDS"))
+stopCluster(cl)
+y_pred <- predict(model_svm, newdata = test_crimeData)
+cat(paste0("\nAccuracy of the model: ","svm"))
+accuracy <- sum(y_pred == test_crimeData$Target)/nrow(test_crimeData)
 
 
 #=================
