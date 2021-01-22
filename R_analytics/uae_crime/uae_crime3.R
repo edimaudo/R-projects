@@ -92,9 +92,7 @@ pheatmap::pheatmap(data.matrix(table(crimes_data_job$Job, crimes_data_job$Target
                    treeheight_row = 0,
                    treeheight_col = 0)
 
-#check for missing information
-crimes_data_model <- crimes_data %>%
-  na.omit()
+
 
 #===================
 #dummy variable set up
@@ -222,6 +220,11 @@ normalize <- function(x) {
   return ((x - min(x)) / (max(x) - min(x)))
 }
 
+crimes_data <- crimes_data[c(1:11)]
+
+#check for missing information
+crimes_data_model <- crimes_data %>%
+  na.omit()
  
 crime_info <- crimes_data_model %>%
   select(Year, Age)
@@ -240,27 +243,21 @@ df_new <- cbind(df_cts,df_cat,crime)
 colnames(df_new) <- c("Year","Age","Gender","Marital.Status","Education.Level",
                   'Religion','Job','Emirate','Nationality','crime')
 
-# df_new <- df_new %>%
-#   select(Age, Nationality)
-  #select(Gender, Job, Age, Year, Nationality) # based on variable Importance
-
 #create train and test data
 set.seed(2020)
 sample <- sample.split(df_new,SplitRatio = 0.75)
 train <- subset(df_new,sample ==TRUE)
 test <- subset(df_new, sample==FALSE)
 
-
-
 #model training
 cl <- makePSOCKcluster(4)
 registerDoParallel(cl)
 
 #cross fold validation
-control <- trainControl(method="repeatedcv", number=10, repeats=3, classProbs = FALSE)
+control <- trainControl(method="repeatedcv", number=10, repeats=5, classProbs = FALSE)
 
 #glm
-fit.glm <- train(as.factor(crime)~., data=train, method="multinom", 
+fit.glm <- train(as.factor(crime)~., data=train, method="glm",family=binomial(), 
                  metric = "Accuracy", trControl = control)
 #random forest
 fit.rf <- train(as.factor(crime)~., data=train, method="rf", 
