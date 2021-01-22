@@ -109,7 +109,7 @@ crimes_data_model2 <- crimes_data %>%
                    "Education Level", "Religion", "Job", 'Nationality', 'Emirate','Age group','Counts')) %>%
   na.omit
 
-crimes_data_model <- cbind(crimes_data_model,crimes_data$crime)
+crimes_data_model <- cbind(crimes_data_model2,crimes_data$Target)
 colnames(crimes_data_model)[colnames(crimes_data_model) == 'crimes_data$crime'] <- 'crime'
 
 #===================
@@ -280,6 +280,8 @@ fit.bg <- train(as.factor(crime)~., data=train, method="treebag", metric = "Accu
 fit.dtree <- train(as.factor(crime)~., data=train, method="C5.0", metric = "Accuracy", trControl = control)
 #knn
 fit.knn <- train(as.factor(crime)~., data=train, method="kknn", metric = "Accuracy", trControl = control)
+#ensemble
+fit.ensemble <- train(as.factor(crime)~., data=train, method="node harves", metric = "Accuracy", trControl = control)
 
 
 stopCluster(cl)
