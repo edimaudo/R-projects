@@ -25,9 +25,9 @@ crimes_data <- crimes_data %>%
   dplyr::select(-'Charge Descritpion') %>% # Remove charge description
   mutate_if(is.character, as.factor)# Convert character type variable to factor type
 
-#review values
+# review values
 # unique(crimes_data$Year)
-#unique(crimes_data$Gender)
+# unique(crimes_data$Gender)
 # unique(crimes_data$Age)
 # unique(crimes_data$`Marital Status`)
 # unique(crimes_data$`Educational Level`)
@@ -106,7 +106,8 @@ crimes_data_model2 <- crimes_data %>%
   # dplyr::select(-c("Gender", "Marital.Status", "Educational.Level",
   #                  "Religion", "Job", "Number", "Year")) %>%
   dplyr::select(-c("Marital Status", "Gender",
-                   "Education Level", "Religion", "Job", 'Nationality', 'Emirate','Age group','Counts')) %>%
+                   "Education Level", "Religion", "Job", 'Nationality', 'Emirate',
+                   'Age group','Counts')) %>%
   na.omit
 
 crimes_data_model <- cbind(crimes_data_model2,crimes_data$Target)
@@ -179,7 +180,6 @@ fviz_pca_ind(pca_crime,
              legend.title = "Crime type"
 )
 # dev.off()
-
 
 #logistic regression
 logistic_regression_model <- nnet::multinom(crime ~ ., 
@@ -260,28 +260,39 @@ registerDoParallel(cl)
 control <- trainControl(method="repeatedcv", number=10, repeats=3, classProbs = FALSE)
 
 #glm
-fit.glm <- train(as.factor(crime)~., data=train, method="multinom", metric = "Accuracy", trControl = control)
+fit.glm <- train(as.factor(crime)~., data=train, method="multinom", 
+                 metric = "Accuracy", trControl = control)
 #random forest
-fit.rf <- train(as.factor(crime)~., data=train, method="rf", metric = "Accuracy", trControl = control)
+fit.rf <- train(as.factor(crime)~., data=train, method="rf", 
+                metric = "Accuracy", trControl = control)
 #boosting algorithm - Stochastic Gradient Boosting (Generalized Boosted Modeling)
-fit.gbm <- train(as.factor(crime)~., data=train, method="gbm", metric = "Accuracy", trControl = control)
+fit.gbm <- train(as.factor(crime)~., data=train, method="gbm", 
+                 metric = "Accuracy", trControl = control)
 #svm
-fit.svm <- train(as.factor(crime)~., data=train, method="svmRadial", metric = "Accuracy", trControl = control)
+fit.svm <- train(as.factor(crime)~., data=train, method="svmRadial", 
+                 metric = "Accuracy", trControl = control)
 #nnet
-fit.nnet <- train(as.factor(crime)~., data=train, method="nnet", metric = "Accuracy", trControl = control)
+fit.nnet <- train(as.factor(crime)~., data=train, method="nnet", 
+                  metric = "Accuracy", trControl = control)
 #naive
-fit.naive <- train(as.factor(crime)~., data=train, method="naive_bayes", metric = "Accuracy", 
+fit.naive <- train(as.factor(crime)~., data=train, 
+                   method="naive_bayes", metric = "Accuracy", 
                    trControl = control)
 #extreme gradient boosting
-fit.xgb <- train(as.factor(crime)~., data=train, method="xgbTree", metric = "Accuracy", trControl = control)
+fit.xgb <- train(as.factor(crime)~., data=train, 
+                 method="xgbTree", metric = "Accuracy", trControl = control)
 #bagged cart
-fit.bg <- train(as.factor(crime)~., data=train, method="treebag", metric = "Accuracy", trControl = control)
+fit.bg <- train(as.factor(crime)~., data=train, 
+                method="treebag", metric = "Accuracy", trControl = control)
 #decision tree
-fit.dtree <- train(as.factor(crime)~., data=train, method="C5.0", metric = "Accuracy", trControl = control)
+fit.dtree <- train(as.factor(crime)~., data=train, 
+                   method="C5.0", metric = "Accuracy", trControl = control)
 #knn
-fit.knn <- train(as.factor(crime)~., data=train, method="kknn", metric = "Accuracy", trControl = control)
+fit.knn <- train(as.factor(crime)~., data=train, 
+                 method="kknn", metric = "Accuracy", trControl = control)
 #ensemble
-fit.ensemble <- train(as.factor(crime)~., data=train, method="node harves", metric = "Accuracy", trControl = control)
+fit.ensemble <- train(as.factor(crime)~., data=train, 
+                      method="nodeHarvest", metric = "Accuracy", trControl = control)
 
 
 stopCluster(cl)
@@ -297,7 +308,8 @@ results <- resamples(list(randomforest = fit.rf,
                           xgboost = fit.xgb, 
                           logisticregression = fit.glm, 
                           `decision tree` = fit.dtree, 
-                          `naive bayes` = fit.naive))
+                          `naive bayes` = fit.naive,
+                          `ensemble` = fit.ensemble))
 
 summary(results)
 # boxplot comparison
