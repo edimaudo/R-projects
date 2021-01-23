@@ -1,4 +1,19 @@
 #===================
+# Objective
+#===================
+
+#Data source
+#https://healthdata.gov/dataset/united-states-covid-19-cases-and-deaths-state-over-time/resource/7f8d9b63-9359-49d2-92bb#{view-graph:{graphOptions:{hooks:{processOffset:{},bindEvents:{}}}},graphOptions:{hooks:{processOffset:{},bindEvents:{}}}}
+
+# - week over week growth rates for cases and deaths for all states
+# - month over month growth rates for cases and deaths for all states
+# - Show a top 10 states have shown the greatest increase of cases and deaths in a given 
+# - day
+# - week
+# - month
+
+
+#===================
 ## Load Libraries
 #===================
 rm(list = ls()) #clear environment
@@ -14,6 +29,7 @@ for (package in packages) {
     library(package, character.only=T)
   }
 }
+
 
 
 #load data
