@@ -268,47 +268,83 @@ registerDoParallel(cl)
 
 #cross fold validation
 control <- trainControl(method="repeatedcv", number=10, repeats=5, classProbs = FALSE)
-
 #glm
-fit.glm <- train(as.factor(crime)~., data=train, method="glm",family=binomial(), 
+fit.glm <- train(as.factor(crime)~., data=train, method="glm",family=binomial(),
                  metric = "Accuracy", trControl = control, weights = model_weights)
 #random forest
-fit.rf <- train(as.factor(crime)~., data=train, method="rf", 
+fit.rf <- train(as.factor(crime)~., data=train, method="rf",
                 metric = "Accuracy", trControl = control, weights = model_weights)
 #boosting algorithm - Stochastic Gradient Boosting (Generalized Boosted Modeling)
-fit.gbm <- train(as.factor(crime)~., data=train, method="gbm", 
+fit.gbm <- train(as.factor(crime)~., data=train, method="gbm",
                  metric = "Accuracy", trControl = control, weights = model_weights)
 #svm
-fit.svm <- train(as.factor(crime)~., data=train, method="svmRadial", 
+fit.svm <- train(as.factor(crime)~., data=train, method="svmRadial",
                  metric = "Accuracy", trControl = control, weights = model_weights)
 #nnet
-fit.nnet <- train(as.factor(crime)~., data=train, method="nnet", 
+fit.nnet <- train(as.factor(crime)~., data=train, method="nnet",
                   metric = "Accuracy", trControl = control, weights = model_weights)
+#naive
+fit.naive <- train(as.factor(crime)~., data=train,
+                   method="naive_bayes", metric = "Accuracy",
+                   trControl = control, weights = model_weights)
+#extreme gradient boosting
+fit.xgb <- train(as.factor(crime)~., data=train,
+                 method="xgbTree", metric = "Accuracy",
+                 trControl = control, weights = model_weights)
+#bagged cart
+fit.bg <- train(as.factor(crime)~., data=train,
+                method="treebag", metric = "Accuracy",
+                trControl = control, weights = model_weights)
+#decision tree
+fit.dtree <- train(as.factor(crime)~., data=train,
+                   method="C5.0", metric = "Accuracy",
+                   trControl = control, weights = model_weights)
+#knn
+fit.knn <- train(as.factor(crime)~., data=train,
+                 method="kknn", metric = "Accuracy",
+                 trControl = control, weights = model_weights)
+#ensemble
+fit.ensemble <- train(as.factor(crime)~., data=train,
+                      method="nodeHarvest", metric = "Accuracy",
+                      trControl = control, weights = model_weights)
+stopCluster(cl)
+
+#glm
+fit.glm <- train(as.factor(crime)~., data=train, method="glm",family=binomial(),
+                 metric = "Accuracy", trControl = control)
+#random forest
+fit.rf <- train(as.factor(crime)~., data=train, method="rf", 
+                metric = "Accuracy", trControl = control)
+#boosting algorithm - Stochastic Gradient Boosting (Generalized Boosted Modeling)
+fit.gbm <- train(as.factor(crime)~., data=train, method="gbm", 
+                 metric = "Accuracy", trControl = control)
+#svm
+fit.svm <- train(as.factor(crime)~., data=train, method="svmRadial", 
+                 metric = "Accuracy", trControl = control)
+#nnet
+fit.nnet <- train(as.factor(crime)~., data=train, method="nnet", 
+                  metric = "Accuracy", trControl = control)
 #naive
 fit.naive <- train(as.factor(crime)~., data=train, 
                    method="naive_bayes", metric = "Accuracy", 
-                   trControl = control, weights = model_weights)
+                   trControl = control)
 #extreme gradient boosting
 fit.xgb <- train(as.factor(crime)~., data=train, 
-                 method="xgbTree", metric = "Accuracy", 
-                 trControl = control, weights = model_weights)
+                 method="xgbTree", metric = "Accuracy", trControl = control)
 #bagged cart
 fit.bg <- train(as.factor(crime)~., data=train, 
-                method="treebag", metric = "Accuracy", 
-                trControl = control, weights = model_weights)
+                method="treebag", metric = "Accuracy", trControl = control)
 #decision tree
+cl <- makePSOCKcluster(4)
+registerDoParallel(cl)
 fit.dtree <- train(as.factor(crime)~., data=train, 
-                   method="C5.0", metric = "Accuracy", 
-                   trControl = control, weights = model_weights)
+                   method="C5.0", metric = "Accuracy", trControl = control)
 #knn
 fit.knn <- train(as.factor(crime)~., data=train, 
-                 method="kknn", metric = "Accuracy", 
-                 trControl = control, weights = model_weights)
+                 method="kknn", metric = "Accuracy", trControl = control)
 #ensemble
 fit.ensemble <- train(as.factor(crime)~., data=train, 
-                      method="nodeHarvest", metric = "Accuracy", 
-                      trControl = control, weights = model_weights)
-
+                      method="nodeHarvest", metric = "Accuracy", trControl = control)
 
 stopCluster(cl)
 
@@ -324,7 +360,8 @@ results <- resamples(list(randomforest = fit.rf,
                           logisticregression = fit.glm, 
                           `decision tree` = fit.dtree, 
                           `naive bayes` = fit.naive,
-                          `ensemble` = fit.ensemble))
+                          `ensemble` = fit.ensemble, 
+                          `knn` = fit.knn))
 
 summary(results)
 # boxplot comparison
@@ -332,22 +369,24 @@ bwplot(results)
 # Dot-plot comparison
 dotplot(results)
 
-#other metrics
+
 
 
 # Model accuracy
 #mean(predicted.classes == test$crime)
 #test data accuracy
 # Make predictions
-predicted.classes <- fit.dtree %>% predict(test)
+predicted.classes <- fit.knn %>% predict(test)
 output <- confusionMatrix(data = predicted.classes, reference = test$crime, mode = "everything")
+output
+#other metrics
 
-caret::varImp(fit.xgb)
+caret::varImp(fit.rf)
 
 #confusion matrix output
-write.csv(as.data.frame(output$byClass),"output.csv")
+#write.csv(as.data.frame(output$byClass),"output.csv")
 
-#plot confusion matrix
+#plot confusion matrix of selected option
 library(ggplot2)     # to plot
 library(gridExtra)   # to put more
 library(grid)        # plot together
@@ -362,3 +401,6 @@ cm_d_p <-  ggplot(data =output2, aes(x = Predicted , y =  Actual, fill = Freq))+
   guides(fill=FALSE) 
 
 cm_d_p
+
+
+precision(output)
