@@ -1,16 +1,16 @@
 #===================
 # Objective
 #===================
-
 #Data source
-#https://healthdata.gov/dataset/united-states-covid-19-cases-and-deaths-state-over-time/resource/7f8d9b63-9359-49d2-92bb#{view-graph:{graphOptions:{hooks:{processOffset:{},bindEvents:{}}}},graphOptions:{hooks:{processOffset:{},bindEvents:{}}}}
+#https://healthdata.gov/dataset/united-states-covid-19-cases-and-deaths-state-over-time
+#/resource/7f8d9b63-9359-49d2-92bb#{view-graph:{graphOptions:
+#{hooks:{processOffset:{},bindEvents:{}}}},graphOptions:{hooks:{processOffset:{},bindEvents:{}}}}
 
-# - week over week growth rates for cases and deaths for all states
-# - month over month growth rates for cases and deaths for all states
-# - Show a top 10 states have shown the greatest increase of cases and deaths in a given 
-# - day
-# - week
-# - month
+# - week over week change for cases and deaths for all states
+# - Show a top 10 states have shown the greatest increase of cases and deaths in a given week
+
+# - month over month change for cases and deaths for all states
+# - Show a top 10 states have shown the greatest increase of cases and deaths in a given month
 
 #===================
 ## Load Libraries
@@ -29,21 +29,44 @@ for (package in packages) {
   }
 }
 
-
-
-#load data
+#===================
+# load data
+#===================
 df <- read.csv("US_COVID.csv")
 
+#select key columns
 df_new <- df %>%
   select(submission_date, state, tot_cases, tot_death, consent_cases, consent_deaths)
 
-#update dates
+# Update dates
 df_new$submission_date <- lubridate::mdy(df_new$submission_date)
-#Generate week
+# Generate week
 df_new$week <- lubridate::week(df_new$submission_date)
-#Geenrate month
+# Genrate month
 df_new$month <- lubridate::month(df_new$submission_date)
 
-#Week growth 
+# sort data
+df_new <- df_new %>%
+  arrange(state,submission_date)
 
-# month growth
+# all states
+state <- sort(unique(df_new$state))
+
+#===================
+# Week analysis
+#===================
+# cases
+df_week_cases <- df_new %>%
+  filter(consent_cases == "Agree") %>%
+  select(submission_date, state, tot_cases, week)
+
+# death
+
+#===================
+# month analysis
+#===================
+# cases
+
+
+# death
+
