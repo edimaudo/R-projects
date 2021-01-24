@@ -12,7 +12,6 @@
 # - week
 # - month
 
-
 #===================
 ## Load Libraries
 #===================
@@ -21,7 +20,7 @@ rm(list = ls()) #clear environment
 # libraries
 packages <- c('ggplot2', 'corrplot','tidyverse',"caret","dummies","fastDummies"
               ,'FactoMineR','factoextra','scales','dplyr','mlbench','caTools',
-              'gridExtra','doParallel')
+              'gridExtra','doParallel', 'lubridate')
 # load packages
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
@@ -35,5 +34,16 @@ for (package in packages) {
 #load data
 df <- read.csv("US_COVID.csv")
 
+df_new <- df %>%
+  select(submission_date, state, tot_cases, tot_death, consent_cases, consent_deaths)
 
+#update dates
+df_new$submission_date <- lubridate::mdy(df_new$submission_date)
+#Generate week
+df_new$week <- lubridate::week(df_new$submission_date)
+#Geenrate month
+df_new$month <- lubridate::month(df_new$submission_date)
 
+#Week growth 
+
+# month growth
