@@ -190,21 +190,21 @@ summary(logistic_regression_model)
 #=================
 #other models
 #=================
-cl <- makePSOCKcluster(4)
-registerDoParallel(cl)
-
-model_svm <- train(
-  as.factor(Target) ~.,
-  data = train_crimeData, 
-  method = "svmRadial",
-  trControl = trainControl("cv",
-                           number = 3)
-)
-saveRDS(model_svm, paste0("model_","svm",".RDS"))
-stopCluster(cl)
-y_pred <- predict(model_svm, newdata = test_crimeData)
-cat(paste0("\nAccuracy of the model: ","svm"))
-accuracy <- sum(y_pred == test_crimeData$Target)/nrow(test_crimeData)
+# cl <- makePSOCKcluster(4)
+# registerDoParallel(cl)
+# 
+# model_svm <- train(
+#   as.factor(Target) ~.,
+#   data = train_crimeData, 
+#   method = "svmRadial",
+#   trControl = trainControl("cv",
+#                            number = 3)
+# )
+# saveRDS(model_svm, paste0("model_","svm",".RDS"))
+# stopCluster(cl)
+# y_pred <- predict(model_svm, newdata = test_crimeData)
+# cat(paste0("\nAccuracy of the model: ","svm"))
+# accuracy <- sum(y_pred == test_crimeData$Target)/nrow(test_crimeData)
 
 
 #=================
@@ -243,71 +243,67 @@ df_new <- cbind(df_cts,df_cat,crime)
 colnames(df_new) <- c("Year","Age","Gender","Marital.Status","Education.Level",
                   'Religion','Job','Emirate','Nationality','crime')
 
-
-
-#tweak for sampling
-#check for imbalance
-print(table(df_new$crime))
-
-
-
 #create train and test data
 set.seed(2020)
 sample <- sample.split(df_new,SplitRatio = 0.75)
 train <- subset(df_new,sample ==TRUE)
 test <- subset(df_new, sample==FALSE)
 
-#weight due to 
-model_weights <- ifelse(train$crime == "Assault",
-                        (1/table(train$crime)[1]) * 0.5,
-                        (1/table(train$crime)[2]) * 0.5)
+
 
 #model training
 cl <- makePSOCKcluster(4)
 registerDoParallel(cl)
 
-#cross fold validation
-control <- trainControl(method="repeatedcv", number=10, repeats=5, classProbs = FALSE)
-#glm
-fit.glm <- train(as.factor(crime)~., data=train, method="glm",family=binomial(),
-                 metric = "Accuracy", trControl = control, weights = model_weights)
-#random forest
-fit.rf <- train(as.factor(crime)~., data=train, method="rf",
-                metric = "Accuracy", trControl = control, weights = model_weights)
-#boosting algorithm - Stochastic Gradient Boosting (Generalized Boosted Modeling)
-fit.gbm <- train(as.factor(crime)~., data=train, method="gbm",
-                 metric = "Accuracy", trControl = control, weights = model_weights)
-#svm
-fit.svm <- train(as.factor(crime)~., data=train, method="svmRadial",
-                 metric = "Accuracy", trControl = control, weights = model_weights)
-#nnet
-fit.nnet <- train(as.factor(crime)~., data=train, method="nnet",
-                  metric = "Accuracy", trControl = control, weights = model_weights)
-#naive
-fit.naive <- train(as.factor(crime)~., data=train,
-                   method="naive_bayes", metric = "Accuracy",
-                   trControl = control, weights = model_weights)
-#extreme gradient boosting
-fit.xgb <- train(as.factor(crime)~., data=train,
-                 method="xgbTree", metric = "Accuracy",
-                 trControl = control, weights = model_weights)
-#bagged cart
-fit.bg <- train(as.factor(crime)~., data=train,
-                method="treebag", metric = "Accuracy",
-                trControl = control, weights = model_weights)
-#decision tree
-fit.dtree <- train(as.factor(crime)~., data=train,
-                   method="C5.0", metric = "Accuracy",
-                   trControl = control, weights = model_weights)
-#knn
-fit.knn <- train(as.factor(crime)~., data=train,
-                 method="kknn", metric = "Accuracy",
-                 trControl = control, weights = model_weights)
-#ensemble
-fit.ensemble <- train(as.factor(crime)~., data=train,
-                      method="nodeHarvest", metric = "Accuracy",
-                      trControl = control, weights = model_weights)
-stopCluster(cl)
+#tweak for sampling
+#check for imbalance
+#print(table(df_new$crime))
+# #weight due to 
+# model_weights <- ifelse(train$crime == "Assault",
+#                         (1/table(train$crime)[1]) * 0.5,
+#                         (1/table(train$crime)[2]) * 0.5)
+# #cross fold validation
+# control <- trainControl(method="repeatedcv", number=10, repeats=5, classProbs = FALSE)
+# #glm
+# fit.glm <- train(as.factor(crime)~., data=train, method="glm",family=binomial(),
+#                  metric = "Accuracy", trControl = control, weights = model_weights)
+# #random forest
+# fit.rf <- train(as.factor(crime)~., data=train, method="rf",
+#                 metric = "Accuracy", trControl = control, weights = model_weights)
+# #boosting algorithm - Stochastic Gradient Boosting (Generalized Boosted Modeling)
+# fit.gbm <- train(as.factor(crime)~., data=train, method="gbm",
+#                  metric = "Accuracy", trControl = control, weights = model_weights)
+# #svm
+# fit.svm <- train(as.factor(crime)~., data=train, method="svmRadial",
+#                  metric = "Accuracy", trControl = control, weights = model_weights)
+# #nnet
+# fit.nnet <- train(as.factor(crime)~., data=train, method="nnet",
+#                   metric = "Accuracy", trControl = control, weights = model_weights)
+# #naive
+# fit.naive <- train(as.factor(crime)~., data=train,
+#                    method="naive_bayes", metric = "Accuracy",
+#                    trControl = control, weights = model_weights)
+# #extreme gradient boosting
+# fit.xgb <- train(as.factor(crime)~., data=train,
+#                  method="xgbTree", metric = "Accuracy",
+#                  trControl = control, weights = model_weights)
+# #bagged cart
+# fit.bg <- train(as.factor(crime)~., data=train,
+#                 method="treebag", metric = "Accuracy",
+#                 trControl = control, weights = model_weights)
+# #decision tree
+# fit.dtree <- train(as.factor(crime)~., data=train,
+#                    method="C5.0", metric = "Accuracy",
+#                    trControl = control, weights = model_weights)
+# #knn
+# fit.knn <- train(as.factor(crime)~., data=train,
+#                  method="kknn", metric = "Accuracy",
+#                  trControl = control, weights = model_weights)
+# #ensemble
+# fit.ensemble <- train(as.factor(crime)~., data=train,
+#                       method="nodeHarvest", metric = "Accuracy",
+#                       trControl = control, weights = model_weights)
+# stopCluster(cl)
 
 #glm
 fit.glm <- train(as.factor(crime)~., data=train, method="glm",family=binomial(),
@@ -369,9 +365,6 @@ bwplot(results)
 # Dot-plot comparison
 dotplot(results)
 
-
-
-
 # Model accuracy
 #mean(predicted.classes == test$crime)
 #test data accuracy
@@ -401,6 +394,3 @@ cm_d_p <-  ggplot(data =output2, aes(x = Predicted , y =  Actual, fill = Freq))+
   guides(fill=FALSE) 
 
 cm_d_p
-
-
-precision(output)
