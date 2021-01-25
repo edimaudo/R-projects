@@ -55,21 +55,35 @@ state <- sort(unique(df_new$state))
 #===================
 # Week analysis
 #===================
+get_week_difference <- function(df){
+  temp_data <- c()
+  for (i in 1:length(df$state)){
+    if (df$week == 1){
+      temp_data[[i]] <- 0
+    } else if ((df$week[i] != df$week[i-1]) | (df$state[i] = df$state[i-1])){
+      temp_data[[i]] <- total[i]- total[i-1]
+    } 
+  }  
+  
+  return (temp_data)
+}
+
 # cases
 df_week_cases <- df_new %>%
   filter(consent_cases == "Agree") %>%
   group_by(state,week) %>%
-  summarise(total_cases = sum(tot_cases)) %>%
+  summarise(total = sum(tot_cases)) %>%
   arrange(state,week) %>%
-  select(state, week, total_cases)
+  select(state, week, total)
 
+df_week_cases_difference <- get_week_difference(df_week_cases)
 
 
 # death
 df_week_deaths <- df_new %>%
   filter(consent_deaths == "Agree") %>%
   group_by(state,week) %>%
-  summarise(total_deaths = sum(tot_death)) %>%
+  summarise(total = sum(tot_death)) %>%
   arrange(state,week) %>%
   select(state, week, total_deaths)
 
@@ -81,45 +95,23 @@ df_week_deaths <- df_new %>%
 df_month_cases <- df_new %>%
   filter(consent_cases == "Agree") %>%
   group_by(state,month) %>%
-  summarise(total_cases = sum(tot_cases)) %>%
+  summarise(total = sum(tot_cases)) %>%
   arrange(state,month) %>%
-  select(state, month, total_cases)
+  select(state, month, total)
 
 # death
 df_month_deaths <- df_new %>%
   filter(consent_deaths == "Agree") %>%
   group_by(state,month) %>%
-  summarise(total_deaths = sum(tot_death)) %>%
+  summarise(total = sum(tot_death)) %>%
   arrange(state,month) %>%
-  select(state, month, total_deaths)
+  select(state, month, total)
 
-for (i in 1:(length(df$A)) {
-  if (df$A[i] >= 15 && df$A[i+3] <= 12) {
-    df$B[i] <- 1
-  } else if ((df$A[i] <= 0) && (df$A[i+3] >= 10)) {
-    df$B[i] <- 2
-  }
-  else {
-    df$B[i] <- 0
-  }
-}
 
-get_difference <- function (df){
-  temp_data <- c()
-  for (i in 1:length(df$state)){
-    
-    if (df$week == 1){
-      temp_data[[i]] <- 0
-    } else if (df$week[i]  ){
-      
-    } else {
-      
-    }
-    
-  }
+
+
+
   
-  return (temp_data)
-}
 
 
 
