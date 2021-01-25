@@ -58,15 +58,39 @@ state <- sort(unique(df_new$state))
 # cases
 df_week_cases <- df_new %>%
   filter(consent_cases == "Agree") %>%
-  select(submission_date, state, tot_cases, week)
+  group_by(state,week) %>%
+  summarise(total_cases = sum(tot_cases)) %>%
+  arrange(state,week) %>%
+  select(state, week, total_cases)
+
+
 
 # death
+df_week_cases <- df_new %>%
+  filter(consent_deaths == "Agree") %>%
+  group_by(state,week) %>%
+  summarise(total_deaths = sum(tot_death)) %>%
+  arrange(state,week) %>%
+  select(state, week, total_deaths)
+
 
 #===================
 # month analysis
 #===================
 # cases
+df_month_cases <- df_new %>%
+  filter(consent_cases == "Agree") %>%
+  group_by(state,month) %>%
+  summarise(total_cases = sum(tot_cases)) %>%
+  arrange(state,month) %>%
+  select(state, month, total_cases)
 
 
 # death
+df_month_cases <- df_new %>%
+  filter(consent_deaths == "Agree") %>%
+  group_by(state,month) %>%
+  summarise(total_deaths = sum(tot_death)) %>%
+  arrange(state,month) %>%
+  select(state, month, total_deaths)
 
