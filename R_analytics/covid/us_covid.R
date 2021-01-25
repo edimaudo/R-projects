@@ -66,7 +66,7 @@ df_week_cases <- df_new %>%
 
 
 # death
-df_week_cases <- df_new %>%
+df_week_deaths <- df_new %>%
   filter(consent_deaths == "Agree") %>%
   group_by(state,week) %>%
   summarise(total_deaths = sum(tot_death)) %>%
@@ -85,12 +85,43 @@ df_month_cases <- df_new %>%
   arrange(state,month) %>%
   select(state, month, total_cases)
 
-
 # death
-df_month_cases <- df_new %>%
+df_month_deaths <- df_new %>%
   filter(consent_deaths == "Agree") %>%
   group_by(state,month) %>%
   summarise(total_deaths = sum(tot_death)) %>%
   arrange(state,month) %>%
   select(state, month, total_deaths)
+
+for (i in 1:(length(df$A)) {
+  if (df$A[i] >= 15 && df$A[i+3] <= 12) {
+    df$B[i] <- 1
+  } else if ((df$A[i] <= 0) && (df$A[i+3] >= 10)) {
+    df$B[i] <- 2
+  }
+  else {
+    df$B[i] <- 0
+  }
+}
+
+get_difference <- function (df){
+  temp_data <- c()
+  for (i in 1:length(df$state)){
+    
+    if (df$week == 1){
+      temp_data[[i]] <- 0
+    } else if (df$week[i]  ){
+      
+    } else {
+      
+    }
+    
+  }
+  
+  return (temp_data)
+}
+
+
+
+
 
