@@ -1,0 +1,99 @@
+---
+title: "Operaitonal dashboard"
+author: "Report"
+date: 'Date: `r Sys.Date()`'
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    theme: lumen
+    css: UpdatedCss.css
+    vertical_layout: scroll
+    favicon: New-Logo-short.png
+---
+
+```{r setup, include=FALSE}
+
+pacman::p_load(flexdashboard,tidyverse,lubridate,kableExtra,DT,bit64,formattable,htmltools,reactable,
+               sparkline,plotly,gridExtra,scales,wesanderson,viridis,highcharter,
+               visNetwork,toOrdinal,ISOweek,timeDate,tsibble,tm,vroom,runner,data.table,ggridges,tibble,crosstalk,tippy,ggfittext, update = FALSE)
+
+knitr::opts_chunk$set(echo=FALSE,
+                      warning= FALSE,
+                      message = FALSE)
+options(scipen=999)
+load("Comprehensive_Datasets.RData")
+source("rmd_functions.R",local = knitr::knit_global())
+# source("report_assets/etl_process_1_extract_clean.R")
+source("consolidated_etlv2.R",local = knitr::knit_global())
+library(arules)
+data(Groceries)
+```
+::: {.header}
+<h1>
+
+<img src="New-Logo-short.png" alt="logo"/>Store 1
+
+</h1>
+
+<h2>
+
+`r sprintf("text")`
+
+</h2>
+
+<p>
+
+</p>
+:::
+
+# Last Sold {data-icon="fa-cart-arrow-down" data-orientation=rows}
+
+## Row {data-height="200"}
+
+### Last Sold: Store Overview
+
+```{r Last Sold: Store Overview}
+last_sold_highchart_gg
+```
+
+### Last Sold: Division Overview
+
+```{r Last Sold: Stock Overview}
+daily_last_sold_ply
+```
+
+### Last Sold: Supplier Overview
+
+```{r Last Sold: Stock Overview2}
+
+```
+
+### Last Sold: Division Overview
+
+```{r  Last Sold: WIP4 Overview}
+last_sold_highchart_gg
+```
+
+## row {.tabset data-height=450}
+
+### Days: 1-7
+```{r Last Sold Tab 1}
+last_sold_tables_function(1)
+```
+### Days: 7-14
+```{r Last Sold Tab 2}
+last_sold_tables_function(2)
+```
+### Days: 14-21
+```{r Last Sold Tab 3}
+last_sold_tables_function(3)
+```
+### Days: 21-28
+```{r Last Sold Tab 4}
+last_sold_tables_function(4)
+```
+### Days: +28
+```{r Last Sold Tab 5}
+last_sold_tables_function(5)
+```
+
