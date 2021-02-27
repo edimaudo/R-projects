@@ -10,9 +10,8 @@
 rm(list = ls()) #clear environment
 
 # libraries
-packages <- c('ggplot2', 'corrplot','tidyverse',"caret","dummies","fastDummies"
-              ,'FactoMineR','factoextra','readxl','scales','dplyr','mlbench','caTools',
-              'gridExtra','doParallel')
+packages <- c('ggplot2', 'corrplot','tidyverse',"caret","dummies","fastDummies",'aod',
+              ,'readxl','scales','dplyr','mlbench','caTools','gridExtra','doParallel','car')
 
 # load packages
 for (package in packages) {
@@ -52,6 +51,9 @@ summary(model)
 # confidence interval
 confint(model)
 
+## CIs using standard errors
+confint.default(model)
+
 # exponentiated coefficients
 exp(model$coefficients)        
 
@@ -60,8 +62,23 @@ exp(model$coefficients)
 exp(confint(model))             
 
 
+#Analysis of variance for individual terms
+Anova(model, type="II", test="Wald")
 
+#Wald test
+wald.test(b = coef(model), Sigma = vcov(model), Terms = 2)
 
+# Overall p-value for model
+anova(model,
+      update(model, ~1),    # update here produces null model for comparison
+      test="Chisq")
+
+# likelihood ratio test
+library(lmtest)
+lrtest(model)
+
+# Plot of standardized residuals
+plot(fitted(model),rstandard(model))
 
 
 #Questions to Address
