@@ -11,7 +11,7 @@ rm(list = ls()) #clear environment
 
 # libraries
 packages <- c('ggplot2', 'corrplot','tidyverse',"caret","dummies","fastDummies",'aod',
-              ,'readxl','scales','dplyr','mlbench','caTools','gridExtra','doParallel','car')
+              'readxl','car','lmtest')
 
 # load packages
 for (package in packages) {
@@ -37,12 +37,9 @@ labelEncoder <-function(x){
   as.numeric(factor(x))-1
 }
 
-
-
+set.seed(2020)
 # build logistic regression model
 df$Target <- factor(df$Target)
-#df$Country <- factor(df$Country)
-#df$Country <- lapply(df$Country, labelEncoder)
 model <- glm(Target ~ dentist_number, data = df, family = "binomial")
 
 # model details
@@ -57,10 +54,8 @@ confint.default(model)
 # exponentiated coefficients
 exp(model$coefficients)        
 
-
 # 95% CI for exponentiated coefficients
 exp(confint(model))             
-
 
 #Analysis of variance for individual terms
 Anova(model, type="II", test="Wald")
@@ -74,11 +69,16 @@ anova(model,
       test="Chisq")
 
 # likelihood ratio test
-library(lmtest)
 lrtest(model)
 
 # Plot of standardized residuals
 plot(fitted(model),rstandard(model))
+
+#Plotting the model
+plot(Target ~ dentist_number,data = df,xlab="Dentist number",ylab="Essential",pch=19)             
+
+curve(predict(model,data.frame(dentist_number=x),type="response"),
+      lty=1, lwd=2, col="blue", add=TRUE)
 
 
 #Questions to Address
