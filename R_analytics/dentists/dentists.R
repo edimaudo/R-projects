@@ -83,31 +83,48 @@ curve(predict(model,data.frame(dentist_number=x),type="response"),
 
 #Questions to Address
 
-What is Your Public Health Topic?
+# What is Your Public Health Topic?
+# The objective is to understand oral health care across the globe
+# from across the world
   
-What is the research question?
+## What is the research question?
+# Understanding the relationship between oral health plans and dentists
+# from across the world
   
-What is the Null Hypothesis?
+## What is the Null Hypothesis?
+#The null hypothesis is that  Number of Dentists per 10,000 residents	
+#has an impact on Existence of operational policy/strategy/action plan for oral health 
   
-What is the Alternative Hypothesis?
+#What is the Alternative Hypothesis?
+#Number of Dentists per 10,000 residents	
+#does not have an impact on Existence of operational policy/strategy/action plan for oral health 
   
-What Research Method will be used?(Quantitative or Qualitative?)
+#What Research Method will be used?(Quantitative or Qualitative?)
+#Quantitative since the key variables are Quantitative
 
-What Research Study Design will be used?
-  
-How Many Samples will be used? (One, Two, or More?)
 
-Identify the Variables That May Be Used in the Study
-Identify the Level of Measurement for Each Variable That Will Be Used in the Study
-(Nominal, Ordinal, Interval, or Ratio)	
-List All Descriptive Statistics That Will Be Used 	
-List All Inferential Statistics That May Be Used
+#What Research Study Design will be used?
+#Logistic regession will be applied because 
+    
+#How Many Samples will be used? (One, Two, or More?)
+#One sample
 
-What level of alpha would you set to test your hypothesis? 
+#What level of alpha would you set to test your hypothesis? 
+#95%
   
-Can you address how to avoid Type I and/or Type II errors? 
+##Can you address how to avoid Type I and/or Type II errors? 
+#The probability of a type 1 error (rejecting a true null hypothesis) can be minimized by picking a smaller level of significance 
+#α before doing a test (requiring a smaller p-value for rejecting H0).
+
+#Once the level of significance is set, the probability of a type 2 error 
+#(failing to reject a false null hypothesis) can be minimized either by picking a larger sample size or 
+#by choosing a "threshold" alternative value of the parameter in question that is further from the 
+#null value
   
-Are you able to calculate a point estimate and/or a confidence interval with the information given?
+##Are you able to calculate a point estimate and/or a confidence interval with the information given?
+#Yes - see model output
   
-Why did you pick the above descriptive and inferential statistics? 
+##Why did you pick the above descriptive and inferential statistics? 
+#Inferential statictics was utlized since it would help in giving better
+#insight into the research question
   
