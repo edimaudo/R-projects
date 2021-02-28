@@ -26,11 +26,10 @@ for (package in packages) {
 #===================
 setwd("~/Documents/Coding/R/R_analytics/dentists")
 df <- read_excel("Data Set Dentists BioStats-2.xlsx",sheet = "Data")
+colnames(df) <- c('Country','dentist_number','Target')
 
 # get data summary
 summary(df)
-
-colnames(df) <- c('Country','dentist_number','Target')
 
 #Label Encoder
 labelEncoder <-function(x){
@@ -39,7 +38,14 @@ labelEncoder <-function(x){
 
 set.seed(2020)
 # build logistic regression model
-df$Target <- factor(df$Target)
+df$Target <- as.factor(df$Target)
+df$Country <- as.factor(df$Country)
+
+Country <- df %>%
+  select(Country)
+
+Country2 <- as.data.frame(lapply(Country, labelEncoder))
+
 model <- glm(Target ~ dentist_number, data = df, family = "binomial")
 
 # model details
@@ -89,7 +95,6 @@ curve(predict(model,data.frame(dentist_number=x),type="response"),
   
 ## What is the research question?
 # Understanding the relationship between oral health plans and dentists
-# from across the world
   
 ## What is the Null Hypothesis?
 #The null hypothesis is that  Number of Dentists per 10,000 residents	
