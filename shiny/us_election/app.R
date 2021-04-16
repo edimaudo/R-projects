@@ -14,3 +14,10 @@ for (package in packages) {
 
 #load data
 df <- read.csv("economy_us_election.csv")
+
+# drop downs
+presidents <- sort(as.vector(unique(df$President)))
+presidential_party <- sort(as.vector(unique(df$Presidential.Party)))
+market <- sort(as.vector(unique(df$Market)))
+
+
