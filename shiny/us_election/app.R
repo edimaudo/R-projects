@@ -20,4 +20,13 @@ presidents <- sort(as.vector(unique(df$President)))
 presidential_party <- sort(as.vector(unique(df$Presidential.Party)))
 market <- sort(as.vector(unique(df$Market)))
 
+ui <- dashboardPage(
+    
+)
+
+server <- function(input, output,session) {
+    
+}
+
+shinyApp(ui, server)
 
