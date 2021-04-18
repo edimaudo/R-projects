@@ -22,12 +22,12 @@ market <- sort(as.vector(unique(df$Market)))
 
 # Define UI for application
 ui <- dashboardPage(
-    dashboardHeader(title = "Kickstarter Analysis"),
+    dashboardHeader(title = "US Election & Market analysis"),
     dashboardSidebar(
         sidebarMenu(
             menuItem("About", tabName = "about", icon = icon("dashboard")),
             menuItem("Presidential party", tabName = "party", icon = icon("list-alt")),
-            menuItem("Presidents", tabName = "president", icon = icon("th")),
+            menuItem("Presidents", tabName = "president", icon = icon("th"))
             
         )
     ),
@@ -35,8 +35,13 @@ ui <- dashboardPage(
         tabItems(
             tabItem(tabName = "about",includeMarkdown("readme.md"),hr()),
             tabItem(tabName = "party",
+                    sidebarLayout(
+                        sidebarPanel(
+                            checkboxInput("partyInput", "Party", choices = presidential_party),
+                            checkboxInput("marketInput", "Market", choices = market)
+                        ),
                     mainPanel(
-                        h2("Summary",style="text-align: center;"),
+                        h2("Presidential Party",style="text-align: center;")
                         #fluidRow(valueBoxOutput("countryOutput"),
                         #         valueBoxOutput("ciytOutput")),
                         #fluidRow(
@@ -51,24 +56,25 @@ ui <- dashboardPage(
             tabItem(tabName = "president",
                     sidebarLayout(
                         sidebarPanel(
-                            selectInput("cityInput", "City", choices = cities),
-                            selectInput("categoryInput", "Category", choices = categories)
+                            checkboxInput("presidentInput", "President", choices = presidents),
+                            checkboxInput("marketInput", "Market", choices = market
                         ),
                         mainPanel(
-                            h2("City Analysis",style="text-align: center;"), 
-                            fluidRow(
-                                h3("Amount pledged",style="text-align: center;"),
-                                plotOutput("pledgeYearOutput"),
-                                h3("# of pledges",style="text-align: center;"),
-                                plotOutput("pledgenumYearOutput")
+                            h2("President",style="text-align: center;"), 
+                            #fluidRow(
+                            #    h3("Amount pledged",style="text-align: center;"),
+                            #    plotOutput("pledgeYearOutput"),
+                                h3("# of pledges",style="text-align: center;")
+                            #    plotOutput("pledgenumYearOutput")
                                 #plotOutput(""),
                             )
                         )
                     )
-            ) # prediction model
+            ) 
         )
     )
-)
+),
+
 
 server <- function(input, output,session) {
     
