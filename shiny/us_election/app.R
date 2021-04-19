@@ -37,8 +37,8 @@ ui <- dashboardPage(
             tabItem(tabName = "party",
                     sidebarLayout(
                         sidebarPanel(
-                            checkboxInput("partyInput", "Party", choices = presidential_party),
-                            checkboxInput("marketInput", "Market", choices = market)
+                            checkboxInput("partyInput", choices = presidential_party),
+                            checkboxInput("marketInput", choices = market)
                         ),
                     mainPanel(
                         h2("Presidential Party",style="text-align: center;")
@@ -56,15 +56,15 @@ ui <- dashboardPage(
             tabItem(tabName = "president",
                     sidebarLayout(
                         sidebarPanel(
-                            checkboxInput("presidentInput", "President", choices = presidents),
-                            checkboxInput("marketInput", "Market", choices = market
+                            checkboxInput("presidentInput", choices = presidents),
+                            checkboxInput("marketInput", choices = market)
                         ),
                         mainPanel(
                             h2("President",style="text-align: center;"), 
                             #fluidRow(
                             #    h3("Amount pledged",style="text-align: center;"),
                             #    plotOutput("pledgeYearOutput"),
-                                h3("# of pledges",style="text-align: center;")
+                            h3("# of pledges",style="text-align: center;")
                             #    plotOutput("pledgenumYearOutput")
                                 #plotOutput(""),
                             )
@@ -73,7 +73,8 @@ ui <- dashboardPage(
             ) 
         )
     )
-),
+)
+
 
 
 server <- function(input, output,session) {
