@@ -14,9 +14,47 @@ for (package in packages) {
   }
 }
 
+#=============================
+# Load data
+#=============================
 df <- read_excel(file.choose())
 
+#=============================
+# Tax calculator function
+#=============================
+tax_calculator <- function(taxable_withdrawal, tax_bracket_inflation){
+  standard_deduction <- 25.1
+  downfloated_taxable_withdrawal <- (taxable_withdrawal / tax_bracket_inflation) - standard_deduction
+  noadjusted_tax <- 0
+  taxCalculator <- 0
+  
+  if (downfloated_taxable_withdrawal <= 0) {
+    noadjusted_tax <- 0
+  } else if (downfloated_taxable_withdrawal < 19.05){
+    noadjusted_tax <- downfloated_taxable_withdrawal * 0.1
+  } else if(downfloated_taxable_withdrawal < 77.4) {
+    noadjusted_tax <- 1.9 + ((downfloated_taxable_withdrawal - 19.05) * 0.12)
+  } else if(downfloated_taxable_withdrawal < 77.4){
+    noadjusted_tax <- 1.9 + ((downfloated_taxable_withdrawal - 19.05) * 0.12)
+  } else if (downfloated_taxable_withdrawal < 165){
+    noadjusted_tax <- 8.9 + ((downfloated_taxable_withdrawal - 77.4) * 0.22)
+  } else if (downfloated_taxable_withdrawal < 315){
+    noadjusted_tax <- 28.17 + ((downfloated_taxable_withdrawal - 165) * 0.24)
+  } else if (downfloated_taxable_withdrawal < 400){
+    noadjusted_tax <- 64.17 + ((downfloated_taxable_withdrawal - 315) * 0.32)
+  } else if (downfloated_taxable_withdrawal < 600){
+    noadjusted_tax <- 91.37 + ((downfloated_taxable_withdrawal - 400) * 0.35)
+  } else {
+    noadjusted_tax <- 161.37 + ((downfloated_taxable_withdrawal - 600) * 0.37)
+  }
+  taxCalculator <- tax_bracket_inflation * noadjusted_tax
+  return (taxCalculator)
+  
+}
+
+#=============================
 # CONSTANTS
+#=============================
 RETIREMENT_AGE <- 60
 BASE_RMD <- 25
 RATE_OF_RETURN <- 1.07
@@ -37,35 +75,78 @@ MAX_RETIREMENT_ACCOUNT <- 58
 MAX_RETIREMENT_CATCHUP <- 64.5
 
 
-# #Generate column information
+
+
+## Create an empty list
+# list <- c()
+# # Create a for statement to populate the list
+# for (i in seq(1, 4, by=1)) {
+#   list[[i]] <- i*i
+# }
+
+#lapply
+
+#=============================
+# Generate data
+#=============================
 df$Traditional_401K_Contribution <- 0
 df$Tradtional_401K_ROTH_Contribution <- 0
 df$Google_Match_ROTH_CONVERSION <- 0
 df$RMD <- "-"
 df$RMD_PERCENT <- 0
 
-lapply
 
-#GENERATE ACTION
-# Create an empty list
-list <- c()
-# Create a for statement to populate the list
-for (i in seq(1, 4, by=1)) {
-  list[[i]] <- i*i
+#GENERATE ACTION COLUMN
+action <- c()
+for (i in seq(1, length(df$Power), by= 1)){
+  age_outcome <- ""
+  if (df$Age[[i]] >= RETIREMENT_AGE  ){
+    age_outcome <- "Retired"
+  }  else if (df$Age[[i]] >= 50) {
+    age_outcome <- "Catchup"
+  }else {
+    age_outcome <- "Contributing"
+  }
+  action [[i]] <- age_outcome
 }
-#GENERATE 401K PENALTY
+
+df$Action <- action
+
+#GENERATE 401K PENALTY column
+penalty_401K <- c()
+for (i in seq(1, length(df$Power), by= 1)){
+  penalty_outcome <- ""
+  if (df$Action[[i]]=="Retired" &&  df$Age[[i]] < PENALTY_AGE_401K){
+    penalty_outcome <- TRUE
+  } else {
+    penalty_outcome <- FALSE
+  }
+  penalty_401K[[i]] <- penalty_outcome
+}
+df$penalty_401K <- penalty_401K
+
+# Max 401k contrib
+
+
+# Roth 401k contrib	
+
+#RMD 401K
+
+#RMD Match
 
 #Taxable Traditional 401K
 
-# Non Taxable Backdoor roth ira
+
+# Non Taxable Backdoor roth IRA
+non_taxable_backdoor_roth_ira <- c()
+for (i in seq(1, length(df$Power), by= 1)){
+  non_taxable_backdoor_roth_ira [[i]] <- ""
+}
+
 
 # Non taxable roth 401K
 
 # Taxable Google Match
-
-# Roth 401k contrib	
-
-# Max 401k contrib
 
 # Non Taxable after tax 401K
 
@@ -77,41 +158,36 @@ for (i in seq(1, 4, by=1)) {
 
 # TOTAL (SUM BALANCE TAXABLE + SUM BALANCE NON TAXABLE)
 
+# Taxable Withdrawal and conversion
+
+# ROth withdrawal
+
+# Retirement income
+
+# Minimum living expense
+
+# Total inflation
+
+# Tax Bracket inflation
+
+# Tax
+
+# Cumulative Tax
+
+# Cumulative feels like tax
 
 
-tax_calculator <- function(taxable_withdrawal, tax_bracket_inflation){
-  standard_deduction <- 25.1
-  
-  downfloated_taxable_withdrawal <- (taxable_withdrawal / tax_bracket_inflation) - standard_deduction
-  
-  noadjusted_tax <- 0
-  
-  taxCalculator <- 0
-  
-  If (downfloated_taxable_withdrawal <= 0) {
-    noadjusted_tax <- 0
-  } else if (downfloated_taxable_withdrawal < 19.05){
-    noadjusted_tax <- downfloated_taxable_withdrawal * 0.1
-  } else if(downfloated_taxable_withdrawal < 77.4) {
-    noadjusted_tax <- 1.9 + ((downfloated_taxable_withdrawal - 19.05) * 0.12)
-  } else if(downfloated_taxable_withdrawal < 77.4){
-    noadjusted_tax <- 1.9 + ((downfloated_taxable_withdrawal - 19.05) * 0.12)
-  } else if (downfloated_taxable_withdrawal < 165){
-    noadjusted_tax <- 8.9 + ((downfloated_taxable_withdrawal - 77.4) * 0.22)
-  } else if (downfloated_taxable_withdrawal < 315){
-    noadjusted_tax <- 28.17 + ((downfloated_taxable_withdrawal - 165) * 0.24)
-  } else if (downfloated_taxable_withdrawal < 400){
-    noadjusted_tax <- 64.17 + ((downfloated_taxable_withdrawal - 315) * 0.32)
-  } else if (downfloated_taxable_withdrawal < 600){
-    noadjusted_tax <- 91.37 + ((downfloated_taxable_withdrawal - 400) * 0.35)
-  } else {
-    noadjusted_tax <- 161.37 + ((downfloated_taxable_withdrawal - 600) * 0.37)
-  }
-  
-  taxCalculator <- tax_bracket_inflation * noadjusted_tax
-  return (taxCalculator)
-  
-}
+
+#=============================
+# Model setup
+#=============================
+
+
+
+
+#=============================
+# Model solution
+#=============================
 
 
 
@@ -119,13 +195,3 @@ tax_calculator <- function(taxable_withdrawal, tax_bracket_inflation){
 
 
 
-
-
-
-
-
-
-
-Loop
-taxCalculator = tax_bracket_inflation * noadjusted_tax
-End Function
