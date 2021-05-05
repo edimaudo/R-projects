@@ -109,7 +109,6 @@ for (i in seq(1, length(df$Power), by= 1)){
   }
   action [[i]] <- age_outcome
 }
-
 df$Action <- action
 
 #GENERATE 401K PENALTY column
@@ -125,11 +124,25 @@ for (i in seq(1, length(df$Power), by= 1)){
 }
 df$penalty_401K <- penalty_401K
 
-# Max 401k contrib
-
+# Generate Max 401k contrib column
+max_401K_contribution <- c()
+for (i in seq(1, length(df$Power), by= 1)){
+  outcome_value <- 0
+  if(df$Action[[i]]=="Contributing"){
+    outcome_value <-  round(MAX_401K_CONTRIBUTION,2)
+  } else if(df$Action[[i]]=="Catchup") {
+    outcome_value <- round(MAX_401K_CATCHUP * (LIMIT_INCREASE_401K^df$Power[[i]]),2)
+  } else {
+    outcome_value = 0
+  }
+  max_401K_contribution[[i]] <- outcome_value
+}
+df$max_401K_contribution <- max_401K_contribution
 
 # Roth 401k contrib	
+df$roth_401K_contribution <- df$max_401K_contribution - df$Traditional_401K_Contribution
 
+## Thursday
 #RMD 401K
 
 #RMD Match
@@ -139,9 +152,7 @@ df$penalty_401K <- penalty_401K
 
 # Non Taxable Backdoor roth IRA
 non_taxable_backdoor_roth_ira <- c()
-for (i in seq(1, length(df$Power), by= 1)){
-  non_taxable_backdoor_roth_ira [[i]] <- ""
-}
+
 
 
 # Non taxable roth 401K
@@ -158,6 +169,7 @@ for (i in seq(1, length(df$Power), by= 1)){
 
 # TOTAL (SUM BALANCE TAXABLE + SUM BALANCE NON TAXABLE)
 
+## Friday
 # Taxable Withdrawal and conversion
 
 # ROth withdrawal
@@ -167,6 +179,8 @@ for (i in seq(1, length(df$Power), by= 1)){
 # Minimum living expense
 
 # Total inflation
+
+# Saturday
 
 # Tax Bracket inflation
 
