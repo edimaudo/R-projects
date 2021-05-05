@@ -44,8 +44,15 @@ df$Google_Match_ROTH_CONVERSION <- 0
 df$RMD <- "-"
 df$RMD_PERCENT <- 0
 
-#GENERATE ACTION
+lapply
 
+#GENERATE ACTION
+# Create an empty list
+list <- c()
+# Create a for statement to populate the list
+for (i in seq(1, 4, by=1)) {
+  list[[i]] <- i*i
+}
 #GENERATE 401K PENALTY
 
 #Taxable Traditional 401K
@@ -69,3 +76,56 @@ df$RMD_PERCENT <- 0
 # SUM BALANCE NON TAXABLE
 
 # TOTAL (SUM BALANCE TAXABLE + SUM BALANCE NON TAXABLE)
+
+
+
+tax_calculator <- function(taxable_withdrawal, tax_bracket_inflation){
+  standard_deduction <- 25.1
+  
+  downfloated_taxable_withdrawal <- (taxable_withdrawal / tax_bracket_inflation) - standard_deduction
+  
+  noadjusted_tax <- 0
+  
+  taxCalculator <- 0
+  
+  If (downfloated_taxable_withdrawal <= 0) {
+    noadjusted_tax <- 0
+  } else if (downfloated_taxable_withdrawal < 19.05){
+    noadjusted_tax <- downfloated_taxable_withdrawal * 0.1
+  } else if(downfloated_taxable_withdrawal < 77.4) {
+    noadjusted_tax <- 1.9 + ((downfloated_taxable_withdrawal - 19.05) * 0.12)
+  } else if(downfloated_taxable_withdrawal < 77.4){
+    noadjusted_tax <- 1.9 + ((downfloated_taxable_withdrawal - 19.05) * 0.12)
+  } else if (downfloated_taxable_withdrawal < 165){
+    noadjusted_tax <- 8.9 + ((downfloated_taxable_withdrawal - 77.4) * 0.22)
+  } else if (downfloated_taxable_withdrawal < 315){
+    noadjusted_tax <- 28.17 + ((downfloated_taxable_withdrawal - 165) * 0.24)
+  } else if (downfloated_taxable_withdrawal < 400){
+    noadjusted_tax <- 64.17 + ((downfloated_taxable_withdrawal - 315) * 0.32)
+  } else if (downfloated_taxable_withdrawal < 600){
+    noadjusted_tax <- 91.37 + ((downfloated_taxable_withdrawal - 400) * 0.35)
+  } else {
+    noadjusted_tax <- 161.37 + ((downfloated_taxable_withdrawal - 600) * 0.37)
+  }
+  
+  taxCalculator <- tax_bracket_inflation * noadjusted_tax
+  return (taxCalculator)
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Loop
+taxCalculator = tax_bracket_inflation * noadjusted_tax
+End Function
