@@ -35,3 +35,37 @@ AFTER_TAX_CONTRIBUTION <- 28.75
 AFTER_TAX_CATCHUP <- 25.5
 MAX_RETIREMENT_ACCOUNT <- 58
 MAX_RETIREMENT_CATCHUP <- 64.5
+
+
+# #Generate column information
+df$Traditional_401K_Contribution <- 0
+df$Tradtional_401K_ROTH_Contribution <- 0
+df$Google_Match_ROTH_CONVERSION <- 0
+df$RMD <- "-"
+df$RMD_PERCENT <- 0
+
+#GENERATE ACTION
+
+#GENERATE 401K PENALTY
+
+#Taxable Traditional 401K
+
+# Non Taxable Backdoor roth ira
+
+# Non taxable roth 401K
+
+# Taxable Google Match
+
+# Roth 401k contrib	
+
+# Max 401k contrib
+
+# Non Taxable after tax 401K
+
+# Taxable Regular Income
+
+# SUM BALANCE TAXABLE
+
+# SUM BALANCE NON TAXABLE
+
+# TOTAL (SUM BALANCE TAXABLE + SUM BALANCE NON TAXABLE)
