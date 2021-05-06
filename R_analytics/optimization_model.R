@@ -143,17 +143,12 @@ df$max_401K_contribution <- max_401K_contribution
 df$roth_401K_contribution <- df$max_401K_contribution - df$Traditional_401K_Contribution
 
 ## Thursday
-#RMD 401K
-
-#RMD Match
-
-#Taxable Traditional 401K
-
 
 # Non Taxable Backdoor roth IRA
 non_taxable_backdoor_roth_ira <- c()
-
-
+for (i in seq(1, length(df$Power), by= 1)){
+  
+}
 
 # Non taxable roth 401K
 
@@ -163,16 +158,25 @@ non_taxable_backdoor_roth_ira <- c()
 
 # Taxable Regular Income
 
+## Friday
+#Taxable Traditional 401K
+
+#RMD 401K
+
+#RMD Match
+
 # SUM BALANCE TAXABLE
 
 # SUM BALANCE NON TAXABLE
 
 # TOTAL (SUM BALANCE TAXABLE + SUM BALANCE NON TAXABLE)
 
-## Friday
+
 # Taxable Withdrawal and conversion
 
 # ROth withdrawal
+
+# Saturday
 
 # Retirement income
 
@@ -180,7 +184,7 @@ non_taxable_backdoor_roth_ira <- c()
 
 # Total inflation
 
-# Saturday
+# Sunday
 
 # Tax Bracket inflation
 
