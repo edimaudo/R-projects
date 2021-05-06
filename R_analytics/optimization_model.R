@@ -147,10 +147,42 @@ df$roth_401K_contribution <- df$max_401K_contribution - df$Traditional_401K_Cont
 # Non Taxable Backdoor roth IRA
 non_taxable_backdoor_roth_ira <- c()
 for (i in seq(1, length(df$Power), by= 1)){
+  outcome_value <- 0
+  if (i == 1){
+    outcome_value <- 32
+  } else if(df$Action[[i]]=="Contributing" ){
+    outcome_value  <- round(RATE_OF_RETURN*non_taxable_backdoor_roth_ira[[i-1]] + 
+      IRA_CONTRIBUTION * LIMIT_INCREASE_401K^df$Power[[i-1]],2)
+  } else if (df$Action[[i]]=="Catchup"){
+    outcome_value <- RATE_OF_RETURN*non_taxable_backdoor_roth_ira[[i-1]] + 
+      IRA_CATCHUP * LIMIT_INCREASE_401K^df$Power[[i-1]]
+  } else {
+    outcome_value <- round(RATE_OF_RETURN*non_taxable_backdoor_roth_ira[[i-1]],2)
+  }
   
+  non_taxable_backdoor_roth_ira[[i]] <- outcome_value
 }
 
+df$non_taxable_backdoor_roth_ira <- non_taxable_backdoor_roth_ira
+
 # Non taxable roth 401K
+non_taxable_roth_ira <- c()
+for (i in seq(1, length(df$Power), by= 1)){
+  outcome_value <- 0
+  if (i == 1){
+    outcome_value <- 19.5
+  } else if (""){
+    
+  } else if(""){
+    
+  } else {
+    
+  }
+  non_taxable_roth_ira[[i]] <- outcome_value
+  
+}
+df$non_taxable_roth_ira <- non_taxable_roth_ira
+
 
 # Taxable Google Match
 
