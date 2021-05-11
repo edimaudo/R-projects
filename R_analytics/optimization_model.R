@@ -19,6 +19,11 @@ for (package in packages) {
 #=============================
 df <- read_excel(file.choose())
 
+#
+# Experiment
+df1 <- read_excel(file.choose())
+
+
 #=============================
 # Tax calculator function
 #=============================
@@ -179,9 +184,11 @@ for (i in seq(1, length(df$Power), by= 1)){
 }
 df$non_taxable_roth_401k  <- non_taxable_roth_401k 
 
-## Friday
 
-### Copy data into new sheet and then set up  optimization model
+
+
+
+
 
 # Taxable Google Match
 
@@ -191,7 +198,6 @@ df$non_taxable_roth_401k  <- non_taxable_roth_401k
 
 #Taxable Traditional 401K
 
-## Saturday
 
 #RMD 401K
 
@@ -203,7 +209,6 @@ df$non_taxable_roth_401k  <- non_taxable_roth_401k
 
 # TOTAL (SUM BALANCE TAXABLE + SUM BALANCE NON TAXABLE)
 
-## Sunday
 
 # Taxable Withdrawal and conversion
 
