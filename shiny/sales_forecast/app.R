@@ -1,3 +1,5 @@
+# Objective is to forecast sales and revenue
+
 rm(list = ls()) #clear environment
 
 # libraries
@@ -14,8 +16,13 @@ for (package in packages) {
 
 # load data
 df <- read.csv("volume_by_day_type_and_region.csv")
+
+#data update
+df$date <- lubridate::as_date(df$date) #update date
 df$revenue <- df$average_price*df$total_volume #revenue
 
 # Drop downs
 type_info <- sort(as.vector(unique(df$type))) #type 
 region_info <- sort(as.vector(unique(df$region))) #region
+
+
