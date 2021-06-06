@@ -3,9 +3,8 @@
 rm(list = ls()) #clear environment
 
 # libraries
-packages <- c('ggplot2', 'corrplot','tidyverse',"caret","dummies",'readxl',
-              'scales','dplyr','mlbench','caTools','forecast','TTR','xts',
-              'lubridate')
+packages <- c('ggplot2', 'corrplot','tidyverse',"caret","dummies",'readxl','scales',
+              'dplyr','mlbench','caTools','forecast','TTR','xts','lubridate','shiny','shinydashboard')
 # load packages
 for (package in packages) {
     if (!require(package, character.only=T, quietly=T)) {
@@ -34,45 +33,31 @@ ui <- dashboardPage(
   dashboardSidebar(
     sidebarMenu(
       menuItem("About", tabName = "about", icon = icon("dashboard")),
-      menuItem("Summary", tabName = "summary", icon = icon("list-alt")),
-      menuItem("City Analysis", tabName = "city", icon = icon("th"))
+      menuItem("Sales forecast", tabName = "forecast", icon = icon("th"))
     )
   ),
   dashboardBody(
     tabItems(
       tabItem(tabName = "about",includeMarkdown("readme.md"),hr()),
-      tabItem(tabName = "summary",
-              mainPanel(
-                h2("Summary",style="text-align: center;"),
-                fluidRow(valueBoxOutput("countryOutput"),
-                         valueBoxOutput("ciytOutput")),
-                fluidRow(
-                  valueBoxOutput("categoryOutput"),
-                  valueBoxOutput("subCategoryOutput")
-                ),
-                fluidRow(valueBoxOutput("amountRaisedOutput"),
-                         valueBoxOutput("percentofSuccessfulProjectsOutput")
-                )
-              )
-      ),
       tabItem(tabName = "city",
               sidebarLayout(
                 sidebarPanel(
-                  selectInput("cityInput", "City", choices = cities),
-                  selectInput("categoryInput", "Category", choices = categories)
+                  selectInput("typeInput", "Type", choices = type_info),
+                  selectInput("regionInput", "Region", choices = region_info),
+                  selectInput("forecastInput", "Forecast Period", choices = forecast_info),
                 ),
                 mainPanel(
-                  h2("City Analysis",style="text-align: center;"), 
+                  h2("Forecast Analysis",style="text-align: center;"), 
                   fluidRow(
-                    h3("Amount pledged",style="text-align: center;"),
-                    plotOutput("pledgeYearOutput"),
-                    h3("# of pledges",style="text-align: center;"),
-                    plotOutput("pledgenumYearOutput")
+                    #h3("Amount pledged",style="text-align: center;"),
+                    #plotOutput("pledgeYearOutput"),
+                    #h3("# of pledges",style="text-align: center;"),
+                    #plotOutput("pledgenumYearOutput")
                     #plotOutput(""),
                   )
                 )
               )
-      )
+      ) 
     )
   )
 )
@@ -80,9 +65,7 @@ ui <- dashboardPage(
 
 # Define server logic 
 server <- function(input, output,session) {
-
-  
-  }
+}
 
 shinyApp(ui, server)
 
