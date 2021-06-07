@@ -29,7 +29,7 @@ forecast_info <- c(12,24) #forecast range
 
 # Define UI for application
 ui <- dashboardPage(
-  dashboardHeader(title = "Kickstarter Analysis"),
+  dashboardHeader(title = "Forecasting Analysis"),
   dashboardSidebar(
     sidebarMenu(
       menuItem("About", tabName = "about", icon = icon("dashboard")),
@@ -39,7 +39,7 @@ ui <- dashboardPage(
   dashboardBody(
     tabItems(
       tabItem(tabName = "about",includeMarkdown("readme.md"),hr()),
-      tabItem(tabName = "city",
+      tabItem(tabName = "forecast",
               sidebarLayout(
                 sidebarPanel(
                   selectInput("typeInput", "Type", choices = type_info),
