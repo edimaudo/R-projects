@@ -1,49 +1,79 @@
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
+# Patient Forecast
+rm(list = ls()) #clear environment
 
-library(shiny)
+# libraries
+packages <- c('ggplot2', 'corrplot','tidyverse',"caret","dummies",'readxl',
+              'scales','dplyr','mlbench','caTools','forecast','TTR','xts',
+              'lubridate')
+# load packages
+for (package in packages) {
+    if (!require(package, character.only=T, quietly=T)) {
+        install.packages(package)
+        library(package, character.only=T)
+    }
+}
 
-# Define UI for application that draws a histogram
-ui <- fluidPage(
+#load data
+df <- read.csv("test-ts2.csv")
 
-    # Application title
-    titlePanel("Old Faithful Geyser Data"),
+#data cleaning
+df <- na.omit(df)
+df$Arrival_date <- lubridate::dmy(df$Arrival_date) #update date field
 
-    # Sidebar with a slider input for number of bins 
-    sidebarLayout(
-        sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
-        ),
+#dropdowns
+aggregate_info <- c("daily",'weekly','monthly')
+horizon_info <- c(1:50) #default 14
+frequency_info <- c(7, 12, 52.18, 365.25)
 
-        # Show a plot of the generated distribution
-        mainPanel(
-           plotOutput("distPlot")
+#generate decomposition + plot
+
+#ACT/PACF 
+
+#Forecast with metric output
+
+
+# visualization
+
+# Define UI for application
+ui <- dashboardPage(
+    dashboardHeader(title = "Forecasting Analysis"),
+    dashboardSidebar(
+        sidebarMenu(
+            menuItem("About", tabName = "about", icon = icon("dashboard")),
+            menuItem("Sales forecast", tabName = "forecast", icon = icon("th"))
+        )
+    ),
+    dashboardBody(
+        tabItems(
+            tabItem(tabName = "about",includeMarkdown("readme.md"),hr()),
+            tabItem(tabName = "forecast",
+                    sidebarLayout(
+                        sidebarPanel(
+                            selectInput("typeInput", "Type", choices = type_info),
+                            selectInput("regionInput", "Region", choices = region_info),
+                            selectInput("forecastInput", "Forecast Period", choices = forecast_info),
+                        ),
+                        mainPanel(
+                            h2("Forecast Analysis",style="text-align: center;"), 
+                            fluidRow(
+                                #h3("Amount pledged",style="text-align: center;"),
+                                #plotOutput("pledgeYearOutput"),
+                                #h3("# of pledges",style="text-align: center;"),
+                                #plotOutput("pledgenumYearOutput")
+                                #plotOutput(""),
+                            )
+                        )
+                    )
+            ) 
         )
     )
 )
 
-# Define server logic required to draw a histogram
-server <- function(input, output) {
 
-    output$distPlot <- renderPlot({
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white')
-    })
+# Define server logic 
+server <- function(input, output,session) {
 }
 
-# Run the application 
-shinyApp(ui = ui, server = server)
+shinyApp(ui, server)
+
+
