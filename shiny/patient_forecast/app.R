@@ -21,8 +21,8 @@ df <- read.csv("test-ts2.csv")
 #=============
 #data cleaning
 #=============
+df[df==0] <- NA #assigne 0 to NA
 df <- na.omit(df) #remove na
- #remove 0s
 df$Arrival_date <- lubridate::dmy(df$Arrival_date) #update date field
 
 #=============
@@ -33,6 +33,8 @@ horizon_info <- c(1:50) #default 14
 frequency_info <- c(7, 12, 52, 365)
 difference_info <- c("Yes","No")
 log_info <- c("Yes","No")
+model_info <- c('auto arima','auto exponential','simple exponential','double exponential','triple exponential')
+
 
 #generate decomposition + plot
 
@@ -56,11 +58,18 @@ ui <- dashboardPage(
             tabItem(tabName = "Forecast",
                     sidebarLayout(
                         sidebarPanel(
-                            selectInput("aggregateInput", "Aggregate", choices = aggregate_info, selected = 'daily'),
-                            selectInput("horizonInput", "Horizon", choices = horizon_info, selected = 14),
-                            selectInput("frequencyInput", "Frequency", choices = frequency_info, selected = 7),
-                            radioButtons("differenceInput","Difference",choices = difference_info, selected = "No"),
-                            radioButtons("logInput","Log",choices = log_info, selected = "No"),
+                            selectInput("aggregateInput", "Aggregate", 
+                                        choices = aggregate_info, selected = 'daily'),
+                            selectInput("horizonInput", "Horizon", 
+                                        choices = horizon_info, selected = 14),
+                            selectInput("frequencyInput", "Frequency", 
+                                        choices = frequency_info, selected = 7),
+                            radioButtons("differenceInput","Difference",
+                                         choices = difference_info, selected = "No"),
+                            radioButtons("logInput","Log",
+                                         choices = log_info, selected = "No"),
+                            selectInput("modelInput", "Model", 
+                                        choices = model_info, selected = ''),
                             submitButton("Submit")
                         ),
                         mainPanel(
