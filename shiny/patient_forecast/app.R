@@ -13,14 +13,21 @@ for (package in packages) {
     }
 }
 
+#=============
 #load data
+#=============
 df <- read.csv("test-ts2.csv")
 
+#=============
 #data cleaning
-df <- na.omit(df)
+#=============
+df <- na.omit(df) #remove na
+ #remove 0s
 df$Arrival_date <- lubridate::dmy(df$Arrival_date) #update date field
 
+#=============
 #dropdowns
+#=============
 aggregate_info <- c("daily",'weekly','monthly')
 horizon_info <- c(1:50) #default 14
 frequency_info <- c(7, 12, 52, 365)
