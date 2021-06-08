@@ -24,6 +24,8 @@ df$Arrival_date <- lubridate::dmy(df$Arrival_date) #update date field
 aggregate_info <- c("daily",'weekly','monthly')
 horizon_info <- c(1:50) #default 14
 frequency_info <- c(7, 12, 52.18, 365.25)
+difference_info <- c("Yes","No")
+log_info <- c("Yes","No")
 
 #generate decomposition + plot
 
@@ -36,30 +38,32 @@ frequency_info <- c(7, 12, 52.18, 365.25)
 
 # Define UI for application
 ui <- dashboardPage(
-    dashboardHeader(title = "Forecasting Analysis"),
+    dashboardHeader(title = "Patient Forecast"),
     dashboardSidebar(
         sidebarMenu(
-            menuItem("About", tabName = "about", icon = icon("dashboard")),
-            menuItem("Sales forecast", tabName = "forecast", icon = icon("th"))
+            menuItem("Patient forecast", tabName = "forecast", icon = icon("th"))
         )
     ),
     dashboardBody(
         tabItems(
-            tabItem(tabName = "about",includeMarkdown("readme.md"),hr()),
             tabItem(tabName = "forecast",
                     sidebarLayout(
                         sidebarPanel(
-                            selectInput("typeInput", "Type", choices = type_info),
-                            selectInput("regionInput", "Region", choices = region_info),
-                            selectInput("forecastInput", "Forecast Period", choices = forecast_info),
+                            selectInput("aggregateInput", "Aggregate", choices = aggregate_info, selected = 'daily'),
+                            selectInput("horizonInput", "Horizon", choices = horizon_info, selected = 14),
+                            selectInput("frequencyInput", "Frequency", choices = frequency_info),
+                            radioButtons("differenceInput","Difference",choices = difference_info, selected = "No"),
+                            radioButtons("logInput","Log",choices = log_info, selected = "No"),
+                            submitButton("Submit")
                         ),
                         mainPanel(
-                            h2("Forecast Analysis",style="text-align: center;"), 
+                            h1("Forecast Analysis",style="text-align: center;"), 
                             fluidRow(
-                                #h3("Amount pledged",style="text-align: center;"),
+                                h3("Decomposition",style="text-align: center;"),
                                 #plotOutput("pledgeYearOutput"),
-                                #h3("# of pledges",style="text-align: center;"),
+                                h3("ACF/PACF",style="text-align: center;"),
                                 #plotOutput("pledgenumYearOutput")
+                                h3("Forecast",style="text-align: center;"),
                                 #plotOutput(""),
                             )
                         )
