@@ -23,7 +23,7 @@ df$Arrival_date <- lubridate::dmy(df$Arrival_date) #update date field
 #dropdowns
 aggregate_info <- c("daily",'weekly','monthly')
 horizon_info <- c(1:50) #default 14
-frequency_info <- c(7, 12, 52.18, 365.25)
+frequency_info <- c(7, 12, 52, 365)
 difference_info <- c("Yes","No")
 log_info <- c("Yes","No")
 
@@ -41,17 +41,17 @@ ui <- dashboardPage(
     dashboardHeader(title = "Patient Forecast"),
     dashboardSidebar(
         sidebarMenu(
-            menuItem("Patient forecast", tabName = "forecast", icon = icon("th"))
+            menuItem("Patient Forecast", tabName = "Forecast", icon = icon("th"))
         )
     ),
     dashboardBody(
         tabItems(
-            tabItem(tabName = "forecast",
+            tabItem(tabName = "Forecast",
                     sidebarLayout(
                         sidebarPanel(
                             selectInput("aggregateInput", "Aggregate", choices = aggregate_info, selected = 'daily'),
                             selectInput("horizonInput", "Horizon", choices = horizon_info, selected = 14),
-                            selectInput("frequencyInput", "Frequency", choices = frequency_info),
+                            selectInput("frequencyInput", "Frequency", choices = frequency_info, selected = 7),
                             radioButtons("differenceInput","Difference",choices = difference_info, selected = "No"),
                             radioButtons("logInput","Log",choices = log_info, selected = "No"),
                             submitButton("Submit")
@@ -76,6 +76,8 @@ ui <- dashboardPage(
 
 # Define server logic 
 server <- function(input, output,session) {
+    
+    
 }
 
 shinyApp(ui, server)
