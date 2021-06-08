@@ -33,17 +33,15 @@ horizon_info <- c(1:50) #default 14
 frequency_info <- c(7, 12, 52, 365)
 difference_info <- c("Yes","No")
 log_info <- c("Yes","No")
-model_info <- c('auto arima','auto exponential','simple exponential','double exponential','triple exponential')
+model_info <- c('auto arima','auto exponential','simple exponential',
+                'double exponential','triple exponential')
 
-
-#generate decomposition + plot
-
-#ACT/PACF 
-
-#Forecast with metric output
-
-
-# visualization
+#data 
+patient.xts <- xts(x = df$Patients, order.by = df$Arrival_date) 
+#aggregations
+patient.daily <- apply.daily(patient.xts,mean)
+patient.weekly <- apply.weekly(patient.xts, mean) 
+patient.monthly <- apply.monthly(patient.xts, mean) 
 
 # Define UI for application
 ui <- dashboardPage(
@@ -69,18 +67,22 @@ ui <- dashboardPage(
                             radioButtons("logInput","Log",
                                          choices = log_info, selected = "No"),
                             selectInput("modelInput", "Model", 
-                                        choices = model_info, selected = ''),
+                                        choices = model_info, selected = 'auto exponential'),
                             submitButton("Submit")
                         ),
                         mainPanel(
                             h1("Forecast Analysis",style="text-align: center;"), 
                             fluidRow(
                                 h3("Decomposition",style="text-align: center;"),
-                                #plotOutput("pledgeYearOutput"),
+                                plotOutput("decompositionPlot"),
                                 h3("ACF/PACF",style="text-align: center;"),
-                                #plotOutput("pledgenumYearOutput")
+                                h4("ACF Plot",style="text-align: center;"),
+                                plotOutput("acfPlot"),
+                                br(),
+                                h4("PACF Plot",style="text-align: center;"),
+                                plotOutput("pacfPlot"),
                                 h3("Forecast",style="text-align: center;"),
-                                #plotOutput(""),
+                                plotOutput("forecastPlot")
                             )
                         )
                     )
@@ -92,6 +94,71 @@ ui <- dashboardPage(
 
 # Define server logic 
 server <- function(input, output,session) {
+    
+    #decomposition output
+    output$decompositionPlot <- renderPlot({
+        #using only daily data
+        patient.end <- floor(1*length(patient.daily)) 
+        patient.train <- patient.daily[1:patient.end,] 
+        patient.start <- c(year (start(patient.train)), month(start(patient.train)),
+                           day(start(patient.train)))
+        patient.end <- c(year(end(patient.train)), month(end(patient.train)), 
+                         day(end(patient.train)))
+        patient.train <- ts(as.numeric(patient.train), start = patient.start, 
+                             end = patient.end, frequency = as.numeric(input$frequencyInput)) 
+         
+         if (input$differenceInput == "Yes"){
+             patient.train <- diff(patient.train, differences = 1) # hardcoded difference value
+         }
+        #Decompose the Time Series
+        patient.train.components <- decompose(patient.train)
+        plot(patient.train.components)
+        
+    })
+    
+    #ACF output
+    output$acfPlot <- renderPlot({
+        #using only daily data
+        patient.end <- floor(1*length(patient.daily))
+        patient.train <- patient.daily[1:patient.end,] 
+        patient.start <- c(year (start(patient.train)), month(start(patient.train)),
+                           day(start(patient.train)))
+        patient.end <- c(year(end(patient.train)), month(end(patient.train)), day(end(patient.train)))
+        patient.train <- ts(as.numeric(patient.train), start = patient.start, 
+                            end = patient.end, frequency = as.numeric(input$frequencyInput)) 
+        
+        if (input$logInput == "No"){
+            acf(patient.train)
+        } else {
+            acf(log(patient.train))
+        }
+        
+        
+        
+    })
+
+    #PACF output
+    output$pacfPlot <- renderPlot({
+        #using only daily data
+        patient.end <- floor(1*length(patient.daily)) #select the first 80% of the data
+        patient.train <- patient.daily[1:patient.end,] 
+        patient.start <- c(year (start(patient.train)), month(start(patient.train)),
+                           day(start(patient.train)))
+        patient.end <- c(year(end(patient.train)), month(end(patient.train)), day(end(patient.train)))
+        patient.train <- ts(as.numeric(patient.train), start = patient.start, 
+                            end = patient.end, frequency = as.numeric(input$frequencyInput)) 
+        
+        if (input$logInput == "No"){
+            pacf(patient.train)
+        } else {
+            pacf(log(patient.train))
+        }
+        
+    })
+    
+    output$forecastPlot <- renderPlot({
+        
+    })
     
     
 }
