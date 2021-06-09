@@ -50,7 +50,7 @@ ui <- dashboardPage(
                   h2("Forecast Analysis",style="text-align: center;"), 
                   fluidRow(
                     #h3("Amount pledged",style="text-align: center;"),
-                    #plotOutput("pledgeYearOutput"),
+                    plotOutput("forecastOutput"),
                     #h3("# of pledges",style="text-align: center;"),
                     #plotOutput("pledgenumYearOutput")
                     #plotOutput(""),
@@ -65,6 +65,8 @@ ui <- dashboardPage(
 
 # Define server logic 
 server <- function(input, output,session) {
+  
+  
 }
 
 shinyApp(ui, server)
