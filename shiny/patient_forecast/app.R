@@ -157,53 +157,81 @@ server <- function(input, output,session) {
     })
     
     output$forecastPlot <- renderPlot({
-        #aggregations
-        patient.daily <- apply.daily(patient.xts,mean)
-        patient.weekly <- apply.weekly(patient.xts, mean) 
-        patient.monthly <- apply.monthly(patient.xts, mean) 
         
-        patient.end <- floor(0.8*length(patient.daily)) #select the first 80% of the data
-        patient.train <- patient.daily[1:patient.end,] 
-        patient.test <- patient.daily[(patient.end+1):length(patient.daily),]
-        
-        patient.start <- c(year (start(patient.train)), month(start(patient.train)),day(start(patient.train)))
-        patient.end <- c(year(end(patient.train)), month(end(patient.train)), day(end(patient.train)))
-        patient.train <- ts(as.numeric(patient.train), start = patient.start, 
-                            end = patient.end, frequency = 7)
-        
-        patient.start <- c(year (start(patient.test)), month(start(patient.test)),day(start(patient.test)))
-        patient.end <- c(year(end(patient.test)), month(end(patient.test)), day(end(patient.test)))
-        patient.test <- ts(as.numeric(patient.test), start = patient.start, 
-                           end = patient.end, frequency = 7)
+        # Aggregation
+        if(""){
+            
+        } else if(""){
+            
+        } else {
+            
+        }
         
         
-        #set forecast horizon
+        # training and test data
         
-        #Exponential Smoothing Forecast account for the trend and seasonal components
-        patient.train.esforecast <- HoltWinters(patient.train,
-                                                beta=TRUE, 
-                                                gamma=TRUE) %>% 
-            forecast(h=forecast.horizon)
+        # generate outputs
+        
+        if(""){
+            
+        } else if (""){
+            
+        } else if (""){
+            
+        } else if (""){
+            
+        } else {
+            
+        }
         
         
-        fit_ets <- ets(patient.train)
-        # Automated forecasting using an ARIMA model
-        fit_arima <- auto.arima(patient.train)
-        
-        patient.train%>% 
-            HoltWinters(beta = TRUE, gamma = TRUE) %>% 
-            forecast(h=forecast.horizon) %>% 
-            plot()
-        lines(patient.test, col = "red")
-        
-        #Auto forecast
-        patient.train %>%
-            forecast(h=forecast.horizon) %>% 
-            plot()
-        lines(patient.test, col = "red")
-        
-        #Model accuracy
-        accuracy(patient.train.esforecast,patient.test)
+        # #aggregations
+        # patient.daily <- apply.daily(patient.xts,mean)
+        # patient.weekly <- apply.weekly(patient.xts, mean) 
+        # patient.monthly <- apply.monthly(patient.xts, mean) 
+        # 
+        # patient.end <- floor(0.8*length(patient.daily)) #select the first 80% of the data
+        # patient.train <- patient.daily[1:patient.end,] 
+        # patient.test <- patient.daily[(patient.end+1):length(patient.daily),]
+        # 
+        # patient.start <- c(year (start(patient.train)), month(start(patient.train)),day(start(patient.train)))
+        # patient.end <- c(year(end(patient.train)), month(end(patient.train)), day(end(patient.train)))
+        # patient.train <- ts(as.numeric(patient.train), start = patient.start, 
+        #                     end = patient.end, frequency = 7)
+        # 
+        # patient.start <- c(year (start(patient.test)), month(start(patient.test)),day(start(patient.test)))
+        # patient.end <- c(year(end(patient.test)), month(end(patient.test)), day(end(patient.test)))
+        # patient.test <- ts(as.numeric(patient.test), start = patient.start, 
+        #                    end = patient.end, frequency = 7)
+        # 
+        # 
+        # #set forecast horizon
+        # 
+        # #Exponential Smoothing Forecast account for the trend and seasonal components
+        # patient.train.esforecast <- HoltWinters(patient.train,
+        #                                         beta=TRUE, 
+        #                                         gamma=TRUE) %>% 
+        #     forecast(h=forecast.horizon)
+        # 
+        # 
+        # fit_ets <- ets(patient.train)
+        # # Automated forecasting using an ARIMA model
+        # fit_arima <- auto.arima(patient.train)
+        # 
+        # patient.train%>% 
+        #     HoltWinters(beta = TRUE, gamma = TRUE) %>% 
+        #     forecast(h=forecast.horizon) %>% 
+        #     plot()
+        # lines(patient.test, col = "red")
+        # 
+        # #Auto forecast
+        # patient.train %>%
+        #     forecast(h=forecast.horizon) %>% 
+        #     plot()
+        # lines(patient.test, col = "red")
+        # 
+        # #Model accuracy
+        # accuracy(patient.train.esforecast,patient.test)
         
     })
     
