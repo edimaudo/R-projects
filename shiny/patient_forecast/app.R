@@ -159,14 +159,50 @@ server <- function(input, output,session) {
     output$forecastPlot <- renderPlot({
         
         # Aggregation
-        if(""){
-            
-        } else if(""){
-            
+        if(input$aggregateInput == 'daily'){
+            patient.data <- apply.daily(patient.xts,mean)
+            patient.end <- floor(0.8*length(patient.data)) #select the first 80% of the data
+            patient.train <- patient.data[1:patient.end,] 
+            patient.test <- patient.data[(patient.end+1):length(patient.data),]
+            patient.start <- c(year (start(patient.train)), month(start(patient.train)),day(start(patient.train)))
+            patient.end <- c(year(end(patient.train)), month(end(patient.train)), day(end(patient.train)))
+            patient.train <- ts(as.numeric(patient.train), start = patient.start, 
+                                end = patient.end, frequency = as.numeric(input$frequencyInput) )
+            patient.start <- c(year (start(patient.test)), month(start(patient.test)),day(start(patient.test)))
+            patient.end <- c(year(end(patient.test)), month(end(patient.test)), day(end(patient.test)))
+            patient.test <- ts(as.numeric(patient.test), start = patient.start, 
+                               end = patient.end, frequency = as.numeric(input$frequencyInput))
+        } else if(input$aggregateInput == 'weekly'){
+            patient.data <- apply.weekly(patient.xts, mean) 
+            patient.end <- floor(0.8*length(patient.data)) #select the first 80% of the data
+            patient.train <- patient.data[1:patient.end,] 
+            patient.test <- patient.data[(patient.end+1):length(patient.data),]
+            patient.start <- c(year (start(patient.train)), month(start(patient.train)),week(start(patient.train)))
+            patient.end <- c(year(end(patient.train)), month(end(patient.train)), day(end(patient.train)))
+            patient.train <- ts(as.numeric(patient.train), start = patient.start, 
+                                end = patient.end, frequency = as.numeric(input$frequencyInput) )
+            patient.start <- c(year (start(patient.test)), month(start(patient.test)),week(start(patient.test)))
+            patient.end <- c(year(end(patient.test)), month(end(patient.test)), day(end(patient.test)))
+            patient.test <- ts(as.numeric(patient.test), start = patient.start, 
+                               end = patient.end, frequency = as.numeric(input$frequencyInput))
         } else {
-            
+            patient.data <- apply.monthly(patient.xts, mean) 
+            patient.data <- apply.weekly(patient.xts, mean) 
+            patient.end <- floor(0.8*length(patient.data)) #select the first 80% of the data
+            patient.train <- patient.data[1:patient.end,] 
+            patient.test <- patient.data[(patient.end+1):length(patient.data),]
+            patient.start <- c(year (start(patient.train)), month(start(patient.train)))
+            patient.end <- c(year(end(patient.train)), month(end(patient.train)))
+            patient.train <- ts(as.numeric(patient.train), start = patient.start, 
+                                end = patient.end, frequency = as.numeric(input$frequencyInput) )
+            patient.start <- c(year (start(patient.test)), month(start(patient.test)))
+            patient.end <- c(year(end(patient.test)), month(end(patient.test)))
+            patient.test <- ts(as.numeric(patient.test), start = patient.start, 
+                               end = patient.end, frequency = as.numeric(input$frequencyInput))
         }
-        
+ 
+
+               
         
         # training and test data
         
