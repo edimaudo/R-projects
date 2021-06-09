@@ -81,8 +81,11 @@ ui <- dashboardPage(
                                 br(),
                                 h4("PACF Plot",style="text-align: center;"),
                                 plotOutput("pacfPlot"),
-                                h3("Forecast",style="text-align: center;"),
-                                plotOutput("forecastPlot")
+                                h3("Forecast Output",style="text-align: center;"),
+                                plotOutput("forecastPlot"),
+                                br(),
+                                DT::dataTableOutput("accuracyOutput")
+                                
                             )
                         )
                     )
@@ -157,18 +160,19 @@ server <- function(input, output,session) {
     })
     
     output$forecastPlot <- renderPlot({
-        
-        # Aggregation
+        # Aggregation &  training and test data
         if(input$aggregateInput == 'daily'){
             patient.data <- apply.daily(patient.xts,mean)
             patient.end <- floor(0.8*length(patient.data)) #select the first 80% of the data
             patient.train <- patient.data[1:patient.end,] 
             patient.test <- patient.data[(patient.end+1):length(patient.data),]
-            patient.start <- c(year (start(patient.train)), month(start(patient.train)),day(start(patient.train)))
+            patient.start <- c(year (start(patient.train)), month(start(patient.train)),
+                               day(start(patient.train)))
             patient.end <- c(year(end(patient.train)), month(end(patient.train)), day(end(patient.train)))
             patient.train <- ts(as.numeric(patient.train), start = patient.start, 
                                 end = patient.end, frequency = as.numeric(input$frequencyInput) )
-            patient.start <- c(year (start(patient.test)), month(start(patient.test)),day(start(patient.test)))
+            patient.start <- c(year (start(patient.test)), month(start(patient.test)),
+                               day(start(patient.test)))
             patient.end <- c(year(end(patient.test)), month(end(patient.test)), day(end(patient.test)))
             patient.test <- ts(as.numeric(patient.test), start = patient.start, 
                                end = patient.end, frequency = as.numeric(input$frequencyInput))
@@ -177,12 +181,16 @@ server <- function(input, output,session) {
             patient.end <- floor(0.8*length(patient.data)) #select the first 80% of the data
             patient.train <- patient.data[1:patient.end,] 
             patient.test <- patient.data[(patient.end+1):length(patient.data),]
-            patient.start <- c(year (start(patient.train)), month(start(patient.train)),week(start(patient.train)))
-            patient.end <- c(year(end(patient.train)), month(end(patient.train)), day(end(patient.train)))
+            patient.start <- c(year (start(patient.train)), month(start(patient.train)),
+                               week(start(patient.train)))
+            patient.end <- c(year(end(patient.train)), month(end(patient.train)), 
+                             week(end(patient.train)))
             patient.train <- ts(as.numeric(patient.train), start = patient.start, 
                                 end = patient.end, frequency = as.numeric(input$frequencyInput) )
-            patient.start <- c(year (start(patient.test)), month(start(patient.test)),week(start(patient.test)))
-            patient.end <- c(year(end(patient.test)), month(end(patient.test)), day(end(patient.test)))
+            patient.start <- c(year (start(patient.test)), month(start(patient.test)),
+                               week(start(patient.test)))
+            patient.end <- c(year(end(patient.test)), month(end(patient.test)), 
+                             week(end(patient.test)))
             patient.test <- ts(as.numeric(patient.test), start = patient.start, 
                                end = patient.end, frequency = as.numeric(input$frequencyInput))
         } else {
@@ -200,77 +208,130 @@ server <- function(input, output,session) {
             patient.test <- ts(as.numeric(patient.test), start = patient.start, 
                                end = patient.end, frequency = as.numeric(input$frequencyInput))
         }
+        
+        #set forecast horizon
+        forecast.horizon <- as.numeric(input$horizonInput)
  
-
-               
-        
-        # training and test data
-        
-        # generate outputs
-        
-        if(""){
-            
-        } else if (""){
-            
-        } else if (""){
-            
-        } else if (""){
-            
+        # models
+        if(input$modelInput == 'auto exponential'){
+            patient.train%>% 
+                ets %>% 
+                forecast(h=forecast.horizon) %>% 
+                plot()
+            lines(patient.test, col = "red")             
+        } else if (input$modelInput == 'auto arima'){
+            patient.train%>% 
+                auto.arima %>% 
+                forecast(h=forecast.horizon) %>% 
+                plot()
+            lines(patient.test, col = "red")             
+        } else if (input$modelInput == 'simple exponential'){
+            patient.train%>% 
+                HoltWinters(beta=FALSE, gamma=FALSE) %>% 
+                forecast(h=forecast.horizon) %>% 
+                plot()
+            lines(patient.test, col = "red")             
+        } else if (input$modelInput == 'double exponential'){
+            patient.train%>% 
+                HoltWinters(beta = TRUE, gamma=FALSE) %>% 
+                forecast(h=forecast.horizon) %>% 
+                plot()
+            lines(patient.test, col = "red") 
         } else {
-            
+            patient.train%>% 
+                HoltWinters(beta = TRUE, gamma = TRUE) %>% 
+                forecast(h=forecast.horizon) %>% 
+                plot()
+            lines(patient.test, col = "red")           
+        }
+    })
+    
+    
+    output$accuracyOutput <- DT::renderDataTable({
+        # Aggregation &  training and test data
+        if(input$aggregateInput == 'daily'){
+            patient.data <- apply.daily(patient.xts,mean)
+            patient.end <- floor(0.8*length(patient.data)) #select the first 80% of the data
+            patient.train <- patient.data[1:patient.end,] 
+            patient.test <- patient.data[(patient.end+1):length(patient.data),]
+            patient.start <- c(year (start(patient.train)), month(start(patient.train)),
+                               day(start(patient.train)))
+            patient.end <- c(year(end(patient.train)), month(end(patient.train)), day(end(patient.train)))
+            patient.train <- ts(as.numeric(patient.train), start = patient.start, 
+                                end = patient.end, frequency = as.numeric(input$frequencyInput) )
+            patient.start <- c(year (start(patient.test)), month(start(patient.test)),
+                               day(start(patient.test)))
+            patient.end <- c(year(end(patient.test)), month(end(patient.test)), day(end(patient.test)))
+            patient.test <- ts(as.numeric(patient.test), start = patient.start, 
+                               end = patient.end, frequency = as.numeric(input$frequencyInput))
+        } else if(input$aggregateInput == 'weekly'){
+            patient.data <- apply.weekly(patient.xts, mean) 
+            patient.end <- floor(0.8*length(patient.data)) #select the first 80% of the data
+            patient.train <- patient.data[1:patient.end,] 
+            patient.test <- patient.data[(patient.end+1):length(patient.data),]
+            patient.start <- c(year (start(patient.train)), month(start(patient.train)),
+                               week(start(patient.train)))
+            patient.end <- c(year(end(patient.train)), month(end(patient.train)), 
+                             week(end(patient.train)))
+            patient.train <- ts(as.numeric(patient.train), start = patient.start, 
+                                end = patient.end, frequency = as.numeric(input$frequencyInput) )
+            patient.start <- c(year (start(patient.test)), month(start(patient.test)),
+                               week(start(patient.test)))
+            patient.end <- c(year(end(patient.test)), month(end(patient.test)), 
+                             week(end(patient.test)))
+            patient.test <- ts(as.numeric(patient.test), start = patient.start, 
+                               end = patient.end, frequency = as.numeric(input$frequencyInput))
+        } else {
+            patient.data <- apply.monthly(patient.xts, mean) 
+            patient.data <- apply.weekly(patient.xts, mean) 
+            patient.end <- floor(0.8*length(patient.data)) #select the first 80% of the data
+            patient.train <- patient.data[1:patient.end,] 
+            patient.test <- patient.data[(patient.end+1):length(patient.data),]
+            patient.start <- c(year (start(patient.train)), month(start(patient.train)))
+            patient.end <- c(year(end(patient.train)), month(end(patient.train)))
+            patient.train <- ts(as.numeric(patient.train), start = patient.start, 
+                                end = patient.end, frequency = as.numeric(input$frequencyInput) )
+            patient.start <- c(year (start(patient.test)), month(start(patient.test)))
+            patient.end <- c(year(end(patient.test)), month(end(patient.test)))
+            patient.test <- ts(as.numeric(patient.test), start = patient.start, 
+                               end = patient.end, frequency = as.numeric(input$frequencyInput))
         }
         
+        #set forecast horizon
+        forecast.horizon <- as.numeric(input$horizonInput)
         
-        # #aggregations
-        # patient.daily <- apply.daily(patient.xts,mean)
-        # patient.weekly <- apply.weekly(patient.xts, mean) 
-        # patient.monthly <- apply.monthly(patient.xts, mean) 
-        # 
-        # patient.end <- floor(0.8*length(patient.daily)) #select the first 80% of the data
-        # patient.train <- patient.daily[1:patient.end,] 
-        # patient.test <- patient.daily[(patient.end+1):length(patient.daily),]
-        # 
-        # patient.start <- c(year (start(patient.train)), month(start(patient.train)),day(start(patient.train)))
-        # patient.end <- c(year(end(patient.train)), month(end(patient.train)), day(end(patient.train)))
-        # patient.train <- ts(as.numeric(patient.train), start = patient.start, 
-        #                     end = patient.end, frequency = 7)
-        # 
-        # patient.start <- c(year (start(patient.test)), month(start(patient.test)),day(start(patient.test)))
-        # patient.end <- c(year(end(patient.test)), month(end(patient.test)), day(end(patient.test)))
-        # patient.test <- ts(as.numeric(patient.test), start = patient.start, 
-        #                    end = patient.end, frequency = 7)
-        # 
-        # 
-        # #set forecast horizon
-        # 
-        # #Exponential Smoothing Forecast account for the trend and seasonal components
-        # patient.train.esforecast <- HoltWinters(patient.train,
-        #                                         beta=TRUE, 
-        #                                         gamma=TRUE) %>% 
-        #     forecast(h=forecast.horizon)
-        # 
-        # 
-        # fit_ets <- ets(patient.train)
-        # # Automated forecasting using an ARIMA model
-        # fit_arima <- auto.arima(patient.train)
-        # 
-        # patient.train%>% 
-        #     HoltWinters(beta = TRUE, gamma = TRUE) %>% 
-        #     forecast(h=forecast.horizon) %>% 
-        #     plot()
-        # lines(patient.test, col = "red")
-        # 
-        # #Auto forecast
-        # patient.train %>%
-        #     forecast(h=forecast.horizon) %>% 
-        #     plot()
-        # lines(patient.test, col = "red")
-        # 
-        # #Model accuracy
-        # accuracy(patient.train.esforecast,patient.test)
+        # models
+        if(input$modelInput == 'auto exponential'){
+            patient.train.forecast <- ets(patient.train) %>% 
+                forecast(h=forecast.horizon)    
+        } else if (input$modelInput == 'auto arima'){
+            patient.train.forecast <- auto.arima(patient.train) %>% 
+                forecast(h=forecast.horizon)             
+        } else if (input$modelInput == 'simple exponential'){
+            patient.train.forecast <- HoltWinters(patient.train,
+                                                  beta=FALSE, 
+                                                  gamma=FALSE) %>% 
+                forecast(h=forecast.horizon)             
+        } else if (input$modelInput == 'double exponential'){
+            patient.train.forecast <- HoltWinters(patient.train,
+                                                  beta=TRUE, 
+                                                  gamma=FALSE) %>% 
+                forecast(h=forecast.horizon)  
+        } else {
+            patient.train.forecast <- HoltWinters(patient.train,
+                                                  beta=TRUE, 
+                                                  gamma=TRUE) %>% 
+                forecast(h=forecast.horizon)  
+        }  
+        
+        outputInfo <- as.data.frame(accuracy(patient.train.forecast,patient.test))
+        outputInfo
         
     })
     
+   
+
+ 
     
 }
 
