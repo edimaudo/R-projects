@@ -265,29 +265,29 @@ server <- function(input, output,session) {
     
     # models
     if(input$modelInput == 'auto exponential'){
-      patient.train.forecast <- ets(patient.train) %>% 
+      sales.train.forecast <- ets(sales.train) %>% 
         forecast(h=forecast.horizon)    
     } else if (input$modelInput == 'auto arima'){
-      patient.train.forecast <- auto.arima(patient.train) %>% 
+      sales.train.forecast <- auto.arima(sales.train) %>% 
         forecast(h=forecast.horizon)             
     } else if (input$modelInput == 'simple exponential'){
-      patient.train.forecast <- HoltWinters(patient.train,
+      sales.train.forecast <- HoltWinters(sales.train,
                                             beta=FALSE, 
                                             gamma=FALSE) %>% 
         forecast(h=forecast.horizon)             
     } else if (input$modelInput == 'double exponential'){
-      patient.train.forecast <- HoltWinters(patient.train,
+      sales.train.forecast <- HoltWinters(sales.train,
                                             beta=TRUE, 
                                             gamma=FALSE) %>% 
         forecast(h=forecast.horizon)  
     } else {
-      patient.train.forecast <- HoltWinters(patient.train,
+      sales.train.forecast <- HoltWinters(sales.train,
                                             beta=TRUE, 
                                             gamma=TRUE) %>% 
         forecast(h=forecast.horizon)  
     }
     outputInfo <- as.data.frame(accuracy(sales.train.forecast,sales.test))
-    outputInfo    
+    DT::datatable(outputInfo, options = list(scrollX = TRUE))  
     
     
   })
