@@ -36,9 +36,10 @@ log_info <- c("Yes","No")
 model_info <- c('auto arima','auto exponential','simple exponential',
                 'double exponential','triple exponential')
 
-#data 
+#=============
+# data
+#=============
 patient.xts <- xts(x = df$Patients, order.by = df$Arrival_date) 
-#aggregations
 patient.daily <- apply.daily(patient.xts,mean)
 patient.weekly <- apply.weekly(patient.xts, mean) 
 patient.monthly <- apply.monthly(patient.xts, mean) 
@@ -111,8 +112,9 @@ server <- function(input, output,session) {
              patient.train <- diff(patient.train, differences = 1) # hardcoded difference value
          }
         #Decompose the Time Series
-        patient.train.components <- decompose(patient.train)
-        plot(patient.train.components)
+        patient.train %>%
+            decompose() %>%
+            autoplot()
         
     })
     
@@ -128,9 +130,10 @@ server <- function(input, output,session) {
                             end = patient.end, frequency = as.numeric(input$frequencyInput)) 
         
         if (input$logInput == "No"){
-            acf(patient.train)
+            #acf(patient.train)
+            ggAcf(patient.train)
         } else {
-            acf(log(patient.train))
+            ggAcf(log(patient.train))
         }
         
         
@@ -149,9 +152,9 @@ server <- function(input, output,session) {
                             end = patient.end, frequency = as.numeric(input$frequencyInput)) 
         
         if (input$logInput == "No"){
-            pacf(patient.train)
+            ggPacf(patient.train) #pacf(patient.train)
         } else {
-            pacf(log(patient.train))
+            ggPacf(log(patient.train))
         }
         
     })
@@ -214,32 +217,32 @@ server <- function(input, output,session) {
             patient.train%>% 
                 ets %>% 
                 forecast(h=forecast.horizon) %>% 
-                plot()
-            lines(patient.test, col = "red")             
+                autoplot()
+            #lines(patient.test, col = "red")             
         } else if (input$modelInput == 'auto arima'){
             patient.train%>% 
                 auto.arima %>% 
                 forecast(h=forecast.horizon) %>% 
-                plot()
-            lines(patient.test, col = "red")             
+                autoplot()
+            #lines(patient.test, col = "red")             
         } else if (input$modelInput == 'simple exponential'){
             patient.train%>% 
                 HoltWinters(beta=FALSE, gamma=FALSE) %>% 
                 forecast(h=forecast.horizon) %>% 
-                plot()
-            lines(patient.test, col = "red")             
+                autoplot()
+           # lines(patient.test, col = "red")             
         } else if (input$modelInput == 'double exponential'){
             patient.train%>% 
                 HoltWinters(beta = TRUE, gamma=FALSE) %>% 
                 forecast(h=forecast.horizon) %>% 
-                plot()
-            lines(patient.test, col = "red") 
+                autoplot()
+            #lines(patient.test, col = "red") 
         } else {
             patient.train%>% 
                 HoltWinters(beta = TRUE, gamma = TRUE) %>% 
                 forecast(h=forecast.horizon) %>% 
-                plot()
-            lines(patient.test, col = "red") 
+                autoplot()
+            #lines(patient.test, col = "red") 
             
         }
     })
