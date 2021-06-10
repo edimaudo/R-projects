@@ -72,20 +72,17 @@ ui <- dashboardPage(
                         ),
                         mainPanel(
                             h1("Forecast Analysis",style="text-align: center;"), 
-                            fluidRow(
-                                h3("Decomposition",style="text-align: center;"),
-                                plotOutput("decompositionPlot"),
-                                h3("ACF/PACF",style="text-align: center;"),
-                                h4("ACF Plot",style="text-align: center;"),
-                                plotOutput("acfPlot"),
-                                br(),
-                                h4("PACF Plot",style="text-align: center;"),
-                                plotOutput("pacfPlot"),
-                                h3("Forecast Output",style="text-align: center;"),
-                                plotOutput("forecastPlot"),
-                                br(),
-                                DT::dataTableOutput("accuracyOutput")
-                                
+                            tabsetPanel(type = "tabs",
+                                        tabPanel(h4("Decomposition",style="text-align: center;"), 
+                                                 plotOutput("decompositionPlot")),
+                                        tabPanel(h4("ACF Plot",style="text-align: center;"), 
+                                                 plotOutput("acfPlot")),
+                                        tabPanel(h4("PACF Plot",style="text-align: center;"), 
+                                                 plotOutput("pacfPlot")),
+                                        tabPanel(h4("Forecast Output",style="text-align: center;"), 
+                                                 plotOutput("forecastPlot")),
+                                        tabPanel(h4("Forecast Accuracy",style="text-align: center;"), 
+                                                 DT::dataTableOutput("accuracyOutput"))
                             )
                         )
                     )
@@ -242,7 +239,8 @@ server <- function(input, output,session) {
                 HoltWinters(beta = TRUE, gamma = TRUE) %>% 
                 forecast(h=forecast.horizon) %>% 
                 plot()
-            lines(patient.test, col = "red")           
+            lines(patient.test, col = "red") 
+            
         }
     })
     
@@ -325,7 +323,8 @@ server <- function(input, output,session) {
         }  
         
         outputInfo <- as.data.frame(accuracy(patient.train.forecast,patient.test))
-        outputInfo
+        
+        DT::datatable(outputInfo, options = list(scrollX = TRUE))
         
     })
     
