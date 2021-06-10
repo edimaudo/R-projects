@@ -47,13 +47,13 @@ ui <- dashboardPage(
   dashboardHeader(title = "Forecasting Analysis"),
   dashboardSidebar(
     sidebarMenu(
-      menuItem("About", tabName = "about", icon = icon("dashboard")),
+      
       menuItem("sales forecast", tabName = "forecast", icon = icon("th"))
     )
   ),
   dashboardBody(
     tabItems(
-      tabItem(tabName = "about",includeMarkdown("readme.md"),hr()),
+      
       tabItem(tabName = "forecast",
               sidebarLayout(
                 sidebarPanel(
