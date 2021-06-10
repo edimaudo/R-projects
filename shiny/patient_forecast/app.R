@@ -229,6 +229,7 @@ server <- function(input, output,session) {
             patient.train%>% 
                 HoltWinters(beta=FALSE, gamma=FALSE) %>% 
                 forecast(h=forecast.horizon) %>% 
+                
                 autoplot()
            # lines(patient.test, col = "red")             
         } else if (input$modelInput == 'double exponential'){
