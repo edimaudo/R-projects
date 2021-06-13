@@ -52,7 +52,8 @@ ui <- dashboardPage(
                     sidebarLayout(
                         sidebarPanel(
                             selectInput("cityInput", "City", choices = cities),
-                            selectInput("categoryInput", "Category", choices = categories)
+                            selectInput("categoryInput", "Category", choices = categories),
+                            submitButton("Submit")
                         ),
                         mainPanel(
                             h2("City Analysis",style="text-align: center;"), 
