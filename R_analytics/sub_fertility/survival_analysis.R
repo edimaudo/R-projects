@@ -3,7 +3,6 @@
 # for conception or withdrawal from study
 #  1. Kaplan Meier survival analysis (plotted cumulatively or 1-x) with censoring for 2 events 
 #  2. Cumulative competing risks method 
-#  3.  graph(s) to explain the variables BMI, time trying to conceive and diagnosis type 3
 # 
 
 rm(list = ls())
@@ -29,8 +28,16 @@ df.backup <- df
 summary(df)
 
 #  1. Kaplan Meier survival analysis (plotted cumulatively or 1-x) with censoring for 2 events 
+fit <- survfit(Surv(days_try_conceive,days_to_censor) ~ rrm_outcome, data = df)
+print(fit)
+
 
 #  2. Cumulative competing risks method 
-
-
-#  3.  graph(s) to explain the variables BMI, time trying to conceive and diagnosis type 3
+ggsurvplot(fit,
+           pval = TRUE, conf.int = TRUE,
+           risk.table = TRUE, # Add risk table
+           risk.table.col = "strata", # Change risk table color by groups
+           linetype = "strata", # Change line type by groups
+           surv.median.line = "hv", # Specify median survival
+           ggtheme = theme_bw(), # Change ggplot2 theme
+           palette = c("#E7B800", "#2E9FDF"))
