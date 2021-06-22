@@ -1,13 +1,16 @@
+# Classify bank loans
+
 #===================
 ## Load Libraries
 #===================
 rm(list = ls()) #clear environment
 
-# libraries
+# Packages
 packages <- c('ggplot2', 'corrplot','tidyverse',"caret","dummies","fastDummies"
               ,'FactoMineR','factoextra','readxl','scales','dplyr','mlbench','caTools',
               'gridExtra','doParallel','readxl','doParallel')
-# load packages
+
+# Load packages
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
     install.packages(package)
@@ -15,13 +18,17 @@ for (package in packages) {
   }
 }
 
+#===================
 # Load data
+#===================
 df <- read.csv("bankloan.csv")
 
 #back up 
 df.backup <- df
 
-# understand data
+#===================
+# Understand data
+#===================
 glimpse(df)
 
 summary(df)
@@ -36,7 +43,9 @@ print(missing_data)
 #drop na
 df <- na.omit(df)
 
-# calculate correlation
+#===================
+# Calculate correlation
+#===================
 correlationMatrix <- cor(df)
 corrplot(correlationMatrix,method='number')
 # # summarize the correlation matrix
@@ -46,6 +55,9 @@ highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.75)
 # # print indexes of highly correlated attributes
 print(highlyCorrelated)
 
+#===================
+# Check for imbalance
+#===================
 
 #tweak for sampling
 #check for imbalance
@@ -68,8 +80,9 @@ labelEncoder <-function(x){
 df_cts <- df[,c(1,11,12,13,14,16,17,18,19,20)]
 df_cts <- as.data.frame(lapply(df_cts, normalize))
 
-
-#split into train and test
+#===================
+# Data modeling
+#===================
 sample <- sample.split(df,SplitRatio = 0.75)
 train <- subset(df,sample ==TRUE)
 test <- subset(df, sample==FALSE)
@@ -129,9 +142,9 @@ fit.ensemble <- train(as.factor(crime)~., data=train,
 
 stopCluster(cl)
 
-#------------------
+#===================
 #compare models
-#------------------
+#===================
 results <- resamples(list(randomforest = fit.rf, 
                           `gradient boost` = fit.gbm, 
                           `support vector machine` = fit.svm,
@@ -160,12 +173,15 @@ summary(logistic_regression_model)
 test_scores <- predict(fit.gbm, test)
 confusionMatrix(test_scores, test$Output)
 
-# Make predictions
+#===================
+# Predictions
+#===================
 predicted.classes <- fit.knn %>% predict(test)
 output <- confusionMatrix(data = predicted.classes, reference = test$crime, mode = "everything")
 output
+#===================
 #other metrics
-
+#===================
 caret::varImp(fit.rf)
 
 #plot confusion matrix of selected option
