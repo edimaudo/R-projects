@@ -1,0 +1,20 @@
+library(lpSolveAPI)
+
+
+model<-make.lp(ncol=4)
+m1<-lp.control(model, sense="max", verbose="neutral")
+m2<-set.objfn(model, obj=c(1/250,1/200,1/150,1/100))
+m3<-set.bounds(model, lower=c(250000,200000,75000,50000))
+m4<-add.constraint(model, c(1,1,0,0), "<=",600000)
+m5<-add.constraint(model, c(1,1,1,1), type="<=",1000000)
+m6<-add.constraint(model, c((1500/250-500/250),(800/200-500/200),(300/150-500/150),(100/100-500/100)), type=">=",0) 
+rownames=c("facebook & Adword budget constraint","total budget","LTV")
+colnames=c("Adword","Facebook","Email","Affiliated")
+dimnames(model)=list(rownames,colnames)
+name.lp(model,"Maximize Number Of Users")
+write.lp(model, filename="lp_model.lp")
+kable(readLines("lp_model.lp"))
+
+solve(model)
+get.variables(model)
+get.objective(model)
