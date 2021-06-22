@@ -18,15 +18,13 @@ for (package in packages) {
 # Load data
 df <- read.csv("bankloan.csv")
 
+#back up 
+df.backup <- df
+
 # understand data
-summary(df)
-
-
 glimpse(df)
 
-introduce(df)
-
-plot_bar(df)
+summary(df)
 
 #drop id
 df['id'] <- NULL
@@ -35,7 +33,17 @@ df['id'] <- NULL
 missing_data <- apply(df, 2, function(x) any(is.na(x)))
 print(missing_data)
 
+#drop na
+df <- na.omit(df)
 
+# calculate correlation
+correlationMatrix <- cor(df)
+# # summarize the correlation matrix
+# print(correlationMatrix)
+# # find attributes that are highly corrected (ideally >0.75)
+highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.75)
+# # print indexes of highly correlated attributes
+print(highlyCorrelated)
 
 #normalize data
 normalize <- function(x) {
@@ -43,18 +51,14 @@ normalize <- function(x) {
 }
 
 
-library(corrplot)
-#update model by remove redundant columns
-# # calculate correlation matrix
-correlationMatrix <- cor(df_new[,1:16])
-# # summarize the correlation matrix
-# print(correlationMatrix)
-# # find attributes that are highly corrected (ideally >0.75)
-highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.5)
-# # print indexes of highly correlated attributes
-print(highlyCorrelated)
 
-#drop id
+
+
+
+
+
+
+
 
 #split into train and test
 sample <- sample.split(df,SplitRatio = 0.75)
