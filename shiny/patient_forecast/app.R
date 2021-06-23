@@ -2,7 +2,7 @@
 rm(list = ls()) #clear environment
 
 # libraries
-packages <- c('ggplot2', 'corrplot','tidyverse',"caret","dummies",'readxl',
+packages <- c('ggplot2', 'corrplot','tidyverse',"caret","dummies",'readxl','shiny','shinydashboard',
               'scales','dplyr','mlbench','caTools','forecast','TTR','xts',
               'lubridate')
 # load packages
