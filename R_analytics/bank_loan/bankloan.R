@@ -8,7 +8,7 @@ rm(list = ls()) #clear environment
 # Packages
 packages <- c('ggplot2', 'corrplot','tidyverse',"caret","dummies","fastDummies"
               ,'FactoMineR','factoextra','readxl','scales','dplyr','mlbench','caTools',
-              'gridExtra','doParallel','readxl','doParallel')
+              'gridExtra','doParallel','readxl','gridExtra','grid')
 
 # Load packages
 for (package in packages) {
@@ -89,59 +89,55 @@ model_weights <- ifelse(train$default == "1",
 #model training
 cl <- makePSOCKcluster(4)
 registerDoParallel(cl)
+
 # Prediction model
 set.seed(123)
 #cross fold validation
 control <- trainControl(method="repeatedcv", number=10, repeats=3)
-#logistic regression
 # control <- trainControl(method="repeatedcv", number=10, repeats=5, classProbs = FALSE)
-# #glm
-# fit.glm <- train(as.factor(crime)~., data=train, method="glm",family=binomial(),
-#                  metric = "Accuracy", trControl = control, weights = model_weights)
-fit.glm <- train(Output~., data=train, method="glm", trControl=control)
-#svm
-fit.svm <- train(Output~., data=train, method="svmRadial", trControl=control)
-#random forest
-fit.rf <- train(Output~., data=train, method="rf", trControl=control)
-#boosting algorithm - Stochastic Gradient Boosting (Generalized Boosted Modeling)
-fit.gbm <- train(Output~., data=train, method="gbm", trControl=control)
 
-fit.glm <- train(as.factor(crime)~., data=train, method="glm",family=binomial(),
-                 metric = "Accuracy", trControl = control)
-#random forest
-fit.rf <- train(as.factor(crime)~., data=train, method="rf", 
-                metric = "Accuracy", trControl = control)
-#boosting algorithm - Stochastic Gradient Boosting (Generalized Boosted Modeling)
-fit.gbm <- train(as.factor(crime)~., data=train, method="gbm", 
-                 metric = "Accuracy", trControl = control)
+# models
+#glm
+fit.glm <- train(as.factor(default)~., data=train, method="glm",family=binomial(),
+                  metric = "Accuracy", trControl = control, weights = model_weights)
 #svm
-fit.svm <- train(as.factor(crime)~., data=train, method="svmRadial", 
-                 metric = "Accuracy", trControl = control)
+fit.svm <- train(as.factor(default)~., data=train, method="svmRadial", 
+                 metric = "Accuracy", trControl = control, weights = model_weights)
+#random forest
+fit.rf <- train(as.factor(default)~., data=train, method="rf",
+                metric = "Accuracy", trControl = control, weights = model_weights)
+
+#boosting algorithm - Stochastic Gradient Boosting (Generalized Boosted Modeling)
+fit.gbm <- train(as.factor(default)~., data=train, method="gbm",
+                 metric = "Accuracy", trControl = control, weights = model_weights)
 #nnet
-fit.nnet <- train(as.factor(crime)~., data=train, method="nnet", 
-                  metric = "Accuracy", trControl = control)
+fit.nnet <- train(as.factor(default)~., data=train, method="nnet", 
+                  metric = "Accuracy", trControl = control, weights = model_weights)
 #naive
-fit.naive <- train(as.factor(crime)~., data=train, 
-                   method="naive_bayes", metric = "Accuracy", 
-                   trControl = control)
+fit.naive <- train(as.factor(default)~., data=train, method="naive_bayes", 
+                   metric = "Accuracy", trControl = control, weights = model_weights)
+
 #extreme gradient boosting
-fit.xgb <- train(as.factor(crime)~., data=train, 
-                 method="xgbTree", metric = "Accuracy", trControl = control)
+fit.xgb <- train(as.factor(default)~., data=train, method="xgbTree", 
+                 metric = "Accuracy", trControl = control, weights = model_weights)
+
 #bagged cart
-fit.bg <- train(as.factor(crime)~., data=train, 
-                method="treebag", metric = "Accuracy", trControl = control)
+fit.bg <- train(as.factor(default)~., data=train, method="treebag", 
+                metric = "Accuracy", trControl = control, weights = model_weights)
+
 #decision tree
+fit.dtree <- train(as.factor(default)~., data=train, method="C5.0", 
+                   metric = "Accuracy", trControl = control,weights = model_weights)
+
+#knn
+fit.knn <- train(as.factor(default)~., data=train, method="kknn", 
+                 metric = "Accuracy", trControl = control,weights = model_weights)
+#ensemble
+fit.ensemble <- train(as.factor(default)~., data=train, method="nodeHarvest", 
+                      metric = "Accuracy", trControl = control,weights = model_weights)
+
 cl <- makePSOCKcluster(4)
 registerDoParallel(cl)
-fit.dtree <- train(as.factor(crime)~., data=train, 
-                   method="C5.0", metric = "Accuracy", trControl = control)
-#knn
-fit.knn <- train(as.factor(crime)~., data=train, 
-                 method="kknn", metric = "Accuracy", trControl = control)
-#ensemble
-fit.ensemble <- train(as.factor(crime)~., data=train, 
-                      method="nodeHarvest", metric = "Accuracy", trControl = control)
-
 stopCluster(cl)
 
 #===================
@@ -154,7 +150,7 @@ results <- resamples(list(randomforest = fit.rf,
                           neuralnetwork = fit.nnet,
                           xgboost = fit.xgb, 
                           logisticregression = fit.glm, 
-                          `decision tree` = fit.dtree, 
+                          #`decision tree` = fit.dtree, 
                           `naive bayes` = fit.naive,
                           `ensemble` = fit.ensemble, 
                           `knn` = fit.knn))
@@ -164,34 +160,21 @@ summary(results)
 bwplot(results)
 # Dot-plot comparison
 dotplot(results)
-#logistic regression
-logistic_regression_model <- nnet::multinom(crime ~ ., 
-                                            data = crimes_data_model2 %>% 
-                                              select(Year, Age,`Job_House Wife`,`Job_Maid`,
-                                                     `Marital Status_Single`,
-                                                     Nationality_UAE, Target))
-summary(logistic_regression_model)
-#use of test data
-test_scores <- predict(fit.gbm, test)
-confusionMatrix(test_scores, test$Output)
 
 #===================
 # Predictions
 #===================
-predicted.classes <- fit.knn %>% predict(test)
-output <- confusionMatrix(data = predicted.classes, reference = test$crime, mode = "everything")
+predicted.classes <- fit.rf %>% predict(test)
+output <- confusionMatrix(data = predicted.classes, reference = test$default, mode = "everything")
 output
+
 #===================
 #other metrics
 #===================
 caret::varImp(fit.rf)
 
-#plot confusion matrix of selected option
-library(ggplot2)     # to plot
-library(gridExtra)   # to put more
-library(grid)        # plot together
 
-# plotting the matrix
+#plot confusion matrix of selected option
 output2 <- as.data.frame(output$table)
 colnames(output2) <- c("Predicted",'Actual',"Freq")
 cm_d_p <-  ggplot(data =output2, aes(x = Predicted , y =  Actual, fill = Freq))+
