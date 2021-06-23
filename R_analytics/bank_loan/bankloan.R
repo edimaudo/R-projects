@@ -55,18 +55,6 @@ highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.75)
 # # print indexes of highly correlated attributes
 print(highlyCorrelated)
 
-#===================
-# Check for imbalance
-#===================
-
-#tweak for sampling
-#check for imbalance
-#print(table(df_new$crime))
-# #weight due to 
-# model_weights <- ifelse(train$crime == "Assault",
-#                         (1/table(train$crime)[1]) * 0.5,
-#                         (1/table(train$crime)[2]) * 0.5)
-
 #normalize data
 normalize <- function(x) {
   return ((x - min(x)) / (max(x) - min(x)))
@@ -77,8 +65,8 @@ labelEncoder <-function(x){
   as.numeric(factor(x))-1
 }
 
-df_cts <- df[,c(1,11,12,13,14,16,17,18,19,20)]
-df_cts <- as.data.frame(lapply(df_cts, normalize))
+
+df <- as.data.frame(lapply(df, normalize))
 
 #===================
 # Data modeling
@@ -87,6 +75,16 @@ sample <- sample.split(df,SplitRatio = 0.75)
 train <- subset(df,sample ==TRUE)
 test <- subset(df, sample==FALSE)
 
+#===================
+# Check for imbalance
+#===================
+print(table(df$default))
+#tweak for sampling
+
+# #weight due to 
+model_weights <- ifelse(train$default == "1",
+                        (1/table(train$default)[1]) * 0.5,
+                        (1/table(train$default)[2]) * 0.5)
 
 #model training
 cl <- makePSOCKcluster(4)
@@ -96,6 +94,10 @@ set.seed(123)
 #cross fold validation
 control <- trainControl(method="repeatedcv", number=10, repeats=3)
 #logistic regression
+# control <- trainControl(method="repeatedcv", number=10, repeats=5, classProbs = FALSE)
+# #glm
+# fit.glm <- train(as.factor(crime)~., data=train, method="glm",family=binomial(),
+#                  metric = "Accuracy", trControl = control, weights = model_weights)
 fit.glm <- train(Output~., data=train, method="glm", trControl=control)
 #svm
 fit.svm <- train(Output~., data=train, method="svmRadial", trControl=control)
