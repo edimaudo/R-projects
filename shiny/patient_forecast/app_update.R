@@ -36,6 +36,7 @@ difference_info <- c("Yes","No")
 log_info <- c("Yes","No")
 model_info <- c('auto arima','auto exponential','simple exponential',
                 'double exponential','triple exponential')
+train_test_split_info <- c(seq(0, 100, by=5))
 
 #=============
 # data
@@ -101,6 +102,8 @@ ui <- dashboardPage(
                                         choices = horizon_info, selected = 14),
                             selectInput("frequencyInput", "Frequency", 
                                         choices = frequency_info, selected = 7),
+                            sliderInput("traintestInput", "Train/Test Split",
+                                        min = 0, max = 1,value = 0.8),
                             selectInput("modelInput", "Model", 
                                         choices = model_info, selected = 'auto exponential'),
                             submitButton("Submit")
@@ -213,9 +216,10 @@ server <- function(input, output,session) {
     
     output$forecastPlot <- renderPlot({
         # Aggregation &  training and test data
+        
         if(input$aggregateInput == 'daily'){
             patient.data <- apply.daily(patient.xts,mean)
-            patient.end <- floor(0.8*length(patient.data)) #select the first 80% of the data
+            patient.end <- floor(as.numeric(input$traintestInput)  * length(patient.data)) #select the first 80% of the data
             patient.train <- patient.data[1:patient.end,] 
             patient.test <- patient.data[(patient.end+1):length(patient.data),]
             patient.start <- c(year (start(patient.train)), month(start(patient.train)),
@@ -230,7 +234,7 @@ server <- function(input, output,session) {
                                end = patient.end, frequency = as.numeric(input$frequencyInput))
         } else if(input$aggregateInput == 'weekly'){
             patient.data <- apply.weekly(patient.xts, mean) 
-            patient.end <- floor(0.8*length(patient.data)) #select the first 80% of the data
+            patient.end <- floor(as.numeric(input$traintestInput)*length(patient.data)) #select the first 80% of the data
             patient.train <- patient.data[1:patient.end,] 
             patient.test <- patient.data[(patient.end+1):length(patient.data),]
             patient.start <- c(year (start(patient.train)), month(start(patient.train)),
@@ -248,7 +252,7 @@ server <- function(input, output,session) {
         } else {
             patient.data <- apply.monthly(patient.xts, mean) 
             patient.data <- apply.weekly(patient.xts, mean) 
-            patient.end <- floor(0.8*length(patient.data)) #select the first 80% of the data
+            patient.end <- floor(as.numeric(input$traintestInput)*length(patient.data)) #select the first 80% of the data
             patient.train <- patient.data[1:patient.end,] 
             patient.test <- patient.data[(patient.end+1):length(patient.data),]
             patient.start <- c(year (start(patient.train)), month(start(patient.train)))
@@ -305,7 +309,7 @@ server <- function(input, output,session) {
         # Aggregation &  training and test data
         if(input$aggregateInput == 'daily'){
             patient.data <- apply.daily(patient.xts,mean)
-            patient.end <- floor(0.8*length(patient.data)) #select the first 80% of the data
+            patient.end <- floor(as.numeric(input$traintestInput)*length(patient.data)) #select the first 80% of the data
             patient.train <- patient.data[1:patient.end,] 
             patient.test <- patient.data[(patient.end+1):length(patient.data),]
             patient.start <- c(year (start(patient.train)), month(start(patient.train)),
@@ -320,7 +324,7 @@ server <- function(input, output,session) {
                                end = patient.end, frequency = as.numeric(input$frequencyInput))
         } else if(input$aggregateInput == 'weekly'){
             patient.data <- apply.weekly(patient.xts, mean) 
-            patient.end <- floor(0.8*length(patient.data)) #select the first 80% of the data
+            patient.end <- floor(as.numeric(input$traintestInput)*length(patient.data)) #select the first 80% of the data
             patient.train <- patient.data[1:patient.end,] 
             patient.test <- patient.data[(patient.end+1):length(patient.data),]
             patient.start <- c(year (start(patient.train)), month(start(patient.train)),
@@ -338,7 +342,7 @@ server <- function(input, output,session) {
         } else {
             patient.data <- apply.monthly(patient.xts, mean) 
             patient.data <- apply.weekly(patient.xts, mean) 
-            patient.end <- floor(0.8*length(patient.data)) #select the first 80% of the data
+            patient.end <- floor(as.numeric(input$traintestInput)*length(patient.data)) #select the first 80% of the data
             patient.train <- patient.data[1:patient.end,] 
             patient.test <- patient.data[(patient.end+1):length(patient.data),]
             patient.start <- c(year (start(patient.train)), month(start(patient.train)))
