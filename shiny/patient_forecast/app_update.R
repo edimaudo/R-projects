@@ -63,8 +63,6 @@ ui <- dashboardPage(
                         sidebarPanel(
                             selectInput("aggregateInput", "Aggregate", 
                                         choices = aggregate_info, selected = 'daily'),
-                            selectInput("horizonInput", "Horizon", 
-                                        choices = horizon_info, selected = 14),
                             selectInput("frequencyInput", "Frequency", 
                                         choices = frequency_info, selected = 7),
                             radioButtons("differenceInput","Difference",
@@ -84,9 +82,11 @@ ui <- dashboardPage(
                                         tabPanel(
                                             h4("Multi seasonal Decomposition",style="text-align: center;"),
                                             plotOutput("multidecompositionPlot")),
-                                        tabPanel(h4("ACF Plot",style="text-align: center;"), 
+                                        tabPanel(
+                                            h4("ACF Plot",style="text-align: center;"), 
                                                  plotOutput("acfPlot")),
-                                        tabPanel(h4("PACF Plot",style="text-align: center;"), 
+                                        tabPanel(
+                                            h4("PACF Plot",style="text-align: center;"), 
                                                  plotOutput("pacfPlot"))
                             )
                         )
@@ -101,10 +101,6 @@ ui <- dashboardPage(
                                         choices = horizon_info, selected = 14),
                             selectInput("frequencyInput", "Frequency", 
                                         choices = frequency_info, selected = 7),
-                            radioButtons("differenceInput","Difference",
-                                         choices = difference_info, selected = "No"),
-                            radioButtons("logInput","Log",
-                                         choices = log_info, selected = "No"),
                             selectInput("modelInput", "Model", 
                                         choices = model_info, selected = 'auto exponential'),
                             submitButton("Submit")
@@ -112,8 +108,6 @@ ui <- dashboardPage(
                         mainPanel(
                             h1("Forecast Analysis",style="text-align: center;"), 
                             tabsetPanel(type = "tabs",
-                                        tabPanel(h4("Decomposition",style="text-align: center;"), 
-                                                 plotOutput("decompositionPlot")),
                                         tabPanel(h4("Forecast Output",style="text-align: center;"), 
                                                  plotOutput("forecastPlot")),
                                         tabPanel(h4("Forecast Accuracy",style="text-align: center;"), 
