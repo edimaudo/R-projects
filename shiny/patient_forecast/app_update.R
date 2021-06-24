@@ -2,9 +2,10 @@
 rm(list = ls()) #clear environment
 
 # libraries
-packages <- c('ggplot2', 'corrplot','tidyverse',"caret","dummies",'readxl','shiny','shinydashboard',
-              'scales','dplyr','mlbench','caTools','forecast','TTR','xts',
-              'lubridate')
+packages <- c('ggplot2', 'corrplot','tidyverse',"caret","dummies",'readxl',
+              'shiny','shinydashboard','scales','dplyr','mlbench','caTools',
+              'forecast','TTR','xts','lubridate')
+
 # load packages
 for (package in packages) {
     if (!require(package, character.only=T, quietly=T)) {
@@ -49,11 +50,48 @@ ui <- dashboardPage(
     dashboardHeader(title = "Patient Forecast"),
     dashboardSidebar(
         sidebarMenu(
-            menuItem("Patient Forecast", tabName = "Forecast", icon = icon("th"))
+            menuItem("Data", tabName = "data", icon = icon("th")),
+            menuItem("Analysis", tabName = "analysis", icon = icon("th")),
+            menuItem("Forecasting", tabName = "Forecast", icon = icon("th"))
         )
     ),
     dashboardBody(
         tabItems(
+            tabItem(tabName = "data"),
+            tabItem(tabName = "analysis",
+                    sidebarLayout(
+                        sidebarPanel(
+                            selectInput("aggregateInput", "Aggregate", 
+                                        choices = aggregate_info, selected = 'daily'),
+                            selectInput("horizonInput", "Horizon", 
+                                        choices = horizon_info, selected = 14),
+                            selectInput("frequencyInput", "Frequency", 
+                                        choices = frequency_info, selected = 7),
+                            radioButtons("differenceInput","Difference",
+                                         choices = difference_info, selected = "No"),
+                            numericInput("differenceNumericInput", "Difference Input", 
+                                         1, min = 1, max = 52, step = 0.5),
+                            radioButtons("logInput","Log",
+                                         choices = log_info, selected = "No"),
+                            submitButton("Submit")
+                        ),
+                        mainPanel(
+                            h1("Analysis",style="text-align: center;"), 
+                            tabsetPanel(type = "tabs",
+                                        tabPanel(
+                                            h4("Decomposition",style="text-align: center;"),
+                                            plotOutput("decompositionPlot")),
+                                        tabPanel(
+                                            h4("Multi seasonal Decomposition",style="text-align: center;"),
+                                            plotOutput("multidecompositionPlot")),
+                                        tabPanel(h4("ACF Plot",style="text-align: center;"), 
+                                                 plotOutput("acfPlot")),
+                                        tabPanel(h4("PACF Plot",style="text-align: center;"), 
+                                                 plotOutput("pacfPlot"))
+                            )
+                        )
+                    )  
+            ),
             tabItem(tabName = "Forecast",
                     sidebarLayout(
                         sidebarPanel(
@@ -76,10 +114,6 @@ ui <- dashboardPage(
                             tabsetPanel(type = "tabs",
                                         tabPanel(h4("Decomposition",style="text-align: center;"), 
                                                  plotOutput("decompositionPlot")),
-                                        tabPanel(h4("ACF Plot",style="text-align: center;"), 
-                                                 plotOutput("acfPlot")),
-                                        tabPanel(h4("PACF Plot",style="text-align: center;"), 
-                                                 plotOutput("pacfPlot")),
                                         tabPanel(h4("Forecast Output",style="text-align: center;"), 
                                                  plotOutput("forecastPlot")),
                                         tabPanel(h4("Forecast Accuracy",style="text-align: center;"), 
@@ -100,61 +134,85 @@ server <- function(input, output,session) {
     output$decompositionPlot <- renderPlot({
         #using only daily data
         patient.end <- floor(1*length(patient.daily)) 
-        patient.train <- patient.daily[1:patient.end,] 
-        patient.start <- c(year (start(patient.train)), month(start(patient.train)),
-                           day(start(patient.train)))
-        patient.end <- c(year(end(patient.train)), month(end(patient.train)), 
-                         day(end(patient.train)))
-        patient.train <- ts(as.numeric(patient.train), start = patient.start, 
-                             end = patient.end, frequency = as.numeric(input$frequencyInput)) 
-         
-         if (input$differenceInput == "Yes"){
-             patient.train <- diff(patient.train, differences = 1) # hardcoded difference value
-         }
+        patient.data <- patient.daily[1:patient.end,] 
+        patient.start <- c(year (start(patient.data)), month(start(patient.data)),
+                           day(start(patient.data)))
+        patient.end <- c(year(end(patient.data)), month(end(patient.data)), 
+                         day(end(patient.data)))
+        patient.data <- ts(as.numeric(patient.data), start = patient.start, 
+                           end = patient.end, frequency = as.numeric(input$frequencyInput)) 
+        
+        if (input$differenceInput == "Yes"){
+            patient.data <- diff(patient.data, differences = as.numeric(input$differenceNumericInput)) 
+        }
         #Decompose the Time Series
-        patient.train %>%
+        patient.data %>%
             decompose() %>%
             autoplot()
         
     })
     
+    #multi season output
+    output$multidecompositionPlot <- renderPlot({
+        #using only daily data
+        patient.end <- floor(1*length(patient.daily)) 
+        patient.data <- patient.daily[1:patient.end,] 
+        patient.start <- c(year (start(patient.data)), month(start(patient.data)),
+                           day(start(patient.data)))
+        patient.end <- c(year(end(patient.data)), month(end(patient.data)), 
+                         day(end(patient.data)))
+        patient.data <- ts(as.numeric(patient.data), start = patient.start, 
+                           end = patient.end, frequency = as.numeric(input$frequencyInput)) 
+        
+        if (input$differenceInput == "Yes"){
+            patient.data <- diff(patient.data, differences = as.numeric(input$differenceNumericInput))
+        }
+        #Decompose the Time Series
+        patient.data %>%
+            mstl() %>%
+            autoplot()
+        
+    })    
+    
     #ACF output
     output$acfPlot <- renderPlot({
-        #using only daily data
-        patient.end <- floor(1*length(patient.daily))
-        patient.train <- patient.daily[1:patient.end,] 
-        patient.start <- c(year (start(patient.train)), month(start(patient.train)),
-                           day(start(patient.train)))
-        patient.end <- c(year(end(patient.train)), month(end(patient.train)), day(end(patient.train)))
-        patient.train <- ts(as.numeric(patient.train), start = patient.start, 
-                            end = patient.end, frequency = as.numeric(input$frequencyInput)) 
+        # Ddaily data
+        patient.end <- floor(1*length(patient.daily)) 
+        patient.data <- patient.daily[1:patient.end,] 
+        patient.start <- c(year (start(patient.data)), month(start(patient.data)),
+                           day(start(patient.data)))
+        patient.end <- c(year(end(patient.data)), month(end(patient.data)), 
+                         day(end(patient.data)))
+        patient.data <- ts(as.numeric(patient.data), start = patient.start, 
+                           end = patient.end, frequency = as.numeric(input$frequencyInput)) 
         
         if (input$logInput == "No"){
             #acf(patient.train)
-            ggAcf(patient.train)
+            ggAcf(patient.data)
         } else {
-            ggAcf(log(patient.train))
+            ggAcf(log(patient.data))
         }
         
         
         
     })
-
+    
     #PACF output
     output$pacfPlot <- renderPlot({
         #using only daily data
-        patient.end <- floor(1*length(patient.daily)) #select the first 80% of the data
-        patient.train <- patient.daily[1:patient.end,] 
-        patient.start <- c(year (start(patient.train)), month(start(patient.train)),
-                           day(start(patient.train)))
-        patient.end <- c(year(end(patient.train)), month(end(patient.train)), day(end(patient.train)))
-        patient.train <- ts(as.numeric(patient.train), start = patient.start, 
-                            end = patient.end, frequency = as.numeric(input$frequencyInput)) 
+        patient.end <- floor(1*length(patient.daily)) 
+        patient.data <- patient.daily[1:patient.end,] 
+        patient.start <- c(year (start(patient.data)), month(start(patient.data)),
+                           day(start(patient.data)))
+        patient.end <- c(year(end(patient.data)), month(end(patient.data)), 
+                         day(end(patient.data)))
+        patient.data <- ts(as.numeric(patient.data), start = patient.start, 
+                           end = patient.end, frequency = as.numeric(input$frequencyInput)) 
         
         if (input$logInput == "No"){
-            ggPacf(patient.train) #pacf(patient.train)
+            ggPacf(patient.data) #pacf(patient.train)
         } else {
-            ggPacf(log(patient.train))
+            ggPacf(log(patient.data))
         }
         
     })
@@ -211,7 +269,7 @@ server <- function(input, output,session) {
         
         #set forecast horizon
         forecast.horizon <- as.numeric(input$horizonInput)
- 
+        
         # models
         if(input$modelInput == 'auto exponential'){
             patient.train%>% 
@@ -231,7 +289,7 @@ server <- function(input, output,session) {
                 forecast(h=forecast.horizon) %>% 
                 
                 autoplot()
-           # lines(patient.test, col = "red")             
+            # lines(patient.test, col = "red")             
         } else if (input$modelInput == 'double exponential'){
             patient.train%>% 
                 HoltWinters(beta = TRUE, gamma=FALSE) %>% 
@@ -332,9 +390,9 @@ server <- function(input, output,session) {
         
     })
     
-   
-
- 
+    
+    
+    
     
 }
 
