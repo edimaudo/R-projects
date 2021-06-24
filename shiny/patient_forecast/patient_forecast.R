@@ -46,7 +46,7 @@ patient.test <- ts(as.numeric(patient.test), start = patient.start,
 
 forecast.horizon <- length(patient.test) 
 
-
+info <- c(seq(0, 100, by=5))
 
 
 ## twice-difference the CO2 data
