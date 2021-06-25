@@ -82,6 +82,11 @@ patient.train.esforecast <- HoltWinters(patient.train,
                                        gamma=TRUE) %>% 
 forecast(h=forecast.horizon)
 
+#tbat
+patient.train%>% 
+  tbats %>% 
+  forecast(h=forecast.horizon) %>% 
+  plot()
 
 fit_ets <- ets(patient.train)
 # Automated forecasting using an ARIMA model
