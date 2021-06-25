@@ -474,7 +474,7 @@ server <- function(input, output,session) {
                 forecast(h=forecast.horizon)  
         }  
         
-        outputInfo <- as.data.frame(accuracy(patient.train.forecast,patient.test))
+        outputInfo <- as.data.frame(accuracy(patient.train.forecast ,patient.test))
         
         DT::datatable(outputInfo, options = list(scrollX = TRUE))
         
