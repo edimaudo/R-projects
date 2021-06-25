@@ -35,7 +35,7 @@ frequency_info <- c(7, 12, 52, 365)
 difference_info <- c("Yes","No")
 log_info <- c("Yes","No")
 model_info <- c('auto arima','auto exponential','simple exponential',
-                'double exponential','triple exponential')
+                'double exponential','triple exponential', 'tbat','manual arima')
 
 
 #=============
@@ -101,8 +101,8 @@ ui <- dashboardPage(
                                         choices = frequency_info, selected = 7),
                             sliderInput("traintestInput", "Train/Test Split",
                                         min = 0, max = 1,value = 0.8),
-                            selectInput("modelInput", "Model", 
-                                        choices = model_info, selected = 'auto exponential'),
+                            checkboxGroupInput("modelCheckboxInput", "Models:",choices = model_info, 
+                                               selected = 'auto exponential'),
                             submitButton("Submit")
                         ),
                         mainPanel(
@@ -301,7 +301,10 @@ server <- function(input, output,session) {
     
     output$forecastPlot <- renderPlot({
         # Aggregation &  training and test data
-        
+        patient.xts <- xts(x = df$Patients, order.by = df$Arrival_date) 
+        patient.daily <- apply.daily(patient.xts,mean)
+        patient.weekly <- apply.weekly(patient.xts, mean) 
+        patient.monthly <- apply.monthly(patient.xts, mean)        
         if(input$aggregateInput == 'daily'){
             patient.data <- apply.daily(patient.xts,mean)
             patient.end <- floor(as.numeric(input$traintestInput)  * length(patient.data)) 
@@ -391,6 +394,10 @@ server <- function(input, output,session) {
     
     
     output$accuracyOutput <- DT::renderDataTable({
+        patient.xts <- xts(x = df$Patients, order.by = df$Arrival_date) 
+        patient.daily <- apply.daily(patient.xts,mean)
+        patient.weekly <- apply.weekly(patient.xts, mean) 
+        patient.monthly <- apply.monthly(patient.xts, mean) 
         # Aggregation &  training and test data
         if(input$aggregateInput == 'daily'){
             patient.data <- apply.daily(patient.xts,mean)
