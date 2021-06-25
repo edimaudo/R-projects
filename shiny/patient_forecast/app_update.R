@@ -385,7 +385,7 @@ server <- function(input, output,session) {
         }else if (auto_arima & auto_exp)
             autoplot() + 
             autolayer(auto_exp_model) + 
-            autolayer(auto_arima_model) + guides(colour = guide_legend("Model"))
+            autolayer(auto_arima_model) 
             
             
             #plot(auto_arima_model)
