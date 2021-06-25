@@ -17,7 +17,7 @@ for (package in packages) {
 #=============
 #load data
 #=============
-df <- read.csv("test-ts2.csv")
+#df <- read.csv("test-ts2.csv")
 
 #=============
 #data cleaning
@@ -55,7 +55,17 @@ ui <- dashboardPage(
     ),
     dashboardBody(
         tabItems(
-            tabItem(tabName = "data"),
+            tabItem(tabName = "data",
+                    sidebarLayout(
+                        sidebarPanel(
+                            fileInput("file1", "Choose CSV File", accept = ".csv"),
+                            checkboxInput("header", "Header", TRUE)
+                        ),
+                        mainPanel(
+                            tableOutput("contents")
+                        )
+                    )
+            ),
             tabItem(tabName = "analysis",
                     sidebarLayout(
                         sidebarPanel(
@@ -123,6 +133,16 @@ ui <- dashboardPage(
 
 # Define server logic 
 server <- function(input, output,session) {
+    
+    output$contents <- renderTable({
+        file <- input$file1
+        ext <- tools::file_ext(file$datapath)
+        
+        req(file)
+        validate(need(ext == "csv", "Please upload a csv file"))
+        
+        read.csv(file$datapath, header = input$header)
+    })
     
     #decomposition output
     output$decompositionPlot <- renderPlot({
