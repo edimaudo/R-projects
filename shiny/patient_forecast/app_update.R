@@ -357,12 +357,40 @@ server <- function(input, output,session) {
         forecast.horizon <- as.numeric(input$horizonInput)
         
         #models
-        auto_exp <- patient.train %>% ets %>% orecast(h=forecast.horizon)
-        auto_arima <- patient.train %>% auto.arima %>% forecast(h=forecast.horizon)
-        simple_exp <- patient.train %>% HoltWinters(beta=FALSE, gamma=FALSE) %>% forecast(h=forecast.horizon)
-        double_exp <- patient.train %>% HoltWinters(beta = TRUE, gamma=FALSE) %>% forecast(h=forecast.horizon)
-        triple_exp <- patient.train %>% HoltWinters(beta = TRUE, gamma = TRUE) %>% forecast(h=forecast.horizon)
-        tbat <- patient.train %>% tbats %>% forecast(h=forecast.horizon)
+        auto_exp_model <- patient.train %>% ets %>% forecast(h=forecast.horizon)
+        auto_arima_model <- patient.train %>% auto.arima %>% forecast(h=forecast.horizon)
+        simple_exp_model <- patient.train %>% HoltWinters(beta=FALSE, gamma=FALSE) %>% 
+            forecast(h=forecast.horizon)
+        double_exp_model <- patient.train %>% HoltWinters(beta = TRUE, gamma=FALSE) %>% 
+            forecast(h=forecast.horizon)
+        triple_exp_model <- patient.train %>% HoltWinters(beta = TRUE, gamma = TRUE) %>% 
+            forecast(h=forecast.horizon)
+        tbat_model <- patient.train %>% tbats %>% forecast(h=forecast.horizon)
+        manual_model <- ""
+        
+        auto_arima <- "auto arima"       %in% input$modelInput
+        auto_exp   <- 'auto exponential'     %in% input$modelInput
+        simple_exp <- "simple exponential"  %in% input$modelInput
+        double_exp <- "double exponential"       %in% input$modelInput
+        triple_exp <- "triple exponential"     %in% input$modelInput
+        tbat       <- "tbat"  %in% input$modelInput
+        manual_arima <- "manual arima"  %in% input$modelInput
+                
+        if (is.null(input$modelInput)){
+            
+        } else if (auto_arima ){
+            auto_arima_model %>% autoplot()
+        }  else if (auto_exp) {
+            auto_exp_model %>% autoplot()
+        }else if (auto_arima & auto_exp)
+            autoplot() + 
+            autolayer(auto_exp_model) + 
+            autolayer(auto_arima_model) + guides(colour = guide_legend("Model"))
+            
+            
+            #plot(auto_arima_model)
+            #par(new=T)
+            #plot(auto_exp_model)
             
         # # models
         # if(input$modelInput == 'auto exponential'){
