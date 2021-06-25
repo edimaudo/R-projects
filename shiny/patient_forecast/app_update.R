@@ -356,40 +356,47 @@ server <- function(input, output,session) {
         #set forecast horizon
         forecast.horizon <- as.numeric(input$horizonInput)
         
-        # models
-        if(input$modelInput == 'auto exponential'){
-            patient.train%>% 
-                ets %>% 
-                forecast(h=forecast.horizon) %>% 
-                autoplot()
-            #lines(patient.test, col = "red")             
-        } else if (input$modelInput == 'auto arima'){
-            patient.train%>% 
-                auto.arima %>% 
-                forecast(h=forecast.horizon) %>% 
-                autoplot()
-            #lines(patient.test, col = "red")             
-        } else if (input$modelInput == 'simple exponential'){
-            patient.train%>% 
-                HoltWinters(beta=FALSE, gamma=FALSE) %>% 
-                forecast(h=forecast.horizon) %>% 
-                
-                autoplot()
-            # lines(patient.test, col = "red")             
-        } else if (input$modelInput == 'double exponential'){
-            patient.train%>% 
-                HoltWinters(beta = TRUE, gamma=FALSE) %>% 
-                forecast(h=forecast.horizon) %>% 
-                autoplot()
-            #lines(patient.test, col = "red") 
-        } else {
-            patient.train%>% 
-                HoltWinters(beta = TRUE, gamma = TRUE) %>% 
-                forecast(h=forecast.horizon) %>% 
-                autoplot()
-            #lines(patient.test, col = "red") 
+        #models
+        auto_exp <- patient.train %>% ets %>% orecast(h=forecast.horizon)
+        auto_arima <- patient.train %>% auto.arima %>% forecast(h=forecast.horizon)
+        simple_exp <- patient.train %>% HoltWinters(beta=FALSE, gamma=FALSE) %>% forecast(h=forecast.horizon)
+        double_exp <- patient.train %>% HoltWinters(beta = TRUE, gamma=FALSE) %>% forecast(h=forecast.horizon)
+        triple_exp <- patient.train %>% HoltWinters(beta = TRUE, gamma = TRUE) %>% forecast(h=forecast.horizon)
+        tbat <- patient.train %>% tbats %>% forecast(h=forecast.horizon)
             
-        }
+        # # models
+        # if(input$modelInput == 'auto exponential'){
+        #     patient.train%>% 
+        #         ets %>% 
+        #         forecast(h=forecast.horizon) %>% 
+        #         autoplot()
+        #     #lines(patient.test, col = "red")             
+        # } else if (input$modelInput == 'auto arima'){
+        #     patient.train%>% 
+        #         auto.arima %>% 
+        #         forecast(h=forecast.horizon) %>% 
+        #         autoplot()
+        #     #lines(patient.test, col = "red")             
+        # } else if (input$modelInput == 'simple exponential'){
+        #     patient.train%>% 
+        #         HoltWinters(beta=FALSE, gamma=FALSE) %>% 
+        #         forecast(h=forecast.horizon) %>% 
+        #         
+        #         autoplot()
+        #     # lines(patient.test, col = "red")             
+        # } else if (input$modelInput == 'double exponential'){
+        #     patient.train%>% 
+        #         HoltWinters(beta = TRUE, gamma=FALSE) %>% 
+        #         forecast(h=forecast.horizon) %>% 
+        #         autoplot()
+        #     #lines(patient.test, col = "red") 
+        # } else {
+        #     patient.train%>% 
+        #         HoltWinters(beta = TRUE, gamma = TRUE) %>% 
+        #         forecast(h=forecast.horizon) %>% 
+        #         autoplot()
+        #     #lines(patient.test, col = "red") 
+        # }
     })
     
     
