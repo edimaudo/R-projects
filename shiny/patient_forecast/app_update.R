@@ -101,7 +101,7 @@ ui <- dashboardPage(
                                         choices = frequency_info, selected = 7),
                             sliderInput("traintestInput", "Train/Test Split",
                                         min = 0, max = 1,value = 0.8),
-                            checkboxGroupInput("modelCheckboxInput", "Models:",choices = model_info, 
+                            checkboxGroupInput("modelInput", "Models:",choices = model_info, 
                                                selected = 'auto exponential'),
                             submitButton("Submit")
                         ),
