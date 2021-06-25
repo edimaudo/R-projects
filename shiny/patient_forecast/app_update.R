@@ -36,15 +36,12 @@ difference_info <- c("Yes","No")
 log_info <- c("Yes","No")
 model_info <- c('auto arima','auto exponential','simple exponential',
                 'double exponential','triple exponential')
-train_test_split_info <- c(seq(0, 100, by=5))
+
 
 #=============
 # data
 #=============
-patient.xts <- xts(x = df$Patients, order.by = df$Arrival_date) 
-patient.daily <- apply.daily(patient.xts,mean)
-patient.weekly <- apply.weekly(patient.xts, mean) 
-patient.monthly <- apply.monthly(patient.xts, mean) 
+
 
 # Define UI for application
 ui <- dashboardPage(
@@ -129,15 +126,37 @@ server <- function(input, output,session) {
     
     #decomposition output
     output$decompositionPlot <- renderPlot({
+        patient.xts <- xts(x = df$Patients, order.by = df$Arrival_date) 
+        patient.daily <- apply.daily(patient.xts,mean)
+        patient.weekly <- apply.weekly(patient.xts, mean) 
+        patient.monthly <- apply.monthly(patient.xts, mean) 
         #using only daily data
-        patient.end <- floor(1*length(patient.daily)) 
-        patient.data <- patient.daily[1:patient.end,] 
-        patient.start <- c(year (start(patient.data)), month(start(patient.data)),
-                           day(start(patient.data)))
-        patient.end <- c(year(end(patient.data)), month(end(patient.data)), 
-                         day(end(patient.data)))
-        patient.data <- ts(as.numeric(patient.data), start = patient.start, 
-                           end = patient.end, frequency = as.numeric(input$frequencyInput)) 
+        if (input$aggregateInput == 'daily'){
+            patient.end <- floor(1*length(patient.daily)) 
+            patient.data <- patient.daily[1:patient.end,] 
+            patient.start <- c(year (start(patient.data)), month(start(patient.data)),
+                               day(start(patient.data)))
+            patient.end <- c(year(end(patient.data)), month(end(patient.data)), 
+                             day(end(patient.data)))
+            patient.data <- ts(as.numeric(patient.data), start = patient.start, 
+                               end = patient.end, frequency = as.numeric(input$frequencyInput))             
+        } else if(input$aggregateInput == 'weekly'){
+            patient.end <- floor(1*length(patient.weekly)) 
+            patient.data <- patient.weekly[1:patient.end,] 
+            patient.start <- c(year (start(patient.data)), month(start(patient.data)),
+                               week(start(patient.data)))
+            patient.end <- c(year(end(patient.data)), month(end(patient.data)), 
+                             week(end(patient.data)))
+            patient.data <- ts(as.numeric(patient.data), start = patient.start, 
+                               end = patient.end, frequency = as.numeric(input$frequencyInput))         
+        } else {
+            patient.end <- floor(1*length(patient.monthly)) 
+            patient.data <- ppatient.monthly[1:patient.end,] 
+            patient.start <- c(year (start(patient.data)), month(start(patient.data)))
+            patient.end <- c(year(end(patient.data)), month(end(patient.data)))
+            patient.data <- ts(as.numeric(patient.data), start = patient.start, 
+                               end = patient.end, frequency = as.numeric(input$frequencyInput))               
+        }
         
         if (input$differenceInput == "Yes"){
             patient.data <- diff(patient.data, differences = as.numeric(input$differenceNumericInput)) 
@@ -151,15 +170,37 @@ server <- function(input, output,session) {
     
     #multi season output
     output$multidecompositionPlot <- renderPlot({
+        patient.xts <- xts(x = df$Patients, order.by = df$Arrival_date) 
+        patient.daily <- apply.daily(patient.xts,mean)
+        patient.weekly <- apply.weekly(patient.xts, mean) 
+        patient.monthly <- apply.monthly(patient.xts, mean) 
         #using only daily data
-        patient.end <- floor(1*length(patient.daily)) 
-        patient.data <- patient.daily[1:patient.end,] 
-        patient.start <- c(year (start(patient.data)), month(start(patient.data)),
-                           day(start(patient.data)))
-        patient.end <- c(year(end(patient.data)), month(end(patient.data)), 
-                         day(end(patient.data)))
-        patient.data <- ts(as.numeric(patient.data), start = patient.start, 
-                           end = patient.end, frequency = as.numeric(input$frequencyInput)) 
+        if (input$aggregateInput == 'daily'){
+            patient.end <- floor(1*length(patient.daily)) 
+            patient.data <- patient.daily[1:patient.end,] 
+            patient.start <- c(year (start(patient.data)), month(start(patient.data)),
+                               day(start(patient.data)))
+            patient.end <- c(year(end(patient.data)), month(end(patient.data)), 
+                             day(end(patient.data)))
+            patient.data <- ts(as.numeric(patient.data), start = patient.start, 
+                               end = patient.end, frequency = as.numeric(input$frequencyInput))             
+        } else if(input$aggregateInput == 'weekly'){
+            patient.end <- floor(1*length(patient.weekly)) 
+            patient.data <- patient.weekly[1:patient.end,] 
+            patient.start <- c(year (start(patient.data)), month(start(patient.data)),
+                               week(start(patient.data)))
+            patient.end <- c(year(end(patient.data)), month(end(patient.data)), 
+                             week(end(patient.data)))
+            patient.data <- ts(as.numeric(patient.data), start = patient.start, 
+                               end = patient.end, frequency = as.numeric(input$frequencyInput))         
+        } else {
+            patient.end <- floor(1*length(patient.monthly)) 
+            patient.data <- ppatient.monthly[1:patient.end,] 
+            patient.start <- c(year (start(patient.data)), month(start(patient.data)))
+            patient.end <- c(year(end(patient.data)), month(end(patient.data)))
+            patient.data <- ts(as.numeric(patient.data), start = patient.start, 
+                               end = patient.end, frequency = as.numeric(input$frequencyInput))               
+        }
         
         if (input$differenceInput == "Yes"){
             patient.data <- diff(patient.data, differences = as.numeric(input$differenceNumericInput))
@@ -173,15 +214,37 @@ server <- function(input, output,session) {
     
     #ACF output
     output$acfPlot <- renderPlot({
-        # Ddaily data
-        patient.end <- floor(1*length(patient.daily)) 
-        patient.data <- patient.daily[1:patient.end,] 
-        patient.start <- c(year (start(patient.data)), month(start(patient.data)),
-                           day(start(patient.data)))
-        patient.end <- c(year(end(patient.data)), month(end(patient.data)), 
-                         day(end(patient.data)))
-        patient.data <- ts(as.numeric(patient.data), start = patient.start, 
-                           end = patient.end, frequency = as.numeric(input$frequencyInput)) 
+        patient.xts <- xts(x = df$Patients, order.by = df$Arrival_date) 
+        patient.daily <- apply.daily(patient.xts,mean)
+        patient.weekly <- apply.weekly(patient.xts, mean) 
+        patient.monthly <- apply.monthly(patient.xts, mean) 
+        #using only daily data
+        if (input$aggregateInput == 'daily'){
+            patient.end <- floor(1*length(patient.daily)) 
+            patient.data <- patient.daily[1:patient.end,] 
+            patient.start <- c(year (start(patient.data)), month(start(patient.data)),
+                               day(start(patient.data)))
+            patient.end <- c(year(end(patient.data)), month(end(patient.data)), 
+                             day(end(patient.data)))
+            patient.data <- ts(as.numeric(patient.data), start = patient.start, 
+                               end = patient.end, frequency = as.numeric(input$frequencyInput))             
+        } else if(input$aggregateInput == 'weekly'){
+            patient.end <- floor(1*length(patient.weekly)) 
+            patient.data <- patient.weekly[1:patient.end,] 
+            patient.start <- c(year (start(patient.data)), month(start(patient.data)),
+                               week(start(patient.data)))
+            patient.end <- c(year(end(patient.data)), month(end(patient.data)), 
+                             week(end(patient.data)))
+            patient.data <- ts(as.numeric(patient.data), start = patient.start, 
+                               end = patient.end, frequency = as.numeric(input$frequencyInput))         
+        } else {
+            patient.end <- floor(1*length(patient.monthly)) 
+            patient.data <- ppatient.monthly[1:patient.end,] 
+            patient.start <- c(year (start(patient.data)), month(start(patient.data)))
+            patient.end <- c(year(end(patient.data)), month(end(patient.data)))
+            patient.data <- ts(as.numeric(patient.data), start = patient.start, 
+                               end = patient.end, frequency = as.numeric(input$frequencyInput))               
+        }
         
         if (input$logInput == "No"){
             #acf(patient.train)
@@ -196,15 +259,37 @@ server <- function(input, output,session) {
     
     #PACF output
     output$pacfPlot <- renderPlot({
+        patient.xts <- xts(x = df$Patients, order.by = df$Arrival_date) 
+        patient.daily <- apply.daily(patient.xts,mean)
+        patient.weekly <- apply.weekly(patient.xts, mean) 
+        patient.monthly <- apply.monthly(patient.xts, mean) 
         #using only daily data
-        patient.end <- floor(1*length(patient.daily)) 
-        patient.data <- patient.daily[1:patient.end,] 
-        patient.start <- c(year (start(patient.data)), month(start(patient.data)),
-                           day(start(patient.data)))
-        patient.end <- c(year(end(patient.data)), month(end(patient.data)), 
-                         day(end(patient.data)))
-        patient.data <- ts(as.numeric(patient.data), start = patient.start, 
-                           end = patient.end, frequency = as.numeric(input$frequencyInput)) 
+        if (input$aggregateInput == 'daily'){
+            patient.end <- floor(1*length(patient.daily)) 
+            patient.data <- patient.daily[1:patient.end,] 
+            patient.start <- c(year (start(patient.data)), month(start(patient.data)),
+                               day(start(patient.data)))
+            patient.end <- c(year(end(patient.data)), month(end(patient.data)), 
+                             day(end(patient.data)))
+            patient.data <- ts(as.numeric(patient.data), start = patient.start, 
+                               end = patient.end, frequency = as.numeric(input$frequencyInput))             
+        } else if(input$aggregateInput == 'weekly'){
+            patient.end <- floor(1*length(patient.weekly)) 
+            patient.data <- patient.weekly[1:patient.end,] 
+            patient.start <- c(year (start(patient.data)), month(start(patient.data)),
+                               week(start(patient.data)))
+            patient.end <- c(year(end(patient.data)), month(end(patient.data)), 
+                             week(end(patient.data)))
+            patient.data <- ts(as.numeric(patient.data), start = patient.start, 
+                               end = patient.end, frequency = as.numeric(input$frequencyInput))         
+        } else {
+            patient.end <- floor(1*length(patient.monthly)) 
+            patient.data <- ppatient.monthly[1:patient.end,] 
+            patient.start <- c(year (start(patient.data)), month(start(patient.data)))
+            patient.end <- c(year(end(patient.data)), month(end(patient.data)))
+            patient.data <- ts(as.numeric(patient.data), start = patient.start, 
+                               end = patient.end, frequency = as.numeric(input$frequencyInput))               
+        }
         
         if (input$logInput == "No"){
             ggPacf(patient.data) #pacf(patient.train)
