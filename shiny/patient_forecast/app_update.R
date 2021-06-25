@@ -18,13 +18,21 @@ for (package in packages) {
 #load data
 #=============
 #df <- read.csv("test-ts2.csv")
+#df <- read.csv("data.csv")
 
-#=============
-#data cleaning
-#=============
-df[df==0] <- NA #assigne 0 to NA
-df <- na.omit(df) #remove na
-df$Arrival_date <- lubridate::dmy(df$Arrival_date) #update date field
+mtry <- try(read.table("data.csv", sep = ",", header = TRUE), silent = TRUE)
+
+if (class(mtry) != "try-error") {
+    df <- read.csv("data.csv", sep = ",", header = TRUE)
+    df[df==0] <- NA #assigne 0 to NA
+    df <- na.omit(df) #remove na
+    df$Arrival_date <- lubridate::dmy(df$Arrival_date) #update date field
+} 
+#else {
+#    #message("File doesn't exist, please check")
+#}
+
+
 
 #=============
 #dropdowns
@@ -141,7 +149,11 @@ server <- function(input, output,session) {
         req(file)
         validate(need(ext == "csv", "Please upload a csv file"))
         
-        read.csv(file$datapath, header = input$header)
+        df <- read.csv(file$datapath, header = input$header)
+        df
+        
+        write_csv(df, "data.csv")
+        
     })
     
     #decomposition output
