@@ -113,11 +113,11 @@ ui <- dashboardPage(
                             checkboxGroupInput("modelInput", "Models",choices = model_info, 
                                                selected = 'auto exponential'),
                             sliderInput("autoInput", "Auto-regression",
-                                        min = 0, max = 100,value = 1),
+                                        min = 0, max = 100,value = 0),
                             sliderInput("difference2Input", "Difference",
-                                        min = 0, max = 52,value = 1),
+                                        min = 0, max = 52,value = 0),
                             sliderInput("maInput", "Moving Average",
-                                        min = 0, max = 100,value = 1),
+                                        min = 0, max = 100,value = 0),
                             submitButton("Submit")
                         ),
                         mainPanel(
@@ -388,6 +388,8 @@ server <- function(input, output,session) {
         
         #set forecast horizon
         forecast.horizon <- as.numeric(input$horizonInput)
+        
+        #manual arima info
         orderinfo = c(as.numeric(input$autoInput),as.numeric(input$difference2Input),
                        as.numeric(input$maInput))
         #models
@@ -400,9 +402,9 @@ server <- function(input, output,session) {
         triple_exp_model <- patient.train %>% HoltWinters(beta = TRUE, gamma = TRUE) %>% 
             forecast(h=forecast.horizon)
         tbat_model <- patient.train %>% tbats %>% forecast(h=forecast.horizon)
-        manual_arima_model <- patient.train %>%
-            arima(order=orderinfo) 
+        manual_arima_model <- patient.train %>% arima(order=orderinfo) 
         
+        #model output
         auto_arima <- "auto arima"        %in% input$modelInput
         auto_exp   <- 'auto exponential'  %in% input$modelInput
         simple_exp <- "simple exponential"%in% input$modelInput
@@ -410,7 +412,9 @@ server <- function(input, output,session) {
         triple_exp <- "triple exponential"%in% input$modelInput
         tbat       <- "tbat"  %in% input$modelInput
         manual_arima <- "manual arima"  %in% input$modelInput
-              
+        auto_arima_exp <- c("auto arima","auto exponential") %in% input$modelInput
+        
+        model_selection <- c(input$modelInput)     
         
           
         if (is.null(input$modelInput)){
@@ -429,7 +433,7 @@ server <- function(input, output,session) {
             tbat_model %>% autoplot()
         } else if (manual_arima){
             manual_arima_model %>% autoplot()
-        } else if (input$modelInput %in%  c("auto arima","auto exponential")){
+        } else if (""){
             autoplot(patient.train) + autolayer(auto_arima_model,series="auto arima")
             + autolayer(auto_exp_model, series = "auto exponential")
         }
