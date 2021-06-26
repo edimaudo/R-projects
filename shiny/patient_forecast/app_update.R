@@ -17,11 +17,7 @@ for (package in packages) {
 #=============
 #load data
 #=============
-#df <- read.csv("test-ts2.csv")
-#df <- read.csv("data.csv")
-
 mtry <- try(read.table("data.csv", sep = ",", header = TRUE), silent = TRUE)
-
 if (class(mtry) != "try-error") {
     df <- read.csv("data.csv", sep = ",", header = TRUE)
     df[df==0] <- NA #assigne 0 to NA
@@ -31,8 +27,6 @@ if (class(mtry) != "try-error") {
 #else {
 #    #message("File doesn't exist, please check")
 #}
-
-
 
 #=============
 #dropdowns
@@ -414,11 +408,15 @@ server <- function(input, output,session) {
             auto_arima_model %>% autoplot()
         }  else if (auto_exp) {
             auto_exp_model %>% autoplot()
-        }else if (auto_arima & auto_exp)
+        }  else if (auto_exp) {
+            auto_exp_model %>% autoplot()
+        }  else if (auto_exp) {
+            auto_exp_model %>% autoplot()
+        }else if (auto_arima & auto_exp) {
             autoplot() + 
             autolayer(auto_exp_model) + 
-            autolayer(auto_arima_model) 
-            
+            autolayer() 
+        }   
             
             #plot(auto_arima_model)
             #par(new=T)
