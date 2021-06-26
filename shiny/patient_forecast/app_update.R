@@ -111,7 +111,7 @@ ui <- dashboardPage(
                             sliderInput("traintestInput", "Train/Test Split",
                                         min = 0, max = 1,value = 0.8),
                             checkboxGroupInput("modelInput", "Models",choices = model_info, 
-                                               selected = 'auto exponential'),
+                                               selected = model_info),
                             sliderInput("autoInput", "Auto-regression",
                                         min = 0, max = 100,value = 0),
                             sliderInput("difference2Input", "Difference",
@@ -389,9 +389,6 @@ server <- function(input, output,session) {
         #set forecast horizon
         forecast.horizon <- as.numeric(input$horizonInput)
         
-        #manual arima info
-        orderinfo = c(as.numeric(input$autoInput),as.numeric(input$difference2Input),
-                       as.numeric(input$maInput))
         #models
         auto_exp_model <- patient.train %>% ets %>% forecast(h=forecast.horizon)
         auto_arima_model <- patient.train %>% auto.arima() %>% forecast(h=forecast.horizon)
@@ -402,41 +399,47 @@ server <- function(input, output,session) {
         triple_exp_model <- patient.train %>% HoltWinters(beta = TRUE, gamma = TRUE) %>% 
             forecast(h=forecast.horizon)
         tbat_model <- patient.train %>% tbats %>% forecast(h=forecast.horizon)
+        #manual arima info
+        orderinfo = c(as.numeric(input$autoInput),as.numeric(input$difference2Input),
+                      as.numeric(input$maInput))
         manual_arima_model <- patient.train %>% arima(order=orderinfo) 
         
         #model output
         auto_arima <- "auto arima"        %in% input$modelInput
         auto_exp   <- 'auto exponential'  %in% input$modelInput
-        simple_exp <- "simple exponential"%in% input$modelInput
-        double_exp <- "double exponential"%in% input$modelInput
-        triple_exp <- "triple exponential"%in% input$modelInput
-        tbat       <- "tbat"  %in% input$modelInput
+        simple_exp <- "simple exponential" %in% input$modelInput
+        double_exp <- "double exponential" %in% input$modelInput
+        triple_exp <- "triple exponential" %in% input$modelInput
+        tbat <- "tbat"  %in% input$modelInput
         manual_arima <- "manual arima"  %in% input$modelInput
-        auto_arima_exp <- c("auto arima","auto exponential") %in% input$modelInput
+        
         
         model_selection <- c(input$modelInput)     
-        
+        print(model_selection)
           
         if (is.null(input$modelInput)){
              
-        } else if (auto_arima ){
-            auto_arima_model %>% autoplot()
-        }  else if (auto_exp) {
-            auto_exp_model %>% autoplot()
-        }  else if (simple_exp) {
-            simple_exp_model %>% autoplot()
-        }  else if (double_exp) {
-            double_exp_model %>% autoplot()
-        }else if (triple_exp) {
-            triple_exp_model %>% autoplot()
-        } else if (tbat ) {
-            tbat_model %>% autoplot()
-        } else if (manual_arima){
-            manual_arima_model %>% autoplot()
         } else if (""){
-            autoplot(patient.train) + autolayer(auto_arima_model,series="auto arima")
-            + autolayer(auto_exp_model, series = "auto exponential")
+        
         }
+        #     autoplot(patient.train) + autolayer(auto_arima_model,series="auto arima")
+        #     + autolayer(auto_exp_model, series = "auto exponential")
+        # }  else if (auto_exp) {
+        #     auto_exp_model %>% autoplot()
+        # }  else if (simple_exp) {
+        #     simple_exp_model %>% autoplot()
+        # }  else if (double_exp) {
+        #     double_exp_model %>% autoplot()
+        # }else if (triple_exp) {
+        #     triple_exp_model %>% autoplot()
+        # } else if (tbat ) {
+        #     tbat_model %>% autoplot()
+        # } else if (manual_arima){
+        #     manual_arima_model %>% autoplot()
+        # } else if (""){
+        #     autoplot(patient.train) + autolayer(auto_arima_model,series="auto arima")
+        #     + autolayer(auto_exp_model, series = "auto exponential")
+        # }
             
     })
     
