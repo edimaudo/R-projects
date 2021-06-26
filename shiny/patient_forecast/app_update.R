@@ -15,7 +15,7 @@ for (package in packages) {
 }
 
 #=============
-#load data
+# load data
 #=============
 mtry <- try(read.table("data.csv", sep = ",", header = TRUE), silent = TRUE)
 if (class(mtry) != "try-error") {
@@ -38,11 +38,6 @@ difference_info <- c("Yes","No")
 log_info <- c("Yes","No")
 model_info <- c('auto arima','auto exponential','simple exponential',
                 'double exponential','triple exponential', 'tbat','manual arima')
-
-
-#=============
-# data
-#=============
 
 
 # Define UI for application
@@ -113,7 +108,7 @@ ui <- dashboardPage(
                                         choices = frequency_info, selected = 7),
                             sliderInput("traintestInput", "Train/Test Split",
                                         min = 0, max = 1,value = 0.8),
-                            checkboxGroupInput("modelInput", "Models:",choices = model_info, 
+                            checkboxGroupInput("modelInput", "Models",choices = model_info, 
                                                selected = 'auto exponential'),
                             submitButton("Submit")
                         ),
@@ -121,9 +116,9 @@ ui <- dashboardPage(
                             h1("Forecast Analysis",style="text-align: center;"), 
                             tabsetPanel(type = "tabs",
                                         tabPanel(h4("Forecast Output",style="text-align: center;"), 
-                                                 plotOutput("forecastPlot")),
-                                        tabPanel(h4("Forecast Accuracy",style="text-align: center;"), 
-                                                 DT::dataTableOutput("accuracyOutput"))
+                                                 plotOutput("forecastPlot"))#,
+                                        #tabPanel(h4("Forecast Accuracy",style="text-align: center;"), 
+                                        #         DT::dataTableOutput("accuracyOutput"))
                             )
                         )
                     )
@@ -136,7 +131,8 @@ ui <- dashboardPage(
 # Define server logic 
 server <- function(input, output,session) {
     
-    output$contents <- renderTable({
+    # load data
+    output$contents <- DT::renderTable({
         file <- input$file1
         ext <- tools::file_ext(file$datapath)
         
@@ -150,7 +146,7 @@ server <- function(input, output,session) {
         
     })
     
-    #decomposition output
+    # decomposition output
     output$decompositionPlot <- renderPlot({
         patient.xts <- xts(x = df$Patients, order.by = df$Arrival_date) 
         patient.daily <- apply.daily(patient.xts,mean)
@@ -194,7 +190,7 @@ server <- function(input, output,session) {
         
     })
     
-    #multi season output
+    # multi season output
     output$multidecompositionPlot <- renderPlot({
         patient.xts <- xts(x = df$Patients, order.by = df$Arrival_date) 
         patient.daily <- apply.daily(patient.xts,mean)
@@ -238,7 +234,7 @@ server <- function(input, output,session) {
         
     })    
     
-    #ACF output
+    # ACF output
     output$acfPlot <- renderPlot({
         patient.xts <- xts(x = df$Patients, order.by = df$Arrival_date) 
         patient.daily <- apply.daily(patient.xts,mean)
@@ -283,7 +279,7 @@ server <- function(input, output,session) {
         
     })
     
-    #PACF output
+    # PACF output
     output$pacfPlot <- renderPlot({
         patient.xts <- xts(x = df$Patients, order.by = df$Arrival_date) 
         patient.daily <- apply.daily(patient.xts,mean)
@@ -325,6 +321,7 @@ server <- function(input, output,session) {
         
     })
     
+    # Forecast
     output$forecastPlot <- renderPlot({
         # Aggregation &  training and test data
         patient.xts <- xts(x = df$Patients, order.by = df$Arrival_date) 
@@ -384,7 +381,7 @@ server <- function(input, output,session) {
         
         #models
         auto_exp_model <- patient.train %>% ets %>% forecast(h=forecast.horizon)
-        auto_arima_model <- patient.train %>% auto.arima %>% forecast(h=forecast.horizon)
+        auto_arima_model <- patient.train %>% auto.arima() %>% forecast(h=forecast.horizon)
         simple_exp_model <- patient.train %>% HoltWinters(beta=FALSE, gamma=FALSE) %>% 
             forecast(h=forecast.horizon)
         double_exp_model <- patient.train %>% HoltWinters(beta = TRUE, gamma=FALSE) %>% 
@@ -394,11 +391,11 @@ server <- function(input, output,session) {
         tbat_model <- patient.train %>% tbats %>% forecast(h=forecast.horizon)
         manual_model <- ""
         
-        auto_arima <- "auto arima"       %in% input$modelInput
-        auto_exp   <- 'auto exponential'     %in% input$modelInput
-        simple_exp <- "simple exponential"  %in% input$modelInput
-        double_exp <- "double exponential"       %in% input$modelInput
-        triple_exp <- "triple exponential"     %in% input$modelInput
+        auto_arima <- "auto arima"        %in% input$modelInput
+        auto_exp   <- 'auto exponential'  %in% input$modelInput
+        simple_exp <- "simple exponential"%in% input$modelInput
+        double_exp <- "double exponential"%in% input$modelInput
+        triple_exp <- "triple exponential"%in% input$modelInput
         tbat       <- "tbat"  %in% input$modelInput
         manual_arima <- "manual arima"  %in% input$modelInput
                 
@@ -408,19 +405,22 @@ server <- function(input, output,session) {
             auto_arima_model %>% autoplot()
         }  else if (auto_exp) {
             auto_exp_model %>% autoplot()
-        }  else if (auto_exp) {
-            auto_exp_model %>% autoplot()
-        }  else if (auto_exp) {
-            auto_exp_model %>% autoplot()
-        }else if (auto_arima & auto_exp) {
-            autoplot() + 
-            autolayer(auto_exp_model) + 
-            autolayer() 
-        }   
+        }  else if (simple_exp) {
+            simple_exp_model %>% autoplot()
+        }  else if (double_exp) {
+            double_exp_model %>% autoplot()
+        }else if (triple_exp) {
+            triple_exp_model %>% autoplot()
+        } else if (tbat ) {
+            tbat_model %>% autoplot()
+        } else if (manual_arima){
             
-            #plot(auto_arima_model)
-            #par(new=T)
-            #plot(auto_exp_model)
+        } else if (input$modelInput %in%  c("auto arima","auto exponential")){
+            autoplot(patient.train) + autolayer(auto_arima_model,series="auto arima") 
+            + autolayer(auto_exp_model, series = "auto exponential")
+        }
+            
+
             
         # # models
         # if(input$modelInput == 'auto exponential'){
@@ -457,7 +457,7 @@ server <- function(input, output,session) {
         # }
     })
     
-    
+    # Forecast output
     output$accuracyOutput <- DT::renderDataTable({
         patient.xts <- xts(x = df$Patients, order.by = df$Arrival_date) 
         patient.daily <- apply.daily(patient.xts,mean)
