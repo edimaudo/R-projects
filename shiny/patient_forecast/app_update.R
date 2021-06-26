@@ -82,10 +82,12 @@ ui <- dashboardPage(
                             h1("Analysis",style="text-align: center;"), 
                             tabsetPanel(type = "tabs",
                                         tabPanel(
-                                            h4("Decomposition",style="text-align: center;"),
+                                            h4("Decomposition",
+                                               style="text-align: center;"),
                                             plotOutput("decompositionPlot")),
                                         tabPanel(
-                                            h4("Multi seasonal Decomposition",style="text-align: center;"),
+                                            h4("Multi seasonal Decomposition",
+                                               style="text-align: center;"),
                                             plotOutput("multidecompositionPlot")),
                                         tabPanel(
                                             h4("ACF Plot",style="text-align: center;"), 
@@ -110,6 +112,12 @@ ui <- dashboardPage(
                                         min = 0, max = 1,value = 0.8),
                             checkboxGroupInput("modelInput", "Models",choices = model_info, 
                                                selected = 'auto exponential'),
+                            sliderInput("autoInput", "Auto-regression",
+                                        min = 0, max = 100,value = 1),
+                            sliderInput("difference2Input", "Difference",
+                                        min = 0, max = 52,value = 1),
+                            sliderInput("maInput", "Moving Average",
+                                        min = 0, max = 100,value = 1),
                             submitButton("Submit")
                         ),
                         mainPanel(
@@ -335,12 +343,14 @@ server <- function(input, output,session) {
             patient.test <- patient.data[(patient.end+1):length(patient.data),]
             patient.start <- c(year (start(patient.train)), month(start(patient.train)),
                                day(start(patient.train)))
-            patient.end <- c(year(end(patient.train)), month(end(patient.train)), day(end(patient.train)))
+            patient.end <- c(year(end(patient.train)), month(end(patient.train)), 
+                             day(end(patient.train)))
             patient.train <- ts(as.numeric(patient.train), start = patient.start, 
                                 end = patient.end, frequency = as.numeric(input$frequencyInput) )
             patient.start <- c(year (start(patient.test)), month(start(patient.test)),
                                day(start(patient.test)))
-            patient.end <- c(year(end(patient.test)), month(end(patient.test)), day(end(patient.test)))
+            patient.end <- c(year(end(patient.test)), month(end(patient.test)), 
+                             day(end(patient.test)))
             patient.test <- ts(as.numeric(patient.test), start = patient.start, 
                                end = patient.end, frequency = as.numeric(input$frequencyInput))
         } else if(input$aggregateInput == 'weekly'){
@@ -378,7 +388,8 @@ server <- function(input, output,session) {
         
         #set forecast horizon
         forecast.horizon <- as.numeric(input$horizonInput)
-        
+        orderinfo = c(as.numeric(input$autoInput),as.numeric(input$difference2Input),
+                       as.numeric(input$maInput))
         #models
         auto_exp_model <- patient.train %>% ets %>% forecast(h=forecast.horizon)
         auto_arima_model <- patient.train %>% auto.arima() %>% forecast(h=forecast.horizon)
@@ -389,7 +400,8 @@ server <- function(input, output,session) {
         triple_exp_model <- patient.train %>% HoltWinters(beta = TRUE, gamma = TRUE) %>% 
             forecast(h=forecast.horizon)
         tbat_model <- patient.train %>% tbats %>% forecast(h=forecast.horizon)
-        manual_model <- ""
+        manual_arima_model <- patient.train %>%
+            arima(order=orderinfo) 
         
         auto_arima <- "auto arima"        %in% input$modelInput
         auto_exp   <- 'auto exponential'  %in% input$modelInput
@@ -416,7 +428,7 @@ server <- function(input, output,session) {
         } else if (tbat ) {
             tbat_model %>% autoplot()
         } else if (manual_arima){
-
+            manual_arima_model %>% autoplot()
         } else if (input$modelInput %in%  c("auto arima","auto exponential")){
             autoplot(patient.train) + autolayer(auto_arima_model,series="auto arima")
             + autolayer(auto_exp_model, series = "auto exponential")
