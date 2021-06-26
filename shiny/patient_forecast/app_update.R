@@ -36,8 +36,8 @@ horizon_info <- c(1:50) #default 14
 frequency_info <- c(7, 12, 52, 365)
 difference_info <- c("Yes","No")
 log_info <- c("Yes","No")
-model_info <- c('auto arima','auto exponential','simple exponential',
-                'double exponential','triple exponential', 'tbat','manual arima')
+model_info <- c('auto-arima','auto-exponential','simple-exponential',
+                'double-exponential','triple-exponential', 'tbat')#,'manual-arima')
 
 
 # Define UI for application
@@ -112,12 +112,12 @@ ui <- dashboardPage(
                                         min = 0, max = 1,value = 0.8),
                             checkboxGroupInput("modelInput", "Models",choices = model_info, 
                                                selected = model_info),
-                            sliderInput("autoInput", "Auto-regression",
-                                        min = 0, max = 100,value = 0),
-                            sliderInput("difference2Input", "Difference",
-                                        min = 0, max = 52,value = 0),
-                            sliderInput("maInput", "Moving Average",
-                                        min = 0, max = 100,value = 0),
+                            #sliderInput("autoInput", "Auto-regression",
+                            #            min = 0, max = 100,value = 0),
+                            #sliderInput("difference2Input", "Difference",
+                            #            min = 0, max = 52,value = 0),
+                            #sliderInput("maInput", "Moving Average",
+                            #            min = 0, max = 100,value = 0),
                             submitButton("Submit")
                         ),
                         mainPanel(
@@ -399,48 +399,64 @@ server <- function(input, output,session) {
         triple_exp_model <- patient.train %>% HoltWinters(beta = TRUE, gamma = TRUE) %>% 
             forecast(h=forecast.horizon)
         tbat_model <- patient.train %>% tbats %>% forecast(h=forecast.horizon)
-        #manual arima info
-        orderinfo = c(as.numeric(input$autoInput),as.numeric(input$difference2Input),
-                      as.numeric(input$maInput))
-        manual_arima_model <- patient.train %>% arima(order=orderinfo) 
+        # manual arima info
+        #orderinfo = c(as.numeric(input$autoInput),as.numeric(input$difference2Input),
+        #              as.numeric(input$maInput))
+       # manual_arima_model <- patient.train %>% Arima(order=orderinfo) 
         
         #model output
-        auto_arima <- "auto arima"        %in% input$modelInput
-        auto_exp   <- 'auto exponential'  %in% input$modelInput
-        simple_exp <- "simple exponential" %in% input$modelInput
-        double_exp <- "double exponential" %in% input$modelInput
-        triple_exp <- "triple exponential" %in% input$modelInput
+        auto_arima <- "auto-arima"        %in% input$modelInput
+        auto_exp   <- 'auto-exponential'  %in% input$modelInput
+        simple_exp <- "simple-exponential" %in% input$modelInput
+        double_exp <- "double-exponential" %in% input$modelInput
+        triple_exp <- "triple-exponential" %in% input$modelInput
         tbat <- "tbat"  %in% input$modelInput
-        manual_arima <- "manual arima"  %in% input$modelInput
+        #manual_arima <- "manual-arima"  %in% input$modelInput
         
         
-        model_selection <- c(input$modelInput)     
-        print(model_selection)
+        model_selection <- unlist(strsplit(input$modelInput, split=" "))
+        #print(length(model_selection))
+        model_count <- length(model_selection)
           
         if (is.null(input$modelInput)){
-             
-        } else if (""){
-        
-        }
-        #     autoplot(patient.train) + autolayer(auto_arima_model,series="auto arima")
-        #     + autolayer(auto_exp_model, series = "auto exponential")
-        # }  else if (auto_exp) {
-        #     auto_exp_model %>% autoplot()
-        # }  else if (simple_exp) {
-        #     simple_exp_model %>% autoplot()
-        # }  else if (double_exp) {
-        #     double_exp_model %>% autoplot()
-        # }else if (triple_exp) {
-        #     triple_exp_model %>% autoplot()
-        # } else if (tbat ) {
-        #     tbat_model %>% autoplot()
-        # } else if (manual_arima){
-        #     manual_arima_model %>% autoplot()
-        # } else if (""){
-        #     autoplot(patient.train) + autolayer(auto_arima_model,series="auto arima")
-        #     + autolayer(auto_exp_model, series = "auto exponential")
-        # }
+              
+        } else if (model_count == 1){
+            if (auto_arima){
+                auto_arima_model %>% autoplot()
+            } else if (auto_exp) {
+                auto_exp_model %>% autoplot()
+            } else if (simple_exp) {
+                simple_exp_model %>% autoplot()
+            } else if (double_exp) {
+                double_exp_model %>% autoplot()
+            } else if (triple_exp) {
+                triple_exp_model %>% autoplot()
+            } else if (tbat ) {
+                tbat_model %>% autoplot()   
+            }
+        } else if (model_count == 2){
             
+        } else if (model_count == 3) {
+            
+        } else if (model_count == 4){
+            
+        } else if (model_count == 5){
+            
+        } else {
+            autoplot(patient.train) +
+                autolayer(auto_arima_model,series="auto arima") +
+                autolayer(auto_exp_model, series = "auto exponential") +
+                autolayer(simple_exp_model, series= "simple exponential") +
+                autolayer(double_exp_model, series = "double exponential") +
+                autolayer(triple_exp_model, series = "triple exponential") +
+                autolayer(tbat_model, series = "tbat") #+
+            #autolayer(manual_arima_model, series = "manual arima")            
+        }
+        
+
+        
+
+
     })
     
     # Forecast output
