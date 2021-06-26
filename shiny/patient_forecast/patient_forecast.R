@@ -110,3 +110,10 @@ accuracy(patient.train.esforecast,patient.test)
 infoOutput <- data_frame(accuracy(patient.train.esforecast,patient.test))
 
 data_frame()
+
+auto_exp_model <- patient.train %>% ets %>% forecast(h=forecast.horizon)
+auto_arima_model <- patient.train %>% auto.arima() %>% forecast(h=forecast.horizon)
+
+
+autoplot(patient.train) + autolayer(auto_arima_model, series="auto arima") + 
+  autolayer(auto_exp_model, series = "auto exponential")
