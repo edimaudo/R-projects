@@ -132,7 +132,7 @@ ui <- dashboardPage(
 server <- function(input, output,session) {
     
     # load data
-    output$contents <- DT::renderTable({
+    output$contents <- renderTable({
         file <- input$file1
         ext <- tools::file_ext(file$datapath)
         
@@ -398,9 +398,11 @@ server <- function(input, output,session) {
         triple_exp <- "triple exponential"%in% input$modelInput
         tbat       <- "tbat"  %in% input$modelInput
         manual_arima <- "manual arima"  %in% input$modelInput
-                
+              
+        
+          
         if (is.null(input$modelInput)){
-            
+             
         } else if (auto_arima ){
             auto_arima_model %>% autoplot()
         }  else if (auto_exp) {
@@ -414,47 +416,12 @@ server <- function(input, output,session) {
         } else if (tbat ) {
             tbat_model %>% autoplot()
         } else if (manual_arima){
-            
+
         } else if (input$modelInput %in%  c("auto arima","auto exponential")){
-            autoplot(patient.train) + autolayer(auto_arima_model,series="auto arima") 
+            autoplot(patient.train) + autolayer(auto_arima_model,series="auto arima")
             + autolayer(auto_exp_model, series = "auto exponential")
         }
             
-
-            
-        # # models
-        # if(input$modelInput == 'auto exponential'){
-        #     patient.train%>% 
-        #         ets %>% 
-        #         forecast(h=forecast.horizon) %>% 
-        #         autoplot()
-        #     #lines(patient.test, col = "red")             
-        # } else if (input$modelInput == 'auto arima'){
-        #     patient.train%>% 
-        #         auto.arima %>% 
-        #         forecast(h=forecast.horizon) %>% 
-        #         autoplot()
-        #     #lines(patient.test, col = "red")             
-        # } else if (input$modelInput == 'simple exponential'){
-        #     patient.train%>% 
-        #         HoltWinters(beta=FALSE, gamma=FALSE) %>% 
-        #         forecast(h=forecast.horizon) %>% 
-        #         
-        #         autoplot()
-        #     # lines(patient.test, col = "red")             
-        # } else if (input$modelInput == 'double exponential'){
-        #     patient.train%>% 
-        #         HoltWinters(beta = TRUE, gamma=FALSE) %>% 
-        #         forecast(h=forecast.horizon) %>% 
-        #         autoplot()
-        #     #lines(patient.test, col = "red") 
-        # } else {
-        #     patient.train%>% 
-        #         HoltWinters(beta = TRUE, gamma = TRUE) %>% 
-        #         forecast(h=forecast.horizon) %>% 
-        #         autoplot()
-        #     #lines(patient.test, col = "red") 
-        # }
     })
     
     # Forecast output
@@ -544,10 +511,6 @@ server <- function(input, output,session) {
         DT::datatable(outputInfo, options = list(scrollX = TRUE))
         
     })
-    
-    
-    
-    
     
 }
 
