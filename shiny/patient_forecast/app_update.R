@@ -417,6 +417,7 @@ server <- function(input, output,session) {
         #manual_arima <- "manual-arima"  %in% input$modelInput
         
         
+        
         model_selection <- unlist(strsplit(input$modelInput, split=" "))
         model_count <- length(model_selection)
         
@@ -437,11 +438,58 @@ server <- function(input, output,session) {
                 tbat_model %>% autoplot()   
             }
         } else if (model_count == 2){
-            
+            if(auto_arima &  auto_exp) {}
+            else if(auto_arima &  simple_exp) {}
+            else if(auto_arima &  double_exp) {}
+            else if(auto_arima &  triple_exp) {}
+            else if(auto_arima &  tbat) {}
+            else if(auto_exp &  simple_exp) {}
+            else if(auto_exp &  double_exp) {}
+            else if(auto_exp &  triple_exp) {}
+            else if(auto_exp &  tbat) {}
+            else if(simple_exp &  double_exp) {}
+            else if(simple_exp &  triple_exp) {}
+            else if(simple_exp &  tbat) {}
+            else if(double_exp &  triple_exp) {}
+            else if(double_exp &  tbat) {}
+            else if(triple_exp &  tbat) {}
         } else if (model_count == 3) {
-            
+            if(auto_arima &  auto_exp &  simple_exp) {}
+            else if(auto_arima &  auto_exp &  double_exp) {}
+            else if(auto_arima &  auto_exp &  triple_exp) {}
+            else if(auto_arima &  auto_exp &  tbat) {}
+            else if(auto_arima &  simple_exp &  double_exp) {}
+            else if(auto_arima &  simple_exp &  triple_exp) {}
+            else if(auto_arima &  simple_exp &  tbat) {}
+            else if(auto_arima &  double_exp &  triple_exp) {}
+            else if(auto_arima &  double_exp &  tbat) {}
+            else if(auto_arima &  triple_exp &  tbat) {}
+            else if(auto_exp &  simple_exp &  double_exp) {}
+            else if(auto_exp &  simple_exp &  triple_exp) {}
+            else if(auto_exp &  simple_exp &  tbat) {}
+            else if(auto_exp &  double_exp &  triple_exp) {}
+            else if(auto_exp &  double_exp &  tbat) {}
+            else if(auto_exp &  triple_exp &  tbat) {}
+            else if(simple_exp &  double_exp &  triple_exp) {}
+            else if(simple_exp &  double_exp &  tbat) {}
+            else if(simple_exp &  triple_exp &  tbat) {}
+            else if(double_exp &  triple_exp &  tbat) {}
         } else if (model_count == 4){
-            
+            if(auto_arima &  auto_exp &  simple_exp &  double_exp) {}
+            else if(auto_arima &  auto_exp &  simple_exp &  triple_exp) {}
+            else if(auto_arima &  auto_exp &  simple_exp &  tbat) {}
+            else if(auto_arima &  auto_exp &  double_exp &  triple_exp) {}
+            else if(auto_arima &  auto_exp &  double_exp &  tbat) {}
+            else if(auto_arima &  auto_exp &  triple_exp &  tbat) {}
+            else if(auto_arima &  simple_exp &  double_exp &  triple_exp) {}
+            else if(auto_arima &  simple_exp &  double_exp &  tbat) {}
+            else if(auto_arima &  simple_exp &  triple_exp &  tbat) {}
+            else if(auto_arima &  double_exp &  triple_exp &  tbat) {}
+            else if(auto_exp &  simple_exp &  double_exp &  triple_exp) {}
+            else if(auto_exp &  simple_exp &  double_exp &  tbat) {}
+            else if(auto_exp &  simple_exp &  triple_exp &  tbat) {}
+            else if(auto_exp &  double_exp &  triple_exp &  tbat) {}
+            else if(simple_exp &  double_exp &  triple_exp &  tbat) {}
         } else if (model_count == 5){
             if (auto_arima & auto_exp & simple_exp & double_exp & triple_exp) {
                 autoplot(patient.train) +
