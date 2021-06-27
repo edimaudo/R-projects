@@ -445,7 +445,23 @@ server <- function(input, output,session) {
         } else if (model_count == 4){
             
         } else if (model_count == 5){
-            
+           if (model_selection %in% c('auto-arima','auto-exponential','simple-exponential',
+                 'double-exponential','triple-exponential')) {
+               autoplot(patient.train) +
+                   autolayer(auto_arima_model,series="auto arima") +
+                   autolayer(auto_exp_model, series = "auto exponential") +
+                   autolayer(simple_exp_model, series= "simple exponential") +
+                   autolayer(double_exp_model, series = "double exponential") +
+                   autolayer(triple_exp_model, series = "triple exponential")
+                   
+           } else {
+               autoplot(patient.train) +
+                   autolayer(auto_exp_model, series = "auto exponential") +
+                   autolayer(simple_exp_model, series= "simple exponential") +
+                   autolayer(double_exp_model, series = "double exponential") +
+                   autolayer(triple_exp_model, series = "triple exponential") +
+                   autolayer(tbat_model, series = "tbat")
+           }
         } else {
             autoplot(patient.train) +
                 autolayer(auto_arima_model,series="auto arima") +
