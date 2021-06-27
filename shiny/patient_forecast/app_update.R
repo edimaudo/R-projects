@@ -25,10 +25,9 @@ if (class(mtry) != "try-error") {
     df[df==0] <- NA #assigne 0 to NA
     df <- na.omit(df) #remove na
     df$Arrival_date <- lubridate::dmy(df$Arrival_date) #update date field
-} 
-#else {
-#    #message("File doesn't exist, please check")
-#}
+} else {
+    #message("File doesn't exist, please check")
+}
 
 #=============
 #dropdowns
@@ -390,10 +389,10 @@ server <- function(input, output,session) {
                                end = patient.end, frequency = as.numeric(input$frequencyInput))
         }
         
-        #set forecast horizon
+        # set forecast horizon
         forecast.horizon <- as.numeric(input$horizonInput)
         
-        #models
+        # models
         auto_exp_model <- patient.train %>% ets %>% forecast(h=forecast.horizon)
         auto_arima_model <- patient.train %>% auto.arima() %>% forecast(h=forecast.horizon)
         simple_exp_model <- patient.train %>% HoltWinters(beta=FALSE, gamma=FALSE) %>% 
@@ -408,7 +407,7 @@ server <- function(input, output,session) {
         #              as.numeric(input$maInput))
        # manual_arima_model <- patient.train %>% Arima(order=orderinfo) 
         
-        #model output
+        # model output
         auto_arima <- "auto-arima"        %in% input$modelInput
         auto_exp   <- 'auto-exponential'  %in% input$modelInput
         simple_exp <- "simple-exponential" %in% input$modelInput
@@ -419,7 +418,6 @@ server <- function(input, output,session) {
         
         
         model_selection <- unlist(strsplit(input$modelInput, split=" "))
-        #print(length(model_selection))
         model_count <- length(model_selection)
           
         if (is.null(input$modelInput)){
