@@ -452,7 +452,8 @@ server <- function(input, output,session) {
                    autolayer(double_exp_model, series = "double exponential") +
                    autolayer(triple_exp_model, series = "triple exponential")
                    
-           } else {
+           } else if (model_selection %in% c('auto-exponential','simple-exponential',
+                                             'double-exponential','triple-exponential','tbat')) {
                autoplot(patient.train) +
                    autolayer(auto_exp_model, series = "auto exponential") +
                    autolayer(simple_exp_model, series= "simple exponential") +
