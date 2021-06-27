@@ -1,7 +1,7 @@
 # Patient Forecast
 rm(list = ls()) #clear environment
 #=============
-# libraries
+# Packages
 #=============
 packages <- c('ggplot2', 'corrplot','tidyverse',"caret","dummies",'readxl',
               'shiny','shinydashboard','scales','dplyr','mlbench','caTools',
@@ -30,7 +30,7 @@ if (class(mtry) != "try-error") {
 }
 
 #=============
-#dropdowns
+# dropdowns
 #=============
 aggregate_info <- c("daily",'weekly','monthly')
 horizon_info <- c(1:50) #default 14
@@ -416,8 +416,6 @@ server <- function(input, output,session) {
         tbat <- "tbat"  %in% input$modelInput
         #manual_arima <- "manual-arima"  %in% input$modelInput
         
-        
-        
         model_selection <- unlist(strsplit(input$modelInput, split=" "))
         model_count <- length(model_selection)
         
@@ -537,10 +535,6 @@ server <- function(input, output,session) {
                 autolayer(tbat_model, series = "tbat") #+
             #autolayer(manual_arima_model, series = "manual arima")            
         }
-        
-        
-        
-        
         
     })
     
