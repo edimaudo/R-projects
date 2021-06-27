@@ -1,12 +1,14 @@
 # Patient Forecast
 rm(list = ls()) #clear environment
-
+#=============
 # libraries
+#=============
 packages <- c('ggplot2', 'corrplot','tidyverse',"caret","dummies",'readxl',
               'shiny','shinydashboard','scales','dplyr','mlbench','caTools',
               'forecast','TTR','xts','lubridate')
-
+#=============
 # load packages
+#=============
 for (package in packages) {
     if (!require(package, character.only=T, quietly=T)) {
         install.packages(package)
@@ -39,8 +41,9 @@ log_info <- c("Yes","No")
 model_info <- c('auto-arima','auto-exponential','simple-exponential',
                 'double-exponential','triple-exponential', 'tbat')#,'manual-arima')
 
-
+#=============
 # Define UI for application
+#=============
 ui <- dashboardPage(
     dashboardHeader(title = "Patient Forecast"),
     dashboardSidebar(
@@ -135,8 +138,9 @@ ui <- dashboardPage(
     )
 )
 
-
+#=============
 # Define server logic 
+#=============
 server <- function(input, output,session) {
     
     # load data
