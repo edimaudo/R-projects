@@ -870,6 +870,18 @@ server <- function(input, output,session) {
                  forecast(h=forecast.horizon)  
         
         patient_train_tbat_forecast <-  tbats(patient.train) %>% forecast(h=forecast.horizon)
+        
+        triple_exp <- as.data.frame(accuracy(patient_train_triple_exp_forecast ,patient.test))
+        rownames(triple_exp) <- c()
+        is.num <- sapply(triple_exp, is.numeric)
+        triple_exp[is.num] <- lapply(triple_exp[is.num], round, 2)
+        
+        models<- c("triple exponential","triple exponential")
+        data<- c("Training set", 'Test set')
+        
+        
+        triple_exp <- cbind(models, sets, triple_exp)
+        outputInfo <- rbind(outputInfo, outputInfo)
 
         # model output
         auto_arima <- "auto-arima"        %in% input$modelInput
@@ -881,7 +893,9 @@ server <- function(input, output,session) {
         #manual_arima <- "manual-arima"  %in% input$modelInput
         
         model_selection <- unlist(strsplit(input$modelInput, split=" "))
-        model_count <- length(model_selection)
+        #model_count <- length(model_selection)
+        
+        
         
         if (is.null(input$modelInput)){
             
@@ -1226,9 +1240,7 @@ server <- function(input, output,session) {
         
          
         # forecast accuracy output
-        #is.num <- sapply(DF, is.numeric)
-        #DF[is.num] <- lapply(DF[is.num], round, 8)
-        outputInfo <- as.data.frame(accuracy(patient_train_tbat_forecast ,patient.test))
+        outputInfo <- ""
         DT::datatable(outputInfo, options = list(scrollX = TRUE))
         
     })
