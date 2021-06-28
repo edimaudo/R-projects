@@ -29,6 +29,7 @@ if (class(mtry) != "try-error") {
     #message("File doesn't exist, please check")
 }
 
+
 #=============
 # dropdowns
 #=============
@@ -126,9 +127,9 @@ ui <- dashboardPage(
                             h1("Forecast Analysis",style="text-align: center;"), 
                             tabsetPanel(type = "tabs",
                                         tabPanel(h4("Forecast Output",style="text-align: center;"), 
-                                                 plotOutput("forecastPlot"))#,
-                                        #tabPanel(h4("Forecast Accuracy",style="text-align: center;"), 
-                                        #         DT::dataTableOutput("accuracyOutput"))
+                                                 plotOutput("forecastPlot")),
+                                        tabPanel(h4("Forecast Accuracy",style="text-align: center;"), 
+                                                 DT::dataTableOutput("accuracyOutput"))
                             )
                         )
                     )
@@ -847,7 +848,6 @@ server <- function(input, output,session) {
         forecast.horizon <- as.numeric(input$horizonInput)
         
         # models
-       
         patient_train_auto_exp_forecast <- ets(patient.train) %>% 
                  forecast(h=forecast.horizon)    
         
@@ -868,12 +868,13 @@ server <- function(input, output,session) {
                                                    beta=TRUE, 
                                                    gamma=TRUE) %>% 
                  forecast(h=forecast.horizon)  
+        
+        patient_train_tbat_forecast <-  tbats(patient.train) %>% forecast(h=forecast.horizon)
           
-        
-        
-        #outputInfo <- as.data.frame(accuracy(patient.train.forecast ,patient.test))
-        
-        #DT::datatable(outputInfo, options = list(scrollX = TRUE))
+       
+        # forecast accuracy output
+        outputInfo <- as.data.frame(accuracy(patient_train_tbat_forecast ,patient.test))
+        DT::datatable(outputInfo, options = list(scrollX = TRUE))
         
     })
     
