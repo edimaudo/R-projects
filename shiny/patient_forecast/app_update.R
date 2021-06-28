@@ -858,17 +858,17 @@ server <- function(input, output,session) {
                                                    beta=FALSE, 
                                                    gamma=FALSE) %>% 
                  forecast(h=forecast.horizon)             
-        # } else if (input$modelInput == 'double exponential'){
-        #     patient.train.forecast <- HoltWinters(patient.train,
-        #                                           beta=TRUE, 
-        #                                           gamma=FALSE) %>% 
-        #         forecast(h=forecast.horizon)  
-        # } else {
-        #     patient.train.forecast <- HoltWinters(patient.train,
-        #                                           beta=TRUE, 
-        #                                           gamma=TRUE) %>% 
-        #         forecast(h=forecast.horizon)  
-        # }  
+        
+        patient_train_double_exp_forecast <- HoltWinters(patient.train,
+                                                   beta=TRUE, 
+                                                   gamma=FALSE) %>% 
+                 forecast(h=forecast.horizon)  
+        
+        patient_train_triple_exp_forecast <- HoltWinters(patient.train,
+                                                   beta=TRUE, 
+                                                   gamma=TRUE) %>% 
+                 forecast(h=forecast.horizon)  
+          
         
         
         #outputInfo <- as.data.frame(accuracy(patient.train.forecast ,patient.test))
