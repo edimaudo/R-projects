@@ -847,32 +847,33 @@ server <- function(input, output,session) {
         forecast.horizon <- as.numeric(input$horizonInput)
         
         # models
-        if(input$modelInput == 'auto exponential'){
-            patient.train.forecast <- ets(patient.train) %>% 
-                forecast(h=forecast.horizon)    
-        } else if (input$modelInput == 'auto arima'){
-            patient.train.forecast <- auto.arima(patient.train) %>% 
-                forecast(h=forecast.horizon)             
-        } else if (input$modelInput == 'simple exponential'){
-            patient.train.forecast <- HoltWinters(patient.train,
-                                                  beta=FALSE, 
-                                                  gamma=FALSE) %>% 
-                forecast(h=forecast.horizon)             
-        } else if (input$modelInput == 'double exponential'){
-            patient.train.forecast <- HoltWinters(patient.train,
-                                                  beta=TRUE, 
-                                                  gamma=FALSE) %>% 
-                forecast(h=forecast.horizon)  
-        } else {
-            patient.train.forecast <- HoltWinters(patient.train,
-                                                  beta=TRUE, 
-                                                  gamma=TRUE) %>% 
-                forecast(h=forecast.horizon)  
-        }  
+       
+        patient_train_auto_exp_forecast <- ets(patient.train) %>% 
+                 forecast(h=forecast.horizon)    
         
-        outputInfo <- as.data.frame(accuracy(patient.train.forecast ,patient.test))
+        patient_train_auto_arima_forecast <- auto.arima(patient.train) %>% 
+                 forecast(h=forecast.horizon)             
         
-        DT::datatable(outputInfo, options = list(scrollX = TRUE))
+        patient_train_simple_exp_forecast <- HoltWinters(patient.train,
+                                                   beta=FALSE, 
+                                                   gamma=FALSE) %>% 
+                 forecast(h=forecast.horizon)             
+        # } else if (input$modelInput == 'double exponential'){
+        #     patient.train.forecast <- HoltWinters(patient.train,
+        #                                           beta=TRUE, 
+        #                                           gamma=FALSE) %>% 
+        #         forecast(h=forecast.horizon)  
+        # } else {
+        #     patient.train.forecast <- HoltWinters(patient.train,
+        #                                           beta=TRUE, 
+        #                                           gamma=TRUE) %>% 
+        #         forecast(h=forecast.horizon)  
+        # }  
+        
+        
+        #outputInfo <- as.data.frame(accuracy(patient.train.forecast ,patient.test))
+        
+        #DT::datatable(outputInfo, options = list(scrollX = TRUE))
         
     })
     
