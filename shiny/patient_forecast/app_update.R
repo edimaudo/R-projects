@@ -871,17 +871,48 @@ server <- function(input, output,session) {
         
         patient_train_tbat_forecast <-  tbats(patient.train) %>% forecast(h=forecast.horizon)
         
-        triple_exp <- as.data.frame(accuracy(patient_train_triple_exp_forecast ,patient.test))
-        rownames(triple_exp) <- c()
-        is.num <- sapply(triple_exp, is.numeric)
-        triple_exp[is.num] <- lapply(triple_exp[is.num], round, 2)
+        #accuracy models
+        auto_exp_accuracy <- as.data.frame(accuracy( patient_train_auto_exp_forecast ,patient.test))
+        auto_arima_accuracy <- as.data.frame(accuracy(patient_train_auto_arima_forecast ,patient.test))
+        simple_exp_accuracy <- as.data.frame(accuracy(patient_train_simple_exp_forecast ,patient.test))
+        double_exp_accuracy <- as.data.frame(accuracy(patient_train_double_exp_forecast ,patient.test))
+        triple_exp_accuracy <- as.data.frame(accuracy(patient_train_triple_exp_forecast ,patient.test))
+        tbat_accuracy <- as.data.frame(accuracy(patient_train_tbat_forecast ,patient.test))
         
-        models<- c("triple exponential","triple exponential")
-        data<- c("Training set", 'Test set')
+        numeric_update <- function(df){
+            rownames(df) <- c()
+            is.num <- sapply(df, is.numeric)
+            df[is.num] <- lapply(df[is.num], round, 2)           
+            return (df)
+        }
         
+        auto_exp_accuracy <- numeric_update(auto_exp_accuracy)
+        auto_arima_accuracy <- numeric_update(auto_arima_accuracy)
+        simple_exp_accuracy <- numeric_update(simple_exp_accuracy)
+        double_exp_accuracy <- numeric_update(double_exp_accuracy)
+        triple_exp_accuracy <- numeric_update(triple_exp_accuracy)
+        tbat_accuracy <- numeric_update(tbat_accuracy)
         
-        triple_exp <- cbind(models, sets, triple_exp)
-        outputInfo <- rbind(outputInfo, outputInfo)
+        models<- c("auto-exponential","auto-exponential",
+                   "auto-arima","auto-arima",
+                   "simple-exponential","simple-exponential",
+                   "double-exponential","double-exponential",
+                   "triple-exponential","triple-exponential",
+                   "tbat","tbat")
+
+        data<- c("Training set", 'Test set',
+                 "Training set", 'Test set',
+                 "Training set", 'Test set',
+                 "Training set", 'Test set',
+                 "Training set", 'Test set',
+                 "Training set", 'Test set')
+        
+        outputInfo <- rbind(auto_exp_accuracy,auto_arima_accuracy,
+                            simple_exp_accuracy,double_exp_accuracy,
+                            triple_exp_accuracy,tbat_accuracy)
+        
+        outputInfo <- cbind(models, data, outputInfo)
+        
 
         # model output
         auto_arima <- "auto-arima"        %in% input$modelInput
@@ -893,25 +924,29 @@ server <- function(input, output,session) {
         #manual_arima <- "manual-arima"  %in% input$modelInput
         
         model_selection <- unlist(strsplit(input$modelInput, split=" "))
-        #model_count <- length(model_selection)
-        
-        
+        model_count <- length(model_selection)
         
         if (is.null(input$modelInput)){
             
         } else if (model_count == 1){
             if (auto_arima){
-                auto_arima_model %>% autoplot()
+                outputInfo <- outputInfo %>% 
+                    filter(models %in% c("auto-arima"))
             } else if (auto_exp) {
-                auto_exp_model %>% autoplot()
+                outputInfo <- outputInfo %>% 
+                    filter(models %in% c("auto-exponential"))
             } else if (simple_exp) {
-                simple_exp_model %>% autoplot()
+                outputInfo <- outputInfo %>% 
+                    filter(models %in% c("simple-exponential"))
             } else if (double_exp) {
-                double_exp_model %>% autoplot()
+                outputInfo <- outputInfo %>% 
+                    filter(models %in% c("double-exponential"))
             } else if (triple_exp) {
-                triple_exp_model %>% autoplot()
+                outputInfo <- outputInfo %>% 
+                    filter(models %in% c("triple-exponential"))
             } else if (tbat ) {
-                tbat_model %>% autoplot()   
+                outputInfo <- outputInfo %>% 
+                    filter(models %in% c("tbat"))
             }
         } else if (model_count == 2){
             if(auto_arima &  auto_exp) {
@@ -1231,16 +1266,16 @@ server <- function(input, output,session) {
             } else if (auto_arima & auto_exp & simple_exp &  triple_exp & tbat){
                             
             } else if (auto_arima & auto_exp & double_exp & triple_exp & tbat){
-  
+                outputInfo <- outputInfo %>% 
+                    filter(!models %in% c("simple-exponential"))
             }
         } else {
            
-            #autolayer(manual_arima_model, series = "manual arima")            
+            outputInfo <- outputInfo          
         }
         
          
         # forecast accuracy output
-        outputInfo <- ""
         DT::datatable(outputInfo, options = list(scrollX = TRUE))
         
     })
