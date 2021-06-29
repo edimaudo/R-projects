@@ -34,11 +34,11 @@ df$printer <- ifelse(df$appId == "com.hp.printercontrol", 'HP',
 #=============
 # Dropdown information
 #=============                        
-printer_dropdown <- c('Canon','Epson','Epson Smart','HP')
+printer_info <- c('Canon','Epson','Epson Smart','HP')
 
 # Define UI for application
 ui <- dashboardPage(
-    dashboardHeader(title = "Patient Forecast"),
+    dashboardHeader(title = "Printer Analysis"),
     dashboardSidebar(
         sidebarMenu(
             menuItem("Overview", tabName = "overview", icon = icon("th")),
@@ -52,40 +52,40 @@ ui <- dashboardPage(
             tabItem(tabName = "Analysis",
                     sidebarLayout(
                         sidebarPanel(
-                            selectInput("aggregateInput", "Aggregate", 
-                                        choices = aggregate_info, selected = 'daily'),
-                            selectInput("horizonInput", "Horizon", 
-                                        choices = horizon_info, selected = 14),
-                            selectInput("frequencyInput", "Frequency", 
-                                        choices = frequency_info, selected = 7),
-                            radioButtons("differenceInput","Difference",
-                                         choices = difference_info, selected = "No"),
-                            radioButtons("logInput","Log",
-                                         choices = log_info, selected = "No"),
-                            selectInput("modelInput", "Model", 
-                                        choices = model_info, selected = 'auto exponential'),
+                            checkboxGroupInput("printerInput", "Printer",choices = printer_info, 
+                                               selected = printer_info),
+                            # selectInput("horizonInput", "Horizon", 
+                            #             choices = horizon_info, selected = 14),
+                            # selectInput("frequencyInput", "Frequency", 
+                            #             choices = frequency_info, selected = 7),
+                            # radioButtons("differenceInput","Difference",
+                            #              choices = difference_info, selected = "No"),
+                            # radioButtons("logInput","Log",
+                            #              choices = log_info, selected = "No"),
+                            # selectInput("modelInput", "Model", 
+                            #             choices = model_info, selected = 'auto exponential'),
                             submitButton("Submit")
                         ),
                         mainPanel(
-                            h1("Forecast Analysis",style="text-align: center;"), 
-                            tabsetPanel(type = "tabs",
-                                        tabPanel(h4("Decomposition",style="text-align: center;"), 
-                                                 plotOutput("decompositionPlot")),
-                                        tabPanel(h4("ACF Plot",style="text-align: center;"), 
-                                                 plotOutput("acfPlot")),
-                                        tabPanel(h4("PACF Plot",style="text-align: center;"), 
-                                                 plotOutput("pacfPlot")),
-                                        tabPanel(h4("Forecast Output",style="text-align: center;"), 
-                                                 plotOutput("forecastPlot")),
-                                        tabPanel(h4("Forecast Accuracy",style="text-align: center;"), 
-                                                 DT::dataTableOutput("accuracyOutput"))
+                            h1("Forecast Analysis",style="text-align: center;")#, 
+                            # tabsetPanel(type = "tabs",
+                            #             tabPanel(h4("Decomposition",style="text-align: center;"), 
+                            #                      plotOutput("decompositionPlot")),
+                            #             tabPanel(h4("ACF Plot",style="text-align: center;"), 
+                            #                      plotOutput("acfPlot")),
+                            #             tabPanel(h4("PACF Plot",style="text-align: center;"), 
+                            #                      plotOutput("pacfPlot")),
+                            #             tabPanel(h4("Forecast Output",style="text-align: center;"), 
+                            #                      plotOutput("forecastPlot")),
+                            #             tabPanel(h4("Forecast Accuracy",style="text-align: center;"), 
+                            #                      DT::dataTableOutput("accuracyOutput"))
                             )
                         )
                     )
             ) 
         )
     )
-)
+#)
 
 # Define server logic 
 server <- function(input, output,session) {
