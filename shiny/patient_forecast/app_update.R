@@ -126,8 +126,10 @@ ui <- dashboardPage(
                         mainPanel(
                             h1("Forecast Analysis",style="text-align: center;"), 
                             tabsetPanel(type = "tabs",
-                                        tabPanel(h4("Forecast Output",style="text-align: center;"), 
+                                        tabPanel(h4("Forecast Visualization",style="text-align: center;"), 
                                                  plotOutput("forecastPlot")),
+                                        tabPanel(h4("Forecast Results",style="text-align: center;")), 
+                                                 #DT::dataTableOutput("accuracyOutput")),
                                         tabPanel(h4("Forecast Accuracy",style="text-align: center;"), 
                                                  DT::dataTableOutput("accuracyOutput"))
                             )
@@ -333,7 +335,7 @@ server <- function(input, output,session) {
         
     })
     
-    # Forecast
+    # Forecast Visualization
     output$forecastPlot <- renderPlot({
         # Aggregation &  training and test data
         patient.xts <- xts(x = df$Patients, order.by = df$Arrival_date) 
@@ -786,18 +788,19 @@ server <- function(input, output,session) {
             
         } else {
             autoplot(patient.train) +
-                autolayer(auto_arima_model,series="auto arima") +
-                autolayer(auto_exp_model, series = "auto exponential") +
-                autolayer(simple_exp_model, series= "simple exponential") +
-                autolayer(double_exp_model, series = "double exponential") +
-                autolayer(triple_exp_model, series = "triple exponential") +
-                autolayer(tbat_model, series = "tbat") #+
+                autolayer(auto_arima_model,series="auto arima", alpha=0.25) +
+                autolayer(auto_exp_model, series = "auto exponential", alpha=0.1) +
+                autolayer(simple_exp_model, series= "simple exponential", alpha=0.5) +
+                autolayer(double_exp_model, series = "double exponential", alpha=0.4) +
+                autolayer(triple_exp_model, series = "triple exponential", alpha=0.15) +
+                autolayer(tbat_model, series = "tbat", alpha=0.6) + 
+                guides(colour = guide_legend("Models")) #+
             #autolayer(manual_arima_model, series = "manual arima")            
         }
         
     })
     
-    # Forecast output
+    # Forecast Accuracy
     output$accuracyOutput <- DT::renderDataTable({
         patient.xts <- xts(x = df$Patients, order.by = df$Arrival_date) 
         patient.daily <- apply.daily(patient.xts,mean)
@@ -879,7 +882,7 @@ server <- function(input, output,session) {
         
         patient_train_tbat_forecast <-  tbats(patient.train) %>% forecast(h=forecast.horizon)
         
-        #accuracy models
+        #accuracy models -- fix this
         auto_exp_accuracy <- as.data.frame(accuracy( patient_train_auto_exp_forecast ,patient.test))
         auto_arima_accuracy <- as.data.frame(accuracy(patient_train_auto_arima_forecast ,patient.test))
         simple_exp_accuracy <- as.data.frame(accuracy(patient_train_simple_exp_forecast ,patient.test))
@@ -1138,6 +1141,12 @@ server <- function(input, output,session) {
         DT::datatable(outputInfo, options = list(scrollX = TRUE))
         
     })
+    
+    # Forecast results using test information
+    #model 1 | model 2 | model 3......
+    #value | value | value
+    #value | value | value
+    output$forecastOutput <- DT::renderDataTable({})
     
 }
 
