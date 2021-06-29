@@ -749,7 +749,7 @@ server <- function(input, output,session) {
                     autolayer(triple_exp_model, series = "triple exponential")
             } else if (auto_arima & simple_exp & double_exp & triple_exp & tbat) {
                 autoplot(patient.train) +
-                    autolayer(auto_exp_model, series = "auto exponential") +
+                    autolayer(auto_arima_model, series = "auto arima") +
                     autolayer(simple_exp_model, series= "simple exponential") +
                     autolayer(double_exp_model, series = "double exponential") +
                     autolayer(triple_exp_model, series = "triple exponential") +
@@ -775,7 +775,15 @@ server <- function(input, output,session) {
                     autolayer(double_exp_model, series = "double exponential") +
                     autolayer(triple_exp_model, series = "triple exponential") + 
                     autolayer(tbat_model, series= "tbat")
-            }
+            }    else if (auto_exp & simple_exp & double_exp & triple_exp & tbat){
+                    autoplot(patient.train) +
+                        autolayer(auto_exp_model,series="auto exp") +
+                        autolayer(simple_exp_model, series = "simple exponential") +
+                        autolayer(double_exp_model, series = "double exponential") +
+                        autolayer(triple_exp_model, series = "triple exponential") + 
+                        autolayer(tbat_model, series= "tbat")
+                }
+            
         } else {
             autoplot(patient.train) +
                 autolayer(auto_arima_model,series="auto arima") +
@@ -957,68 +965,55 @@ server <- function(input, output,session) {
                 autoplot(patient.train) +
                     autolayer(auto_arima_model,series="auto arima") +
                     autolayer(simple_exp_model, series = "simple exponential ") 
-            }
-            else if(auto_arima &  double_exp) {
+            } else if(auto_arima &  double_exp) {
                 autoplot(patient.train) +
                     autolayer(auto_arima_model,series="auto arima") +
                     autolayer(double_exp_model, series = "double exponential") 
-            }
-            else if(auto_arima &  triple_exp) {
+            } else if(auto_arima &  triple_exp) {
                 autoplot(patient.train) +
                     autolayer(auto_arima_model,series="auto arima") +
                     autolayer(triple_exp_model, series = "triple exponential") 
-            }
-            else if(auto_arima &  tbat) {
+            } else if(auto_arima &  tbat) {
                 autoplot(patient.train) +
                     autolayer(auto_arima_model,series="auto arima") +
                     autolayer(tbat_model, series = "tbat") 
-            }
-            else if(auto_exp &  simple_exp) {
+            } else if(auto_exp &  simple_exp) {
                 autoplot(patient.train) +
                     autolayer(auto_exp_model, series = "auto exponential") +
                     autolayer(simple_exp_model,series="simple exponential") 
-            }
-            else if(auto_exp &  double_exp) {
+            } else if(auto_exp &  double_exp) {
                 autoplot(patient.train) +
                     autolayer(auto_exp_model, series = "auto exponential") +
                     autolayer(double_exp_model,series="double exponential")                 
-            }
-            else if(auto_exp &  triple_exp) {
+            }else if(auto_exp &  triple_exp) {
                 autoplot(patient.train) +
                     autolayer(auto_exp_model, series = "auto exponential") +
                     autolayer(triple_exp_model,series="triple exponential") 
-            }
-            else if(auto_exp &  tbat) {
+            } else if(auto_exp &  tbat) {
                 autoplot(patient.train) +
                     autolayer(auto_exp_model, series = "auto exponential") +
                     autolayer(tbat_model,series="tbat") 
-            }
-            else if(simple_exp &  double_exp) {
+            }else if(simple_exp &  double_exp) {
                 autoplot(patient.train) +
                     autolayer(simple_exp_model,series="simple exponential") + 
                     autolayer(double_exp_model,series="double exponential") 
-            }
-            else if(simple_exp &  triple_exp) {
+            }else if(simple_exp &  triple_exp) {
                 autoplot(patient.train) +
                     autolayer(simple_exp_model,series="simple exponential") + 
                     autolayer(triple_exp_model,series="triple exponential")                 
-            }
-            else if(simple_exp &  tbat) {
+            }else if(simple_exp &  tbat) {
                 autoplot(patient.train) +
                     autolayer(simple_exp_model,series="simple exponential") + 
                     autolayer(tbat_model,series="tbat") 
-            }
-            else if(double_exp &  triple_exp) {
+            }else if(double_exp &  triple_exp) {
                 autoplot(patient.train) +
                     autolayer(double_exp_model,series="double exponential") + 
                     autolayer(triple_exp_model,series="triple exponential") 
-            }
-            else if(double_exp &  tbat) {
+            }else if(double_exp &  tbat) {
                 autoplot(patient.train) +
                     autolayer(double_exp_model,series="double exponential") + 
                     autolayer(tbat_model,series="tbat") 
-            }
-            else if(triple_exp &  tbat) {
+            }else if(triple_exp &  tbat) {
                 autoplot(patient.train) +
                     autolayer(triple_exp_model,series="triple exponential") + 
                     autolayer(tbat_model,series="tbat") 
@@ -1029,116 +1024,97 @@ server <- function(input, output,session) {
                     autolayer(auto_arima_model, series = "auto arima") +
                     autolayer(auto_exp_model, series = "auto exponential") +
                     autolayer(simple_exp_model, series= "simple exponential") 
-            }
-            else if(auto_arima &  auto_exp &  double_exp) {
+            }else if(auto_arima &  auto_exp &  double_exp) {
                 autoplot(patient.train) +
                     autolayer(auto_arima_model, series = "auto arima") +
                     autolayer(auto_exp_model, series = "auto exponential") +
                     autolayer(double_exp_model, series= "double exponential") 
-            }
-            else if(auto_arima &  auto_exp &  triple_exp) {
+            }else if(auto_arima &  auto_exp &  triple_exp) {
                 autoplot(patient.train) +
                     autolayer(auto_arima_model, series = "auto arima") +
                     autolayer(auto_exp_model, series = "auto exponential") +
                     autolayer(triple_exp_model, series= "triple exponential") 
-            }
-            else if(auto_arima &  auto_exp &  tbat) {
+            }else if(auto_arima &  auto_exp &  tbat) {
                 autoplot(patient.train) +
                     autolayer(auto_arima_model, series = "auto arima") +
                     autolayer(auto_exp_model, series = "auto exponential") +
                     autolayer(tbat_model, series= "tbat")                
-            }
-            else if(auto_arima &  simple_exp &  double_exp) {
+            }else if(auto_arima &  simple_exp &  double_exp) {
                 autoplot(patient.train) +
                     autolayer(auto_arima_model, series = "auto arima") +
                     autolayer(simple_exp_model, series = "simple exponential") +
                     autolayer(double_exp_model, series= "double exponential") 
-            }
-            else if(auto_arima &  simple_exp &  triple_exp) {
+            }else if(auto_arima &  simple_exp &  triple_exp) {
                 autoplot(patient.train) +
                     autolayer(auto_arima_model, series = "auto arima") +
                     autolayer(simple_exp_model, series= "simple exponential") + 
                     autolayer(triple_exp_model, series = "triple exponential") 
-            }
-            else if(auto_arima &  simple_exp &  tbat) {
+            }else if(auto_arima &  simple_exp &  tbat) {
                 autoplot(patient.train) +
                     autolayer(auto_arima_model, series = "auto arima") +
                     autolayer(simple_exp_model, series= "simple exponential") + 
                     autolayer(tbat_model, series = "tbat") 
-            }
-            else if(auto_arima &  double_exp &  triple_exp) {
+            }else if(auto_arima &  double_exp &  triple_exp) {
                 autoplot(patient.train) +
                     autolayer(auto_arima_model, series = "auto arima") +
                     autolayer(double_exp_model, series= "double exponential") + 
                     autolayer(triple_exp_model, series = "triple exponential") 
-            }
-            else if(auto_arima &  double_exp &  tbat) {
+            }else if(auto_arima &  double_exp &  tbat) {
                 autoplot(patient.train) +
                     autolayer(auto_arima_model, series = "auto arima") +
                     autolayer(double_exp_model, series= "double exponential") + 
                     autolayer(tbat_model, series = "tbat") 
-            }
-            else if(auto_arima &  triple_exp &  tbat) {
+            }else if(auto_arima &  triple_exp &  tbat) {
                 autoplot(patient.train) +
                     autolayer(auto_arima_model, series = "auto arima") +
                     autolayer(triple_exp_model, series= "triple exponential") + 
                     autolayer(tbat_model, series = "tbat") 
-            }
-            else if(auto_exp &  simple_exp &  double_exp) {
+            }else if(auto_exp &  simple_exp &  double_exp) {
                 autoplot(patient.train) +
                     autolayer(auto_exp_model, series = "auto exponential") +
                     autolayer(simple_exp_model, series = "simple exponential") + 
                     autolayer(double_exp_model, series= "double exponential")                 
-            }
-            else if(auto_exp &  simple_exp &  triple_exp) {
+            }else if(auto_exp &  simple_exp &  triple_exp) {
                 autoplot(patient.train) +
                     autolayer(auto_exp_model, series = "auto exponential") +
                     autolayer(simple_exp_model, series = "simple exponential") + 
                     autolayer(triple_exp_model, series= "triple exponential") 
-            }
-            else if(auto_exp &  simple_exp &  tbat) {
+            }else if(auto_exp &  simple_exp &  tbat) {
                 autoplot(patient.train) +
                     autolayer(auto_exp_model, series = "auto exponential") +
                     autolayer(simple_exp_model, series = "simple exponential") + 
                     autolayer(tbat_model, series= "tbat")                
-            }
-            else if(auto_exp &  double_exp &  triple_exp) {
+            }else if(auto_exp &  double_exp &  triple_exp) {
                 autoplot(patient.train) +
                     autolayer(auto_exp_model, series = "auto exponential") +
                     autolayer(double_exp_model, series = "double exponential") + 
                     autolayer(triple_exp_model, series= "triple exponential")
-            }
-            else if(auto_exp &  double_exp &  tbat) {
+            }else if(auto_exp &  double_exp &  tbat) {
                 autoplot(patient.train) +
                     autolayer(auto_exp_model, series = "auto exponential") +
                     autolayer(double_exp_model, series= "double exponential") +
                     autolayer(tbat_model, series = "tbat") 
-            }
-            else if(auto_exp &  triple_exp &  tbat) {
+            }else if(auto_exp &  triple_exp &  tbat) {
                 autoplot(patient.train) +
                     autolayer(auto_exp_model, series = "auto exponential") +
                     autolayer(triple_exp_model, series= "triple exponential") +
                     autolayer(tbat_model, series = "tbat") 
-            }
-            else if(simple_exp &  double_exp &  triple_exp) {
+            }else if(simple_exp &  double_exp &  triple_exp) {
                 autoplot(patient.train) +
                     autolayer(simple_exp_model, series = "simple exponential") +
                     autolayer(double_exp_model, series= "double exponential") +
                     autolayer(triple_exp_model, series = "triple exponential") 
-            }
-            else if(simple_exp &  double_exp &  tbat) {
+            }else if(simple_exp &  double_exp &  tbat) {
                 autoplot(patient.train) +
                     autolayer(simple_exp_model, series = "simple exponential") +
                     autolayer(double_exp_model, series= "double exponential") +
                     autolayer(tbat_model, series = "tbat") 
-            }
-            else if(simple_exp &  triple_exp &  tbat) {
+            }else if(simple_exp &  triple_exp &  tbat) {
                 autoplot(patient.train) +
                     autolayer(simple_exp_model, series= "simple exponential") +
                     autolayer(triple_exp_model, series = "triple exponential") +
                     autolayer(tbat_model, series = "tbat") 
-            }
-            else if(double_exp &  triple_exp &  tbat) {
+            }else if(double_exp &  triple_exp &  tbat) {
                 autoplot(patient.train) +
                     autolayer(double_exp_model, series= "double exponential") +
                     autolayer(triple_exp_model, series = "triple exponential") +
@@ -1151,100 +1127,85 @@ server <- function(input, output,session) {
                     autolayer(auto_exp_model, series = "auto exponential") +
                     autolayer(simple_exp_model, series = "simple exponential") +
                     autolayer(double_exp_model,series="double exponential")
-            }
-            else if(auto_arima &  auto_exp &  simple_exp &  triple_exp) {
+            }else if(auto_arima &  auto_exp &  simple_exp &  triple_exp) {
                 autoplot(patient.train) +
                     autolayer(auto_arima_model, series= "auto arima") +
                     autolayer(auto_exp_model, series = "auto exponential") +
                     autolayer(simple_exp_model,series="simple exponential") +
                     autolayer(triple_exp_model, series = "triple exponential")  
-            }
-            else if(auto_arima &  auto_exp &  simple_exp &  tbat) {
+            }else if(auto_arima &  auto_exp &  simple_exp &  tbat) {
                 autoplot(patient.train) +
                     autolayer(auto_arima_model, series= "auto arima") +
                     autolayer(auto_exp_model, series = "auto exponential") +
                     autolayer(simple_exp_model,series="simple exponential") +
                     autolayer(tbat_model, series = "tbat")  
-            }
-            else if(auto_arima &  auto_exp &  double_exp &  triple_exp) {
+            }else if(auto_arima &  auto_exp &  double_exp &  triple_exp) {
                 autoplot(patient.train) +
                     autolayer(auto_arima_model, series= "auto arima") +
                     autolayer(auto_exp_model, series = "auto exponential") +
                     autolayer(double_exp_model,series="double exponential") +
                     autolayer(triple_exp_model, series = "triple exponential")  
-            }
-            else if(auto_arima &  auto_exp &  double_exp &  tbat) {
+            }else if(auto_arima &  auto_exp &  double_exp &  tbat) {
                 autoplot(patient.train) +
                     autolayer(auto_arima_model, series= "auto arima") +
                     autolayer(auto_exp_model, series = "auto exponential") +
                     autolayer(double_exp_model, series = "double exponential") + 
                     autolayer(tbat_model,series="tbat") 
-            }
-            else if(auto_arima &  auto_exp &  triple_exp &  tbat) {
+            }else if(auto_arima &  auto_exp &  triple_exp &  tbat) {
                 autoplot(patient.train) +
                     autolayer(auto_arima_model, series= "auto arima") +
                     autolayer(auto_exp_model, series = "auto exponential") +
                     autolayer(triple_exp_model, series = "triple exponential") + 
                     autolayer(tbat_model,series="tbat") 
-            }
-            else if(auto_arima &  simple_exp &  double_exp &  triple_exp) {
+            }else if(auto_arima &  simple_exp &  double_exp &  triple_exp) {
                 autoplot(patient.train) +
                     autolayer(auto_arima_model, series= "auto arima") +
                     autolayer(simple_exp_model, series = "simple exponential") +
                     autolayer(double_exp_model,series="double exponential") +
                     autolayer(triple_exp_model, series = "triple exponential") 
-                
-            }
-            else if(auto_arima &  simple_exp &  double_exp &  tbat) {
+            }else if(auto_arima &  simple_exp &  double_exp &  tbat) {
                 autoplot(patient.train) +
                     autolayer(auto_arima_model, series= "auto arima") +
                     autolayer(simple_exp_model, series = "simple exponential") + 
                     autolayer(double_exp_model, series = "double exponential") +
                     autolayer(tbat_model,series="tbat")  
-            }
-            else if(auto_arima &  simple_exp &  triple_exp &  tbat) {
+            }else if(auto_arima &  simple_exp &  triple_exp &  tbat) {
                 autoplot(patient.train) +
                     autolayer(auto_arima_model, series= "auto arima") +
                     autolayer(simple_exp_model, series = "simple exponential") + 
                     autolayer(triple_exp_model, series = "triple exponential") +
                     autolayer(tbat_model,series="tbat")                
-            }
-            else if(auto_arima &  double_exp &  triple_exp &  tbat) {
+            }else if(auto_arima &  double_exp &  triple_exp &  tbat) {
                 autoplot(patient.train) +
                     autolayer(auto_arima_model, series= "auto arima") +
                     autolayer(double_exp_model, series = "double exponential") + 
                     autolayer(triple_exp_model, series = "triple exponential") +
                     autolayer(tbat_model,series="tbat") 
-            }
-            else if(auto_exp &  simple_exp &  double_exp &  triple_exp) {
+            }else if(auto_exp &  simple_exp &  double_exp &  triple_exp) {
                 autoplot(patient.train) +
                     autolayer(auto_exp_model, series= "auto exponential") +
                     autolayer(simple_exp_model,series="simple exponential") +
                     autolayer(double_exp_model, series = "double exponential") + 
                     autolayer(triple_exp_model, series = "triple exponential") 
-            }
-            else if(auto_exp &  simple_exp &  double_exp &  tbat) {
+            }else if(auto_exp &  simple_exp &  double_exp &  tbat) {
                 autoplot(patient.train) +
                     autolayer(auto_exp_model, series= "auto exponential") +
                     autolayer(simple_exp_model,series="simple exponential") +
                     autolayer(double_exp_model, series = "double exponential") + 
                     autolayer(tbat_model, series = "tbat") 
-            }
-            else if(auto_exp &  simple_exp &  triple_exp &  tbat) {
+            }else if(auto_exp &  simple_exp &  triple_exp &  tbat) {
                 autoplot(patient.train) +
                     autolayer(auto_exp_model, series= "auto exponential") +
                     autolayer(simple_exp_model, series = "simple exponential") + 
                     autolayer(triple_exp_model,series="triple exponential") +
                     autolayer(tbat_model, series = "tbat") 
-            }
-            else if(auto_exp &  double_exp &  triple_exp &  tbat) {
+            }else if(auto_exp &  double_exp &  triple_exp &  tbat) {
                 autoplot(patient.train) +
                     autolayer(auto_exp_model, series= "auto exponential") +
                     autolayer(double_exp_model, series = "double exponential") + 
                     autolayer(triple_exp_model,series="triple exponential") +
                     autolayer(tbat_model, series = "tbat") 
-            }
-            else if(simple_exp &  double_exp &  triple_exp &  tbat) {
+            }else if(simple_exp &  double_exp &  triple_exp &  tbat) {
                 autoplot(patient.train) +
                     autolayer(simple_exp_model, series= "simple exponential") +
                     autolayer(double_exp_model, series = "double exponential") + 
@@ -1253,26 +1214,25 @@ server <- function(input, output,session) {
             }
         } else if (model_count == 5){
             if (auto_arima & auto_exp & simple_exp & double_exp & triple_exp) {
-                autoplot(patient.train) +
-                    autolayer(auto_arima_model,series="auto arima") +
-                    autolayer(auto_exp_model, series = "auto exponential") +
-                    autolayer(simple_exp_model, series= "simple exponential") +
-                    autolayer(double_exp_model, series = "double exponential") +
-                    autolayer(triple_exp_model, series = "triple exponential")
+                outputInfo <- outputInfo %>% 
+                    filter(!models %in% c("tbat"))
             } else if (auto_arima & simple_exp & double_exp & triple_exp & tbat) {
-               
+                outputInfo <- outputInfo %>% 
+                    filter(!models %in% c("auto-exponential"))
             } else if (auto_arima & auto_exp & simple_exp & double_exp & tbat){
-                             
+                outputInfo <- outputInfo %>% 
+                    filter(!models %in% c("triple-exponential"))             
             } else if (auto_arima & auto_exp & simple_exp &  triple_exp & tbat){
-                            
+                outputInfo <- outputInfo %>% 
+                    filter(!models %in% c("double-exponential"))
             } else if (auto_arima & auto_exp & double_exp & triple_exp & tbat){
                 outputInfo <- outputInfo %>% 
                     filter(!models %in% c("simple-exponential"))
+            } else if (auto_exp & simple_exp & double_exp & triple_exp & tbat){
+                outputInfo <- outputInfo %>% 
+                    filter(!models %in% c("auto-arima"))
             }
-        } else {
-           
-            outputInfo <- outputInfo          
-        }
+        } 
         
          
         # forecast accuracy output
