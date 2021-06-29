@@ -1149,7 +1149,6 @@ server <- function(input, output,session) {
             }
         } 
         
-         
         # forecast accuracy output
         DT::datatable(outputInfo, options = list(scrollX = TRUE))
         
