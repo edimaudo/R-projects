@@ -19,10 +19,12 @@ for (package in packages) {
 df <- read.csv("reviews_v2.csv")
 
 #=============
-# data cleaning
+# Data cleaning
 #=============
-df[df==0] <- NA #assigne 0 to NA
-df <- na.omit(df) #remove na
+df$at <- as.Date(df$at, format = "%m/%d/%Y")
+df$year <- lubridate::year(df$at)
+df$month <- lubridate::month((df$at))
+
 
 #=============
 # Add printer column
@@ -91,29 +93,34 @@ ui <- dashboardPage(
 server <- function(input, output,session) {
     output$avgPrinterScoreplot <- renderPlot({
         
-        printer_selection <- unlist(strsplit(input$printerInput, split=" "))
-        printer_selection <- c(printer_selection)
-        print(printer_selection)
-        df_avg_score <- df %>%
-            group_by(printer) %>%
-            filter(printer %in% printer_selection) %>%
-            summarise(score_avg = mean(score), score_count = n()) %>%
-            select(printer,score_avg, score_count) 
+        if (is.null(input$printerInput)){
         
+        } else {
+            printer_selection <- unlist(strsplit(input$printerInput, split=" "))
+            printer_selection <- c(printer_selection)
+            df_avg_score <- df %>%
+                group_by(printer) %>%
+                filter(printer %in% printer_selection) %>%
+                summarise(score_avg = mean(score), score_count = n()) %>%
+                select(printer,score_avg, score_count) 
+            
             ggplot(df_avg_score, aes(x = reorder(printer,score_avg), y = score_avg)) + 
-            geom_bar(stat = "identity", width = 0.3) + theme_light()  + 
-            coord_flip() + 
-            guides(fill = FALSE) + 
-            ggtitle("Average score of Printers") + 
-            xlab("Printer") + 
-            ylab("Average. Score") + 
+                geom_bar(stat = "identity", width = 0.3) + theme_light()  + 
+                coord_flip() + 
+                guides(fill = FALSE) + 
+                ggtitle("Average score of Printers") + 
+                xlab("Printer") + 
+                ylab("Average. Score") + 
                 theme(
                     plot.title = element_text(hjust = 0.5),
                     legend.text = element_text(size = 20),
                     legend.title = element_text(size = 25),
                     axis.title = element_text(size = 15),
                     axis.text = element_text(size = 15)
-                )
+                )                
+        }
+        
+
         
         
         # ggplot(data = data_df,aes(x = as.factor(year),y = total_pledges)) +
