@@ -1209,6 +1209,7 @@ server <- function(input, output,session) {
     #value | value | value
     #value | value | value
     #VALUES SHOULD BE INT, because its patient data
+    #https://stackoverflow.com/questions/25216189/get-the-forecasted-values-when-using-forecast-in-r/25216260
     output$forecastOutput <- DT::renderDataTable({})
     
 }
