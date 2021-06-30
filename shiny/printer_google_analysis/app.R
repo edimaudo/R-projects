@@ -70,7 +70,7 @@ ui <- dashboardPage(
                             h1("Analysis",style="text-align: center;"), 
                             tabsetPanel(type = "tabs",
                                          tabPanel(h4("Avg Printer Score",style="text-align: center;"), 
-                                                  plotOutput("avgPrinterScorelot")),
+                                                  plotOutput("avgPrinterScoreplot")),
                                          tabPanel(h4("ACF Plot",style="text-align: center;"), 
                                                   plotOutput("")),
                                          tabPanel(h4("PACF Plot",style="text-align: center;"), 
@@ -89,7 +89,7 @@ ui <- dashboardPage(
 
 # Define server logic 
 server <- function(input, output,session) {
-    output$avgPrinterScorelot <- renderPlot({
+    output$avgPrinterScoreplot <- renderPlot({
         
         printer_selection <- unlist(strsplit(input$printerInput, split=" "))
         
@@ -105,7 +105,7 @@ server <- function(input, output,session) {
             guides(fill = FALSE) + 
             ggtitle("Avg score of Printers") + 
             xlab("Printer") + 
-            ylab("Avg. Score")
+            ylab("Avg. Score") + 
         
         
         # ggplot(data = data_df,aes(x = as.factor(year),y = total_pledges)) +
@@ -114,13 +114,13 @@ server <- function(input, output,session) {
         #          y = "Total # of Pledges") +
         #     scale_y_continuous(labels = comma) +
         #     scale_x_discrete() +
-        #     theme(
-        #         legend.text = element_text(size = 10),
-        #         legend.title = element_text(size = 10),
-        #         axis.title = element_text(size = 15),
-        #         axis.text = element_text(size = 10),
-        #         axis.text.x = element_text(angle = 45, hjust = 1)
-            #)
+             theme(
+                 legend.text = element_text(size = 20),
+                 legend.title = element_text(size = 15),
+                 axis.title = element_text(size = 15),
+                 axis.text = element_text(size = 15),
+                 #axis.text.x = element_text(angle = 45, hjust = 1)
+            )
     })
     
 }
