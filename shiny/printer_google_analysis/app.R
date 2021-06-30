@@ -121,6 +121,26 @@ server <- function(input, output,session) {
                  axis.text = element_text(size = 15),
                  #axis.text.x = element_text(angle = 45, hjust = 1)
             )
+            
+            # data_df <- df %>%
+            #     filter(city == input$cityInput) %>%
+            #     filter(major_category == input$categoryInput) %>%
+            #     group_by(year) %>%
+            #     summarise(total_pledges = sum(amt_pledged_.))
+            # 
+            # ggplot(data = data_df,aes(x = as.factor(year),y = total_pledges)) +
+            #     geom_bar(stat = "identity", width = 0.3) + theme_light() +
+            #     labs(x = "Years",
+            #          y = "Amount Pledged ($)") +
+            #     scale_y_continuous(labels = comma) +
+            #     scale_x_discrete() +
+            #     theme(
+            #         legend.text = element_text(size = 10),
+            #         legend.title = element_text(size = 10),
+            #         axis.title = element_text(size = 15),
+            #         axis.text = element_text(size = 10),
+            #         axis.text.x = element_text(angle = 45, hjust = 1)
+                )
     })
     
 }
