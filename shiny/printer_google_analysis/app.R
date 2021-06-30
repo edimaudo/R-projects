@@ -42,14 +42,14 @@ ui <- dashboardPage(
     dashboardSidebar(
         sidebarMenu(
             menuItem("Overview", tabName = "overview", icon = icon("th")),
-            menuItem("Analysis", tabName = "city", icon = icon("th")),
+            menuItem("Analysis", tabName = "analysis", icon = icon("th")),
             menuItem("Sentiment Analysis", tabName = "sentiment", icon = icon("th"))
         )
     ),
     dashboardBody(
         tabItems(
             tabItem(tabName = "overview",includeMarkdown("readme.md"),hr()),
-            tabItem(tabName = "Analysis",
+            tabItem(tabName = "analysis",
                     sidebarLayout(
                         sidebarPanel(
                             checkboxGroupInput("printerInput", "Printer",choices = printer_info, 
@@ -67,28 +67,61 @@ ui <- dashboardPage(
                             submitButton("Submit")
                         ),
                         mainPanel(
-                            h1("Forecast Analysis",style="text-align: center;")#, 
-                            # tabsetPanel(type = "tabs",
-                            #             tabPanel(h4("Decomposition",style="text-align: center;"), 
-                            #                      plotOutput("decompositionPlot")),
-                            #             tabPanel(h4("ACF Plot",style="text-align: center;"), 
-                            #                      plotOutput("acfPlot")),
-                            #             tabPanel(h4("PACF Plot",style="text-align: center;"), 
-                            #                      plotOutput("pacfPlot")),
-                            #             tabPanel(h4("Forecast Output",style="text-align: center;"), 
-                            #                      plotOutput("forecastPlot")),
-                            #             tabPanel(h4("Forecast Accuracy",style="text-align: center;"), 
-                            #                      DT::dataTableOutput("accuracyOutput"))
+                            h1("Analysis",style="text-align: center;"), 
+                            tabsetPanel(type = "tabs",
+                                         tabPanel(h4("Avg Printer Score",style="text-align: center;"), 
+                                                  plotOutput("avgPrinterScorelot")),
+                                         tabPanel(h4("ACF Plot",style="text-align: center;"), 
+                                                  plotOutput("")),
+                                         tabPanel(h4("PACF Plot",style="text-align: center;"), 
+                                                  plotOutput("")),
+                                         tabPanel(h4("Forecast Output",style="text-align: center;"), 
+                                                  plotOutput("")),
+                                         tabPanel(h4("Forecast Accuracy",style="text-align: center;"), 
+                                                  plotOutput(""))
                             )
                         )
                     )
             ) 
         )
     )
-#)
+)
 
 # Define server logic 
 server <- function(input, output,session) {
+    output$avgPrinterScorelot <- renderPlot({
+        
+        printer_selection <- unlist(strsplit(input$printerInput, split=" "))
+        
+        df_avg_score <- df %>%
+            filter(printer %in% printer_selection) %>%
+            group_by(printer) %>%
+            summarise(score_avg = mean(score), score_count = n()) %>%
+            select(printer,score_avg, score_count) 
+        
+            ggplot(df_avg_score, aes(x = reorder(printer,score_avg), y = score_avg)) + 
+            geom_bar(stat = "identity", width = 0.3) + theme_light()  + 
+            coord_flip() + 
+            guides(fill = FALSE) + 
+            ggtitle("Avg score of Printers") + 
+            xlab("Printer") + 
+            ylab("Avg. Score")
+        
+        
+        # ggplot(data = data_df,aes(x = as.factor(year),y = total_pledges)) +
+        #     geom_bar(stat = "identity", width = 0.3) + theme_light() +
+        #     labs(x = "Years",
+        #          y = "Total # of Pledges") +
+        #     scale_y_continuous(labels = comma) +
+        #     scale_x_discrete() +
+        #     theme(
+        #         legend.text = element_text(size = 10),
+        #         legend.title = element_text(size = 10),
+        #         axis.title = element_text(size = 15),
+        #         axis.text = element_text(size = 10),
+        #         axis.text.x = element_text(angle = 45, hjust = 1)
+            #)
+    })
     
 }
 
