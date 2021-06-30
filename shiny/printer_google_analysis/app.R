@@ -29,12 +29,12 @@ df <- na.omit(df) #remove na
 #=============
 df$printer <- ifelse(df$appId == "com.hp.printercontrol", 'HP',
                      ifelse(df$appId == "jp.co.canon.bsd.ad.pixmaprint", 'Canon',
-                            ifelse(df$appId == "epson.print", 'Epson', 'Epson Smart')))
+                            ifelse(df$appId == "epson.print", 'Epson', 'Epson-Smart')))
 
 #=============
 # Dropdown information
 #=============                        
-printer_info <- c('Canon','Epson','Epson Smart','HP')
+printer_info <- c('Canon','Epson','Epson-Smart','HP')
 
 # Define UI for application
 ui <- dashboardPage(
@@ -92,10 +92,11 @@ server <- function(input, output,session) {
     output$avgPrinterScoreplot <- renderPlot({
         
         printer_selection <- unlist(strsplit(input$printerInput, split=" "))
-        
+        printer_selection <- c(printer_selection)
+        print(printer_selection)
         df_avg_score <- df %>%
-            filter(printer %in% printer_selection) %>%
             group_by(printer) %>%
+            filter(printer %in% printer_selection) %>%
             summarise(score_avg = mean(score), score_count = n()) %>%
             select(printer,score_avg, score_count) 
         
@@ -103,9 +104,16 @@ server <- function(input, output,session) {
             geom_bar(stat = "identity", width = 0.3) + theme_light()  + 
             coord_flip() + 
             guides(fill = FALSE) + 
-            ggtitle("Avg score of Printers") + 
+            ggtitle("Average score of Printers") + 
             xlab("Printer") + 
-            ylab("Avg. Score") + 
+            ylab("Average. Score") + 
+                theme(
+                    plot.title = element_text(hjust = 0.5),
+                    legend.text = element_text(size = 20),
+                    legend.title = element_text(size = 25),
+                    axis.title = element_text(size = 15),
+                    axis.text = element_text(size = 15)
+                )
         
         
         # ggplot(data = data_df,aes(x = as.factor(year),y = total_pledges)) +
@@ -114,13 +122,7 @@ server <- function(input, output,session) {
         #          y = "Total # of Pledges") +
         #     scale_y_continuous(labels = comma) +
         #     scale_x_discrete() +
-             theme(
-                 legend.text = element_text(size = 20),
-                 legend.title = element_text(size = 15),
-                 axis.title = element_text(size = 15),
-                 axis.text = element_text(size = 15),
-                 #axis.text.x = element_text(angle = 45, hjust = 1)
-            )
+
             
             # data_df <- df %>%
             #     filter(city == input$cityInput) %>%
@@ -140,7 +142,7 @@ server <- function(input, output,session) {
             #         axis.title = element_text(size = 15),
             #         axis.text = element_text(size = 10),
             #         axis.text.x = element_text(angle = 45, hjust = 1)
-                )
+                #)
     })
     
 }
