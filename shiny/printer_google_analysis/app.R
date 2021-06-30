@@ -2,9 +2,9 @@
 rm(list = ls()) #clear environment
 
 # libraries
-packages <- c('ggplot2', 'corrplot','tidyverse',"caret","dummies",'readxl','shiny','shinydashboard',
-              'scales','dplyr','mlbench','caTools','forecast','TTR','xts',
-              'lubridate')
+packages <- c('ggplot2', 'corrplot','tidyverse',"caret","dummies",'readxl',
+              'shiny','shinydashboard','scales','dplyr','mlbench','caTools',
+              'forecast','TTR','xts','lubridate')
 # load packages
 for (package in packages) {
     if (!require(package, character.only=T, quietly=T)) {
@@ -54,33 +54,21 @@ ui <- dashboardPage(
             tabItem(tabName = "analysis",
                     sidebarLayout(
                         sidebarPanel(
-                            checkboxGroupInput("printerInput", "Printer",choices = printer_info, 
+                            checkboxGroupInput("printerInput", "Printers",choices = printer_info, 
                                                selected = printer_info),
-                            # selectInput("horizonInput", "Horizon", 
-                            #             choices = horizon_info, selected = 14),
-                            # selectInput("frequencyInput", "Frequency", 
-                            #             choices = frequency_info, selected = 7),
-                            # radioButtons("differenceInput","Difference",
-                            #              choices = difference_info, selected = "No"),
-                            # radioButtons("logInput","Log",
-                            #              choices = log_info, selected = "No"),
-                            # selectInput("modelInput", "Model", 
-                            #             choices = model_info, selected = 'auto exponential'),
                             submitButton("Submit")
                         ),
                         mainPanel(
                             h1("Analysis",style="text-align: center;"), 
                             tabsetPanel(type = "tabs",
-                                         tabPanel(h4("Avg Printer Score",style="text-align: center;"), 
-                                                  plotOutput("avgPrinterScoreplot")),
-                                         tabPanel(h4("ACF Plot",style="text-align: center;"), 
-                                                  plotOutput("")),
-                                         tabPanel(h4("PACF Plot",style="text-align: center;"), 
-                                                  plotOutput("")),
-                                         tabPanel(h4("Forecast Output",style="text-align: center;"), 
-                                                  plotOutput("")),
-                                         tabPanel(h4("Forecast Accuracy",style="text-align: center;"), 
-                                                  plotOutput(""))
+                                    tabPanel(h4("Printer Score Average",style="text-align: center;"), 
+                                        plotOutput("avgPrinterScoreplot")),
+                                    tabPanel(h4("Printer Score Count",style="text-align: center;"), 
+                                        plotOutput("countPrinterScoreplot")),
+                                    tabPanel(h4("Printer Score Average over time",style="text-align: center;"), 
+                                         plotOutput("avgPrinterScoreYearplot")),
+                                    tabPanel(h4("Printer Score Count over time",style="text-align: center;"), 
+                                         plotOutput("countPrinterScoreYearplot"))
                             )
                         )
                     )
@@ -120,6 +108,41 @@ server <- function(input, output,session) {
                 )                
         }
     })
+    
+    output$countPrinterScoreplot <- renderPlot({
+        
+        if (is.null(input$printerInput)){
+            
+        } else {
+            printer_selection <- unlist(strsplit(input$printerInput, split=" "))
+            printer_selection <- c(printer_selection)
+            df_avg_score <- df %>%
+                group_by(printer) %>%
+                filter(printer %in% printer_selection) %>%
+                summarise(score_avg = mean(score), score_count = n()) %>%
+                select(printer,score_avg, score_count) 
+            
+            ggplot(df_avg_score, aes(x = reorder(printer,score_count), y = score_count)) + 
+                geom_bar(stat = "identity", width = 0.3, fill = "#AA6566") + theme_light()  + 
+                coord_flip() + 
+                guides(fill = FALSE) + 
+                ggtitle("Score Count of Printers") + 
+                xlab("Printer") + 
+                ylab("Score Count") + 
+                theme(
+                    plot.title = element_text(hjust = 0.5),
+                    legend.text = element_text(size = 20),
+                    legend.title = element_text(size = 25),
+                    axis.title = element_text(size = 15),
+                    axis.text = element_text(size = 15)
+                )              
+        }
+        
+    })
+    
+    output$avgPrinterScoreYearplot <- renderPlot({})
+    
+    output$countPrinterScoreYearplot <- renderPlot({})
     
 }
 
