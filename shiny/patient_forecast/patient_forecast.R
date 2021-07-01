@@ -113,7 +113,7 @@ patient_train_triple_exp_forecast <- HoltWinters(patient.train,
                                                  gamma=TRUE) %>% 
   forecast(h=forecast.horizon)  
 
-patient_train_tbat_forecast <-  tbats(patient.test) %>% forecast(h=forecast.horizon)
+patient_train_tbat_forecast <-  tbats(patient.train) %>% forecast(h=forecast.horizon)
 
 
 numeric_update <- function(df){
@@ -132,5 +132,35 @@ tbat_accuracy <- as.data.frame(accuracy(patient_train_tbat_forecast))
 # triple_exp_accuracy <- numeric_update(triple_exp_accuracy)
 # tbat_accuracy <- numeric_update(tbat_accuracy)
 
+#forecast output
+auto_exp_forecast <- as.data.frame(patient_train_auto_exp_forecast$mean)
+auto_arima_forecast <- as.data.frame(patient_train_auto_arima_forecast$mean)
+simple_exp_forecast <- as.data.frame(patient_train_simple_exp_forecast$mean)
+double_exp_forecast <- as.data.frame(patient_train_double_exp_forecast$mean)
+triple_exp_forecast <- as.data.frame(patient_train_triple_exp_forecast$mean)
+tbat_forecast <- as.data.frame(patient_train_tbat_forecast$mean)
+
+numeric_update <- function(df){
+  rownames(df) <- c()
+  is.num <- sapply(df, is.numeric)
+  df[is.num] <- lapply(df[is.num], round, 0)           
+  return (df)
+}
+
+auto_exp_forecast <- numeric_update(auto_exp_forecast)
+auto_arima_forecast <- numeric_update(auto_arima_forecast)
+simple_exp_forecast <- numeric_update(simple_exp_forecast)
+double_exp_forecast <- numeric_update(double_exp_forecast)
+triple_exp_forecast <- numeric_update(triple_exp_forecast)
+tbat_forecast <- numeric_update(tbat_forecast)
+
+models <- c("auto-exponential","auto-arima","simple-exponential","double-exponential",
+            "triple-exponential","tbat")
+
+outputInfo <- cbind(auto_exp_forecast,auto_arima_forecast,
+                    simple_exp_forecast,double_exp_forecast,
+                    triple_exp_forecast,tbat_forecast)
+
+colnames(outputInfo) <- models
 
 
