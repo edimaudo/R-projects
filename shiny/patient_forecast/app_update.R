@@ -1210,7 +1210,89 @@ server <- function(input, output,session) {
     #value | value | value
     #VALUES SHOULD BE INT, because its patient data
     #https://stackoverflow.com/questions/25216189/get-the-forecasted-values-when-using-forecast-in-r/25216260
-    output$forecastOutput <- DT::renderDataTable({})
+    output$forecastOutput <- DT::renderDataTable({
+        patient.xts <- xts(x = df$Patients, order.by = df$Arrival_date) 
+        patient.daily <- apply.daily(patient.xts,mean)
+        patient.weekly <- apply.weekly(patient.xts, mean) 
+        patient.monthly <- apply.monthly(patient.xts, mean) 
+        # Aggregation &  training and test data
+        if(input$aggregateInput == 'daily'){
+            patient.data <- apply.daily(patient.xts,mean)
+            patient.end <- floor(as.numeric(input$traintestInput)*length(patient.data)) 
+            patient.train <- patient.data[1:patient.end,] 
+            patient.test <- patient.data[(patient.end+1):length(patient.data),]
+            patient.start <- c(year (start(patient.train)), month(start(patient.train)),
+                               day(start(patient.train)))
+            patient.end <- c(year(end(patient.train)), month(end(patient.train)), day(end(patient.train)))
+            patient.train <- ts(as.numeric(patient.train), start = patient.start, 
+                                end = patient.end, frequency = as.numeric(input$frequencyInput) )
+            patient.start <- c(year (start(patient.test)), month(start(patient.test)),
+                               day(start(patient.test)))
+            patient.end <- c(year(end(patient.test)), month(end(patient.test)), day(end(patient.test)))
+            patient.test <- ts(as.numeric(patient.test), start = patient.start, 
+                               end = patient.end, frequency = as.numeric(input$frequencyInput))
+        } else if(input$aggregateInput == 'weekly'){
+            patient.data <- apply.weekly(patient.xts, mean) 
+            patient.end <- floor(as.numeric(input$traintestInput)*length(patient.data)) 
+            patient.train <- patient.data[1:patient.end,] 
+            patient.test <- patient.data[(patient.end+1):length(patient.data),]
+            patient.start <- c(year (start(patient.train)), month(start(patient.train)),
+                               week(start(patient.train)))
+            patient.end <- c(year(end(patient.train)), month(end(patient.train)), 
+                             week(end(patient.train)))
+            patient.train <- ts(as.numeric(patient.train), start = patient.start, 
+                                end = patient.end, frequency = as.numeric(input$frequencyInput) )
+            patient.start <- c(year (start(patient.test)), month(start(patient.test)),
+                               week(start(patient.test)))
+            patient.end <- c(year(end(patient.test)), month(end(patient.test)), 
+                             week(end(patient.test)))
+            patient.test <- ts(as.numeric(patient.test), start = patient.start, 
+                               end = patient.end, frequency = as.numeric(input$frequencyInput))
+        } else {
+            patient.data <- apply.monthly(patient.xts, mean) 
+            patient.data <- apply.weekly(patient.xts, mean) 
+            patient.end <- floor(as.numeric(input$traintestInput)*length(patient.data)) 
+            patient.train <- patient.data[1:patient.end,] 
+            patient.test <- patient.data[(patient.end+1):length(patient.data),]
+            patient.start <- c(year (start(patient.train)), month(start(patient.train)))
+            patient.end <- c(year(end(patient.train)), month(end(patient.train)))
+            patient.train <- ts(as.numeric(patient.train), start = patient.start, 
+                                end = patient.end, frequency = as.numeric(input$frequencyInput) )
+            patient.start <- c(year (start(patient.test)), month(start(patient.test)))
+            patient.end <- c(year(end(patient.test)), month(end(patient.test)))
+            patient.test <- ts(as.numeric(patient.test), start = patient.start, 
+                               end = patient.end, frequency = as.numeric(input$frequencyInput))
+        }
+        
+        #set forecast horizon
+        forecast.horizon <- as.numeric(input$horizonInput)
+        
+        # models
+        patient_train_auto_exp_forecast <- ets(patient.train) %>% 
+            forecast(h=forecast.horizon)    
+        
+        patient_train_auto_arima_forecast <- auto.arima(patient.train) %>% 
+            forecast(h=forecast.horizon)             
+        
+        patient_train_simple_exp_forecast <- HoltWinters(patient.train,
+                                                         beta=FALSE, 
+                                                         gamma=FALSE) %>% 
+            forecast(h=forecast.horizon)             
+        
+        patient_train_double_exp_forecast <- HoltWinters(patient.train,
+                                                         beta=TRUE, 
+                                                         gamma=FALSE) %>% 
+            forecast(h=forecast.horizon)  
+        
+        patient_train_triple_exp_forecast <- HoltWinters(patient.train,
+                                                         beta=TRUE, 
+                                                         gamma=TRUE) %>% 
+            forecast(h=forecast.horizon)  
+        
+        patient_train_tbat_forecast <-  tbats(patient.train) %>% forecast(h=forecast.horizon)
+        
+        
+    })
     
 }
 
