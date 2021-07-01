@@ -140,7 +140,35 @@ server <- function(input, output,session) {
         
     })
     
-    output$avgPrinterScoreYearplot <- renderPlot({})
+    output$avgPrinterScoreYearplot <- renderPlot({
+        if (is.null(input$printerInput)){
+            
+        } else {
+            printer_selection <- unlist(strsplit(input$printerInput, split=" "))
+            printer_selection <- c(printer_selection)
+            df_score <- df %>%
+                group_by(printer) %>%
+                filter(printer %in% printer_selection) %>%
+                summarise(score_avg = mean(score), score_count = n()) %>%
+                select(printer,score_avg, score_count) 
+            ggplot(df_score, aes(x = reorder(year, score_count), y = score_count, fill=printer)) + 
+                geom_bar(stat = "identity", width = 0.3) + theme_light()  + 
+                coord_flip() + 
+                
+                ggtitle("Score count of Printers by Year") + 
+                xlab("Year") + 
+                ylab("Score Count") + 
+                theme(legend.position="bottom") +
+                theme(
+                    plot.title = element_text(hjust = 0.5),
+                    legend.text = element_text(size = 10),
+                    legend.title = element_text(size = 10),
+                    axis.title = element_text(size = 15),
+                    axis.text = element_text(size = 15), 
+                    
+                )
+        }
+    })
     
     output$countPrinterScoreYearplot <- renderPlot({})
     
