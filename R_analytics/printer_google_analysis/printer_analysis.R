@@ -27,6 +27,10 @@ df.backup <- df #backup
 # Text analysis
 #=============
 
+#=============
+# Tect cleaning
+#=============
+
 # function to expand contractions in an English-language source
 fix.contractions <- function(doc) {
   # "won't" is a special case as it does not expand to "wo not"
@@ -43,4 +47,15 @@ fix.contractions <- function(doc) {
   return(doc)
 }
 
+# function to remove special characters
+removeSpecialChars <- function(x) gsub("[^a-zA-Z0-9 ]", " ", x)
+
+# fix (expand) contractions
+df$Review <- sapply(df$Review, fix.contractions)
+
+# remove special characters
+df$Review <- sapply(df$Review, removeSpecialChars)
+
+# convert everything to lower case
+df$Review <- sapply(df$Review, tolower)
 
