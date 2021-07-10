@@ -2,7 +2,7 @@ rm(list = ls()) #clear environment
 #=============
 # Packages
 #=============
-packages <- c('ggplot2', 'corrplot','tidyverse',"caret",'readxl',
+packages <- c('ggplot2', 'corrplot','tidyverse',"caret",'readxl','tidyr',
               'scales','dplyr','mlbench','caTools','wordcloud2','gridExtra',
               'tidytext','stringr','reshape2',"tm", "SnowballCC", "RColorBrewer", 
               "biclust", "cluster", "igraph", "fpc",'forecast','TTR','xts','lubridate')
@@ -59,3 +59,24 @@ df$Review <- sapply(df$Review, removeSpecialChars)
 # convert everything to lower case
 df$Review <- sapply(df$Review, tolower)
 
+#=============
+# Text mining
+#=============
+
+# word breakdown 
+review_words <- df %>%
+  unnest_tokens(word, Review) %>%
+  anti_join(stop_words) %>%
+  distinct() %>%
+  filter(nchar(word) > 3)
+
+# word frequency
+full_word_count <- prince %>%
+  unnest_tokens(word, lyrics) %>%
+  group_by(song,chart_level) %>%
+  summarise(num_words = n()) %>%
+  arrange(desc(num_words)) 
+
+
+
+# Sentiment
