@@ -23,9 +23,9 @@ df.backup <- df #backup
 
 glimpse(df)
 
-df$Product <- ifelse(df$appId == "com.hp.printercontrol", 'HP',
-                     ifelse(df$appId == "jp.co.canon.bsd.ad.pixmaprint", 'Canon',
-                            ifelse(df$appId == "epson.print", 'Epson', 'Epson-Smart')))
+#df$Product <- ifelse(df$appId == "com.hp.printercontrol", 'HP',
+#                     ifelse(df$appId == "jp.co.canon.bsd.ad.pixmaprint", 'Canon',
+#                            ifelse(df$appId == "epson.print", 'Epson', 'Epson-Smart')))
 
 #=============
 # Text analysis
@@ -70,12 +70,39 @@ review_words <- df %>%
   filter(nchar(word) > 3)
 
 # word frequency
-full_word_count <- prince %>%
-  unnest_tokens(word, lyrics) %>%
-  group_by(song,chart_level) %>%
+full_word_count <- df %>%
+  unnest_tokens(word, Review) %>%
+  group_by(Brand,Rating) %>%
   summarise(num_words = n()) %>%
   arrange(desc(num_words)) 
 
+# word count visualization
+full_word_count %>%
+  ggplot(aes(x = Rating,y=num_words, fill = Brand )) +
+  geom_bar(stat = "identity", position = "dodge") +
+  coord_flip() + 
+  ylab("Word Count") + 
+  xlab("Rating") +
+  theme(plot.title = element_text(hjust = 0.5),
+        legend.title = element_blank(),
+        panel.grid.minor.y = element_blank())
+
+
+#top words across all reviews and brands
+review_words %>%
+  count(word, sort = TRUE) %>%
+  top_n(100) %>%
+  ungroup() %>%
+  mutate(word = reorder(word, n)) %>%
+  ggplot() +
+  geom_col(aes(word, n)) +
+  theme(legend.position = "none", 
+        plot.title = element_text(hjust = 0.5),
+        panel.grid.major = element_blank()) +
+  xlab("") + 
+  ylab("Word Count") +
+  ggtitle("Most Frequently Used Words") +
+  coord_flip()
 
 #=============
 # Topic modeling
