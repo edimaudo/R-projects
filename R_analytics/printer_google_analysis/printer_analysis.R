@@ -5,7 +5,8 @@ rm(list = ls()) #clear environment
 packages <- c('ggplot2', 'corrplot','tidyverse',"caret",'readxl','tidyr',
               'scales','dplyr','mlbench','caTools','wordcloud2','gridExtra',
               'tidytext','stringr','reshape2',"tm", "SnowballCC", "RColorBrewer", 
-              "biclust", "cluster", "igraph", "fpc",'forecast','TTR','xts','lubridate')
+              'topicmodels','pals',"biclust", "cluster", "igraph", "fpc",'forecast',
+              'TTR','xts','lubridate')
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
     install.packages(package)
@@ -16,21 +17,19 @@ for (package in packages) {
 #=============
 # Load data
 #=============
-
 df <- read_excel(file.choose())
+
+df.backup <- df #backup
 
 glimpse(df)
 
-df.backup <- df #backup
+df$Product <- ifelse(df$appId == "com.hp.printercontrol", 'HP',
+                     ifelse(df$appId == "jp.co.canon.bsd.ad.pixmaprint", 'Canon',
+                            ifelse(df$appId == "epson.print", 'Epson', 'Epson-Smart')))
 
 #=============
 # Text analysis
 #=============
-
-#=============
-# Tect cleaning
-#=============
-
 # function to expand contractions in an English-language source
 fix.contractions <- function(doc) {
   # "won't" is a special case as it does not expand to "wo not"
@@ -78,5 +77,6 @@ full_word_count <- prince %>%
   arrange(desc(num_words)) 
 
 
-
-# Sentiment
+#=============
+# Topic modeling
+#=============
