@@ -88,7 +88,7 @@ full_word_count %>%
         panel.grid.minor.y = element_blank())
 
 
-#top words across all reviews and brands
+#top 100 words across all reviews and brands
 review_words %>%
   count(word, sort = TRUE) %>%
   top_n(100) %>%
@@ -102,6 +102,57 @@ review_words %>%
   xlab("") + 
   ylab("Word Count") +
   ggtitle("Most Frequently Used Words") +
+  coord_flip()
+
+#keywords by Brand and ratings
+review_brand_rating <- review_words %>%
+  group_by(Brand, Rating) %>%
+  count(word, sort = TRUE) %>%
+  select(Brand, Rating, word, n) %>%
+  arrange(desc(Brand,Rating))  
+
+# word cloud
+words_counts <- review_words %>%
+  count(word, sort = TRUE) 
+
+wordcloud2(words_counts[1:100, ], size = .5)
+
+wordcloud2(words_counts[1:100, ], 
+           size = .15,
+           minSize = .0005,
+           ellipticity = .3, 
+           rotateRatio = 1, 
+           fontWeight = "bold")
+
+#tf-idf
+popular_tfidf_words <- df %>%
+  unnest_tokens(word, Review) %>%
+  distinct() %>%
+  filter(nchar(word) > 3) %>%
+  count(Brand, Rating, word, sort = TRUE) %>%
+  ungroup() %>%
+  bind_tf_idf(word, Rating, n)
+
+top_popular_tfidf_words <- popular_tfidf_words %>%
+  arrange(desc(tf_idf)) %>%
+  mutate(word = factor(word, levels = rev(unique(word)))) %>%
+  group_by(Brand, Rating) %>% 
+  slice(seq_len(8)) %>%
+  ungroup() %>%
+  arrange(Brand, Rating, tf_idf) %>%
+  mutate(row = row_number())
+
+top_popular_tfidf_words %>%
+  ggplot(aes(x = row, tf_idf, 
+             fill = Brand)) +
+  geom_col(show.legend = NULL) +
+  labs(x = NULL, y = "TF-IDF") + 
+  ggtitle("Important Words using TF-IDF by Brand") +
+  theme_bw() +  
+  facet_wrap(~Brand, ncol = 3, scales = "free") +
+  scale_x_continuous(  # This handles replacement of row 
+    breaks = top_popular_tfidf_words$row, # notice need to reuse data frame
+    labels = top_popular_tfidf_words$word) +
   coord_flip()
 
 #=============
