@@ -23,37 +23,37 @@ frequency_info <- 365.25
 
 patient.xts <- xts(x = df$Patients, order.by = df$Arrival_date) 
 
-df$Patients2 <- log(df$Patients)
+#df$Patients2 <- log(df$Patients)
 
 #aggregations
 patient.daily <- apply.daily(patient.xts,mean)
 patient.weekly <- apply.weekly(patient.xts, mean) 
 patient.monthly <- apply.monthly(patient.xts, mean) 
 
-patient.end <- floor(0.8*length(patient.daily)) #select the first 80% of the data
-patient.train <- patient.daily[1:patient.end,] 
-patient.test <- patient.daily[(patient.end+1):length(patient.daily),]
-
-patient.start <- c(year (start(patient.train)), month(start(patient.train)),day(start(patient.train)))
-patient.end <- c(year(end(patient.train)), month(end(patient.train)), day(end(patient.train)))
-patient.train <- ts(as.numeric(patient.train), start = patient.start, 
-                   end = patient.end, frequency = 7)
-
-patient.start <- c(year (start(patient.test)), month(start(patient.test)),day(start(patient.test)))
-patient.end <- c(year(end(patient.test)), month(end(patient.test)), day(end(patient.test)))
-patient.test <- ts(as.numeric(patient.test), start = patient.start, 
-                   end = patient.end, frequency = 7)
-
-forecast.horizon <- length(patient.test) 
-
-info <- c(seq(0, 100, by=5))
+# patient.end <- floor(0.8*length(patient.daily)) #select the first 80% of the data
+# patient.train <- patient.daily[1:patient.end,] 
+# patient.test <- patient.daily[(patient.end+1):length(patient.daily),]
+# 
+# patient.start <- c(year (start(patient.train)), month(start(patient.train)),day(start(patient.train)))
+# patient.end <- c(year(end(patient.train)), month(end(patient.train)), day(end(patient.train)))
+# patient.train <- ts(as.numeric(patient.train), start = patient.start, 
+#                    end = patient.end, frequency = 7)
+# 
+# patient.start <- c(year (start(patient.test)), month(start(patient.test)),day(start(patient.test)))
+# patient.end <- c(year(end(patient.test)), month(end(patient.test)), day(end(patient.test)))
+# patient.test <- ts(as.numeric(patient.test), start = patient.start, 
+#                    end = patient.end, frequency = 7)
+# 
+# forecast.horizon <- length(patient.test) 
+# 
+# info <- c(seq(0, 100, by=5))
 
 
 ## twice-difference the CO2 data
-patient.train <- diff(patient.train, differences = 1)
+#patient.train <- diff(patient.train, differences = 1)
 #Decompose the Time Series
-patient.train.components <- decompose(patient.train)
-plot(patient.train.components)
+#patient.train.components <- decompose(patient.train)
+#plot(patient.train.components)
 
 
 # acf(patient.train)
@@ -62,17 +62,17 @@ plot(patient.train.components)
 # pacf(log(patient.train))
 # 
 # df1 <- df[,c(1,2)]
-patient.end <- floor(1*length(patient.daily)) #select the first 80% of the data
-patient.train <- patient.daily[1:patient.end,] 
-patient.test <- patient.daily[(patient.end+1):length(patient.daily),]
-
-patient.start <- c(year (start(patient.train)), month(start(patient.train)),day(start(patient.train)))
-patient.end <- c(year(end(patient.train)), month(end(patient.train)), day(end(patient.train)))
-patient.train <- ts(as.numeric(patient.train), start = patient.start, 
-                    end = patient.end, frequency = 7)
-
-patient.train.components <- decompose(patient.train)
-plot(patient.train.components)
+# patient.end <- floor(1*length(patient.daily)) #select the first 80% of the data
+# patient.train <- patient.daily[1:patient.end,] 
+# patient.test <- patient.daily[(patient.end+1):length(patient.daily),]
+# 
+# patient.start <- c(year (start(patient.train)), month(start(patient.train)),day(start(patient.train)))
+# patient.end <- c(year(end(patient.train)), month(end(patient.train)), day(end(patient.train)))
+# patient.train <- ts(as.numeric(patient.train), start = patient.start, 
+#                     end = patient.end, frequency = 7)
+# 
+# patient.train.components <- decompose(patient.train)
+# plot(patient.train.components)
 
 patient.data <- apply.daily(patient.xts,mean)
 patient.end <- floor(0.8*length(patient.data)) 
@@ -90,30 +90,57 @@ patient.test <- ts(as.numeric(patient.test), start = patient.start,
                    end = patient.end, frequency = 7)
 
 
+# set forecast horizon
+forecast.horizon <- 7
+
+# # models
+# patient_train_auto_exp_forecast <- ets(patient.train) %>% 
+#   forecast(h=forecast.horizon)    
+# 
+# patient_train_auto_arima_forecast <- auto.arima(patient.train) %>% 
+#   forecast(h=forecast.horizon)             
+# 
+# patient_train_simple_exp_forecast <- HoltWinters(patient.train,
+#                                                  beta=FALSE, 
+#                                                  gamma=FALSE) %>% 
+#   forecast(h=forecast.horizon)             
+# 
+# patient_train_double_exp_forecast <- HoltWinters(patient.train,
+#                                                  beta=TRUE, 
+#                                                  gamma=FALSE) %>% 
+#   forecast(h=forecast.horizon)  
+# 
+# patient_train_triple_exp_forecast <- HoltWinters(patient.train,
+#                                                  beta=TRUE, 
+#                                                  gamma=TRUE) %>% 
+#   forecast(h=forecast.horizon)  
+# 
+# patient_train_tbat_forecast <-  tbats(patient.train) %>% forecast(h=forecast.horizon)
 
 # models
-patient_train_auto_exp_forecast <- ets(patient.train) %>% 
-  forecast(h=forecast.horizon)    
+auto_exp_model <- patient.train %>% ets %>% forecast(h=forecast.horizon)
+auto_arima_model <- patient.train %>% auto.arima() %>% forecast(h=forecast.horizon)
+simple_exp_model <- patient.train %>% HoltWinters(beta=FALSE, gamma=FALSE) %>% 
+  forecast(h=forecast.horizon)
+double_exp_model <- patient.train %>% HoltWinters(beta = TRUE, gamma=FALSE) %>% 
+  forecast(h=forecast.horizon)
+triple_exp_model <- patient.train %>% HoltWinters(beta = TRUE, gamma = TRUE) %>% 
+  forecast(h=forecast.horizon)
+tbat_model <- patient.train %>% tbats %>% forecast(h=forecast.horizon)
+manual_model <- patient.train %>% Arima()
 
-patient_train_auto_arima_forecast <- auto.arima(patient.train) %>% 
-  forecast(h=forecast.horizon)             
+manual_model %>%
+  plot()
 
-patient_train_simple_exp_forecast <- HoltWinters(patient.train,
-                                                 beta=FALSE, 
-                                                 gamma=FALSE) %>% 
-  forecast(h=forecast.horizon)             
-
-patient_train_double_exp_forecast <- HoltWinters(patient.train,
-                                                 beta=TRUE, 
-                                                 gamma=FALSE) %>% 
-  forecast(h=forecast.horizon)  
-
-patient_train_triple_exp_forecast <- HoltWinters(patient.train,
-                                                 beta=TRUE, 
-                                                 gamma=TRUE) %>% 
-  forecast(h=forecast.horizon)  
-
-patient_train_tbat_forecast <-  tbats(patient.train) %>% forecast(h=forecast.horizon)
+autoplot(patient.train) +
+  autolayer(auto_arima_model,series="auto arima", alpha=0.2) +
+  autolayer(auto_exp_model, series = "auto exponential", alpha=0.2) +
+  autolayer(simple_exp_model, series= "simple exponential", alpha=0.5) +
+  autolayer(double_exp_model, series = "double exponential", alpha=0.25) +
+  autolayer(triple_exp_model, series = "triple exponential", alpha=0.25) +
+  autolayer(tbat_model, series = "tbat", alpha=0.7) + 
+  autolayer(manual_model,series = "manual") + 
+  guides(colour = guide_legend("Models"))
 
 
 numeric_update <- function(df){
