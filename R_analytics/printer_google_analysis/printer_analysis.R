@@ -5,8 +5,8 @@ rm(list = ls()) #clear environment
 packages <- c('ggplot2', 'corrplot','tidyverse',"caret",'readxl','tidyr',
               'scales','dplyr','mlbench','caTools','wordcloud2','gridExtra',
               'tidytext','stringr','reshape2',"tm", "SnowballCC", "RColorBrewer", 
-              'topicmodels','textclean','pals',"biclust", "cluster", "igraph",'lda',
-              "fpc",'forecast','TTR','xts','lubridate')
+              'textmineR','topicmodels','textclean','pals',"biclust", "cluster",
+              "igraph","fpc",'forecast','TTR','xts','lubridate')
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
     install.packages(package)
@@ -20,8 +20,6 @@ for (package in packages) {
 df <- read_excel(file.choose())
 
 df.backup <- df #backup
-
-glimpse(df)
 
 #df$Product <- ifelse(df$appId == "com.hp.printercontrol", 'HP',
 #                     ifelse(df$appId == "jp.co.canon.bsd.ad.pixmaprint", 'Canon',
@@ -68,6 +66,8 @@ review_words <- df %>%
   anti_join(stop_words) %>%
   distinct() %>%
   filter(nchar(word) > 3)
+
+#remove printer and print
 
 # word frequency
 full_word_count <- df %>%
@@ -186,6 +186,7 @@ textcleaner <- function(x){
   
 }
 
+#remove printer and print words
 
 # apply textcleaner function for review text
 dtm_5 <- textcleaner(df$Review)
