@@ -5,8 +5,8 @@ rm(list = ls()) #clear environment
 packages <- c('ggplot2', 'corrplot','tidyverse',"caret",'readxl','tidyr',
               'scales','dplyr','mlbench','caTools','wordcloud2','gridExtra',
               'tidytext','stringr','reshape2',"tm", "SnowballCC", "RColorBrewer", 
-              'topicmodels','pals',"biclust", "cluster", "igraph", "fpc",'forecast',
-              'TTR','xts','lubridate')
+              'topicmodels','textclean','pals',"biclust", "cluster", "igraph",'lda',
+              "fpc",'forecast','TTR','xts','lubridate')
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
     install.packages(package)
@@ -117,12 +117,12 @@ words_counts <- review_words %>%
 
 wordcloud2(words_counts[1:100, ], size = .5)
 
-wordcloud2(words_counts[1:100, ], 
-           size = .15,
-           minSize = .0005,
-           ellipticity = .3, 
-           rotateRatio = 1, 
-           fontWeight = "bold")
+# wordcloud2(words_counts[1:100, ], 
+#            size = .15,
+#            minSize = .0005,
+#            ellipticity = .3, 
+#            rotateRatio = 1, 
+#            fontWeight = "bold")
 
 #tf-idf
 popular_tfidf_words <- df %>%
@@ -158,3 +158,60 @@ top_popular_tfidf_words %>%
 #=============
 # Topic modeling
 #=============
+# build textcleaner function
+textcleaner <- function(x){
+  x <- as.character(x)
+  
+  x <- x %>%
+    str_to_lower() %>%  # convert all the string to low alphabet
+    replace_contraction() %>% # replace contraction to their multi-word forms
+    replace_internet_slang() %>% # replace internet slang to normal words
+    replace_emoji() %>% # replace emoji to words
+    replace_emoticon() %>% # replace emoticon to words
+    replace_hash(replacement = "") %>% # remove hashtag
+    replace_word_elongation() %>% # replace informal writing with known semantic replacements
+    replace_number(remove = T) %>% # remove number
+    replace_date(replacement = "") %>% # remove date
+    replace_time(replacement = "") %>% # remove time
+    str_remove_all(pattern = "[[:punct:]]") %>% # remove punctuation
+    str_remove_all(pattern = "[^\\s]*[0-9][^\\s]*") %>% # remove mixed string n number
+    str_squish() %>% # reduces repeated whitespace inside a string.
+    str_trim() # removes whitespace from start and end of string
+  
+  xdtm <- VCorpus(VectorSource(x)) %>%
+    tm_map(removeWords, stopwords("en"))
+  
+  # convert corpus to document term matrix
+  return(DocumentTermMatrix(xdtm))
+  
+}
+
+
+# apply textcleaner function for review text
+dtm_5 <- textcleaner(df$Review)
+# find most frequent terms. i choose words that at least appear in 50 reviews
+freqterm_5 <- findFreqTerms(dtm_5,50)
+# we have 981 words. subset the dtm to only choose those selected words
+dtm_5 <- dtm_5[,freqterm_5]
+# only choose words that appear once in each rows
+rownum_5 <- apply(dtm_5,1,sum)
+dtm_5 <- dtm_5[rownum_5>0,]
+# apply to LDA function. set the k = 6, means we want to build 6 topic 
+lda_5 <- LDA(dtm_5,k = 6,control = list(seed = 1502))
+# apply auto tidy using tidy and use beta as per-topic-per-word probabilities
+topic_5 <- tidy(lda_5,matrix = "beta")
+# choose 15 words with highest beta from each topic
+top_terms_5 <- topic_5 %>%
+  group_by(topic) %>%
+  top_n(15,beta) %>% 
+  ungroup() %>%
+  arrange(topic,-beta)
+# plot the topic and words for easy interpretation
+plot_topic_5 <- top_terms_5 %>%
+  mutate(term = reorder_within(term, beta, topic)) %>%
+  ggplot(aes(term, beta, fill = factor(topic))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ topic, scales = "free") +
+  coord_flip() +
+  scale_x_reordered()
+plot_topic_5
