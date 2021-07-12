@@ -3,7 +3,7 @@ rm(list = ls()) #clear environment
 #=============
 # Packages
 #=============
-packages <- c('ggplot2', 'corrplot','tidyverse',"caret","dummies",'readxl',
+packages <- c('ggplot2', 'corrplot','tidyverse','readxl',
               'shiny','shinydashboard','scales','dplyr','mlbench','caTools',
               'forecast','TTR','xts','lubridate')
 #=============
