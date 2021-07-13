@@ -6,7 +6,7 @@ packages <- c('ggplot2', 'corrplot','tidyverse',"caret",'readxl','tidyr',
               'scales','dplyr','mlbench','caTools','wordcloud2','gridExtra',
               'tidytext','stringr','reshape2',"tm", "SnowballCC", "RColorBrewer", 
               'textmineR','topicmodels','textclean','pals',"biclust", "cluster",
-              "igraph","fpc",'forecast','TTR','xts','lubridate')
+              "igraph","fpc",'lubridate')
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
     install.packages(package)
@@ -181,9 +181,15 @@ textcleaner <- function(x){
 }
 
 #remove printer and print words
+data_1 <- df %>% filter(Rating == 1)
+data_2 <- df %>% filter(Rating  == 2)
+data_3 <- df %>% filter(Rating  == 3)
+data_4 <- df %>% filter(Rating  == 4)
+data_5 <- df %>% filter(Rating  == 5)
+table(df$Rating)
 
 # apply textcleaner function for review text
-dtm_5 <- textcleaner(df$Review)
+dtm_5 <- textcleaner(data_5$Review)
 # find most frequent terms. i choose words that at least appear in 50 reviews
 freqterm_5 <- findFreqTerms(dtm_5,50)
 # we have 981 words. subset the dtm to only choose those selected words
@@ -197,6 +203,7 @@ lda_5 <- LDA(dtm_5,k = 6,control = list(seed = 1502))
 topic_5 <- tidy(lda_5,matrix = "beta")
 # choose 15 words with highest beta from each topic
 top_terms_5 <- topic_5 %>%
+  filter(!term %in%  c("printer","print", "printing")) %>%
   group_by(topic) %>%
   top_n(15,beta) %>% 
   ungroup() %>%
@@ -210,3 +217,100 @@ plot_topic_5 <- top_terms_5 %>%
   coord_flip() +
   scale_x_reordered()
 plot_topic_5
+
+
+# rating 4
+dtm_4 <- textcleaner(data_4$Review)
+freqterm_4 <- findFreqTerms(dtm_4,20)
+dtm_4 <- dtm_4[,freqterm_4]
+rownum_4 <- apply(dtm_4,1,sum)
+dtm_4 <- dtm_4[rownum_4>0,]
+lda_4 <- LDA(dtm_4,k = 6,control = list(seed = 1502))
+topic_4 <- tidy(lda_4,matrix = "beta")
+
+top_terms_4 <- topic_4 %>%
+  filter(!term %in%  c("printer","print", "printing")) %>%
+  group_by(topic) %>%
+  top_n(15,beta) %>% 
+  ungroup() %>%
+  arrange(topic,-beta)
+plot_topic_4 <- top_terms_4 %>%
+  mutate(term = reorder_within(term, beta, topic)) %>%
+  ggplot(aes(term, beta, fill = factor(topic))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ topic, scales = "free") +
+  coord_flip() +
+  scale_x_reordered()
+plot_topic_4
+
+# rating 3
+dtm_3 <- textcleaner(data_3$Review)
+freqterm_3 <- findFreqTerms(dtm_3,10)
+dtm_3 <- dtm_3[,freqterm_3]
+rownum_3 <- apply(dtm_3,1,sum)
+dtm_3 <- dtm_3[rownum_3>0,]
+lda_3 <- LDA(dtm_3,k = 6,control = list(seed = 1502))
+topic_3 <- tidy(lda_3,matrix = "beta")
+top_terms_3 <- topic_3 %>%
+  filter(!term %in%  c("printer","print", "printing")) %>%
+  group_by(topic) %>%
+  top_n(15,beta) %>% 
+  ungroup() %>%
+  arrange(topic,-beta)
+plot_topic_3 <- top_terms_3 %>%
+  mutate(term = reorder_within(term, beta, topic)) %>%
+  ggplot(aes(term, beta, fill = factor(topic))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ topic, scales = "free") +
+  coord_flip() +
+  scale_x_reordered()
+plot_topic_3
+
+# rating 2
+dtm_2 <- textcleaner(data_2$Review)
+freqterm_2 <- findFreqTerms(dtm_2,5)
+dtm_2 <- dtm_2[,freqterm_2]
+rownum_2 <- apply(dtm_2,1,sum)
+dtm_2 <- dtm_2[rownum_2>0,]
+lda_2 <- LDA(dtm_2,k = 6,control = list(seed = 1502))
+topic_2 <- tidy(lda_2,matrix = "beta")
+top_terms_2 <- topic_2 %>%
+  filter(!term %in%  c("printer","print", "printing")) %>%
+  group_by(topic) %>%
+  top_n(15,beta) %>% 
+  ungroup() %>%
+  arrange(topic,-beta)
+plot_topic_2 <- top_terms_2 %>%
+  mutate(term = reorder_within(term, beta, topic)) %>%
+  ggplot(aes(term, beta, fill = factor(topic))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ topic, scales = "free") +
+  coord_flip() +
+  scale_x_reordered()
+plot_topic_2
+
+# rating 1
+dtm_1 <- textcleaner(data_1$reviewText)
+freqterm_1 <- findFreqTerms(dtm_1,5)
+dtm_1 <- dtm_1[,freqterm_1]
+rownum_1 <- apply(dtm_1,1,sum)
+dtm_1 <- dtm_1[rownum_1>0,]
+lda_1 <- LDA(dtm_1,k = 6,control = list(seed = 1502))
+topic_1 <- tidy(lda_1,matrix = "beta")
+top_terms_1 <- topic_1 %>%
+  filter(!term %in%  c("printer","print", "printing")) %>%
+  group_by(topic) %>%
+  top_n(15,beta) %>% 
+  ungroup() %>%
+  arrange(topic,-beta)
+plot_topic_1 <- top_terms_1 %>%
+  mutate(term = reorder_within(term, beta, topic)) %>%
+  ggplot(aes(term, beta, fill = factor(topic))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ topic, scales = "free") +
+  coord_flip() +
+  scale_x_reordered()
+plot_topic_1
+
+
+
