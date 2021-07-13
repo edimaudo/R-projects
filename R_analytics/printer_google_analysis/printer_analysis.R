@@ -573,7 +573,7 @@ modsum_2 %>%
 data.frame(mod_lda_2$top_terms)
 
 # Rating 1
-clean_1 <- textcleaner_1(data_1$Review)
+clean_1 <- textcleaner_2(data_1$Review)
 clean_1 <- clean_1 %>% mutate(id = rownames(clean_1))
 
 # crete dtm
