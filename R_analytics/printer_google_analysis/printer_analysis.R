@@ -371,7 +371,8 @@ mod_lda_5$prevalence <- colSums(mod_lda_5$theta)/sum(mod_lda_5$theta)*100
 mod_lda_5$summary <- data.frame(topic = rownames(mod_lda_5$phi),
                                 coherence = round(mod_lda_5$coherence,3),
                                 prevalence = round(mod_lda_5$prevalence,3),
-                                top_terms = apply(mod_lda_5$top_terms,2,function(x){paste(x,collapse = ", ")}))
+                                top_terms = apply(mod_lda_5$top_terms,2,
+                                                  function(x){paste(x,collapse = ", ")}))
 
 modsum_5 <- mod_lda_5$summary %>%
   `rownames<-`(NULL)
@@ -386,8 +387,14 @@ modsum_5 %>% pivot_longer(cols = c(coherence,prevalence)) %>%
        subtitle = "Text review with 5 rating",
        x = "Topics", y = "Value")
 
-#denodogram clustering
+# denodogram clustering
 mod_lda_5$linguistic <- CalcHellingerDist(mod_lda_5$phi)
 mod_lda_5$hclust <- hclust(as.dist(mod_lda_5$linguistic),"ward.D")
 mod_lda_5$hclust$labels <- paste(mod_lda_5$hclust$labels, mod_lda_5$labels[,1])
 plot(mod_lda_5$hclust)
+
+modsum_5 %>% 
+  arrange(desc(coherence)) %>%
+  slice(1:5)
+
+data.frame(mod_lda_5$top_terms)
