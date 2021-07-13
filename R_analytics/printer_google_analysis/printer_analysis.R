@@ -312,5 +312,82 @@ plot_topic_1 <- top_terms_1 %>%
   scale_x_reordered()
 plot_topic_1
 
+#===================
+# Topic modeliing 2
+#===================
 
+textcleaner_2 <- function(x){
+  x <- as.character(x)
+  
+  x <- x %>%
+    str_to_lower() %>%  # convert all the string to low alphabet
+    replace_contraction() %>% # replace contraction to their multi-word forms
+    replace_internet_slang() %>% # replace internet slang to normal words
+    replace_emoji() %>% # replace emoji to words
+    replace_emoticon() %>% # replace emoticon to words
+    replace_hash(replacement = "") %>% # remove hashtag
+    replace_word_elongation() %>% # replace informal writing with known semantic replacements
+    replace_number(remove = T) %>% # remove number
+    replace_date(replacement = "") %>% # remove date
+    replace_time(replacement = "") %>% # remove time
+    str_remove_all(pattern = "[[:punct:]]") %>% # remove punctuation
+    str_remove_all(pattern = "[^\\s]*[0-9][^\\s]*") %>% # remove mixed string n number
+    str_squish() %>% # reduces repeated whitespace inside a string.
+    str_trim() # removes whitespace from start and end of string
+  
+  return(as.data.frame(x))
 
+}
+
+# Rating 5
+# apply textcleaner function. note: we only clean the text without convert it to dtm
+clean_5 <- textcleaner_2(data_5$Review)
+clean_5 <- clean_5 %>% mutate(id = rownames(clean_5))
+
+# crete dtm
+set.seed(1502)
+dtm_r_5 <- CreateDtm(doc_vec = clean_5$x,
+                     doc_names = clean_5$id,
+                     ngram_window = c(1,2),
+                     stopword_vec = stopwords("en"),
+                     verbose = F)
+
+dtm_r_5 <- dtm_r_5[,colSums(dtm_r_5)>2]
+
+set.seed(1502)
+mod_lda_5 <- FitLdaModel(dtm = dtm_r_5,
+                         k = 20, # number of topic
+                         iterations = 500,
+                         burnin = 180,
+                         alpha = 0.1,beta = 0.05,
+                         optimize_alpha = T,
+                         calc_likelihood = T,
+                         calc_coherence = T,
+                         calc_r2 = T)
+
+mod_lda_5$top_terms <- GetTopTerms(phi = mod_lda_5$phi,M = 15)
+mod_lda_5$prevalence <- colSums(mod_lda_5$theta)/sum(mod_lda_5$theta)*100
+
+mod_lda_5$summary <- data.frame(topic = rownames(mod_lda_5$phi),
+                                coherence = round(mod_lda_5$coherence,3),
+                                prevalence = round(mod_lda_5$prevalence,3),
+                                top_terms = apply(mod_lda_5$top_terms,2,function(x){paste(x,collapse = ", ")}))
+
+modsum_5 <- mod_lda_5$summary %>%
+  `rownames<-`(NULL)
+
+#visualization
+modsum_5 %>% pivot_longer(cols = c(coherence,prevalence)) %>%
+  ggplot(aes(x = factor(topic,levels = unique(topic)), y = value, group = 1)) +
+  geom_point() + geom_line() +
+  facet_wrap(~name,scales = "free_y",nrow = 2) +
+  theme_minimal() +
+  labs(title = "Best topics by coherence and prevalence score",
+       subtitle = "Text review with 5 rating",
+       x = "Topics", y = "Value")
+
+#denodogram clustering
+mod_lda_5$linguistic <- CalcHellingerDist(mod_lda_5$phi)
+mod_lda_5$hclust <- hclust(as.dist(mod_lda_5$linguistic),"ward.D")
+mod_lda_5$hclust$labels <- paste(mod_lda_5$hclust$labels, mod_lda_5$labels[,1])
+plot(mod_lda_5$hclust)
