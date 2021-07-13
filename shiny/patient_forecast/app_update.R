@@ -39,7 +39,7 @@ frequency_info <- c(7, 12, 52, 365)
 difference_info <- c("Yes","No")
 log_info <- c("Yes","No")
 model_info <- c('auto-arima','auto-exponential','simple-exponential',
-                'double-exponential','triple-exponential', 'tbat')#,'manual-arima')
+                'double-exponential','triple-exponential', 'tbat','manual-arima')
 
 #=============
 # Define UI for application
@@ -115,12 +115,12 @@ ui <- dashboardPage(
                                         min = 0, max = 1,value = 0.8),
                             checkboxGroupInput("modelInput", "Models",choices = model_info, 
                                                selected = model_info),
-                            #sliderInput("autoInput", "Auto-regression",
-                            #            min = 0, max = 100,value = 0),
-                            #sliderInput("difference2Input", "Difference",
-                            #            min = 0, max = 52,value = 0),
-                            #sliderInput("maInput", "Moving Average",
-                            #            min = 0, max = 100,value = 0),
+                            sliderInput("autoInput", "Auto-regression",
+                                       min = 0, max = 100,value = 0),
+                            sliderInput("difference2Input", "Difference",
+                                       min = 0, max = 52,value = 0),
+                            sliderInput("maInput", "Moving Average",
+                                       min = 0, max = 100,value = 0),
                             submitButton("Submit")
                         ),
                         mainPanel(
