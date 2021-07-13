@@ -65,9 +65,10 @@ review_words <- df %>%
   unnest_tokens(word, Review) %>%
   anti_join(stop_words) %>%
   distinct() %>%
-  filter(nchar(word) > 3)
+  filter(nchar(word) > 3,!word %in% c("printer","print", "printing")) #remove printer and print
 
-#remove printer and print
+
+
 
 # word frequency
 full_word_count <- df %>%
@@ -117,18 +118,11 @@ words_counts <- review_words %>%
 
 wordcloud2(words_counts[1:100, ], size = .5)
 
-# wordcloud2(words_counts[1:100, ], 
-#            size = .15,
-#            minSize = .0005,
-#            ellipticity = .3, 
-#            rotateRatio = 1, 
-#            fontWeight = "bold")
-
-#tf-idf
+# tf-idf
 popular_tfidf_words <- df %>%
   unnest_tokens(word, Review) %>%
   distinct() %>%
-  filter(nchar(word) > 3) %>%
+  filter(nchar(word) > 3, !word %in% c("printer","print", "printing")) %>%
   count(Brand, Rating, word, sort = TRUE) %>%
   ungroup() %>%
   bind_tf_idf(word, Rating, n)
