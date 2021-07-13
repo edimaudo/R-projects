@@ -67,9 +67,6 @@ review_words <- df %>%
   distinct() %>%
   filter(nchar(word) > 3,!word %in% c("printer","print", "printing")) #remove printer and print
 
-
-
-
 # word frequency
 full_word_count <- df %>%
   unnest_tokens(word, Review) %>%
@@ -398,3 +395,238 @@ modsum_5 %>%
   slice(1:5)
 
 data.frame(mod_lda_5$top_terms)
+
+# Rating 4
+clean_4 <- textcleaner_2(data_4$Review)
+clean_4 <- clean_4 %>% mutate(id = rownames(clean_4))
+
+# crete dtm
+dtm_r_4 <- CreateDtm(doc_vec = clean_4$x,
+                     doc_names = clean_4$id,
+                     ngram_window = c(1,2),
+                     stopword_vec = stopwords("en"),
+                     verbose = F)
+
+dtm_r_4 <- dtm_r_4[,colSums(dtm_r_4)>2]
+
+mod_lda_4 <- FitLdaModel(dtm = dtm_r_4,
+                         k = 20, # number of topic
+                         iterations = 500,
+                         burnin = 180,
+                         alpha = 0.1,beta = 0.05,
+                         optimize_alpha = T,
+                         calc_likelihood = T,
+                         calc_coherence = T,
+                         calc_r2 = T)
+
+mod_lda_4$top_terms <- GetTopTerms(phi = mod_lda_4$phi,M = 15)
+mod_lda_4$prevalence <- colSums(mod_lda_4$theta)/sum(mod_lda_4$theta)*100
+
+mod_lda_4$summary <- data.frame(topic = rownames(mod_lda_4$phi),
+                                coherence = round(mod_lda_4$coherence,3),
+                                prevalence = round(mod_lda_4$prevalence,3),
+                                top_terms = apply(mod_lda_4$top_terms,2,
+                                                  function(x){paste(x,collapse = ", ")}))
+
+modsum_4 <- mod_lda_4$summary %>%
+  `rownames<-`(NULL)
+
+#visualization
+modsum_4 %>% pivot_longer(cols = c(coherence,prevalence)) %>%
+  ggplot(aes(x = factor(topic,levels = unique(topic)), y = value, group = 1)) +
+  geom_point() + geom_line() +
+  facet_wrap(~name,scales = "free_y",nrow = 2) +
+  theme_minimal() +
+  labs(title = "Best topics by coherence and prevalence score",
+       subtitle = "Text review with 5 rating",
+       x = "Topics", y = "Value")
+
+# denodogram clustering
+mod_lda_4$linguistic <- CalcHellingerDist(mod_lda_4$phi)
+mod_lda_4$hclust <- hclust(as.dist(mod_lda_4$linguistic),"ward.D")
+mod_lda_4$hclust$labels <- paste(mod_lda_4$hclust$labels, mod_lda_4$labels[,1])
+plot(mod_lda_4$hclust)
+
+modsum_4 %>% 
+  arrange(desc(coherence)) %>%
+  slice(1:5)
+
+data.frame(mod_lda_4$top_terms)
+
+
+# Rating 3
+clean_3 <- textcleaner_2(data_3$Review)
+clean_3 <- clean_3 %>% mutate(id = rownames(clean_3))
+
+# crete dtm
+set.seed(1502)
+dtm_r_3 <- CreateDtm(doc_vec = clean_3$x,
+                     doc_names = clean_3$id,
+                     ngram_window = c(1,2),
+                     stopword_vec = stopwords("en"),
+                     verbose = F)
+
+dtm_r_3 <- dtm_r_3[,colSums(dtm_r_3)>2]
+
+set.seed(1502)
+mod_lda_3 <- FitLdaModel(dtm = dtm_r_3,
+                         k = 20, # number of topic
+                         iterations = 500,
+                         burnin = 180,
+                         alpha = 0.1,beta = 0.05,
+                         optimize_alpha = T,
+                         calc_likelihood = T,
+                         calc_coherence = T,
+                         calc_r2 = T)
+
+mod_lda_3$top_terms <- GetTopTerms(phi = mod_lda_3$phi,M = 15)
+mod_lda_3$prevalence <- colSums(mod_lda_3$theta)/sum(mod_lda_3$theta)*100
+
+mod_lda_3$summary <- data.frame(topic = rownames(mod_lda_3$phi),
+                                coherence = round(mod_lda_3$coherence,3),
+                                prevalence = round(mod_lda_3$prevalence,3),
+                                top_terms = apply(mod_lda_3$top_terms,2,
+                                                  function(x){paste(x,collapse = ", ")}))
+
+modsum_3 <- mod_lda_3$summary %>%
+  `rownames<-`(NULL)
+
+#visualization
+modsum_3 %>% pivot_longer(cols = c(coherence,prevalence)) %>%
+  ggplot(aes(x = factor(topic,levels = unique(topic)), y = value, group = 1)) +
+  geom_point() + geom_line() +
+  facet_wrap(~name,scales = "free_y",nrow = 2) +
+  theme_minimal() +
+  labs(title = "Best topics by coherence and prevalence score",
+       subtitle = "Text review with 5 rating",
+       x = "Topics", y = "Value")
+
+# denodogram clustering
+mod_lda_3$linguistic <- CalcHellingerDist(mod_lda_3$phi)
+mod_lda_3$hclust <- hclust(as.dist(mod_lda_3$linguistic),"ward.D")
+mod_lda_3$hclust$labels <- paste(mod_lda_3$hclust$labels, mod_lda_3$labels[,1])
+plot(mod_lda_3$hclust)
+
+modsum_3 %>% 
+  arrange(desc(coherence)) %>%
+  slice(1:5)
+
+data.frame(mod_lda_3$top_terms)
+
+# Rating 2
+clean_2 <- textcleaner_2(data_2$Review)
+clean_2 <- clean_2 %>% mutate(id = rownames(clean_2))
+
+# crete dtm
+set.seed(1502)
+dtm_r_2 <- CreateDtm(doc_vec = clean_2$x,
+                     doc_names = clean_2$id,
+                     ngram_window = c(1,2),
+                     stopword_vec = stopwords("en"),
+                     verbose = F)
+
+dtm_r_2 <- dtm_r_2[,colSums(dtm_r_2)>2]
+
+set.seed(1502)
+mod_lda_2 <- FitLdaModel(dtm = dtm_r_2,
+                         k = 20, # number of topic
+                         iterations = 500,
+                         burnin = 180,
+                         alpha = 0.1,beta = 0.05,
+                         optimize_alpha = T,
+                         calc_likelihood = T,
+                         calc_coherence = T,
+                         calc_r2 = T)
+
+mod_lda_2$top_terms <- GetTopTerms(phi = mod_lda_2$phi,M = 15)
+mod_lda_2$prevalence <- colSums(mod_lda_2$theta)/sum(mod_lda_2$theta)*100
+
+mod_lda_2$summary <- data.frame(topic = rownames(mod_lda_2$phi),
+                                coherence = round(mod_lda_2$coherence,3),
+                                prevalence = round(mod_lda_2$prevalence,3),
+                                top_terms = apply(mod_lda_2$top_terms,2,
+                                                  function(x){paste(x,collapse = ", ")}))
+
+modsum_2 <- mod_lda_2$summary %>%
+  `rownames<-`(NULL)
+
+#visualization
+modsum_2 %>% pivot_longer(cols = c(coherence,prevalence)) %>%
+  ggplot(aes(x = factor(topic,levels = unique(topic)), y = value, group = 1)) +
+  geom_point() + geom_line() +
+  facet_wrap(~name,scales = "free_y",nrow = 2) +
+  theme_minimal() +
+  labs(title = "Best topics by coherence and prevalence score",
+       subtitle = "Text review with 5 rating",
+       x = "Topics", y = "Value")
+
+# denodogram clustering
+mod_lda_2$linguistic <- CalcHellingerDist(mod_lda_2$phi)
+mod_lda_2$hclust <- hclust(as.dist(mod_lda_2$linguistic),"ward.D")
+mod_lda_2$hclust$labels <- paste(mod_lda_2$hclust$labels, mod_lda_2$labels[,1])
+plot(mod_lda_2$hclust)
+
+modsum_2 %>% 
+  arrange(desc(coherence)) %>%
+  slice(1:5)
+
+data.frame(mod_lda_2$top_terms)
+
+# Rating 1
+clean_1 <- textcleaner_1(data_1$Review)
+clean_1 <- clean_1 %>% mutate(id = rownames(clean_1))
+
+# crete dtm
+set.seed(1502)
+dtm_r_1 <- CreateDtm(doc_vec = clean_1$x,
+                     doc_names = clean_1$id,
+                     ngram_window = c(1,2),
+                     stopword_vec = stopwords("en"),
+                     verbose = F)
+
+dtm_r_1 <- dtm_r_1[,colSums(dtm_r_1)>2]
+
+set.seed(1502)
+mod_lda_1 <- FitLdaModel(dtm = dtm_r_1,
+                         k = 20, # number of topic
+                         iterations = 500,
+                         burnin = 180,
+                         alpha = 0.1,beta = 0.05,
+                         optimize_alpha = T,
+                         calc_likelihood = T,
+                         calc_coherence = T,
+                         calc_r2 = T)
+
+mod_lda_1$top_terms <- GetTopTerms(phi = mod_lda_1$phi,M = 15)
+mod_lda_1$prevalence <- colSums(mod_lda_1$theta)/sum(mod_lda_1$theta)*100
+
+mod_lda_1$summary <- data.frame(topic = rownames(mod_lda_1$phi),
+                                coherence = round(mod_lda_1$coherence,3),
+                                prevalence = round(mod_lda_1$prevalence,3),
+                                top_terms = apply(mod_lda_1$top_terms,2,
+                                                  function(x){paste(x,collapse = ", ")}))
+
+modsum_1 <- mod_lda_1$summary %>%
+  `rownames<-`(NULL)
+
+#visualization
+modsum_1 %>% pivot_longer(cols = c(coherence,prevalence)) %>%
+  ggplot(aes(x = factor(topic,levels = unique(topic)), y = value, group = 1)) +
+  geom_point() + geom_line() +
+  facet_wrap(~name,scales = "free_y",nrow = 2) +
+  theme_minimal() +
+  labs(title = "Best topics by coherence and prevalence score",
+       subtitle = "Text review with 5 rating",
+       x = "Topics", y = "Value")
+
+# denodogram clustering
+mod_lda_1$linguistic <- CalcHellingerDist(mod_lda_1$phi)
+mod_lda_1$hclust <- hclust(as.dist(mod_lda_1$linguistic),"ward.D")
+mod_lda_1$hclust$labels <- paste(mod_lda_1$hclust$labels, mod_lda_1$labels[,1])
+plot(mod_lda_1$hclust)
+
+modsum_1 %>% 
+  arrange(desc(coherence)) %>%
+  slice(1:5)
+
+data.frame(mod_lda_1$top_terms)
