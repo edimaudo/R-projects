@@ -290,7 +290,7 @@ plot_topic_2 <- top_terms_2 %>%
 plot_topic_2
 
 # rating 1
-dtm_1 <- textcleaner(data_1$reviewText)
+dtm_1 <- textcleaner(data_1$Review)
 freqterm_1 <- findFreqTerms(dtm_1,5)
 dtm_1 <- dtm_1[,freqterm_1]
 rownum_1 <- apply(dtm_1,1,sum)
