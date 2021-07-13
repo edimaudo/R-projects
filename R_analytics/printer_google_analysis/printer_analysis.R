@@ -438,7 +438,7 @@ modsum_4 %>% pivot_longer(cols = c(coherence,prevalence)) %>%
   facet_wrap(~name,scales = "free_y",nrow = 2) +
   theme_minimal() +
   labs(title = "Best topics by coherence and prevalence score",
-       subtitle = "Text review with 5 rating",
+       subtitle = "Text review with 4 rating",
        x = "Topics", y = "Value")
 
 # denodogram clustering
@@ -498,7 +498,7 @@ modsum_3 %>% pivot_longer(cols = c(coherence,prevalence)) %>%
   facet_wrap(~name,scales = "free_y",nrow = 2) +
   theme_minimal() +
   labs(title = "Best topics by coherence and prevalence score",
-       subtitle = "Text review with 5 rating",
+       subtitle = "Text review with 3 rating",
        x = "Topics", y = "Value")
 
 # denodogram clustering
@@ -557,7 +557,7 @@ modsum_2 %>% pivot_longer(cols = c(coherence,prevalence)) %>%
   facet_wrap(~name,scales = "free_y",nrow = 2) +
   theme_minimal() +
   labs(title = "Best topics by coherence and prevalence score",
-       subtitle = "Text review with 5 rating",
+       subtitle = "Text review with 2 rating",
        x = "Topics", y = "Value")
 
 # denodogram clustering
