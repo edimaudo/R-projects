@@ -942,6 +942,7 @@ server <- function(input, output,session) {
                  forecast(h=forecast.horizon)  
         
         patient_train_tbat_forecast <-  tbats(patient.train) %>% forecast(h=forecast.horizon)
+        #manual arima forecast
         
         
         auto_exp_accuracy <- as.data.frame(accuracy( patient_train_auto_exp_forecast ,patient.test))
@@ -950,6 +951,7 @@ server <- function(input, output,session) {
         double_exp_accuracy <- as.data.frame(accuracy(patient_train_double_exp_forecast ,patient.test))
         triple_exp_accuracy <- as.data.frame(accuracy(patient_train_triple_exp_forecast ,patient.test))
         tbat_accuracy <- as.data.frame(accuracy(patient_train_tbat_forecast ,patient.test))
+        #manual accuracy
         
         numeric_update <- function(df){
             rownames(df) <- c()
@@ -964,15 +966,18 @@ server <- function(input, output,session) {
         double_exp_accuracy <- numeric_update(double_exp_accuracy)
         triple_exp_accuracy <- numeric_update(triple_exp_accuracy)
         tbat_accuracy <- numeric_update(tbat_accuracy)
+        # manual accuarcy
         
         models<- c("auto-exponential","auto-exponential",
                    "auto-arima","auto-arima",
                    "simple-exponential","simple-exponential",
                    "double-exponential","double-exponential",
                    "triple-exponential","triple-exponential",
-                   "tbat","tbat")
+                   "tbat","tbat",
+                   "manual-arima","manual-arima")
 
         data<- c("Training set", 'Test set',
+                 "Training set", 'Test set',
                  "Training set", 'Test set',
                  "Training set", 'Test set',
                  "Training set", 'Test set',
@@ -981,7 +986,7 @@ server <- function(input, output,session) {
         
         outputInfo <- rbind(auto_exp_accuracy,auto_arima_accuracy,
                             simple_exp_accuracy,double_exp_accuracy,
-                            triple_exp_accuracy,tbat_accuracy)
+                            triple_exp_accuracy,tbat_accuracy,manual_accuracy)
         
         outputInfo <- cbind(models, data, outputInfo)
         
@@ -993,7 +998,7 @@ server <- function(input, output,session) {
         double_exp <- "double-exponential" %in% input$modelInput
         triple_exp <- "triple-exponential" %in% input$modelInput
         tbat <- "tbat"  %in% input$modelInput
-        #manual_arima <- "manual-arima"  %in% input$modelInput
+        manual_arima <- "manual-arima"  %in% input$modelInput
         
         model_selection <- unlist(strsplit(input$modelInput, split=" "))
         model_count <- length(model_selection)
@@ -1524,69 +1529,69 @@ server <- function(input, output,session) {
             
         } else if (model_count == 4){
             if(auto_arima &  auto_exp &  simple_exp &  double_exp) {
-                outputInfo <- outputInfo %>% 
+                    outputInfo <- outputInfo %>% 
                     select(!c(tbat,triple-exponential))
             }else if(auto_arima &  auto_exp &  simple_exp &  triple_exp) {
-                outputInfo <- outputInfo %>% 
+                    outputInfo <- outputInfo %>% 
                     select(!c(tbat,double-exponential))
             }else if(auto_arima &  auto_exp &  simple_exp &  tbat) {
-                outputInfo <- outputInfo %>% 
+                    outputInfo <- outputInfo %>% 
                     select(!c(double-exponential,triple-exponential))
             }else if(auto_arima &  auto_exp &  double_exp &  triple_exp) {
-                outputInfo <- outputInfo %>% 
+                    outputInfo <- outputInfo %>% 
                     select(!c(tbat,simple-exponential)) 
             }else if(auto_arima &  auto_exp &  double_exp &  tbat) {
-                outputInfo <- outputInfo %>% 
+                    outputInfo <- outputInfo %>% 
                     select(!c(simple-exponential,triple-exponential))
             }else if(auto_arima &  auto_exp &  triple_exp &  tbat) {
-                outputInfo <- outputInfo %>% 
+                    outputInfo <- outputInfo %>% 
                     select(!c(simple-exponential,double-exponential))
             }else if(auto_arima &  simple_exp &  double_exp &  triple_exp) {
-                outputInfo <- outputInfo %>% 
+                    outputInfo <- outputInfo %>% 
                     select(!c(tbat,auto-exponential))
             }else if(auto_arima &  simple_exp &  double_exp &  tbat) {
-                outputInfo <- outputInfo %>% 
+                    outputInfo <- outputInfo %>% 
                     select(!c(triple-exponential,auto-exponential)) 
             }else if(auto_arima &  simple_exp &  triple_exp &  tbat) {
-                outputInfo <- outputInfo %>% 
+                    outputInfo <- outputInfo %>% 
                     select(!c(double-exponential,auto-exponential))               
             }else if(auto_arima &  double_exp &  triple_exp &  tbat) {
-                outputInfo <- outputInfo %>% 
+                    outputInfo <- outputInfo %>% 
                     select(!c(simple-exponential,auto-exponential))
             }else if(auto_exp &  simple_exp &  double_exp &  triple_exp) {
-                outputInfo <- outputInfo %>% 
+                    outputInfo <- outputInfo %>% 
                     select(!c(tbat,auto-exponential))
             }else if(auto_exp &  simple_exp &  double_exp &  tbat) {
-                outputInfo <- outputInfo %>% 
+                    outputInfo <- outputInfo %>% 
                     select(!c(auto-arima,triple-exponential))
             }else if(auto_exp &  simple_exp &  triple_exp &  tbat) {
-                outputInfo <- outputInfo %>% 
+                    outputInfo <- outputInfo %>% 
                     select(!c(auto-arima,double-exponential))
             }else if(auto_exp &  double_exp &  triple_exp &  tbat) {
-                outputInfo <- outputInfo %>% 
+                    outputInfo <- outputInfo %>% 
                     select(!c(auto-arima,simple-exponential))
             }else if(simple_exp &  double_exp &  triple_exp &  tbat) {
-                outputInfo <- outputInfo %>% 
+                    outputInfo <- outputInfo %>% 
                     select(!c(auto-arima,auto-exponential))
             }
         } else if (model_count == 5){
             if (auto_arima & auto_exp & simple_exp & double_exp & triple_exp) {
-                outputInfo <- outputInfo %>% 
+                    outputInfo <- outputInfo %>% 
                     select(!c(tbat))
             } else if (auto_arima & simple_exp & double_exp & triple_exp & tbat) {
-                outputInfo <- outputInfo %>% 
+                    outputInfo <- outputInfo %>% 
                     select(!c(auto-exponential))
             } else if (auto_arima & auto_exp & simple_exp & double_exp & tbat){
-                outputInfo <- outputInfo %>% 
+                    outputInfo <- outputInfo %>% 
                     select(!c(triple-exponential)  )           
             } else if (auto_arima & auto_exp & simple_exp &  triple_exp & tbat){
-                outputInfo <- outputInfo %>% 
+                    outputInfo <- outputInfo %>% 
                     select(!c(double-exponential))
             } else if (auto_arima & auto_exp & double_exp & triple_exp & tbat){
-                outputInfo <- outputInfo %>% 
+                    outputInfo <- outputInfo %>% 
                     select(!c(simple-exponential))
             } else if (auto_exp & simple_exp & double_exp & triple_exp & tbat){
-                outputInfo <- outputInfo %>% 
+                    outputInfo <- outputInfo %>% 
                     select(!c(auto-arima))
             }
         } else if (model_count == 6){
