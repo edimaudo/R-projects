@@ -74,6 +74,8 @@ full_word_count <- df %>%
   summarise(num_words = n()) %>%
   arrange(desc(num_words)) 
 
+write.csv(full_word_count,"brand_rating.csv")
+
 # word count visualization
 full_word_count %>%
   ggplot(aes(x = Rating,y=num_words, fill = Brand )) +
@@ -86,10 +88,10 @@ full_word_count %>%
         panel.grid.minor.y = element_blank())
 
 
-# top 100 words across all reviews and brands
+# top 20 words across all reviews and brands
 review_words %>%
   count(word, sort = TRUE) %>%
-  top_n(100) %>%
+  top_n(20) %>%
   ungroup() %>%
   mutate(word = reorder(word, n)) %>%
   ggplot() +
@@ -99,7 +101,7 @@ review_words %>%
         panel.grid.major = element_blank()) +
   xlab("") + 
   ylab("Word Count") +
-  ggtitle("Most Frequently Used Words") +
+  ggtitle("Top 20 Most Frequently Used Words") +
   coord_flip()
 
 # keywords by Brand and ratings
@@ -336,13 +338,14 @@ textcleaner_2 <- function(x){
 
 }
 
+set.seed(1502)
+
 # Rating 5
 # apply textcleaner function. note: we only clean the text without convert it to dtm
 clean_5 <- textcleaner_2(data_5$Review)
 clean_5 <- clean_5 %>% mutate(id = rownames(clean_5))
 
 # crete dtm
-set.seed(1502)
 dtm_r_5 <- CreateDtm(doc_vec = clean_5$x,
                      doc_names = clean_5$id,
                      ngram_window = c(1,2),
@@ -351,7 +354,6 @@ dtm_r_5 <- CreateDtm(doc_vec = clean_5$x,
 
 dtm_r_5 <- dtm_r_5[,colSums(dtm_r_5)>2]
 
-set.seed(1502)
 mod_lda_5 <- FitLdaModel(dtm = dtm_r_5,
                          k = 20, # number of topic
                          iterations = 500,
@@ -459,7 +461,7 @@ clean_3 <- textcleaner_2(data_3$Review)
 clean_3 <- clean_3 %>% mutate(id = rownames(clean_3))
 
 # crete dtm
-set.seed(1502)
+
 dtm_r_3 <- CreateDtm(doc_vec = clean_3$x,
                      doc_names = clean_3$id,
                      ngram_window = c(1,2),
@@ -468,7 +470,6 @@ dtm_r_3 <- CreateDtm(doc_vec = clean_3$x,
 
 dtm_r_3 <- dtm_r_3[,colSums(dtm_r_3)>2]
 
-set.seed(1502)
 mod_lda_3 <- FitLdaModel(dtm = dtm_r_3,
                          k = 20, # number of topic
                          iterations = 500,
@@ -518,7 +519,6 @@ clean_2 <- textcleaner_2(data_2$Review)
 clean_2 <- clean_2 %>% mutate(id = rownames(clean_2))
 
 # crete dtm
-set.seed(1502)
 dtm_r_2 <- CreateDtm(doc_vec = clean_2$x,
                      doc_names = clean_2$id,
                      ngram_window = c(1,2),
@@ -527,7 +527,6 @@ dtm_r_2 <- CreateDtm(doc_vec = clean_2$x,
 
 dtm_r_2 <- dtm_r_2[,colSums(dtm_r_2)>2]
 
-set.seed(1502)
 mod_lda_2 <- FitLdaModel(dtm = dtm_r_2,
                          k = 20, # number of topic
                          iterations = 500,
@@ -577,7 +576,6 @@ clean_1 <- textcleaner_2(data_1$Review)
 clean_1 <- clean_1 %>% mutate(id = rownames(clean_1))
 
 # crete dtm
-set.seed(1502)
 dtm_r_1 <- CreateDtm(doc_vec = clean_1$x,
                      doc_names = clean_1$id,
                      ngram_window = c(1,2),
@@ -586,7 +584,6 @@ dtm_r_1 <- CreateDtm(doc_vec = clean_1$x,
 
 dtm_r_1 <- dtm_r_1[,colSums(dtm_r_1)>2]
 
-set.seed(1502)
 mod_lda_1 <- FitLdaModel(dtm = dtm_r_1,
                          k = 20, # number of topic
                          iterations = 500,
