@@ -1359,7 +1359,7 @@ server <- function(input, output,session) {
                     select(tbat)
             } else if (manual_arima){
                 outputInfo <- outputInfo %>% 
-                    select(manual_arima)
+                    select(manual-arima)
             }
         } else if (model_count == 2){
             if(auto_arima &  auto_exp) {
@@ -1407,7 +1407,27 @@ server <- function(input, output,session) {
             }else if(triple_exp &  tbat) {
                 outputInfo <- outputInfo %>% 
                     select(tbat,triple-exponential)
+             }else if(simple_exp &  manual_arima) {
+                outputInfo <- outputInfo %>% 
+                    select(simple-exp,triple-exponential)
+             }else if(double_exp  &  manual_arima) {
+                    outputInfo <- outputInfo %>% 
+                    select(manual-arima,double-exponential)
+            }else if(triple_exp &  manual_arima) {
+                outputInfo <- outputInfo %>% 
+                select(manual-arima,triple-exponential)
+             }else if(auto_exp &  manual_arima) {
+                outputInfo <- outputInfo %>% 
+                    select(auto-exponential,manual-arima)
+            }else if(auto_arima &  manual_arima) {
+                outputInfo <- outputInfo %>% 
+                    select(auto-arima,manual-arima)
+            }else if(tbat & manual_arima) {
+                outputInfo <- outputInfo %>% 
+                    select(tbat,manual-arima)
             }
+
+            
         } else if (model_count == 3) {
             if(auto_arima &  auto_exp &  simple_exp) {
                 outputInfo <- outputInfo %>% 
@@ -1469,7 +1489,39 @@ server <- function(input, output,session) {
             }else if(double_exp &  triple_exp &  tbat) {
                 outputInfo <- outputInfo %>% 
                     select(!c(auto-arima,auto-exponential,simple-exponential))
+            } else if(){
+                
+            }else if(){
+                
+            }else if(){
+                
+            }else if(){
+                
+            }else if(){
+                
+            }else if(){
+                
+            }else if(){
+                
+            }else if(){
+                
+            }else if(){
+                
+            }else if(){
+                
+            }else if(){
+                
+            }else if(){
+                
+            }else if(){
+                
+            }else if(){
+                
+            }else if(){
+                
             }
+            
+            
         } else if (model_count == 4){
             if(auto_arima &  auto_exp &  simple_exp &  double_exp) {
                 outputInfo <- outputInfo %>% 
@@ -1537,7 +1589,9 @@ server <- function(input, output,session) {
                 outputInfo <- outputInfo %>% 
                     select(!c(auto-arima))
             }
-        } 
+        } else if (model_count == 6){
+        
+        }
         
         # forecast accuracy output
         DT::datatable(outputInfo, options = list(scrollX = TRUE))
