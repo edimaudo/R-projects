@@ -86,7 +86,7 @@ full_word_count %>%
         panel.grid.minor.y = element_blank())
 
 
-#top 100 words across all reviews and brands
+# top 100 words across all reviews and brands
 review_words %>%
   count(word, sort = TRUE) %>%
   top_n(100) %>%
@@ -102,7 +102,7 @@ review_words %>%
   ggtitle("Most Frequently Used Words") +
   coord_flip()
 
-#keywords by Brand and ratings
+# keywords by Brand and ratings
 review_brand_rating <- review_words %>%
   group_by(Brand, Rating) %>%
   count(word, sort = TRUE) %>%
@@ -310,7 +310,7 @@ plot_topic_1 <- top_terms_1 %>%
 plot_topic_1
 
 #===================
-# Topic modeliing 2
+# Topic modelliing 2
 #===================
 
 textcleaner_2 <- function(x){
