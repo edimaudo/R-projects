@@ -166,6 +166,17 @@ simple_exp_forecast <- as.data.frame(patient_train_simple_exp_forecast$mean)
 double_exp_forecast <- as.data.frame(patient_train_double_exp_forecast$mean)
 triple_exp_forecast <- as.data.frame(patient_train_triple_exp_forecast$mean)
 tbat_forecast <- as.data.frame(patient_train_tbat_forecast$mean)
+patient_train_manual_forecast <- Arima(patient.train, c(1, 1,1))
+                                         
+
+# forecast output
+auto_exp_forecast <- as.data.frame(patient_train_auto_exp_forecast$mean)
+auto_arima_forecast <- as.data.frame(patient_train_auto_arima_forecast$mean)
+simple_exp_forecast <- as.data.frame(patient_train_simple_exp_forecast$mean)
+double_exp_forecast <- as.data.frame(patient_train_double_exp_forecast$mean)
+triple_exp_forecast <- as.data.frame(patient_train_triple_exp_forecast$mean)
+tbat_forecast <- as.data.frame(patient_train_tbat_forecast$mean)
+manual_arima_forecast <- as.data.frame(patient_train_manual_forecast$mean)
 
 numeric_update <- function(df){
   rownames(df) <- c()
@@ -174,19 +185,26 @@ numeric_update <- function(df){
   return (df)
 }
 
+if(length(manual_arima_forecast) < 1){
+  print(1)
+} else {
+  print(2)
+}
+
 auto_exp_forecast <- numeric_update(auto_exp_forecast)
 auto_arima_forecast <- numeric_update(auto_arima_forecast)
 simple_exp_forecast <- numeric_update(simple_exp_forecast)
 double_exp_forecast <- numeric_update(double_exp_forecast)
 triple_exp_forecast <- numeric_update(triple_exp_forecast)
 tbat_forecast <- numeric_update(tbat_forecast)
+#manual_arima_forecast <- numeric_update(manual_arima_forecast)
 
 models <- c("auto-exponential","auto-arima","simple-exponential","double-exponential",
-            "triple-exponential","tbat")
+            "triple-exponential","tbat", "manual-arima")
 
 outputInfo <- cbind(auto_exp_forecast,auto_arima_forecast,
                     simple_exp_forecast,double_exp_forecast,
-                    triple_exp_forecast,tbat_forecast)
+                    triple_exp_forecast,tbat_forecast, manual_arima_forecast)
 
 colnames(outputInfo) <- models
 
