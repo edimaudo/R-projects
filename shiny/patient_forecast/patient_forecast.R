@@ -151,6 +151,9 @@ numeric_update <- function(df){
 }
 
 tbat_accuracy <- as.data.frame(accuracy(patient_train_tbat_forecast))
+
+patient_train_manual_forecast <-  Arima(patient.train,c(0,0,0)) %>% forecast(h=forecast.horizon)
+#manual arima forecast
 # 
 # auto_exp_accuracy <- numeric_update(auto_exp_accuracy)
 # auto_arima_accuracy <- numeric_update(auto_arima_accuracy)
@@ -166,8 +169,9 @@ simple_exp_forecast <- as.data.frame(patient_train_simple_exp_forecast$mean)
 double_exp_forecast <- as.data.frame(patient_train_double_exp_forecast$mean)
 triple_exp_forecast <- as.data.frame(patient_train_triple_exp_forecast$mean)
 tbat_forecast <- as.data.frame(patient_train_tbat_forecast$mean)
-patient_train_manual_forecast <- Arima(patient.train, c(1, 1,1))
+manual_forecast <- as.data.frame(patient_train_manual_forecast$mean)
                                          
+manual_accuracy <- as.data.frame(accuracy(patient_train_manual_forecast ,patient.test))
 
 # forecast output
 auto_exp_forecast <- as.data.frame(patient_train_auto_exp_forecast$mean)
