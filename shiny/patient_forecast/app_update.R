@@ -1593,9 +1593,82 @@ server <- function(input, output,session) {
             } else if (auto_exp & simple_exp & double_exp & triple_exp & tbat){
                     outputInfo <- outputInfo %>% 
                     select(!c(auto-arima))
+            } else if (){
+                outputInfo <- outputInfo %>% 
+                    select(c)
+            } else if(){
+                outputInfo <- outputInfo %>% 
+                    select(c)
+            } else if(){
+                outputInfo <- outputInfo %>% 
+                    select(c)
+            } else if(){
+                outputInfo <- outputInfo %>% 
+                    select(c)
+            } else if(){
+                outputInfo <- outputInfo %>% 
+                    select(c)
+            } else if(){
+                outputInfo <- outputInfo %>% 
+                    select(c)
+            } else if(){
+                outputInfo <- outputInfo %>% 
+                    select(c)
+            } else if(){
+                outputInfo <- outputInfo %>% 
+                    select(c)
+            } else if(){
+                outputInfo <- outputInfo %>% 
+                    select(c) 
+            } else if(){
+                outputInfo <- outputInfo %>% 
+                    select(c) 
+            } else if(){
+                outputInfo <- outputInfo %>% 
+                    select(c) 
+            } else if(){
+                outputInfo <- outputInfo %>% 
+                    select(c)
+            } else if(){
+                outputInfo <- outputInfo %>% 
+                    select(c)
+            } else if(){
+                outputInfo <- outputInfo %>% 
+                    select(c)
+            } else if(){
+                outputInfo <- outputInfo %>% 
+                    select(c)  
             }
         } else if (model_count == 6){
-        
+            if (auto_exp & auto_arima & simple_exp & double_exp & triple_exp & tbat){
+                outputInfo <- outputInfo %>% 
+                    select(c(auto-exponential, auto-arima, simple-exponential, 
+                             double-exponential, triple-exponential, tbat))
+            } else if (auto_exp & auto_arima & simple_exp & double_exp & triple_exp & manual_arima){
+                outputInfo <- outputInfo %>% 
+                    select(c(auto-exponential, auto-arima, simple-exponential, 
+                             double-exponential, triple-exponential, manual-arima))
+            } else if(auto_exp & auto_arima & simple_exp & double_exp & tbat & manual_arima){
+                outputInfo <- outputInfo %>% 
+                    select(c(auto-exponential, auto-arima, simple-exponential, 
+                             double-exponential, tbat, manual-arima) )
+            } else if(auto_exp & auto_arima & simple_exp & triple_exp & tbat & manual_arima){
+                outputInfo <- outputInfo %>% 
+                    select(c(auto-exponential, auto-arima, simple-exponential, 
+                             triple-exponential, tbat, manual-arima))
+            } else if(auto_exp & auto_arima & double_exp & triple_exp & tbat & manual_arima){
+                outputInfo <- outputInfo %>% 
+                    select(c(auto-exponential, auto-arima, double-exponential, 
+                             triple-exponential, tbat, manual-arima))
+            } else if(auto_exp & simple_exp & double_exp & triple_exp & tbat & manual_arima){
+                outputInfo <- outputInfo %>% 
+                    select(c(auto-exponential, simple-exponential, double-exponential, 
+                             triple-exponential, tbat, manual-arima))
+            } else if(auto_arima & simple_exp & double_exp & triple_exp & tbat & manual_arima){
+                outputInfo <- outputInfo %>% 
+                    select(c(auto-arima, simple-exponential, double-exponential, triple-exponential, 
+                           tbat, manual-arima))
+            }
         }
         
         # forecast accuracy output
