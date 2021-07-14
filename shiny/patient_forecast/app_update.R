@@ -138,7 +138,7 @@ ui <- dashboardPage(
             ) 
         )
     ) 
-)
+)   
 #=============
 # Define server logic 
 #=============
@@ -1203,12 +1203,7 @@ server <- function(input, output,session) {
         
     })
     
-    # Forecast results using test information
-    #model 1 | model 2 | model 3......
-    #value | value | value
-    #value | value | value
-    #VALUES SHOULD BE INT, because its patient data
-    #https://stackoverflow.com/questions/25216189/get-the-forecasted-values-when-using-forecast-in-r/25216260
+    # forecast output
     output$forecastOutput <- DT::renderDataTable({
         patient.xts <- xts(x = df$Patients, order.by = df$Arrival_date) 
         patient.daily <- apply.daily(patient.xts,mean)
@@ -1290,13 +1285,19 @@ server <- function(input, output,session) {
         
         patient_train_tbat_forecast <-  tbats(patient.train) %>% forecast(h=forecast.horizon)
         
-        #forecast output
+        patient_train_manual_forecast <- Arima(patient.train, 
+                                               c(as.numeric(input$autoInput), 
+                                                 as.numeric(input$difference2Input),
+                                                 as.numeric(input$maInput)))
+        
+        # forecast output
         auto_exp_forecast <- as.data.frame(patient_train_auto_exp_forecast$mean)
         auto_arima_forecast <- as.data.frame(patient_train_auto_arima_forecast$mean)
         simple_exp_forecast <- as.data.frame(patient_train_simple_exp_forecast$mean)
         double_exp_forecast <- as.data.frame(patient_train_double_exp_forecast$mean)
         triple_exp_forecast <- as.data.frame(patient_train_triple_exp_forecast$mean)
         tbat_forecast <- as.data.frame(patient_train_tbat_forecast$mean)
+        manual_arima_forecast <- as.data.frame(patient_train_manual_arima_forecast$mean)
         
         numeric_update <- function(df){
             rownames(df) <- c()
@@ -1311,13 +1312,15 @@ server <- function(input, output,session) {
         double_exp_forecast <- numeric_update(double_exp_forecast)
         triple_exp_forecast <- numeric_update(triple_exp_forecast)
         tbat_forecast <- numeric_update(tbat_forecast)
+        manual_arima_forecast <- numeric_update(manual_arima_forecast)
+        
         
         models <- c("auto-exponential","auto-arima","simple-exponential","double-exponential",
-                    "triple-exponential","tbat")
+                    "triple-exponential","tbat", "manual-arima")
         
         outputInfo <- cbind(auto_exp_forecast,auto_arima_forecast,
                             simple_exp_forecast,double_exp_forecast,
-                            triple_exp_forecast,tbat_forecast)
+                            triple_exp_forecast,tbat_forecast, manual_arima_forecast)
         
         colnames(outputInfo) <- models
         
@@ -1328,7 +1331,7 @@ server <- function(input, output,session) {
         double_exp <- "double-exponential" %in% input$modelInput
         triple_exp <- "triple-exponential" %in% input$modelInput
         tbat <- "tbat"  %in% input$modelInput
-        #manual_arima <- "manual-arima"  %in% input$modelInput
+        manual_arima <- "manual-arima"  %in% input$modelInput
         
         model_selection <- unlist(strsplit(input$modelInput, split=" "))
         model_count <- length(model_selection)
@@ -1354,6 +1357,9 @@ server <- function(input, output,session) {
             } else if (tbat ) {
                 outputInfo <- outputInfo %>% 
                     select(tbat)
+            } else if (manual_arima){
+                outputInfo <- outputInfo %>% 
+                    select(manual_arima)
             }
         } else if (model_count == 2){
             if(auto_arima &  auto_exp) {
