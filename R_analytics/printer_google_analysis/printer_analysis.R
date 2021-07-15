@@ -152,27 +152,27 @@ popular_tfidf_words <- df %>%
   unnest_tokens(word, Review) %>%
   distinct() %>%
   filter(nchar(word) > 3, !word %in% c("printer","print", "printing")) %>%
-  count(Brand, Rating, word, sort = TRUE) %>%
+  count(Product, Rating, word, sort = TRUE) %>%
   ungroup() %>%
   bind_tf_idf(word, Rating, n)
 
 top_popular_tfidf_words <- popular_tfidf_words %>%
   arrange(desc(tf_idf)) %>%
   mutate(word = factor(word, levels = rev(unique(word)))) %>%
-  group_by(Brand, Rating) %>% 
+  group_by(Product, Rating) %>% 
   slice(seq_len(8)) %>%
   ungroup() %>%
-  arrange(Brand, Rating, tf_idf) %>%
+  arrange(Product, Rating, tf_idf) %>%
   mutate(row = row_number())
 
 top_popular_tfidf_words %>%
   ggplot(aes(x = row, tf_idf, 
-             fill = Brand)) +
+             fill = Product)) +
   geom_col(show.legend = NULL) +
   labs(x = NULL, y = "TF-IDF") + 
-  ggtitle("Important Words using TF-IDF by Brand") +
+  ggtitle("Important Words using TF-IDF by Product") +
   theme_bw() +  
-  facet_wrap(~Brand, ncol = 3, scales = "free") +
+  facet_wrap(~Product, ncol = 3, scales = "free") +
   scale_x_continuous(  # This handles replacement of row 
     breaks = top_popular_tfidf_words$row, # notice need to reuse data frame
     labels = top_popular_tfidf_words$word) +
