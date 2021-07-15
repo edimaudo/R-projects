@@ -58,14 +58,15 @@ df$Review <- sapply(df$Review, tolower)
 #=============
 # Text mining
 #=============
+remove_keywords <- c("printer","print", "printing","app")
+
 
 # word breakdown 
 review_words <- df %>%
   unnest_tokens(word, Review) %>%
   anti_join(stop_words) %>%
   distinct() %>%
-  #remove printer and print
-  filter(nchar(word) > 3,!word %in% c("printer","print", "printing")) 
+  filter(nchar(word) > 3,!word %in% remove_keywords) 
 
 # word frequency
 full_word_count <- df %>%
@@ -147,11 +148,11 @@ wordcloud2(words_counts[1:100, ], size = 1)
 # Text mining
 #=============
 
-# tf-idf by Product ^ Rating
+# tf-idf by Product & Rating
 popular_tfidf_words <- df %>%
   unnest_tokens(word, Review) %>%
   distinct() %>%
-  filter(nchar(word) > 3, !word %in% c("printer","print", "printing")) %>%
+  filter(nchar(word) > 3, !word %in% remove_keywords) %>%
   count(Product, Rating, word, sort = TRUE) %>%
   ungroup() %>%
   bind_tf_idf(word, Rating, n)
@@ -162,7 +163,7 @@ top_popular_tfidf_words <- popular_tfidf_words %>%
   group_by(Product, Rating) %>% 
   slice(seq_len(8)) %>%
   ungroup() %>%
-  arrange(Product, Rating, tf_idf) %>%
+  arrange(desc(Product, Rating)) %>%
   mutate(row = row_number())
 
 #td-idf by Product
@@ -179,20 +180,8 @@ top_popular_tfidf_words %>%
     labels = top_popular_tfidf_words$word) +
   coord_flip()
 
-# tf-idf by Rating
-top_popular_tfidf_words %>%
-  ggplot(aes(x = row, tf_idf, 
-             fill = Product)) +
-  geom_col(show.legend = NULL) +
-  labs(x = NULL, y = "TF-IDF") + 
-  ggtitle("Important Words using TF-IDF by Rating") +
-  theme_bw() +  
-  facet_wrap(~Rating, ncol = 5, scales = "free") +
-  scale_x_continuous(  # This handles replacement of row 
-    breaks = top_popular_tfidf_words$row, # notice need to reuse data frame
-    labels = top_popular_tfidf_words$word) +
-  coord_flip()
 
+write.csv(top_popular_tfidf_words, "top_popular_tfidf_words.csv")
 
 
 
