@@ -268,9 +268,10 @@ modsum_5 %>% pivot_longer(cols = c(coherence,prevalence)) %>%
 # mod_lda_5$hclust$labels <- paste(mod_lda_5$hclust$labels, mod_lda_5$labels[,1])
 # plot(mod_lda_5$hclust)
 
-#modsum_5 %>% 
-#  arrange(desc(coherence)) %>%
-#  slice(1:5)
+top_5_terms_5<- modsum_5 %>% 
+  arrange(desc(coherence)) %>%
+  slice(1:5)
+write.csv(top_5_terms_5, "top_5_terms.csv")
 
 top_terms_5 <- data.frame(mod_lda_5$top_terms)
 
@@ -325,9 +326,10 @@ modsum_4 %>% pivot_longer(cols = c(coherence,prevalence)) %>%
 # mod_lda_4$hclust$labels <- paste(mod_lda_4$hclust$labels, mod_lda_4$labels[,1])
 # plot(mod_lda_4$hclust)
 
-# modsum_4 %>% 
-#   arrange(desc(coherence)) %>%
-#   slice(1:5)
+top_5_terms_4 <- modsum_4 %>% 
+   arrange(desc(coherence)) %>%
+   slice(1:5)
+write.csv(top_5_terms_4, "top_5_terms.csv")
 
 top_terms_4 <- data.frame(mod_lda_4$top_terms)
 
@@ -384,9 +386,11 @@ modsum_3 %>% pivot_longer(cols = c(coherence,prevalence)) %>%
 # mod_lda_3$hclust$labels <- paste(mod_lda_3$hclust$labels, mod_lda_3$labels[,1])
 # plot(mod_lda_3$hclust)
 # 
-# modsum_3 %>% 
-#   arrange(desc(coherence)) %>%
-#   slice(1:5)
+top_5_terms_3 <- modsum_3 %>% 
+   arrange(desc(coherence)) %>%
+   slice(1:5)
+write.csv(top_5_terms_3, "top_5_terms.csv")
+
 
 top_terms_3 <- data.frame(mod_lda_3$top_terms)
 
@@ -441,9 +445,12 @@ modsum_2 %>% pivot_longer(cols = c(coherence,prevalence)) %>%
 # mod_lda_2$hclust$labels <- paste(mod_lda_2$hclust$labels, mod_lda_2$labels[,1])
 # plot(mod_lda_2$hclust)
 # 
-# modsum_2 %>% 
-#   arrange(desc(coherence)) %>%
-#   slice(1:5)
+
+top_5_terms_2 <- modsum_2 %>% 
+  arrange(desc(coherence)) %>%
+  slice(1:5)
+write.csv(top_5_terms_2, "top_5_terms.csv")
+
 
 top_terms_2 <- data.frame(mod_lda_2$top_terms)
 
@@ -489,7 +496,7 @@ modsum_1 %>% pivot_longer(cols = c(coherence,prevalence)) %>%
   facet_wrap(~name,scales = "free_y",nrow = 2) +
   theme_minimal() +
   labs(title = "Best topics by coherence and prevalence score",
-       subtitle = "Text review with 5 rating",
+       subtitle = "Text review with 1 rating",
        x = "Topics", y = "Value")
 
 # denodogram clustering
@@ -498,9 +505,10 @@ modsum_1 %>% pivot_longer(cols = c(coherence,prevalence)) %>%
 # mod_lda_1$hclust$labels <- paste(mod_lda_1$hclust$labels, mod_lda_1$labels[,1])
 # plot(mod_lda_1$hclust)
 # 
-# modsum_1 %>% 
-#   arrange(desc(coherence)) %>%
-#   slice(1:5)
+top_5_terms_1 <- modsum_1 %>% 
+  arrange(desc(coherence)) %>%
+  slice(1:5)
+write.csv(top_5_terms_1, "top_5_terms.csv")
 
 top_terms_1 <- data.frame(mod_lda_1$top_terms)
 
