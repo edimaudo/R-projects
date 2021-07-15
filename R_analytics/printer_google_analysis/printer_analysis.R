@@ -3,10 +3,9 @@ rm(list = ls()) #clear environment
 # Packages
 #=============
 packages <- c('ggplot2', 'corrplot','tidyverse',"caret",'readxl','tidyr',
-              'scales','dplyr','mlbench','caTools','wordcloud2','gridExtra',
-              'tidytext','stringr','reshape2',"tm", "SnowballCC", "RColorBrewer", 
-              'textmineR','topicmodels','textclean','pals',"biclust", "cluster",
-              "igraph","fpc",'lubridate')
+              'scales','dplyr','wordcloud2','gridExtra',
+              'tidytext','stringr','reshape2', 
+              'textmineR','topicmodels','textclean','pals','lubridate')
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
     install.packages(package)
