@@ -25,7 +25,7 @@ df.backup <- df #backup
 #                            ifelse(df$appId == "epson.print", 'Epson', 'Epson-Smart')))
 
 #=============
-# Text analysis
+# Text analytics
 #=============
 # function to expand contractions in an English-language source
 fix.contractions <- function(doc) {
@@ -55,11 +55,7 @@ df$Review <- sapply(df$Review, removeSpecialChars)
 # convert everything to lower case
 df$Review <- sapply(df$Review, tolower)
 
-#=============
-# Text mining
-#=============
 remove_keywords <- c("printer","print", "printing","app")
-
 
 # word breakdown 
 review_words <- df %>%
@@ -145,7 +141,7 @@ words_counts <- review_words %>%
 wordcloud2(words_counts[1:100, ], size = 1)
 
 #=============
-# Text mining
+# TF-IDF analysis
 #=============
 
 # tf-idf by Product & Rating
@@ -186,7 +182,7 @@ write.csv(top_popular_tfidf_words, "top_popular_tfidf_words.csv")
 
 
 # =================
-# Topic modelliing 2
+# Topic modelling 2
 #===================
 
 textcleaner <- function(x){
