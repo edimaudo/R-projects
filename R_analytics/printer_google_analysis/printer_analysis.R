@@ -70,15 +70,15 @@ review_words <- df %>%
 # word frequency
 full_word_count <- df %>%
   unnest_tokens(word, Review) %>%
-  group_by(Brand,Rating) %>%
+  group_by(Product,Rating) %>%
   summarise(num_words = n()) %>%
   arrange(desc(num_words)) 
 
-write.csv(full_word_count,"brand_rating.csv")
+write.csv(full_word_count,"product_rating.csv")
 
 # word count visualization
 full_word_count %>%
-  ggplot(aes(x = Rating,y=num_words, fill = Brand )) +
+  ggplot(aes(x = Rating,y=num_words, fill = Product )) +
   geom_bar(stat = "identity", position = "dodge") +
   coord_flip() + 
   ylab("Word Count") + 
@@ -87,8 +87,16 @@ full_word_count %>%
         legend.title = element_blank(),
         panel.grid.minor.y = element_blank())
 
+# top 100 words used
+top_100_words <- review_words %>%
+  count(word, sort = TRUE) %>%
+  top_n(100) %>%
+  ungroup() %>%
+  mutate(word = reorder(word, n))
 
-# top 20 words across all reviews and brands
+write.csv(top_100_words, "top_100_words.csv")
+
+# top 20 words across all reviews and brands visualization
 review_words %>%
   count(word, sort = TRUE) %>%
   top_n(20) %>%
@@ -105,17 +113,39 @@ review_words %>%
   coord_flip()
 
 # keywords by Brand and ratings
-review_brand_rating <- review_words %>%
-  group_by(Brand, Rating) %>%
+review_product_rating <- review_words %>%
+  group_by(Product, Rating) %>%
   count(word, sort = TRUE) %>%
-  select(Brand, Rating, word, n) %>%
-  arrange(desc(Brand,Rating))  
+  select(Product, Rating, word, n) %>%
+  arrange(desc(Product,Rating))  
+
+write.csv(review_product_rating, "review_product_rating.csv")
+
+review_product <- review_words %>%
+  group_by(Product) %>%
+  count(word, sort = TRUE) %>%
+  select(Product, word, n) %>%
+  arrange(desc(Product)) 
+
+write.csv(review_product, "review_product.csv")
+
+review_rating <- review_words %>%
+  group_by(Rating) %>%
+  count(word, sort = TRUE) %>%
+  select(Rating, word, n) %>%
+  arrange(desc(Rating)) 
+
+write.csv(review_rating, "review_rating.csv")
 
 # word cloud
 words_counts <- review_words %>%
   count(word, sort = TRUE) 
 
-wordcloud2(words_counts[1:100, ], size = .5)
+wordcloud2(words_counts[1:100, ], size = 1)
+
+#=============
+# Text mining
+#=============
 
 # tf-idf
 popular_tfidf_words <- df %>%
