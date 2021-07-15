@@ -182,8 +182,15 @@ write.csv(top_popular_tfidf_words, "top_popular_tfidf_words.csv")
 
 
 # =================
-# Topic modelling 2
+# Topic modelling
 #===================
+
+data_1 <- df %>% filter(Rating == 1)
+data_2 <- df %>% filter(Rating  == 2)
+data_3 <- df %>% filter(Rating  == 3)
+data_4 <- df %>% filter(Rating  == 4)
+data_5 <- df %>% filter(Rating  == 5)
+table(df$Rating)
 
 textcleaner <- function(x){
   x <- as.character(x)
@@ -257,16 +264,16 @@ modsum_5 %>% pivot_longer(cols = c(coherence,prevalence)) %>%
        x = "Topics", y = "Value")
 
 # denodogram clustering
-mod_lda_5$linguistic <- CalcHellingerDist(mod_lda_5$phi)
-mod_lda_5$hclust <- hclust(as.dist(mod_lda_5$linguistic),"ward.D")
-mod_lda_5$hclust$labels <- paste(mod_lda_5$hclust$labels, mod_lda_5$labels[,1])
-plot(mod_lda_5$hclust)
+# mod_lda_5$linguistic <- CalcHellingerDist(mod_lda_5$phi)
+# mod_lda_5$hclust <- hclust(as.dist(mod_lda_5$linguistic),"ward.D")
+# mod_lda_5$hclust$labels <- paste(mod_lda_5$hclust$labels, mod_lda_5$labels[,1])
+# plot(mod_lda_5$hclust)
 
-modsum_5 %>% 
-  arrange(desc(coherence)) %>%
-  slice(1:5)
+#modsum_5 %>% 
+#  arrange(desc(coherence)) %>%
+#  slice(1:5)
 
-data.frame(mod_lda_5$top_terms)
+top_terms_5 <- data.frame(mod_lda_5$top_terms)
 
 # Rating 4
 clean_4 <- textcleaner(data_4$Review)
@@ -314,16 +321,16 @@ modsum_4 %>% pivot_longer(cols = c(coherence,prevalence)) %>%
        x = "Topics", y = "Value")
 
 # denodogram clustering
-mod_lda_4$linguistic <- CalcHellingerDist(mod_lda_4$phi)
-mod_lda_4$hclust <- hclust(as.dist(mod_lda_4$linguistic),"ward.D")
-mod_lda_4$hclust$labels <- paste(mod_lda_4$hclust$labels, mod_lda_4$labels[,1])
-plot(mod_lda_4$hclust)
+# mod_lda_4$linguistic <- CalcHellingerDist(mod_lda_4$phi)
+# mod_lda_4$hclust <- hclust(as.dist(mod_lda_4$linguistic),"ward.D")
+# mod_lda_4$hclust$labels <- paste(mod_lda_4$hclust$labels, mod_lda_4$labels[,1])
+# plot(mod_lda_4$hclust)
 
-modsum_4 %>% 
-  arrange(desc(coherence)) %>%
-  slice(1:5)
+# modsum_4 %>% 
+#   arrange(desc(coherence)) %>%
+#   slice(1:5)
 
-data.frame(mod_lda_4$top_terms)
+top_terms_4 <- data.frame(mod_lda_4$top_terms)
 
 
 # Rating 3
@@ -373,16 +380,16 @@ modsum_3 %>% pivot_longer(cols = c(coherence,prevalence)) %>%
        x = "Topics", y = "Value")
 
 # denodogram clustering
-mod_lda_3$linguistic <- CalcHellingerDist(mod_lda_3$phi)
-mod_lda_3$hclust <- hclust(as.dist(mod_lda_3$linguistic),"ward.D")
-mod_lda_3$hclust$labels <- paste(mod_lda_3$hclust$labels, mod_lda_3$labels[,1])
-plot(mod_lda_3$hclust)
+# mod_lda_3$linguistic <- CalcHellingerDist(mod_lda_3$phi)
+# mod_lda_3$hclust <- hclust(as.dist(mod_lda_3$linguistic),"ward.D")
+# mod_lda_3$hclust$labels <- paste(mod_lda_3$hclust$labels, mod_lda_3$labels[,1])
+# plot(mod_lda_3$hclust)
+# 
+# modsum_3 %>% 
+#   arrange(desc(coherence)) %>%
+#   slice(1:5)
 
-modsum_3 %>% 
-  arrange(desc(coherence)) %>%
-  slice(1:5)
-
-data.frame(mod_lda_3$top_terms)
+top_terms_3 <- data.frame(mod_lda_3$top_terms)
 
 # Rating 2
 clean_2 <- textcleaner(data_2$Review)
@@ -430,16 +437,16 @@ modsum_2 %>% pivot_longer(cols = c(coherence,prevalence)) %>%
        x = "Topics", y = "Value")
 
 # denodogram clustering
-mod_lda_2$linguistic <- CalcHellingerDist(mod_lda_2$phi)
-mod_lda_2$hclust <- hclust(as.dist(mod_lda_2$linguistic),"ward.D")
-mod_lda_2$hclust$labels <- paste(mod_lda_2$hclust$labels, mod_lda_2$labels[,1])
-plot(mod_lda_2$hclust)
+# mod_lda_2$linguistic <- CalcHellingerDist(mod_lda_2$phi)
+# mod_lda_2$hclust <- hclust(as.dist(mod_lda_2$linguistic),"ward.D")
+# mod_lda_2$hclust$labels <- paste(mod_lda_2$hclust$labels, mod_lda_2$labels[,1])
+# plot(mod_lda_2$hclust)
+# 
+# modsum_2 %>% 
+#   arrange(desc(coherence)) %>%
+#   slice(1:5)
 
-modsum_2 %>% 
-  arrange(desc(coherence)) %>%
-  slice(1:5)
-
-data.frame(mod_lda_2$top_terms)
+top_terms_2 <- data.frame(mod_lda_2$top_terms)
 
 # Rating 1
 clean_1 <- textcleaner(data_1$Review)
@@ -487,15 +494,15 @@ modsum_1 %>% pivot_longer(cols = c(coherence,prevalence)) %>%
        x = "Topics", y = "Value")
 
 # denodogram clustering
-mod_lda_1$linguistic <- CalcHellingerDist(mod_lda_1$phi)
-mod_lda_1$hclust <- hclust(as.dist(mod_lda_1$linguistic),"ward.D")
-mod_lda_1$hclust$labels <- paste(mod_lda_1$hclust$labels, mod_lda_1$labels[,1])
-plot(mod_lda_1$hclust)
+# mod_lda_1$linguistic <- CalcHellingerDist(mod_lda_1$phi)
+# mod_lda_1$hclust <- hclust(as.dist(mod_lda_1$linguistic),"ward.D")
+# mod_lda_1$hclust$labels <- paste(mod_lda_1$hclust$labels, mod_lda_1$labels[,1])
+# plot(mod_lda_1$hclust)
+# 
+# modsum_1 %>% 
+#   arrange(desc(coherence)) %>%
+#   slice(1:5)
 
-modsum_1 %>% 
-  arrange(desc(coherence)) %>%
-  slice(1:5)
-
-data.frame(mod_lda_1$top_terms)
+top_terms_1 <- data.frame(mod_lda_1$top_terms)
 
 # Topics
