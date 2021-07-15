@@ -18,7 +18,6 @@ for (package in packages) {
 # Load data
 #=============
 df <- read_excel(file.choose())
-
 df.backup <- df #backup
 
 #df$Product <- ifelse(df$appId == "com.hp.printercontrol", 'HP',
@@ -113,7 +112,7 @@ review_words %>%
   ggtitle("Top 20 Most Frequently Used Words") +
   coord_flip()
 
-# keywords by Brand and ratings
+# keywords by Product and ratings
 review_product_rating <- review_words %>%
   group_by(Product, Rating) %>%
   count(word, sort = TRUE) %>%
@@ -201,7 +200,7 @@ top_popular_tfidf_words %>%
 # Topic modelliing 2
 #===================
 
-textcleaner_2 <- function(x){
+textcleaner <- function(x){
   x <- as.character(x)
   
   x <- x %>%
@@ -228,7 +227,7 @@ set.seed(1502)
 
 # Rating 5
 # apply textcleaner function. note: we only clean the text without convert it to dtm
-clean_5 <- textcleaner_2(data_5$Review)
+clean_5 <- textcleaner(data_5$Review)
 clean_5 <- clean_5 %>% mutate(id = rownames(clean_5))
 
 # crete dtm
@@ -285,7 +284,7 @@ modsum_5 %>%
 data.frame(mod_lda_5$top_terms)
 
 # Rating 4
-clean_4 <- textcleaner_2(data_4$Review)
+clean_4 <- textcleaner(data_4$Review)
 clean_4 <- clean_4 %>% mutate(id = rownames(clean_4))
 
 # crete dtm
@@ -343,7 +342,7 @@ data.frame(mod_lda_4$top_terms)
 
 
 # Rating 3
-clean_3 <- textcleaner_2(data_3$Review)
+clean_3 <- textcleaner(data_3$Review)
 clean_3 <- clean_3 %>% mutate(id = rownames(clean_3))
 
 # crete dtm
@@ -401,7 +400,7 @@ modsum_3 %>%
 data.frame(mod_lda_3$top_terms)
 
 # Rating 2
-clean_2 <- textcleaner_2(data_2$Review)
+clean_2 <- textcleaner(data_2$Review)
 clean_2 <- clean_2 %>% mutate(id = rownames(clean_2))
 
 # crete dtm
@@ -458,7 +457,7 @@ modsum_2 %>%
 data.frame(mod_lda_2$top_terms)
 
 # Rating 1
-clean_1 <- textcleaner_2(data_1$Review)
+clean_1 <- textcleaner(data_1$Review)
 clean_1 <- clean_1 %>% mutate(id = rownames(clean_1))
 
 # crete dtm
