@@ -1,9 +1,13 @@
 rm(list = ls()) #clear environment
+
+gc()
+
+
 #=============
 # Packages
 #=============
 packages <- c('ggplot2', 'corrplot','tidyverse',"caret",'readxl','tidyr',
-              'scales','dplyr','wordcloud2','gridExtra',
+              'scales','dplyr','wordcloud2','gridExtra','stopwords',
               'tidytext','stringr','reshape2', 
               'textmineR','topicmodels','textclean','pals','lubridate')
 for (package in packages) {
@@ -198,8 +202,8 @@ textcleaner <- function(x){
     str_to_lower() %>%  # convert all the string to low alphabet
     replace_contraction() %>% # replace contraction to their multi-word forms
     replace_internet_slang() %>% # replace internet slang to normal words
-    replace_emoji() %>% # replace emoji to words
-    replace_emoticon() %>% # replace emoticon to words
+    #replace_emoji(replacement = " ") %>% # replace emoji to words
+    #replace_emoticon(replacement = " ") %>% # replace emoticon to words
     replace_hash(replacement = "") %>% # remove hashtag
     replace_word_elongation() %>% # replace informal writing with known semantic replacements
     replace_number(remove = T) %>% # remove number
@@ -271,9 +275,9 @@ modsum_5 %>% pivot_longer(cols = c(coherence,prevalence)) %>%
 top_5_terms_5<- modsum_5 %>% 
   arrange(desc(coherence)) %>%
   slice(1:5)
-write.csv(top_5_terms_5, "top_5_terms.csv")
+write.csv(top_5_terms_5, "top_5_terms5.csv")
 
-top_terms_5 <- data.frame(mod_lda_5$top_terms)
+#top_terms_5 <- data.frame(mod_lda_5$top_terms)
 
 # Rating 4
 clean_4 <- textcleaner(data_4$Review)
@@ -329,9 +333,9 @@ modsum_4 %>% pivot_longer(cols = c(coherence,prevalence)) %>%
 top_5_terms_4 <- modsum_4 %>% 
    arrange(desc(coherence)) %>%
    slice(1:5)
-write.csv(top_5_terms_4, "top_5_terms.csv")
+write.csv(top_5_terms_4, "top_5_terms4.csv")
 
-top_terms_4 <- data.frame(mod_lda_4$top_terms)
+#top_terms_4 <- data.frame(mod_lda_4$top_terms)
 
 
 # Rating 3
@@ -389,10 +393,10 @@ modsum_3 %>% pivot_longer(cols = c(coherence,prevalence)) %>%
 top_5_terms_3 <- modsum_3 %>% 
    arrange(desc(coherence)) %>%
    slice(1:5)
-write.csv(top_5_terms_3, "top_5_terms.csv")
+write.csv(top_5_terms_3, "top_5_terms3.csv")
 
 
-top_terms_3 <- data.frame(mod_lda_3$top_terms)
+#top_terms_3 <- data.frame(mod_lda_3$top_terms)
 
 # Rating 2
 clean_2 <- textcleaner(data_2$Review)
@@ -449,10 +453,10 @@ modsum_2 %>% pivot_longer(cols = c(coherence,prevalence)) %>%
 top_5_terms_2 <- modsum_2 %>% 
   arrange(desc(coherence)) %>%
   slice(1:5)
-write.csv(top_5_terms_2, "top_5_terms.csv")
+write.csv(top_5_terms_2, "top_5_terms2.csv")
 
 
-top_terms_2 <- data.frame(mod_lda_2$top_terms)
+#top_terms_2 <- data.frame(mod_lda_2$top_terms)
 
 # Rating 1
 clean_1 <- textcleaner(data_1$Review)
@@ -508,8 +512,8 @@ modsum_1 %>% pivot_longer(cols = c(coherence,prevalence)) %>%
 top_5_terms_1 <- modsum_1 %>% 
   arrange(desc(coherence)) %>%
   slice(1:5)
-write.csv(top_5_terms_1, "top_5_terms.csv")
+write.csv(top_5_terms_1, "top_5_terms1.csv")
 
-top_terms_1 <- data.frame(mod_lda_1$top_terms)
+#top_terms_1 <- data.frame(mod_lda_1$top_terms)
 
 # Topics
