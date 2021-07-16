@@ -187,14 +187,6 @@ write.csv(top_popular_tfidf_words, "top_popular_tfidf_words.csv")
 # =================
 # Topic modelling
 #===================
-
-data_1 <- df %>% filter(Rating == 1)
-data_2 <- df %>% filter(Rating  == 2)
-data_3 <- df %>% filter(Rating  == 3)
-data_4 <- df %>% filter(Rating  == 4)
-data_5 <- df %>% filter(Rating  == 5)
-table(df$Rating)
-
 textcleaner <- function(x){
   x <- as.character(x)
   
@@ -221,6 +213,13 @@ textcleaner <- function(x){
 #=====================
 # Topic modellings by ratings
 #=====================
+data_1 <- df %>% filter(Rating == 1)
+data_2 <- df %>% filter(Rating  == 2)
+data_3 <- df %>% filter(Rating  == 3)
+data_4 <- df %>% filter(Rating  == 4)
+data_5 <- df %>% filter(Rating  == 5)
+table(df$Rating)
+
 set.seed(1502)
 
 # Rating 5
@@ -520,3 +519,221 @@ write.csv(top_5_terms_1, "top_5_terms1.csv")
 #top_terms_1 <- data.frame(mod_lda_1$top_terms)
 
 # Topics
+
+#=====================
+# Topic modellings by product
+#=====================
+
+data_canon <- df %>% filter(Product == "Canon PRINT")
+data_epson_smart <- df %>% filter(Product  == "Epson Smart Panel")
+data_epson_iprint <- df %>% filter(Product  == "Epson iPrint")
+data_hp <- df %>% filter(Product  == "HP Smart")
+
+table(df$Product)
+
+set.seed(1502)
+
+# Product Canon
+# apply textcleaner function. note: we only clean the text without convert it to dtm
+clean_canon <- textcleaner(data_canon$Review)
+clean_canon <- clean_canon %>% mutate(id = rownames(clean_canon))
+
+# crete dtm
+dtm_r_canon <- CreateDtm(doc_vec = clean_canon$x,
+                         doc_names = clean_canon$id,
+                         ngram_window = c(1,2),
+                         stopword_vec = stopwords("en"),
+                         verbose = F)
+
+dtm_r_canon <- dtm_r_canon[,colSums(dtm_r_canon)>2]
+
+mod_lda_canon <- FitLdaModel(dtm = dtm_r_canon,
+                             k = 20, # number of topic
+                             iterations = 500,
+                             burnin = 180,
+                             alpha = 0.1,beta = 0.05,
+                             optimize_alpha = T,
+                             calc_likelihood = T,
+                             calc_coherence = T,
+                             calc_r2 = T)
+
+mod_lda_canon$top_terms <- GetTopTerms(phi = mod_lda_canon$phi,M = 15)
+mod_lda_canon$prevalence <- colSums(mod_lda_canon$theta)/sum(mod_lda_canon$theta)*100
+
+mod_lda_canon$summary <- data.frame(topic = rownames(mod_lda_canon$phi),
+                                    coherence = round(mod_lda_canon$coherence,3),
+                                    prevalence = round(mod_lda_canon$prevalence,3),
+                                    top_terms = apply(mod_lda_canon$top_terms,2,
+                                                      function(x){paste(x,collapse = ", ")}))
+
+modsum_canon <- mod_lda_canon$summary %>%
+  `rownames<-`(NULL)
+
+#visualization
+modsum_canon %>% pivot_longer(cols = c(coherence,prevalence)) %>%
+  ggplot(aes(x = factor(topic,levels = unique(topic)), y = value, group = 1)) +
+  geom_point() + geom_line() +
+  facet_wrap(~name,scales = "free_y",nrow = 2) +
+  theme_minimal() +
+  labs(title = "Best topics by coherence and prevalence score",
+       subtitle = "Text review with Canon",
+       x = "Topics", y = "Value")
+
+top_5_terms_canon <- modsum_canon %>% 
+  arrange(desc(coherence)) %>%
+  slice(1:5)
+write.csv(top_5_terms_canon, "top_5_canon.csv")
+
+
+# Product Epson smart
+clean_epson_smart <- textcleaner(data_epson_smart$Review)
+clean_epson_smart <- clean_epson_smart %>% mutate(id = rownames(clean_epson_smart))
+
+# crete dtm
+dtm_r_epson_smart <- CreateDtm(doc_vec = clean_epson_smart$x,
+                               doc_names = clean_epson_smart$id,
+                               ngram_window = c(1,2),
+                               stopword_vec = stopwords("en"),
+                               verbose = F)
+
+dtm_r_epson_smart <- dtm_r_epson_smart[,colSums(dtm_r_epson_smart)>2]
+
+mod_lda_epson_smart <- FitLdaModel(dtm = dtm_r_epson_smart,
+                                   k = 20, # number of topic
+                                   iterations = 500,
+                                   burnin = 180,
+                                   alpha = 0.1,beta = 0.05,
+                                   optimize_alpha = T,
+                                   calc_likelihood = T,
+                                   calc_coherence = T,
+                                   calc_r2 = T)
+
+mod_lda_epson_smart$top_terms <- GetTopTerms(phi = mod_lda_epson_smart$phi,M = 15)
+mod_lda_epson_smart$prevalence <- colSums(mod_lda_epson_smart$theta)/sum(mod_lda_epson_smart$theta)*100
+
+mod_lda_epson_smart$summary <- data.frame(topic = rownames(mod_lda_epson_smart$phi),
+                                          coherence = round(mod_lda_epson_smart$coherence,3),
+                                          prevalence = round(mod_lda_epson_smart$prevalence,3),
+                                          top_terms = apply(mod_lda_epson_smart$top_terms,2,
+                                                            function(x){paste(x,collapse = ", ")}))
+
+modsum_epson_smart <- mod_lda_epson_smart$summary %>%
+  `rownames<-`(NULL)
+
+#visualization
+modsum_epson_smart %>% pivot_longer(cols = c(coherence,prevalence)) %>%
+  ggplot(aes(x = factor(topic,levels = unique(topic)), y = value, group = 1)) +
+  geom_point() + geom_line() +
+  facet_wrap(~name,scales = "free_y",nrow = 2) +
+  theme_minimal() +
+  labs(title = "Best topics by coherence and prevalence score",
+       subtitle = "Text review with epson smart",
+       x = "Topics", y = "Value")
+
+top_5_terms_epson_smart <- modsum_epson_smart %>% 
+  arrange(desc(coherence)) %>%
+  slice(1:5)
+write.csv(top_5_terms_epson_smart, "top_5_epson_smart.csv")
+
+
+# Product Epson Iprint
+clean_epson_iprint <- textcleaner(data_epson_iprint$Review)
+clean_epson_iprint <- clean_epson_iprint %>% mutate(id = rownames(clean_epson_iprint))
+
+# crete dtm
+dtm_r_epson_iprint <- CreateDtm(doc_vec = clean_epson_iprint$x,
+                                doc_names = clean_epson_iprint$id,
+                                ngram_window = c(1,2),
+                                stopword_vec = stopwords("en"),
+                                verbose = F)
+
+dtm_r_epson_iprint <- dtm_r_epson_iprint[,colSums(dtm_r_epson_iprint)>2]
+
+mod_lda_epson_iprint <- FitLdaModel(dtm = dtm_r_epson_iprint,
+                                    k = 20, # number of topic
+                                    iterations = 500,
+                                    burnin = 180,
+                                    alpha = 0.1,beta = 0.05,
+                                    optimize_alpha = T,
+                                    calc_likelihood = T,
+                                    calc_coherence = T,
+                                    calc_r2 = T)
+
+mod_lda_epson_iprint$top_terms <- GetTopTerms(phi = mod_lda_epson_iprint$phi,M = 15)
+mod_lda_epson_iprint$prevalence <- colSums(mod_lda_epson_iprint$theta)/sum(mod_lda_epson_iprint$theta)*100
+
+mod_lda_epson_iprint$summary <- data.frame(topic = rownames(mod_lda_epson_iprint$phi),
+                                           coherence = round(mod_lda_epson_iprint$coherence,3),
+                                           prevalence = round(mod_lda_epson_iprint$prevalence,3),
+                                           top_terms = apply(mod_lda_epson_iprint$top_terms,2,
+                                                             function(x){paste(x,collapse = ", ")}))
+
+modsum_epson_iprint <- mod_lda_epson_iprint$summary %>%
+  `rownames<-`(NULL)
+
+#visualization
+modsum_epson_iprint %>% pivot_longer(cols = c(coherence,prevalence)) %>%
+  ggplot(aes(x = factor(topic,levels = unique(topic)), y = value, group = 1)) +
+  geom_point() + geom_line() +
+  facet_wrap(~name,scales = "free_y",nrow = 2) +
+  theme_minimal() +
+  labs(title = "Best topics by coherence and prevalence score",
+       subtitle = "Text review with epson iprint",
+       x = "Topics", y = "Value")
+
+top_5_terms_epson_iprint <- modsum_epson_iprint %>% 
+  arrange(desc(coherence)) %>%
+  slice(1:5)
+write.csv(top_5_terms_epson_iprint, "top_5_epson_iprint.csv")
+
+
+# HP
+clean_hp <- textcleaner(data_hp$Review)
+clean_hp <- clean_hp %>% mutate(id = rownames(clean_hp))
+
+# crete dtm
+dtm_r_hp <- CreateDtm(doc_vec = clean_hp$x,
+                      doc_names = clean_hp$id,
+                      ngram_window = c(1,2),
+                      stopword_vec = stopwords("en"),
+                      verbose = F)
+
+dtm_r_hp <- dtm_r_hp[,colSums(dtm_r_hp)>2]
+
+mod_lda_hp <- FitLdaModel(dtm = dtm_r_hp,
+                          k = 20, # number of topic
+                          iterations = 500,
+                          burnin = 180,
+                          alpha = 0.1,beta = 0.05,
+                          optimize_alpha = T,
+                          calc_likelihood = T,
+                          calc_coherence = T,
+                          calc_r2 = T)
+
+mod_lda_hp$top_terms <- GetTopTerms(phi = mod_lda_hp$phi,M = 15)
+mod_lda_hp$prevalence <- colSums(mod_lda_hp$theta)/sum(mod_lda_hp$theta)*100
+
+mod_lda_hp$summary <- data.frame(topic = rownames(mod_lda_hp$phi),
+                                 coherence = round(mod_lda_hp$coherence,3),
+                                 prevalence = round(mod_lda_hp$prevalence,3),
+                                 top_terms = apply(mod_lda_hp$top_terms,2,
+                                                   function(x){paste(x,collapse = ", ")}))
+
+modsum_hp <- mod_lda_hp$summary %>%
+  `rownames<-`(NULL)
+
+#visualization
+modsum_hp %>% pivot_longer(cols = c(coherence,prevalence)) %>%
+  ggplot(aes(x = factor(topic,levels = unique(topic)), y = value, group = 1)) +
+  geom_point() + geom_line() +
+  facet_wrap(~name,scales = "free_y",nrow = 2) +
+  theme_minimal() +
+  labs(title = "Best topics by coherence and prevalence score",
+       subtitle = "Text review with HP",
+       x = "Topics", y = "Value")
+
+top_5_terms_hp <- modsum_hp %>% 
+  arrange(desc(coherence)) %>%
+  slice(1:5)
+write.csv(top_5_terms_hp, "top_5_hp.csv")
+
