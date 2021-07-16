@@ -218,6 +218,9 @@ textcleaner <- function(x){
 
 }
 
+#=====================
+# Topic modellings by ratings
+#=====================
 set.seed(1502)
 
 # Rating 5
