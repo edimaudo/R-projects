@@ -632,7 +632,7 @@ modsum_epson_smart %>% pivot_longer(cols = c(coherence,prevalence)) %>%
 
 top_5_terms_epson_smart <- modsum_epson_smart %>% 
   arrange(desc(coherence)) %>%
-  slice(1:5)
+  slice(1:6)
 write.csv(top_5_terms_epson_smart, "top_5_epson_smart.csv")
 
 
