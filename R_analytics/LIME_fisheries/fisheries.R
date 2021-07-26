@@ -47,9 +47,25 @@ lh <- create_lh_list(vbk = 1.50, linf = 24.5, t0 = 0, lwa = 0.00407, lwb = 3.16,
 # # plot selectivity for the first (and only) fleet (first row)
 # plot(lh$S_fl[1,], type="l", lwd=4, xlab="Length (cm)", ylab="Proportion selected to gear")
 
-# imulated population
+# simulated population
 true <- generate_data(modpath = NULL, itervec = 1, Fdynamics = c("Endogenous"),
                      Rdynamics = "Constant", lh = lh, Nyears = 20, Nyears_comp = c(20), 
                      comp_sample = rep(200,20), init_depl = 0.7, seed = 123, fleet_proportions = 1)
 
+par(mfrow = c(3, 2))
+plot(true$F_ft[1, ], type = "l", lwd = 4, xlab = "Year", ylab = "Fishing mortality",
+     ylim = c(0, max(true$F_ft) * 1.1), xaxs = "i", yaxs = "i", cex.axis = 1.5,
+     cex.lab = 1.5)
+plot(true$R_t, type = "l", lwd = 4, xlab = "Year", ylab = "Recruitment", ylim = c(0,
+                                                                                  max(true$R_t) * 1.1), xaxs = "i", yaxs = "i", cex.axis = 1.5, cex.lab = 1.5)
+plot(true$SPR_t, type = "l", lwd = 4, xlab = "Year", ylab = "SPR", ylim = c(0,
+                                                                            1), xaxs = "i", yaxs = "i", cex.axis = 1.5, cex.lab = 1.5)
+plot(true$D_t, type = "l", lwd = 4, xlab = "Year", ylab = "Relative spawning biomass",
+     ylim = c(0, max(true$D_t) * 1.1), xaxs = "i", yaxs = "i", cex.axis = 1.5,
+     cex.lab = 1.5)
+plot(true$Cw_ft[1, ], type = "l", lwd = 4, xlab = "Year", ylab = "Catch", ylim = c(0,
+                                                                                   max(true$Cw_ft) * 1.1), xaxs = "i", yaxs = "i", cex.axis = 1.5, cex.lab = 1.5)
+plot(true$I_ft[1, ], type = "l", lwd = 4, xlab = "Year", ylab = "Abundance index",
+     ylim = c(0, max(true$I_ft) * 1.1), xaxs = "i", yaxs = "i", cex.axis = 1.5,
+     cex.lab = 1.5)
 
