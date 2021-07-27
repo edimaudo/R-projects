@@ -35,15 +35,17 @@ update_mm_to_cm <- function(x) {
 }
 
 df[,c(3:14)] <- lapply(df[,c(3:14)], update_mm_to_cm)
-
+Year <- c(1:13)
+df <- cbind(years, df)
 # update column names
-colnames(df) <- c("Year","Catch","0.5","1.5","2.5","3.5","4.5","5.5",
+colnames(df) <- c("Year","Lengthclass","Catch","0.5","1.5","2.5","3.5","4.5","5.5",
                   "6.5","7.5","8.5","9.5","10.5","11.5")
 
 #######################################
 # LH information
 #######################################
 # single fleet
+
 lh <- create_lh_list(vbk = 1.50, linf = 24.5, t0 = 0, lwa = 0.00407, lwb = 3.16,
                     S50 = c(5.66), S95 = c(7.98), selex_input = "length", selex_type = c("logistic"),
                     M50 = 14.76, maturity_input = "length", M = 2.41, binwidth = 1, CVlen = 0.1,
@@ -62,26 +64,24 @@ lh <- create_lh_list(vbk = 1.50, linf = 24.5, t0 = 0, lwa = 0.00407, lwb = 3.16,
 #######################################
 ## Other data type input options
 #######################################
-#data_all <- list("years"=1:true$Nyears, "LF"=LF_df, "I_ft"=true$I_ft, 
-#                 "C_ft"=true$Cw_ft, "neff_ft"=true$obs_per_year)
-
-
-
-data_all <- list("years"=df$Year, "LF"=df[,c(3:14)], 
-                 "C_ft"=df$Catch, "neff_ft"=true$obs_per_year)
+months <- 1:12
+LenFreqMAT <- t(as.matrix(df[,2:13]))
+rownames(LenFreqMAT) <- months
+mids <- df$Lengthclass
+colnames(LenFreqMAT) <- mids
+data_all <- list("years"=df$Year, "LF"=LenFreqMAT , 
+                 "C_ft"=df$Catch, "neff_ft"=c(rep(200,12)))
 inputs_all <- create_inputs(lh=lh, input_data=data_all)
-
 ##----------------------------------------------------
 ## Step 3: Run model
 ## ---------------------------------------------------
 #######################################
 ## Data-rich test
 #######################################
-rich <- run_LIME(modpath=NULL, 
+rich <- run_LIME(modpath=NULL,
                  input=inputs_all,
-                 data_avail="Index_Catch_LC",
-                 C_type=2,
-                 derive_quants=TRUE) 
+                 data_avail="LC",  #LC, Catch_LC, Index_LC,ndex_Catch_LC
+                 C_type=0) #0, 2
 
 ## check TMB inputs
 Inputs <- rich$Inputs
@@ -102,21 +102,21 @@ hessian == TRUE & gradient == TRUE
 ## Step 4: Plot results
 ## ---------------------------------------------------
 ## plot length composition data and fits
-plot_LCfits(Inputs=Inputs, 
-            Report=Report)		
+plot_LCfits(Inputs=Inputs,
+            Report=Report)
 
-plot_LCfits(Inputs=Inputs, 
+plot_LCfits(Inputs=Inputs,
             Report=Report,
             plot_fit=FALSE)
 
 
 ## plot model output
-plot_output(Inputs=Inputs, 
+plot_output(Inputs=Inputs,
             Report=Report,
-            Sdreport=Sdreport, 
+            Sdreport=Sdreport,
             lh=lh,
-            True=true, 
-            plot=c("Fish","Rec","SPR","ML","SB","Selex"), 
+            True=true,
+            plot=c("Fish","Rec","SPR","ML","SB","Selex"),
             set_ylim=list("SPR" = c(0,1)))
 
 plot(true$BBmsy, ylim=c(0,4))
