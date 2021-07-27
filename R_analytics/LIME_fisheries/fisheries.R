@@ -11,7 +11,7 @@ rm(list = ls())
 #######################################
 # Packages
 #######################################
-packages <- c('ggplot2', 'corrplot','tidyverse',"caret","dummies",'readxl','LIME', 'dplyr')
+packages <- c('ggplot2', 'corrplot','tidyverse',"caret","dummies",'readxl','LIME','LBSPR')
 
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
@@ -59,15 +59,16 @@ lh <- create_lh_list(vbk = 1.50, linf = 24.5, t0 = 0, lwa = 0.00407, lwb = 3.16,
 # # plot selectivity for the first (and only) fleet (first row)
 # plot(lh$S_fl[1,], type="l", lwd=4, xlab="Length (cm)", ylab="Proportion selected to gear")
 
-
-
-
-
 #######################################
 ## Other data type input options
 #######################################
-data_all <- list("years"=1:true$Nyears, "LF"=LF_df, "I_ft"=true$I_ft, 
-                 "C_ft"=true$Cw_ft, "neff_ft"=true$obs_per_year)
+#data_all <- list("years"=1:true$Nyears, "LF"=LF_df, "I_ft"=true$I_ft, 
+#                 "C_ft"=true$Cw_ft, "neff_ft"=true$obs_per_year)
+
+
+
+data_all <- list("years"=df$Year, "LF"=df[,c(3:14)], 
+                 "C_ft"=df$Catch, "neff_ft"=true$obs_per_year)
 inputs_all <- create_inputs(lh=lh, input_data=data_all)
 
 ##----------------------------------------------------
@@ -144,7 +145,8 @@ hessian <- Sdreport$pdHess
 gradient <- lc_only$opt$max_gradient <= 0.001
 hessian == TRUE & gradient == TRUE
 
-## hessian not positive definite -- the following line helps diagnose which parameters can't be estimated 
+## hessian not positive definite -- the following line helps diagnose which 
+## parameters can't be estimated 
 check <- TMBhelper::Check_Identifiable(lc_only$obj)
 
 ## issues estimating F - try a more narrow penalty on F
@@ -170,7 +172,6 @@ gradient <- lc_only$opt$max_gradient <= 0.001
 hessian == TRUE & gradient == TRUE
 
 ## LBSPR
-library(LBSPR)
 LB_pars <- new("LB_pars")
 LB_pars@MK <- inputs_all$M/inputs_all$vbk
 LB_pars@Linf <- inputs_all$linf
@@ -249,7 +250,8 @@ LF_list2 <- lapply(1:lh$nfleets, function(x){
   out <- LF_list[[x]]
   out[1:15,] <- 0
   return(out)
-}) ##list with 1 element per fleet, and each element is a matrix with rows = years, columns = upper length bins
+}) ##list with 1 element per fleet, and each element is a matrix with rows = years, 
+   ##columns = upper length bins
 LF_df2 <- LFreq_df(LF_list2)
 
 
