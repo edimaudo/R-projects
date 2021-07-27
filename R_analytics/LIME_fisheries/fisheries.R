@@ -11,7 +11,8 @@ rm(list = ls())
 #######################################
 # Packages
 #######################################
-packages <- c('ggplot2', 'corrplot','tidyverse',"caret","dummies",'readxl','LIME','LBSPR')
+packages <- c('ggplot2', 'corrplot','tidyverse',"caret","dummies",'readxl','LIME','LBSPR',
+              'TMB','TMBhelper')
 
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
@@ -36,7 +37,7 @@ update_mm_to_cm <- function(x) {
 
 df[,c(3:14)] <- lapply(df[,c(3:14)], update_mm_to_cm)
 Year <- c(1:13)
-df <- cbind(years, df)
+df <- cbind(Year, df)
 # update column names
 colnames(df) <- c("Year","Lengthclass","Catch","0.5","1.5","2.5","3.5","4.5","5.5",
                   "6.5","7.5","8.5","9.5","10.5","11.5")
@@ -64,24 +65,38 @@ lh <- create_lh_list(vbk = 1.50, linf = 24.5, t0 = 0, lwa = 0.00407, lwb = 3.16,
 #######################################
 ## Other data type input options
 #######################################
+h <- create_lh_list(vbk = 0.21, linf = 65, t0 = -0.01, lwa = 0.0245, lwb = 2.79,
+                    S50 = c(20), S95 = c(26), selex_input = "length", selex_type = c("logistic"),
+                    M50 = 34, maturity_input = "length", M = 0.27, binwidth = 1, CVlen = 0.1,
+                    SigmaR = 0.737, SigmaF = 0.2, SigmaC = 0.1, SigmaI = 0.1, R0 = 1, Frate = 0.1,
+                    Fequil = 0.25, qcoef = 1e-05, start_ages = 0, rho = 0.43, theta = 10, nseasons = 1,
+                    nfleets = 1)
+
+true <- generate_data(modpath = NULL, itervec = 1, Fdynamics = c("Endogenous"),
+                     Rdynamics = "Constant", lh = h, Nyears = 12, Nyears_comp = c(12), 
+                     comp_sample = rep(200,12), init_depl = 0.7, seed = 123, fleet_proportions = 1)
+#using simulation data
+#data_all <- list(years = 1:true$Nyears, LF = true$LF, I_ft = true$I_ft, C_ft = true$Cw_ft,
+#                 neff_ft = true$obs_per_year)
+#inputs_all <- create_inputs(lh=h, input_data=data_all)
+
 months <- 1:12
-LenFreqMAT <- t(as.matrix(df[,2:13]))
+LenFreqMAT <- t(as.matrix(df[,4:15]))
 rownames(LenFreqMAT) <- months
-mids <- df$Lengthclass
+mids <- c("0.5","1.5","2.5","3.5","4.5","5.5",
+"6.5","7.5","8.5","9.5","10.5","11.5","12")
 colnames(LenFreqMAT) <- mids
-data_all <- list("years"=df$Year, "LF"=LenFreqMAT , 
-                 "C_ft"=df$Catch, "neff_ft"=c(rep(200,12)))
+data_all <- list(years = months, LF=LenFreqMAT , 
+                 C_ft=df$Catch, neff_ft = true$obs_per_year)
 inputs_all <- create_inputs(lh=lh, input_data=data_all)
-##----------------------------------------------------
-## Step 3: Run model
-## ---------------------------------------------------
+
 #######################################
 ## Data-rich test
 #######################################
 rich <- run_LIME(modpath=NULL,
                  input=inputs_all,
-                 data_avail="LC",  #LC, Catch_LC, Index_LC,ndex_Catch_LC
-                 C_type=0) #0, 2
+                 data_avail="LC",  #LC, Catch_LC, Index_LC,Index_Catch_LC
+                 C_type=0) #0, 1,2
 
 ## check TMB inputs
 Inputs <- rich$Inputs
@@ -98,9 +113,6 @@ gradient <- rich$opt$max_gradient <= 0.001
 hessian == TRUE & gradient == TRUE
 
 
-##----------------------------------------------------
-## Step 4: Plot results
-## ---------------------------------------------------
 ## plot length composition data and fits
 plot_LCfits(Inputs=Inputs,
             Report=Report)
@@ -128,7 +140,7 @@ lines(rich$Derived$BBmsy)
 #######################################
 
 lc_only <- run_LIME(modpath=NULL, 
-                    input=inputs_LC,
+                    input=inputs_all, 
                     data_avail="LC")
 
 ## check TMB inputs
@@ -150,7 +162,7 @@ hessian == TRUE & gradient == TRUE
 check <- TMBhelper::Check_Identifiable(lc_only$obj)
 
 ## issues estimating F - try a more narrow penalty on F
-inputs_LC_new <- inputs_LC
+inputs_LC_new <- inputs_all
 inputs_LC_new$SigmaF <- 0.1
 
 lc_only2 <- run_LIME(modpath=NULL, 
@@ -211,84 +223,84 @@ plot_output(Inputs=Inputs,
 #######################################
 ## Catch + length data
 #######################################
-catch_lc <- run_LIME(modpath=NULL, 
-                     input=inputs_all,
-                     data_avail="Catch_LC",
-                     C_type=2)
-
-## check TMB inputs
-Inputs <- catch_lc$Inputs
-
-## Report file
-Report <- catch_lc$Report
-
-## Standard error report
-Sdreport <- catch_lc$Sdreport
-
-## check convergence
-hessian <- Sdreport$pdHess
-gradient <- catch_lc$opt$max_gradient <= 0.001
-hessian == TRUE & gradient == TRUE
-
-
-## plot length composition data
-plot_LCfits(Inputs=Inputs, 
-            Report=Report)		
-
-## plot model output
-plot_output(Inputs=Inputs, 
-            Report=Report,
-            Sdreport=Sdreport, 
-            lh=lh,
-            True=true, 
-            plot=c("Fish","Rec","SPR","ML","SB","Selex"), 
-            set_ylim=list("SPR" = c(0,1), "SB"=c(0,2)))		
-
-
-### remove some years of catch
-LF_list2 <- lapply(1:lh$nfleets, function(x){
-  out <- LF_list[[x]]
-  out[1:15,] <- 0
-  return(out)
-}) ##list with 1 element per fleet, and each element is a matrix with rows = years, 
-   ##columns = upper length bins
-LF_df2 <- LFreq_df(LF_list2)
-
-
-data_rm <- list("years"=1:true$Nyears, "LF"=LF_df2, "I_ft"=true$I_ft, "C_ft"=true$Cw_ft)
-inputs_rm <- create_inputs(lh=lh, input_data=data_rm)
-
-catch_lc2 <- run_LIME(modpath=NULL, 
-                      input=inputs_rm,
-                      data_avail="Catch_LC",
-                      C_type=2,
-                      est_rdev_t = c(rep(0,5),rep(1,15)))
-
-## check TMB inputs
-Inputs <- catch_lc2$Inputs
-
-## Report file
-Report <- catch_lc2$Report
-
-## Standard error report
-Sdreport <- catch_lc2$Sdreport
-
-## check convergence
-hessian <- Sdreport$pdHess
-gradient <- catch_lc2$opt$max_gradient <= 0.001
-hessian == TRUE & gradient == TRUE
-
-
-## plot length composition data
-plot_LCfits(Inputs=Inputs, 
-            Report=Report)		
-
-## plot model output
-plot_output(Inputs=Inputs, 
-            Report=Report,
-            Sdreport=Sdreport, 
-            lh=lh,
-            True=true, 
-            plot=c("Fish","Rec","SPR","ML","SB","Selex"), 
-            set_ylim=list("SPR" = c(0,1), "SB"=c(0,2)))
-
+# catch_lc <- run_LIME(modpath=NULL, 
+#                      input=inputs_all,
+#                      data_avail="Catch_LC",
+#                      C_type=2)
+# 
+# ## check TMB inputs
+# Inputs <- catch_lc$Inputs
+# 
+# ## Report file
+# Report <- catch_lc$Report
+# 
+# ## Standard error report
+# Sdreport <- catch_lc$Sdreport
+# 
+# ## check convergence
+# hessian <- Sdreport$pdHess
+# gradient <- catch_lc$opt$max_gradient <= 0.001
+# hessian == TRUE & gradient == TRUE
+# 
+# 
+# ## plot length composition data
+# plot_LCfits(Inputs=Inputs, 
+#             Report=Report)		
+# 
+# ## plot model output
+# plot_output(Inputs=Inputs, 
+#             Report=Report,
+#             Sdreport=Sdreport, 
+#             lh=lh,
+#             True=true, 
+#             plot=c("Fish","Rec","SPR","ML","SB","Selex"), 
+#             set_ylim=list("SPR" = c(0,1), "SB"=c(0,2)))		
+# 
+# 
+# ### remove some years of catch
+# LF_list2 <- lapply(1:lh$nfleets, function(x){
+#   out <- LF_list[[x]]
+#   out[1:15,] <- 0
+#   return(out)
+# }) ##list with 1 element per fleet, and each element is a matrix with rows = years, 
+#    ##columns = upper length bins
+# LF_df2 <- LFreq_df(LF_list2)
+# 
+# 
+# data_rm <- list("years"=df$Year, "LF"=LF_df2, "C_ft"=df$Catch)
+# inputs_rm <- create_inputs(lh=lh, input_data=data_rm)
+# 
+# catch_lc2 <- run_LIME(modpath=NULL, 
+#                       input=inputs_rm,
+#                       data_avail="Catch_LC",
+#                       C_type=2,
+#                       est_rdev_t = c(rep(0,5),rep(1,15)))
+# 
+# ## check TMB inputs
+# Inputs <- catch_lc2$Inputs
+# 
+# ## Report file
+# Report <- catch_lc2$Report
+# 
+# ## Standard error report
+# Sdreport <- catch_lc2$Sdreport
+# 
+# ## check convergence
+# hessian <- Sdreport$pdHess
+# gradient <- catch_lc2$opt$max_gradient <= 0.001
+# hessian == TRUE & gradient == TRUE
+# 
+# 
+# ## plot length composition data
+# plot_LCfits(Inputs=Inputs, 
+#             Report=Report)		
+# 
+# ## plot model output
+# plot_output(Inputs=Inputs, 
+#             Report=Report,
+#             Sdreport=Sdreport, 
+#             lh=lh,
+#             True=true, 
+#             plot=c("Fish","Rec","SPR","ML","SB","Selex"), 
+#             set_ylim=list("SPR" = c(0,1), "SB"=c(0,2)))
+# 
