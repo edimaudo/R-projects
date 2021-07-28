@@ -34,13 +34,13 @@ df <- read_excel(file.choose())
 update_mm_to_cm <- function(x) {
   return (x/10)
 }
-df[,c(3:14)] <- lapply(df[,c(3:14)], update_mm_to_cm)
+df[,c(1:13)] <- lapply(df[,c(1:13)], update_mm_to_cm)
 # Add year
-Year <- c(1:13)
+Year <- c(1:12)
 df <- cbind(Year, df)
 # update column names
-colnames(df) <- c("Year","Lengthclass","Catch","0.5","1.5","2.5","3.5","4.5","5.5",
-                  "6.5","7.5","8.5","9.5","10.5","11.5")
+colnames(df) <- c("Year","0.5","1.5","2.5","3.5","4.5","5.5",
+                  "6.5","7.5","8.5","9.5","10.5","11.5","12")
 #######################################
 # LH information
 #######################################
@@ -72,21 +72,23 @@ h <- create_lh_list(vbk = 0.21, linf = 65, t0 = -0.01, lwa = 0.0245, lwb = 2.79,
 
 true <- generate_data(modpath = NULL, itervec = 1, Fdynamics = c("Endogenous"),
                      Rdynamics = "Constant", lh = h, Nyears = 12, Nyears_comp = c(12), 
-                     comp_sample = rep(200,12), init_depl = 0.7, seed = 123, fleet_proportions = 1)
+                     comp_sample = rep(12,12), init_depl = 0.7, seed = 123, fleet_proportions = 1)
 #using simulation data
 data_all <- list(years = 1:true$Nyears, LF = true$LF, I_ft = true$I_ft, C_ft = true$Cw_ft,
                  neff_ft = true$obs_per_year)
 inputs_all <- create_inputs(lh=h, input_data=data_all)
 
-# months <- 1:12
-# LenFreqMAT <- t(as.matrix(df[,4:15]))
-# rownames(LenFreqMAT) <- months
-# mids <- c("0.5","1.5","2.5","3.5","4.5","5.5",
-# "6.5","7.5","8.5","9.5","10.5","11.5","12")
-# colnames(LenFreqMAT) <- mids
-# data_all <- list(years = months, LF=LenFreqMAT , 
-#                  C_ft=df$Catch, neff_ft = true$obs_per_year)
-# inputs_all <- create_inputs(lh=lh, input_data=data_all)
+## Using user data
+#months <- 1:12
+#LenFreqMAT <- df[,2:14] #(as.matrix(df[,2:14]))
+#rownames(LenFreqMAT) <- months
+#mids <- c("0.5","1.5","2.5","3.5","4.5","5.5",
+#"6.5","7.5","8.5","9.5","10.5","11.5","12")
+#colnames(LenFreqMAT) <- mids
+#data_all <- list(years = months, LF=df[,2:14],
+                #C_ft=df$Catch,
+#                neff_ft = true$obs_per_year)
+#inputs_all <- create_inputs(lh=lh, input_data=data_all)
 
 #######################################
 ## Data-rich test
