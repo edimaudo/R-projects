@@ -20,7 +20,6 @@ for (package in packages) {
     library(package, character.only=T)
   }
 }
-
 #######################################
 # Load data
 #######################################
@@ -43,7 +42,6 @@ plot(lh$W_a, type="l", lwd=4, xlab="Age", ylab="Weight (g)")
 plot(lh$Mat_l, type="l", lwd=4, xlab="Length (cm)", ylab="Proportion mature")
 # plot selectivity for the first (and only) fleet (first row)
 plot(lh$S_fl[1,], type="l", lwd=4, xlab="Length (cm)", ylab="Proportion selected to gear")
-
 #######################################
 # Data setup
 #######################################
@@ -55,12 +53,9 @@ lf <- matrix(df[,2], nrow=1, ncol=nrow(df))
 
 rownames(lf) <- "2018"
 colnames(lf) <- bins
-
-
 #######################################
 # RUN LIME
 #######################################
-
 ## Single year only
 data_list <- list("years"=2018, "LF"=lf)
 
