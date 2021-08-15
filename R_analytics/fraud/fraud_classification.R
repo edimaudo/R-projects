@@ -4,7 +4,7 @@
 rm(list = ls()) #clear environment
 packages <- c('ggplot2', 'corrplot','tidyverse',"caret","dummies","fastDummies"
               ,'FactoMineR','factoextra','readxl','scales','dplyr','mlbench','caTools',
-              'gridExtra','doParallel','readxl')
+              'gridExtra','doParallel')
 # load packages
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
@@ -12,3 +12,6 @@ for (package in packages) {
     library(package, character.only=T)
   }
 }
+
+# load data
+df <- read.csv("FraudData.csv")
