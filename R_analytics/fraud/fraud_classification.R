@@ -39,24 +39,19 @@ normalize <- function(x) {
   return ((x - min(x)) / (max(x) - min(x)))
 }
 
+df_cts <- df %>%
+  select(X, amount, age)
 
-# CHECK FOR IMBLANANCE
-table(df$fraud)
+df_cat <- df %>%
+  select(category, gender, city, state)
 
-crime_info <- crimes_data_model %>%
-  select(Year, Age)
-
-crime_info2 <- crimes_data_model %>%
-  select(Gender, `Marital Status`, `Education Level`, Religion,Job, Emirate,Nationality)
-
-
-crime <- crimes_data_model %>%
-  select(Target)
+df_fraud <- df %>%
+  select(fraud)
 
 #combine data
-df_cts <- as.data.frame(lapply(crime_info, normalize))
-df_cat <- as.data.frame(lapply(crime_info2, labelEncoder))
-df_new <- cbind(df_cts,df_cat,crime)
+df_cts <- as.data.frame(lapply(df_cts, normalize))
+df_cat <- as.data.frame(lapply(df_cat, labelEncoder))
+df_new <- cbind(df_cts,df_cat,df_fraud)
 
 #create train and test data
 set.seed(2021)
@@ -68,55 +63,55 @@ test <- subset(df_new, sample==FALSE)
 cl <- makePSOCKcluster(4)
 registerDoParallel(cl)
 
+# tweak for sampling
+# CHECK FOR IMBLANANCE
+table(df$fraud)
 
-#tweak for sampling
-#check for imbalance
-#print(table(df_new$crime))
 # #weight due to 
-# model_weights <- ifelse(train$crime == "Assault",
-#                         (1/table(train$crime)[1]) * 0.5,
-#                         (1/table(train$crime)[2]) * 0.5)
-# #cross fold validation
-# control <- trainControl(method="repeatedcv", number=10, repeats=5, classProbs = FALSE)
+model_weights <- ifelse(train$fraud == 0,
+                         (1/table(train$fraud)[1]) * 0.5,
+                         (1/table(train$fraud)[2]) * 0.5)
+# cross fold validation
+control <- trainControl(method="repeatedcv", number=10, repeats=5, classProbs = FALSE)
 # #glm
-# fit.glm <- train(as.factor(crime)~., data=train, method="glm",family=binomial(),
-#                  metric = "Accuracy", trControl = control, weights = model_weights)
-# #random forest
-# fit.rf <- train(as.factor(crime)~., data=train, method="rf",
-#                 metric = "Accuracy", trControl = control, weights = model_weights)
-# #boosting algorithm - Stochastic Gradient Boosting (Generalized Boosted Modeling)
-# fit.gbm <- train(as.factor(crime)~., data=train, method="gbm",
-#                  metric = "Accuracy", trControl = control, weights = model_weights)
-# #svm
-# fit.svm <- train(as.factor(crime)~., data=train, method="svmRadial",
-#                  metric = "Accuracy", trControl = control, weights = model_weights)
-# #nnet
-# fit.nnet <- train(as.factor(crime)~., data=train, method="nnet",
-#                   metric = "Accuracy", trControl = control, weights = model_weights)
-# #naive
-# fit.naive <- train(as.factor(crime)~., data=train,
-#                    method="naive_bayes", metric = "Accuracy",
-#                    trControl = control, weights = model_weights)
-# #extreme gradient boosting
-# fit.xgb <- train(as.factor(crime)~., data=train,
-#                  method="xgbTree", metric = "Accuracy",
-#                  trControl = control, weights = model_weights)
-# #bagged cart
-# fit.bg <- train(as.factor(crime)~., data=train,
-#                 method="treebag", metric = "Accuracy",
-#                 trControl = control, weights = model_weights)
-# #decision tree
-# fit.dtree <- train(as.factor(crime)~., data=train,
-#                    method="C5.0", metric = "Accuracy",
-#                    trControl = control, weights = model_weights)
-# #knn
-# fit.knn <- train(as.factor(crime)~., data=train,
-#                  method="kknn", metric = "Accuracy",
-#                  trControl = control, weights = model_weights)
-# #ensemble
-# fit.ensemble <- train(as.factor(crime)~., data=train,
-#                       method="nodeHarvest", metric = "Accuracy",
-#                       trControl = control, weights = model_weights)
+fit.glm <- train(as.factor(fraud)~., data=train, method="glm",family=binomial(),
+                 metric = "Accuracy", trControl = control, weights = model_weights)
+#random forest
+fit.rf <- train(as.factor(fraud)~., data=train, method="rf",
+                metric = "Accuracy", trControl = control, weights = model_weights)
+#boosting algorithm - Stochastic Gradient Boosting (Generalized Boosted Modeling)
+fit.gbm <- train(as.factor(fraud)~., data=train, method="gbm",
+                 metric = "Accuracy", trControl = control, weights = model_weights)
+#svm
+fit.svm <- train(as.factor(fraud)~., data=train, method="svmRadial",
+                 metric = "Accuracy", trControl = control, weights = model_weights)
+#nnet
+fit.nnet <- train(as.factor(fraud)~., data=train, method="nnet",
+                  metric = "Accuracy", trControl = control, weights = model_weights)
+#naive
+fit.naive <- train(as.factor(fraud)~., data=train,
+                   method="naive_bayes", metric = "Accuracy",
+                   trControl = control, weights = model_weights)
+#extreme gradient boosting
+fit.xgb <- train(as.factor(fraud)~., data=train,
+                 method="xgbTree", metric = "Accuracy",
+                 trControl = control, weights = model_weights)
+#bagged cart
+fit.bg <- train(as.factor(fraud)~., data=train,
+                method="treebag", metric = "Accuracy",
+                trControl = control, weights = model_weights)
+#decision tree
+fit.dtree <- train(as.factor(fraud)~., data=train,
+                   method="C5.0", metric = "Accuracy",
+                   trControl = control, weights = model_weights)
+#knn
+fit.knn <- train(as.factor(fraud)~., data=train,
+                 method="kknn", metric = "Accuracy",
+                 trControl = control, weights = model_weights)
+#ensemble
+fit.ensemble <- train(as.factor(fraud)~., data=train,
+                      method="nodeHarvest", metric = "Accuracy",
+                      trControl = control, weights = model_weights)
 stopCluster(cl)
 
 #------------------
@@ -129,10 +124,11 @@ results <- resamples(list(randomforest = fit.rf,
                           neuralnetwork = fit.nnet,
                           xgboost = fit.xgb, 
                           logisticregression = fit.glm, 
-                          `decision tree` = fit.dtree, 
-                          `naive bayes` = fit.naive,
-                          `ensemble` = fit.ensemble, 
-                          `knn` = fit.knn))
+                         # `decision tree` = fit.dtree, 
+                          `naive bayes` = fit.naive
+                          #`ensemble` = fit.ensemble, 
+                          #`knn` = fit.knn
+                         ))
 
 summary(results)
 # boxplot comparison
@@ -141,16 +137,16 @@ bwplot(results)
 dotplot(results)
 
 # Model accuracy
-mean(predicted.classes == test$crime)
+mean(predicted.classes == test$fraud)
 
 # test data accuracy
 # Make predictions
-predicted.classes <- fit.knn %>% predict(test)
-output <- confusionMatrix(data = predicted.classes, reference = test$crime, mode = "everything")
+predicted.classes <- fit.xgb %>% predict(test)
+output <- confusionMatrix(data = predicted.classes, reference = as.factor(test$fraud), mode = "everything")
 output
 
 #other metrics
-caret::varImp(fit.rf)
+caret::varImp(fit.xgb)
 
 # plotting the matrix
 output2 <- as.data.frame(output$table)
