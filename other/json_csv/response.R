@@ -6,7 +6,7 @@
 rm(list = ls()) #clear environment
 
 # Packages
-packages <- c('ggplot2', 'corrplot','tidyverse','rjson')
+packages <- c('ggplot2', 'corrplot','tidyverse','rjson','jsonlite')
 
 # Load packages
 for (package in packages) {
@@ -19,7 +19,17 @@ for (package in packages) {
 #===================
 # Load data
 #===================
-df <- read.csv("bankloan.csv")
+# using rjson
+df <- fromJSON(file = file.choose())
+df.backup <- df
+
+df1 <- as.data.frame(df)
+
+# using jsonlite
+df <- jsonlite::fromJSON(file.choose(), flatten = TRUE)
+df.backup <- df
+
+df2 <- as.data.frame(df)
 
 #===================
 # Convert to csv
