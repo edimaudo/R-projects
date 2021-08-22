@@ -19,4 +19,16 @@ for (package in packages) {
 }
 
 
-# LO
+# Load data
+train <- read.csv(file.choose())
+test <- read.csv(file.choose())
+
+glimpse(train)
+glimpse(test)
+
+train <- na.omit(train)
+test <- na.omit(test)
+
+#table(train$y)
+
+summary(train)
