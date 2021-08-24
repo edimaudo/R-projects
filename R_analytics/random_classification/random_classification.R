@@ -202,6 +202,13 @@ dotplot(results)
 #mean(predicted.classes == test$crime)
 #test data accuracy
 
+#AUC
+predicted <- predict(model, test, type="response")
+
+#calculate AUC
+library(pROC)
+auc(test$default, predicted)
+
 #===================
 # Predictions
 #===================
