@@ -6,9 +6,8 @@
 rm(list = ls()) #clear environment
 
 # Packages
-packages <- c('ggplot2', 'corrplot','tidyverse',"caret","dummies","fastDummies"
-              ,'FactoMineR','factoextra','readxl','scales','dplyr','mlbench','caTools',
-              'gridExtra','doParallel','readxl','gridExtra','grid')
+packages <- c('ggplot2', 'corrplot','tidyverse',"caret","dummies","fastDummies",'dplyr',
+              'plyr','mlbench','caTools','doParallel')
 
 # Load packages
 for (package in packages) {
@@ -63,6 +62,16 @@ labelEncoder <-function(x){
 }
 
 # update x3 if needed
+train$x3 <- revalue(train$x3, c('Mon'="Monday","Tue"="Tuesday","Wed"="Wednesday","Thur"="Thursday",
+                                "Fri"="Friday","Sat"="Saturday","Sun"="Sunday",
+                                "Monday"="Monday","Tuesday"="Tuesday","Wednesday"="Wednesday",
+                                "Thursday"="Thursday","Friday"="Friday","Saturday"="Saturday",
+                                "Sunday"="Sunday"))
+test$x3 <- revalue(test$x3, c('Mon'="Monday","Tue"="Tuesday","Wed"="Wednesday","Thur"="Thursday",
+                                "Fri"="Friday","Sat"="Saturday","Sun"="Sunday",
+                                "Monday"="Monday","Tuesday"="Tuesday","Wednesday"="Wednesday",
+                                "Thursday"="Thursday","Friday"="Friday","Saturday"="Saturday",
+                                "Sunday"="Sunday"))
 
 # update x19 if needed
 
@@ -76,6 +85,8 @@ labelEncoder <-function(x){
 
 # update x93 if needed
 
+# transform data
+
 #===================
 # Calculate correlation
 #===================
@@ -87,3 +98,91 @@ print(correlationMatrix)
 highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.75)
 # # print indexes of highly correlated attributes
 print(highlyCorrelated)
+
+#================
+# build model
+#================
+
+# #weight due to 
+model_weights <- ifelse(train$default == "1",
+                        (1/table(train$default)[1]) * 0.5,
+                        (1/table(train$default)[2]) * 0.5)
+
+#model training
+cl <- makePSOCKcluster(4)
+registerDoParallel(cl)
+
+# Prediction model
+set.seed(123)
+#cross fold validation
+control <- trainControl(method="repeatedcv", number=10, repeats=3)
+# control <- trainControl(method="repeatedcv", number=10, repeats=5, classProbs = FALSE)
+
+# models
+#glm
+fit.glm <- train(as.factor(default)~., data=train, method="glm",family=binomial(),
+                 metric = "Accuracy", trControl = control, weights = model_weights)
+#svm
+fit.svm <- train(as.factor(default)~., data=train, method="svmRadial", 
+                 metric = "Accuracy", trControl = control, weights = model_weights)
+#random forest
+fit.rf <- train(as.factor(default)~., data=train, method="rf",
+                metric = "Accuracy", trControl = control, weights = model_weights)
+
+#boosting algorithm - Stochastic Gradient Boosting (Generalized Boosted Modeling)
+fit.gbm <- train(as.factor(default)~., data=train, method="gbm",
+                 metric = "Accuracy", trControl = control, weights = model_weights)
+#nnet
+fit.nnet <- train(as.factor(default)~., data=train, method="nnet", 
+                  metric = "Accuracy", trControl = control, weights = model_weights)
+#naive
+fit.naive <- train(as.factor(default)~., data=train, method="naive_bayes", 
+                   metric = "Accuracy", trControl = control, weights = model_weights)
+
+#extreme gradient boosting
+fit.xgb <- train(as.factor(default)~., data=train, method="xgbTree", 
+                 metric = "Accuracy", trControl = control, weights = model_weights)
+
+#bagged cart
+fit.bg <- train(as.factor(default)~., data=train, method="treebag", 
+                metric = "Accuracy", trControl = control, weights = model_weights)
+
+#decision tree
+fit.dtree <- train(as.factor(default)~., data=train, method="C5.0", 
+                   metric = "Accuracy", trControl = control,weights = model_weights)
+
+#knn
+fit.knn <- train(as.factor(default)~., data=train, method="kknn", 
+                 metric = "Accuracy", trControl = control,weights = model_weights)
+#ensemble
+fit.ensemble <- train(as.factor(default)~., data=train, method="nodeHarvest", 
+                      metric = "Accuracy", trControl = control,weights = model_weights)
+
+cl <- makePSOCKcluster(4)
+registerDoParallel(cl)
+stopCluster(cl)
+
+#===================
+#compare models
+#===================
+results <- resamples(list(randomforest = fit.rf, 
+                          `gradient boost` = fit.gbm, 
+                          `support vector machine` = fit.svm,
+                          baggedCart = fit.bg, 
+                          neuralnetwork = fit.nnet,
+                          xgboost = fit.xgb, 
+                          logisticregression = fit.glm, 
+                          #`decision tree` = fit.dtree, 
+                          `naive bayes` = fit.naive,
+                          `ensemble` = fit.ensemble, 
+                          `knn` = fit.knn))
+
+summary(results)
+# boxplot comparison
+bwplot(results)
+# Dot-plot comparison
+dotplot(results)
+
+#===================
+# Predictions
+#===================
