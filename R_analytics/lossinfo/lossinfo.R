@@ -31,3 +31,8 @@ print(missing_data)
 #drop missing variables
 df <- na.omit(df)
 
+# Loss Histogram
+ggplot(df, aes(x=Loss)) + geom_histogram()
+
+# ALAE Histogram
+ggplot(df, aes(x=ALAE)) + geom_histogram()
