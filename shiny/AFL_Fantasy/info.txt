@@ -1,16 +1,21 @@
 Operations Research Model
-My project revolves around optimizing an AFL fantasy football team, using a player's 2017 scores, and adhering to certain constraints.  My Objective Function: Maximize my team's season score, which is the score from Week/Round 1 all the way through to Week 23. 
+My project revolves around optimizing an AFL fantasy football team, using a player's 2017 scores, and adhering to certain constraints.  
+
+My Objective Function: Maximize my team's season score, which is the score from Week/Round 1 all the way through to Week 23. 
+
 Bound to the following Constraints: 
 1. Pick 30 players out of a possible 652 players. 
 2. Pick players from different positions, such that there are 8 DEFs, 10 MIDs, 4 RUCs, and 8 FWDs. Some players can play more than one position. 
 3. Understand that only 22 out of the 30 players are on the 'field' 
- - meaning their scores count towards the weekly team score. The remaining 8 players are on the 'bench', who's score doesn't count. The field positions are: 6 DEFs, 8 MIDs, 2 RUCs, 6 FWDs. The bench positions are: 2 DEFs, 2 MIDs, 2 RUCs, 2 FWDs. 
- 4. Each player has a price. The total cost of all 30 players must be less than or equal to the starting budget of $12.6mil. 
- 5. Each week, I only get 2/3 trades (2 most weeks, 3 over designated rounds). 
- Therefore, out of the 30 players in the current week's team, at minimum 27/28 players should be the exact same as the previous week. Furthermore, each trade should adhere to my remaining salary cap budget from week to week. 
- Additional info: https://fantasy.afl.com.au/classic/help/game-guidelines (Rules may have slightly changed since 2017) I
- nput CSV File: Columns: Player ID, Player Name, Week 1 Position, Week 1 Price, Week 1 Score, ... , Week 23 Position, Week 23 Price, Week 23 Score All 652 rows, not including the header, will be filled with each player's projections. 
- Output CSV File: Columns: Week 1, Week 2, ... , Week 23 All 30 rows, not including the header, will be filled with the Player ID of each week's selection. 
- Code: Ability to update paramemteres 
-       Should be able to factor in past selection decisions or have a separate code to do so. 
-       DNP is 0
+- meaning their scores count towards the weekly team score. The remaining 8 players are on the 'bench', who's score doesn't count. The field positions are: 6 DEFs, 8 MIDs, 2 RUCs, 6 FWDs. The bench positions are: 2 DEFs, 2 MIDs, 2 RUCs, 2 FWDs. 
+4. Each player has a price. The total cost of all 30 players must be less than or equal to the starting budget of $12.6mil. 
+5. Each week, I only get 2/3 trades (2 most weeks, 3 over designated rounds). 
+Therefore, out of the 30 players in the current week's team, at minimum 27/28 players should be the exact same as the previous week. Furthermore, each trade should adhere to my remaining salary cap budget from week to week. 
+ 
+Input CSV File: Columns: Player ID, Player Name, Week 1 Position, Week 1 Price, Week 1 Score, ... , Week 23 Position, Week 23 Price, Week 23 Score All 652 rows, not including the header, will be filled with each player's projections. 
+
+Output CSV File: Columns: Week 1, Week 2, ... , Week 23 All 30 rows, not including the header, will be filled with the Player ID of each week's selection. 
+
+Code: Ability to update paramemteres 
+DNP is 0
+Additional info: https://fantasy.afl.com.au/classic/help/game-guidelines (Rules may have slightly changed since 2017) 
