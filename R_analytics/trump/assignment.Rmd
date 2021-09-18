@@ -37,6 +37,15 @@ print(missing_data)
 ```
 
 
+## Approach
+```{r}
+# replace NAs with 0
+df[is.na(df)] <- 0
+
+corr_data <- df %>%
+  dplyr::select(party_reg, state_reg, pol_spectrum, religion, age, marital, 
+                education, income,  ethnicity,vote,whovoted)
+```
 
 
 
