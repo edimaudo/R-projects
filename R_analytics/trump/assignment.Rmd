@@ -4,10 +4,47 @@ date: "17/09/2021"
 output: html_document
 ---
 
+## Assignment
+Objective is to find out who Trump voters are and what sets them apart
+
+## Load Packages
+```{r echo=TRUE}
+packages <- c('ggplot2', 'corrplot','tidyverse','dplyr','plyr','MASS','readxl',
+              'NbClust','scales','psy','factoextra','nFactors','GoodmanKruskal',
+              'gridExtra','grid','caret','mlbench')
+for (package in packages) {
+  if (!require(package, character.only=T, quietly=T)) {
+    install.packages(package)
+    library(package, character.only=T)
+  }
+}
+```
+
+## Load data
+```{r}
+df <- read_excel("Data.xlsx", sheet = "data")
+```
+
+## Data summary
+```{r}
+summary(df)
+```
+
+```{r}
+# check for missing variables
+missing_data <- apply(df, 2, function(x) any(is.na(x)))
+print(missing_data)
+```
+
+
+
+
+
+
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
 ## R Markdown
 
 This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
