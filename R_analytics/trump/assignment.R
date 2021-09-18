@@ -244,25 +244,107 @@ pol_spectrum_plot
 #=================
 # Visualizations bivariate
 #=================
-
-# Age vs who voted
-
+# 1 biden, 2 Trump
 # Religion vs whovoted
+religion_who_plot <- corr_data %>%
+  dplyr::filter(!(religion==0)) %>%
+  dplyr::filter(whovoted %in% c(2)) %>%
+  ggplot(aes(x = as.factor(religion), 
+           fill = as.factor(whovoted))) + 
+  geom_bar(position = "stack") + theme_minimal() + 
+  guides(scale = 'none') + 
+  xlab("Religion") + labs(fill = "Who voted") +
+  ylab("Count")
+
 
 # income vs whovoted
+income_who_plot <- corr_data %>%
+  dplyr::filter(!(income==0)) %>%
+  dplyr::filter(whovoted %in% c(2)) %>%
+ggplot(aes(x = as.factor(income), 
+                      fill = as.factor(whovoted))) + 
+  geom_bar(position = "stack") + theme_minimal() + 
+  guides(scale = 'none') + 
+  xlab("Income") + labs(fill = "Who voted") +
+  ylab("Count")
 
 # ethnicity vs whovoted
+ethincity_who_plot <- corr_data %>%
+  dplyr::filter(!(ethnicity==0)) %>%
+  dplyr::filter(whovoted %in% c(2)) %>%
+ggplot(aes(x = as.factor(ethnicity), 
+                      fill = as.factor(whovoted))) + 
+  geom_bar(position = "stack") + theme_minimal() + 
+  guides(scale = 'none') + 
+  xlab("Religion") + labs(fill = "Who voted") +
+  ylab("Count")
 
 # education vs whovoted
+education_who_plot <- corr_data %>%
+  dplyr::filter(!(education==0)) %>%
+  dplyr::filter(whovoted %in% c(2)) %>%
+ggplot(aes(x = as.factor(education), 
+                      fill = as.factor(whovoted))) + 
+  geom_bar(position = "stack") + theme_minimal() + 
+  guides(scale = 'none') + 
+  xlab("Education") + labs(fill = "Who voted") +
+  ylab("Count")
 
 # state reg vs whovoted
+state_reg_who_plot <- corr_data %>%
+  dplyr::filter(!(state_reg==0)) %>%
+  dplyr::filter(whovoted %in% c(2)) %>%
+ggplot(aes(x = as.factor(state_reg), 
+                      fill = as.factor(whovoted))) + 
+  geom_bar(position = "stack") + theme_minimal() + 
+  guides(scale = 'none') + 
+  xlab("State Registration") + labs(fill = "Who voted") +
+  ylab("Count")
 
 # party reg vs whovoted
+party_reg_who_plot <- corr_data %>%
+  dplyr::filter(!(party_reg==0)) %>%
+  dplyr::filter(whovoted %in% c(2)) %>%
+ggplot(aes(x = as.factor(party_reg), 
+                      fill = as.factor(whovoted))) + 
+  geom_bar(position = "stack") + theme_minimal() + 
+  guides(scale = 'none') + 
+  xlab("party Registration") + labs(fill = "Who voted") +
+  ylab("Count")
 
 # vote vs whovoted
+vote_who_plot <- corr_data %>%
+  dplyr::filter(!(vote==0)) %>%
+  dplyr::filter(whovoted %in% c(2)) %>%
+ggplot(aes(x = as.factor(vote), 
+                      fill = as.factor(whovoted))) + 
+  geom_bar(position = "stack") + theme_minimal() + 
+  guides(scale = 'none') + 
+  xlab("Vote") + labs(fill = "Who voted") +
+  ylab("Count")
 
 # pol spectrum vs whovoted
+pol_spec_who_plot <- corr_data %>%
+  dplyr::filter(!(pol_spectrum==0)) %>%
+  dplyr::filter(whovoted %in% c(2)) %>%
+  ggplot(aes(x = as.factor(pol_spectrum), 
+             fill = as.factor(whovoted))) + 
+  geom_bar(position = "stack") + theme_minimal() + 
+  guides(scale = 'none') + 
+  xlab("Political Spectrum") + labs(fill = "Who voted") +
+  ylab("Count")
 
+# Age vs who voted
+age_who_plot <- corr_data %>%
+  dplyr::filter(!(age==0)) %>%
+  dplyr::filter(whovoted %in% c(2)) %>%
+  ggplot(aes(x = age, 
+             fill = as.factor(whovoted))) + 
+  geom_histogram(binwidth = 5) + theme_minimal() + 
+  guides(scale = 'none') + 
+  xlab("Age") + labs(fill = "Who voted") +
+  ylab("Count")
 
-
-
+grid.arrange(religion_who_plot,income_who_plot,ethincity_who_plot,education_who_plot,
+             state_reg_who_plot,party_reg_who_plot,vote_who_plot,pol_spec_who_plot,
+             ncol=4, nrow=2)
