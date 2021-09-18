@@ -346,5 +346,5 @@ age_who_plot <- corr_data %>%
   ylab("Count")
 
 grid.arrange(religion_who_plot,income_who_plot,ethincity_who_plot,education_who_plot,
-             state_reg_who_plot,party_reg_who_plot,vote_who_plot,pol_spec_who_plot,
-             ncol=4, nrow=2)
+             state_reg_who_plot,party_reg_who_plot,vote_who_plot,pol_spec_who_plot,age_who_plot,
+             ncol=4, nrow=3)
