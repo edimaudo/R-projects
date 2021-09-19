@@ -142,7 +142,8 @@ whovoted_plot
 ```{r}
 # Age
 age_plot <- corr_data %>%
-  ggplot(aes(x=age,color=whovoted)) + geom_histogram(binwidth = 10, fill='white') + 
+  filter(!age==0) %>%
+  ggplot(aes(x=age)) + geom_histogram(binwidth = 10,fill = "#0073C2FF") + #color #fill='white'
   theme_minimal() + guides(fill = FALSE) + 
   guides(scale = 'none') + 
   ggtitle("Age plot") + 
@@ -262,7 +263,6 @@ religion_who_plot <- corr_data %>%
 ```
 
 ## Bivariate Visualizations
-- 2 means Trump
 ```{r}
 # Religion vs whovoted
 religion_who_plot <- corr_data %>%
@@ -333,6 +333,19 @@ ggplot(aes(x = as.factor(party_reg),
 party_reg_who_plot 
 ```
 
+```{r}
+# Marital status vs who voted
+marital_who_plot <- corr_data %>%
+  dplyr::filter(!(marital==0)) %>%
+  dplyr::arrange(desc(marital)) %>%
+  ggplot(aes(x = as.factor(marital), 
+             fill = as.factor(whovoted))) + 
+  geom_bar(position = "stack") + coord_flip() + theme_minimal() +  
+  guides(scale = 'none') + 
+  xlab("Marital Status") + labs(fill = "Who voted") +
+  ylab("Count")
+marital_who_plot
+```
 
 ```{r}
 # Political spectrum vs whovoted
