@@ -137,7 +137,7 @@ chisq.test(corr_data$marital, corr_data$whovoted)
 chisq.test(corr_data$education, corr_data$whovoted)
 chisq.test(corr_data$income, corr_data$whovoted)
 chisq.test(corr_data$ethnicity, corr_data$whovoted)
-chisq.test(corr_data$vote, corr_data$whovoted)
+#chisq.test(corr_data$vote, corr_data$whovoted)
 ## reject null hypothesis conclude the  two variables are, indeed, independent for all except
 #income
 
@@ -161,7 +161,8 @@ whovoted_plot
   
 # Age
 age_plot <- corr_data %>%
-  ggplot(aes(x=age,color=whovoted)) + geom_histogram(binwidth = 10, fill='white') + 
+  filter(!age==0) %>%
+  ggplot(aes(x=age)) + geom_histogram(binwidth = 10,fill = "#0073C2FF") + #color #fill='white'
   theme_minimal() + guides(fill = FALSE) + 
   guides(scale = 'none') + 
   ggtitle("Age plot") + 
@@ -175,7 +176,7 @@ religion_plot <- corr_data %>%
   group_by(religion) %>%
   dplyr::summarise(religioncount = n()) %>%
   dplyr::select(religion, religioncount) %>%
-  ggplot(aes(x = reorder(as.factor(whovoted),religioncount), y = religioncount)) + 
+  ggplot(aes(x = reorder(as.factor(religion),religioncount), y = religioncount)) + 
   geom_bar(stat = "identity", fill = "#0073C2FF") + 
   coord_flip() + theme_minimal() + 
   guides(scale = 'none') + 
@@ -281,6 +282,19 @@ pol_spectrum_plot <- corr_data %>%
   ylab("Count")
 pol_spectrum_plot
 
+# Marital Status
+dplyr::filter(!(marital==0)) %>%
+  group_by(marital) %>%
+  dplyr::summarise(maritalcount = n()) %>%
+  dplyr::select(marital, maritalcount) %>%
+  ggplot(aes(x = reorder(as.factor(marital),maritalcount), y = maritalcount)) + 
+  geom_bar(stat = "identity",fill = "#0073C2FF") + 
+  coord_flip() + theme_minimal() + 
+  guides(scale = 'none') + 
+  xlab("Marital Status") + 
+  ylab("Count")
+pol_spectrum_plot
+
 #=================
 # Visualizations bivariate
 #=================
@@ -354,16 +368,17 @@ ggplot(aes(x = as.factor(party_reg),
   ylab("Count")
 party_reg_who_plot 
 
-# vote vs whovoted
-# vote_who_plot <- corr_data %>%
-#   dplyr::filter(!(vote==0)) %>%
-#   dplyr::filter(whovoted %in% c(1,2)) %>%
-# ggplot(aes(x = as.factor(vote), 
-#                       fill = as.factor(whovoted))) + 
-#   geom_bar(position = "stack") + theme_minimal() + 
-#   guides(scale = 'none') + 
-#   xlab("Vote") + labs(fill = "Who voted") +
-#   ylab("Count")
+# Marital status vs who voted
+marital_who_plot <- corr_data %>%
+  dplyr::filter(!(marital==0)) %>%
+  dplyr::arrange(desc(marital)) %>%
+  ggplot(aes(x = as.factor(marital), 
+             fill = as.factor(whovoted))) + 
+  geom_bar(position = "stack") + coord_flip() + theme_minimal() +  
+  guides(scale = 'none') + 
+  xlab("Marital Status") + labs(fill = "Who voted") +
+  ylab("Count")
+marital_who_plot
 
 # pol spectrum vs whovoted
 pol_spec_who_plot <- corr_data %>%
@@ -387,6 +402,8 @@ age_who_plot <- corr_data %>%
   xlab("Age") + labs(fill = "Who voted") +
   ylab("Count")
 age_who_plot
+
+
 
 grid.arrange(religion_who_plot,income_who_plot,ethincity_who_plot,education_who_plot,
              party_reg_who_plot,pol_spec_who_plot,age_who_plot,
