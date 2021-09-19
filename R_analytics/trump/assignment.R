@@ -283,7 +283,8 @@ pol_spectrum_plot <- corr_data %>%
 pol_spectrum_plot
 
 # Marital Status
-dplyr::filter(!(marital==0)) %>%
+marital_plot <- corr_data %>%
+  dplyr::filter(!(marital==0)) %>%
   group_by(marital) %>%
   dplyr::summarise(maritalcount = n()) %>%
   dplyr::select(marital, maritalcount) %>%
@@ -293,7 +294,7 @@ dplyr::filter(!(marital==0)) %>%
   guides(scale = 'none') + 
   xlab("Marital Status") + 
   ylab("Count")
-pol_spectrum_plot
+marital_plot
 
 #=================
 # Visualizations bivariate
@@ -304,7 +305,7 @@ religion_who_plot <- corr_data %>%
   dplyr::arrange(religion) %>%
   ggplot(aes(x = as.factor(religion), 
            fill = as.factor(whovoted))) + 
-  geom_bar(position = "stack") + 
+  geom_bar(position = "dodge") + 
   guides(scale = 'none') + coord_flip() + theme_minimal() + 
   xlab("Religion") + labs(fill = "Who Voted") +
   ylab("Count")
@@ -316,7 +317,7 @@ income_who_plot <- corr_data %>%
   dplyr::arrange(desc(income)) %>%
 ggplot(aes(x = as.factor(income), 
                       fill = as.factor(whovoted))) + 
-  geom_bar(position = "stack") + coord_flip() + theme_minimal() + 
+  geom_bar(position = "dodge") + coord_flip() + theme_minimal() + 
   guides(scale = 'none') + 
   xlab("Income") + labs(fill = "Who voted") +
   ylab("Count")
@@ -327,7 +328,7 @@ ethincity_who_plot <- corr_data %>%
   dplyr::filter(!(ethnicity==0)) %>%
 ggplot(aes(x = as.factor(ethnicity), 
                       fill = as.factor(whovoted))) + 
-  geom_bar(position = "stack") + coord_flip() + theme_minimal() + 
+  geom_bar(position = "dodge") + coord_flip() + theme_minimal() + 
   guides(scale = 'none') + 
   xlab("Ethnicity") + labs(fill = "Who voted") +
   ylab("Count")
@@ -339,7 +340,7 @@ education_who_plot <- corr_data %>%
   dplyr::arrange(desc(education)) %>%
 ggplot(aes(x = as.factor(education), 
                       fill = as.factor(whovoted))) + 
-  geom_bar(position = "stack") + coord_flip() + theme_minimal() +  
+  geom_bar(position = "dodge") + coord_flip() + theme_minimal() +  
   guides(scale = 'none') + 
   xlab("Education") + labs(fill = "Who voted") +
   ylab("Count")
@@ -362,7 +363,7 @@ party_reg_who_plot <- corr_data %>%
   dplyr::arrange(desc(party_reg)) %>%
 ggplot(aes(x = as.factor(party_reg), 
                       fill = as.factor(whovoted))) + 
-  geom_bar(position = "stack") + coord_flip() + theme_minimal() +  
+  geom_bar(position = "dodge") + coord_flip() + theme_minimal() +  
   guides(scale = 'none') + 
   xlab("party Registration") + labs(fill = "Who voted") +
   ylab("Count")
@@ -374,7 +375,7 @@ marital_who_plot <- corr_data %>%
   dplyr::arrange(desc(marital)) %>%
   ggplot(aes(x = as.factor(marital), 
              fill = as.factor(whovoted))) + 
-  geom_bar(position = "stack") + coord_flip() + theme_minimal() +  
+  geom_bar(position = "dodge") + coord_flip() + theme_minimal() +  
   guides(scale = 'none') + 
   xlab("Marital Status") + labs(fill = "Who voted") +
   ylab("Count")
@@ -386,7 +387,7 @@ pol_spec_who_plot <- corr_data %>%
   dplyr::arrange(desc(pol_spectrum)) %>%
   ggplot(aes(x = as.factor(pol_spectrum), 
              fill = as.factor(whovoted))) + 
-  geom_bar(position = "stack") + coord_flip() + theme_minimal() + 
+  geom_bar(position = "dodge") + coord_flip() + theme_minimal() + 
   guides(scale = 'none') + 
   xlab("Political Spectrum") + labs(fill = "Who voted") +
   ylab("Count")
