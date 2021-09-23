@@ -193,7 +193,6 @@ print(missing_data)</code></pre>
 <h2>Approach</h2>
 <ul>
 <li>pick key variables based on the codebook</li>
-<li>check correlations</li>
 <li>test using chi-square tests</li>
 <li>generate univariate and bivariate visualizations of selected variables</li>
 </ul>
@@ -201,28 +200,73 @@ print(missing_data)</code></pre>
 df[is.na(df)] &lt;- 0
 
 corr_data &lt;- df %&gt;%
-  dplyr::select(party_reg, state_reg, pol_spectrum, religion, age, marital, 
+  filter(whovoted %in% c(1,2)) %&gt;%
+  mutate(whovoted = recode(whovoted, &quot;1&quot; = &quot;Biden&quot;,&quot;2&quot; = &quot;Trump&quot;),
+         vote = recode(vote, &quot;1&quot; = &quot;Yes&quot;,&quot;2&quot; = &quot;No&quot;,&quot;0&quot; = &quot;0&quot;),
+         ethnicity = recode(ethnicity, &quot;1&quot; = &quot;White, non-Hispanic&quot;,&quot;2&quot; = &quot;Black, non-Hispanic&quot;,
+                            &quot;3&quot; = &quot;Hispanic&quot;,&quot;4&quot; = &quot;Asian or Native Hawaiian&quot;,
+                            &quot;5&quot; = &quot;Native American&quot;,&quot;6&quot; = &quot;Multiple&quot;,&quot;0&quot; = &quot;0&quot;),
+         income = recode(income,&quot;1&quot; = &quot;Below $10k&quot;,&quot;2&quot; = &quot;$10k - $15k&quot;,
+                         &quot;3&quot; = &quot;$15k - $20k&quot;,&quot;4&quot; = &quot;$20k - $25k&quot;,
+                         &quot;5&quot; = &quot;$25k - $30k&quot;,&quot;6&quot; = &quot;$30k - $35k&quot;,
+                         &quot;7&quot; = &quot;$35k - $40k&quot;,&quot;8&quot; = &quot;$40k - $45k&quot;,
+                         &quot;9&quot; = &quot;$45k - %50ik&quot;,&quot;10&quot; = &quot;$50k - $60k&quot;,
+                         &quot;11&quot; = &quot;$60k - $65k&quot;,&quot;12&quot; = &quot;$65k - $70k&quot;,
+                         &quot;13&quot; = &quot;$70k - $75k&quot;,&quot;14&quot; = &quot;$75k - $80k&quot;,
+                         &quot;15&quot; = &quot;$80k - $90k&quot;,&quot;16&quot; = &quot;$90k - $100k&quot;,
+                         &quot;17&quot; = &quot;$100k - $110k&quot;,&quot;18&quot; = &quot;$110k - $125k&quot;,
+                         &quot;19&quot; = &quot;$125k - $150k&quot;,&quot;20&quot; = &quot;$150k - $175k&quot;,
+                         &quot;21&quot; = &quot;$175k - $250k&quot;,&quot;22&quot; = &quot;$250k +&quot;,&quot;0&quot; = &quot;0&quot;),
+         education = recode(education,&quot;1&quot; = &quot;Less than high school&quot;,&quot;2&quot; = &quot;High school credential&quot;,
+                            &quot;3&quot; = &quot;Some post-high school, no bachelor&#39;s degree&quot;,&quot;4&quot; = &quot;Bachelor&#39;s degree&quot;,
+                            &quot;5&quot; = &quot;Graduate degree&quot;,&quot;0&quot; = &quot;0&quot;),
+         marital = recode(marital,&quot;1&quot; = &quot;Married: Spouse Present&quot;,&quot;2&quot; = &quot;Married: Spouse Absent&quot;,
+                          &quot;3&quot; = &quot;Widowed&quot;,&quot;4&quot; = &quot;Divorced&quot;,
+                          &quot;5&quot; = &quot;Separated&quot;,&quot;6&quot; = &quot;Never Married&quot;,&quot;0&quot; = &quot;0&quot;),
+         religion = recode(religion,&quot;1&quot; = &quot;Mainline Protestant&quot;,&quot;2&quot; = &quot;Black Protestant&quot;,
+                           &quot;3&quot; = &quot;Undifferentiated Protestant&quot;,&quot;4&quot; = &quot;Undifferentiated Protestant&quot;,
+                           &quot;5&quot; = &quot;Roman Catholic&quot;,&quot;6&quot; = &quot;Other Christian&quot;,
+                           &quot;7&quot; = &quot;Jewish&quot;,&quot;8&quot; = &quot;Other&quot;,
+                           &quot;9&quot; = &quot;Non-Religious&quot;,&quot;0&quot; = &quot;0&quot;),
+         pol_spectrum  = recode(pol_spectrum,&quot;1&quot; = &quot;Extremely liberal&quot;,&quot;2&quot; = &quot;Liberal&quot;,
+                           &quot;3&quot; = &quot;Slightly liberal&quot;,&quot;4&quot; = &quot;Moderate&quot;,
+                           &quot;5&quot; = &quot;Slightly conservative&quot;,&quot;6&quot; = &quot;Conservative&quot;,
+                           &quot;7&quot; = &quot;Extremely conservative&quot;,&quot;0&quot; = &quot;0&quot;),
+         party_reg = recode(party_reg,&quot;1&quot; = &quot;Democrat&quot;,&quot;2&quot; = &quot;Republican&quot;,
+                            &quot;4&quot; = &quot;None or &#39;independent&#39;&quot;,&quot;4&quot; = &quot;Other&quot;,&quot;0&quot; = &quot;0&quot;)
+         
+         ) %&gt;%
+  dplyr::select(party_reg, pol_spectrum, religion, age, marital, 
                 education, income,  ethnicity,vote,whovoted)</code></pre>
-<pre class="{r}"><code># Correlation
-correlation_matrix = cor(corr_data)
-# summarize the correlation matrix
-print(correlation_matrix)
-# plot correlation
-corrplot(correlation_matrix, method = &#39;number&#39;, bg=&quot;#676767&quot; ,tl.col=&#39;black&#39;, tl.cex=.75) </code></pre>
-<pre class="{r}"><code>#chi-square tests
+<p>##chi-square tests</p>
+<pre class="{r}"><code># Party registration and who voted
 chisq.test(corr_data$party_reg, corr_data$whovoted) 
+
+# State registration and who voted
 chisq.test(corr_data$state_reg, corr_data$whovoted) 
+
+# Political spectrum and who voted
 chisq.test(corr_data$pol_spectrum, corr_data$whovoted) 
+
+# religion and who voted
 chisq.test(corr_data$religion, corr_data$whovoted)
+
+# Marital and who voted
 chisq.test(corr_data$marital, corr_data$whovoted)
+
+# Education and who voted
 chisq.test(corr_data$education, corr_data$whovoted)
+
+# income and who voted
 chisq.test(corr_data$income, corr_data$whovoted)
+
+# ethnicity and who voted
 chisq.test(corr_data$ethnicity, corr_data$whovoted)
-chisq.test(corr_data$vote, corr_data$whovoted)</code></pre>
+</code></pre>
 </div>
 <div id="univariate-visualizations" class="section level2">
 <h2>Univariate Visualizations</h2>
-<pre class="{r}"><code>#whovoted
+<pre class="{r}"><code># whovoted
 whovoted_plot &lt;- corr_data %&gt;%
   dplyr::filter(!(whovoted==0)) %&gt;%
   group_by(whovoted) %&gt;%
@@ -236,8 +280,10 @@ whovoted_plot &lt;- corr_data %&gt;%
   xlab(&quot;Candidates&quot;) + 
   ylab(&quot;Count&quot;)
 whovoted_plot</code></pre>
-<pre class="{r}"><code>age_plot &lt;- corr_data %&gt;%
-  ggplot(aes(x=age)) + geom_histogram(binwidth = 10, fill = &quot;#0073C2FF&quot;) + 
+<pre class="{r}"><code># Age
+age_plot &lt;- corr_data %&gt;%
+  filter(!age==0) %&gt;%
+  ggplot(aes(x=age)) + geom_histogram(binwidth = 10,fill = &quot;#0073C2FF&quot;) + #color #fill=&#39;white&#39;
   theme_minimal() + guides(fill = FALSE) + 
   guides(scale = &#39;none&#39;) + 
   ggtitle(&quot;Age plot&quot;) + 
@@ -283,6 +329,19 @@ ethnicity_plot &lt;- corr_data %&gt;%
   xlab(&quot;ethnicity&quot;) + 
   ylab(&quot;Count&quot;)
 ethnicity_plot</code></pre>
+<pre class="{r}"><code># Education
+education_plot &lt;- corr_data %&gt;%
+  dplyr::filter(!(education==0)) %&gt;%
+  group_by(education) %&gt;%
+  dplyr::summarise(educationcount = n()) %&gt;%
+  dplyr::select(education, educationcount) %&gt;%
+  ggplot(aes(x = reorder(as.factor(education),educationcount), y = educationcount)) + 
+  geom_bar(stat = &quot;identity&quot;,fill = &quot;#0073C2FF&quot;) + 
+  coord_flip() + theme_minimal() + 
+  guides(scale = &#39;none&#39;) + 
+  xlab(&quot;education&quot;) + 
+  ylab(&quot;Count&quot;)
+education_plot</code></pre>
 <pre class="{r}"><code># Party registration
 party_reg_plot &lt;- corr_data %&gt;%
   dplyr::filter(!(party_reg==0)) %&gt;%
@@ -296,32 +355,6 @@ party_reg_plot &lt;- corr_data %&gt;%
   xlab(&quot;party_reg&quot;) + 
   ylab(&quot;Count&quot;)
 party_reg_plot</code></pre>
-<pre class="{r}"><code># State registration
-state_reg_plot &lt;- corr_data %&gt;%
-  dplyr::filter(!(state_reg==0)) %&gt;%
-  group_by(state_reg) %&gt;%
-  dplyr::summarise(state_regcount = n()) %&gt;%
-  dplyr::select(state_reg, state_regcount) %&gt;%
-  ggplot(aes(x = reorder(as.factor(state_reg),state_regcount), y = state_regcount)) + 
-  geom_bar(stat = &quot;identity&quot;,fill = &quot;#0073C2FF&quot;) + 
-  coord_flip() + theme_minimal() + 
-  guides(scale = &#39;none&#39;) + 
-  xlab(&quot;state_reg&quot;) + 
-  ylab(&quot;Count&quot;)
-state_reg_plot</code></pre>
-<pre class="{r}"><code># Vote
-vote_plot &lt;- corr_data %&gt;%
-  dplyr::filter(!(vote==0)) %&gt;%
-  group_by(vote) %&gt;%
-  dplyr::summarise(votecount = n()) %&gt;%
-  dplyr::select(vote, votecount) %&gt;%
-  ggplot(aes(x = reorder(as.factor(vote),votecount), y = votecount)) + 
-  geom_bar(stat = &quot;identity&quot;,fill = &quot;#0073C2FF&quot;) + 
-  coord_flip() + theme_minimal() + 
-  guides(scale = &#39;none&#39;) + 
-  xlab(&quot;vote&quot;) + 
-  ylab(&quot;Count&quot;)
-vote_plot</code></pre>
 <pre class="{r}"><code># Political spectrum
 pol_spectrum_plot &lt;- corr_data %&gt;%
   dplyr::filter(!(pol_spectrum==0)) %&gt;%
@@ -332,7 +365,7 @@ pol_spectrum_plot &lt;- corr_data %&gt;%
   geom_bar(stat = &quot;identity&quot;,fill = &quot;#0073C2FF&quot;) + 
   coord_flip() + theme_minimal() + 
   guides(scale = &#39;none&#39;) + 
-  xlab(&quot;pol_spectrum&quot;) + 
+  xlab(&quot;Political spectrum&quot;) + 
   ylab(&quot;Count&quot;)
 pol_spectrum_plot</code></pre>
 <pre class="{r}"><code># 1 biden, 2 Trump
@@ -349,27 +382,24 @@ religion_who_plot &lt;- corr_data %&gt;%
 </div>
 <div id="bivariate-visualizations" class="section level2">
 <h2>Bivariate Visualizations</h2>
-<ul>
-<li>2 means Trump</li>
-</ul>
 <pre class="{r}"><code># Religion vs whovoted
 religion_who_plot &lt;- corr_data %&gt;%
   dplyr::filter(!(religion==0)) %&gt;%
-  dplyr::filter(whovoted %in% c(2)) %&gt;%
+  dplyr::arrange(religion) %&gt;%
   ggplot(aes(x = as.factor(religion), 
            fill = as.factor(whovoted))) + 
-  geom_bar(position = &quot;stack&quot;) + theme_minimal() + 
-  guides(scale = &#39;none&#39;) + 
-  xlab(&quot;Religion&quot;) + labs(fill = &quot;Who voted&quot;) +
+  geom_bar(position = &quot;dodge&quot;) + 
+  guides(scale = &#39;none&#39;) + coord_flip() + theme_minimal() + 
+  xlab(&quot;Religion&quot;) + labs(fill = &quot;Who Voted&quot;) +
   ylab(&quot;Count&quot;)
 religion_who_plot</code></pre>
 <pre class="{r}"><code># Income vs whovoted
 income_who_plot &lt;- corr_data %&gt;%
   dplyr::filter(!(income==0)) %&gt;%
-  dplyr::filter(whovoted %in% c(2)) %&gt;%
+  dplyr::arrange(desc(income)) %&gt;%
 ggplot(aes(x = as.factor(income), 
                       fill = as.factor(whovoted))) + 
-  geom_bar(position = &quot;stack&quot;) + theme_minimal() + 
+  geom_bar(position = &quot;stack&quot;) + coord_flip() + theme_minimal() + 
   guides(scale = &#39;none&#39;) + 
   xlab(&quot;Income&quot;) + labs(fill = &quot;Who voted&quot;) +
   ylab(&quot;Count&quot;)
@@ -377,65 +407,53 @@ income_who_plot</code></pre>
 <pre class="{r}"><code># Ethnicity vs whovoted
 ethincity_who_plot &lt;- corr_data %&gt;%
   dplyr::filter(!(ethnicity==0)) %&gt;%
-  dplyr::filter(whovoted %in% c(2)) %&gt;%
 ggplot(aes(x = as.factor(ethnicity), 
                       fill = as.factor(whovoted))) + 
-  geom_bar(position = &quot;stack&quot;) + theme_minimal() + 
+  geom_bar(position = &quot;dodge&quot;) + coord_flip() + theme_minimal() + 
   guides(scale = &#39;none&#39;) + 
-  xlab(&quot;Religion&quot;) + labs(fill = &quot;Who voted&quot;) +
+  xlab(&quot;Ethnicity&quot;) + labs(fill = &quot;Who voted&quot;) +
   ylab(&quot;Count&quot;)
 ethincity_who_plot </code></pre>
 <pre class="{r}"><code># Education vs whovoted
 education_who_plot &lt;- corr_data %&gt;%
   dplyr::filter(!(education==0)) %&gt;%
-  dplyr::filter(whovoted %in% c(2)) %&gt;%
+  dplyr::arrange(desc(education)) %&gt;%
 ggplot(aes(x = as.factor(education), 
                       fill = as.factor(whovoted))) + 
-  geom_bar(position = &quot;stack&quot;) + theme_minimal() + 
+  geom_bar(position = &quot;dodge&quot;) + coord_flip() + theme_minimal() +  
   guides(scale = &#39;none&#39;) + 
   xlab(&quot;Education&quot;) + labs(fill = &quot;Who voted&quot;) +
   ylab(&quot;Count&quot;)
 education_who_plot</code></pre>
-<pre class="{r}"><code># State registration vs whovoted
-state_reg_who_plot &lt;- corr_data %&gt;%
-  dplyr::filter(!(state_reg==0)) %&gt;%
-  dplyr::filter(whovoted %in% c(2)) %&gt;%
-ggplot(aes(x = as.factor(state_reg), 
-                      fill = as.factor(whovoted))) + 
-  geom_bar(position = &quot;stack&quot;) + theme_minimal() + 
-  guides(scale = &#39;none&#39;) + 
-  xlab(&quot;State Registration&quot;) + labs(fill = &quot;Who voted&quot;) +
-  ylab(&quot;Count&quot;)
-state_reg_who_plot</code></pre>
 <pre class="{r}"><code># Party registration vs whovoted
 party_reg_who_plot &lt;- corr_data %&gt;%
   dplyr::filter(!(party_reg==0)) %&gt;%
-  dplyr::filter(whovoted %in% c(2)) %&gt;%
+  dplyr::arrange(desc(party_reg)) %&gt;%
 ggplot(aes(x = as.factor(party_reg), 
                       fill = as.factor(whovoted))) + 
-  geom_bar(position = &quot;stack&quot;) + theme_minimal() + 
+  geom_bar(position = &quot;dodge&quot;) + coord_flip() + theme_minimal() +  
   guides(scale = &#39;none&#39;) + 
   xlab(&quot;party Registration&quot;) + labs(fill = &quot;Who voted&quot;) +
   ylab(&quot;Count&quot;)
-party_reg_who_plot</code></pre>
-<pre class="{r}"><code># Vote vs whovoted
-vote_who_plot &lt;- corr_data %&gt;%
-  dplyr::filter(!(vote==0)) %&gt;%
-  dplyr::filter(whovoted %in% c(2)) %&gt;%
-ggplot(aes(x = as.factor(vote), 
-                      fill = as.factor(whovoted))) + 
-  geom_bar(position = &quot;stack&quot;) + theme_minimal() + 
+party_reg_who_plot </code></pre>
+<pre class="{r}"><code># Marital status vs who voted
+marital_who_plot &lt;- corr_data %&gt;%
+  dplyr::filter(!(marital==0)) %&gt;%
+  dplyr::arrange(desc(marital)) %&gt;%
+  ggplot(aes(x = as.factor(marital), 
+             fill = as.factor(whovoted))) + 
+  geom_bar(position = &quot;dodge&quot;) + coord_flip() + theme_minimal() +  
   guides(scale = &#39;none&#39;) + 
-  xlab(&quot;Vote&quot;) + labs(fill = &quot;Who voted&quot;) +
+  xlab(&quot;Marital Status&quot;) + labs(fill = &quot;Who voted&quot;) +
   ylab(&quot;Count&quot;)
-vote_who_plot</code></pre>
+marital_who_plot</code></pre>
 <pre class="{r}"><code># Political spectrum vs whovoted
 pol_spec_who_plot &lt;- corr_data %&gt;%
   dplyr::filter(!(pol_spectrum==0)) %&gt;%
-  dplyr::filter(whovoted %in% c(2)) %&gt;%
+  dplyr::arrange(desc(pol_spectrum)) %&gt;%
   ggplot(aes(x = as.factor(pol_spectrum), 
              fill = as.factor(whovoted))) + 
-  geom_bar(position = &quot;stack&quot;) + theme_minimal() + 
+  geom_bar(position = &quot;dodge&quot;) + coord_flip() + theme_minimal() + 
   guides(scale = &#39;none&#39;) + 
   xlab(&quot;Political Spectrum&quot;) + labs(fill = &quot;Who voted&quot;) +
   ylab(&quot;Count&quot;)
@@ -443,7 +461,6 @@ pol_spec_who_plot</code></pre>
 <pre class="{r}"><code># Age vs whovoted
 age_who_plot &lt;- corr_data %&gt;%
   dplyr::filter(!(age==0)) %&gt;%
-  dplyr::filter(whovoted %in% c(2)) %&gt;%
   ggplot(aes(x = age, 
              fill = as.factor(whovoted))) + 
   geom_histogram(binwidth = 5) + theme_minimal() + 
