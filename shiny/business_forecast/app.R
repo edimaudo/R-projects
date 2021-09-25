@@ -22,3 +22,13 @@ for (package in packages) {
 forecast_df <- read_excel("Forecast Data.xlsx",sheet="Data")
 year_info <- read_excel("Forecast Data.xlsx",sheet="YearInfo")
 week_info <- read_excel("Forecast Data.xlsx",sheet="WeekInfo")
+
+#=============
+# Forecast Inputs
+#=============
+horizon_info <- c(1:50) #default 14
+frequency_info <- c(7, 12, 52, 365)
+difference_info <- c("Yes","No")
+log_info <- c("Yes","No")
+model_info <- c('auto-arima','auto-exponential','simple-exponential',
+                'double-exponential','triple-exponential', 'tbat')
