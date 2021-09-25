@@ -32,3 +32,7 @@ difference_info <- c("Yes","No")
 log_info <- c("Yes","No")
 model_info <- c('auto-arima','auto-exponential','simple-exponential',
                 'double-exponential','triple-exponential', 'tbat')
+
+#=============
+# Define UI for application
+#=============
