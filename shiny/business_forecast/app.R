@@ -33,11 +33,9 @@ difference_info <- c("Yes","No")
 log_info <- c("Yes","No")
 model_info <- c('auto-arima','auto-exponential','simple-exponential',
                 'double-exponential','triple-exponential', 'tbat')
-
 #=============
 # Application UI
 #=============
-
 ui <- dashboardPage(
     dashboardHeader(title = "Business Forecast"),
     dashboardSidebar(
@@ -95,14 +93,6 @@ ui <- dashboardPage(
                                         choices = frequency_info, selected = 7),
                             sliderInput("traintestInput", "Train/Test Split",
                                         min = 0, max = 1,value = 0.8),
-                            #checkboxGroupInput("modelInput", "Models",choices = model_info, 
-                            #                   selected = model_info),
-                            #sliderInput("autoInput", "Auto-regression",
-                            #            min = 0, max = 100,value = 0),
-                            #sliderInput("difference2Input", "Difference",
-                            #            min = 0, max = 52,value = 0),
-                            #sliderInput("maInput", "Moving Average",
-                            #            min = 0, max = 100,value = 0),
                             submitButton("Submit")
                         ),
                         mainPanel(
@@ -127,6 +117,41 @@ ui <- dashboardPage(
 #=============
 server <- function(input, output,session) {
     
+    # decomoposition plot
+    output$decompositionPlot <- renderPlot({
+        
+    })
+    
+    # multi season output
+    output$multidecompositionPlot <- renderPlot({
+        
+    })
+    
+    # ACF output
+    output$acfPlot <- renderPlot({
+        
+    })
+    
+    # PACF output
+    output$pacfPlot <- renderPlot({
+        
+    })
+    
+    # Forecast Visualization
+    output$forecastPlot <- renderPlot({
+        
+    })
+    
+    
+    # Forecast Results/Output
+    output$forecastOutput <- DT::renderDataTable({
+        
+    })
+    
+    # Forecast Accuracy
+    output$accuracyOutput <- DT::renderDataTable({
+        
+    })
 }
 
 shinyApp(ui, server)
