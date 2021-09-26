@@ -24,6 +24,28 @@ year_info <- read_excel("Forecast Data.xlsx",sheet="YearInfo")
 week_info <- read_excel("Forecast Data.xlsx",sheet="WeekInfo")
 
 #=============
+# Data munging
+#=============
+forecast_aggregate <- forecast_df %>%
+    inner_join(week_info,by = "WeekNo") %>%
+    inner_join(year_info,by = "Year") %>%
+    group_by(YearNo, Month2, Website) %>%
+    dplyr::summarise(Turnover_total = sum(Turnover), 
+                     Profit_total = sum(Profit), 
+                     CustomerCount_total = sum(CustomerCount)) %>%
+    select(YearNo, Month2, Website, Turnover_total, Profit_total, CustomerCount_total)
+
+forecast_aggregate$dateInfo <- paste(forecast_aggregate$YearNo,forecast_aggregate$Month2,sep="-") 
+forecast_aggregate$dateInfo2 <- as.Date(paste(forecast_aggregate$dateInfo,"-01",sep=""))
+
+forecast_aggregate_overall <- forecast_aggregate %>%
+    group_by(dateInfo2) %>%
+    dplyr::summarise(Turnover_total = sum(Turnover_total), 
+                     Profit_total = sum(Profit_total), 
+                     CustomerCount_total = sum(CustomerCount_total)) %>%
+    select(dateInfo2, Turnover_total, Profit_total, CustomerCount_total)
+
+#=============
 # Forecast Inputs
 #=============
 segment_info <- c("Profit","Turnover","Customer Count")
