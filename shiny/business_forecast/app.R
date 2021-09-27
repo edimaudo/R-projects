@@ -139,14 +139,14 @@ ui <- dashboardPage(
 #=============
 server <- function(input, output,session) {
 
-    
-    
+    #==================
     # decomoposition plot
+    #==================
     output$decompositionPlot <- renderPlot({
         
         if (input$segmentInput == 'Profit'){
             business.xts <- xts(x = df$Profit, order.by = df$dateInfo2) 
-        } else if (input$segmentInput = 'Turnover'){
+        } else if (input$segmentInput == 'Turnover'){
             business.xts <- xts(x = df$Turnover, order.by = df$dateInfo2) 
         } else {
             business.xts <- xts(x = df$CustomerCount, order.by = df$dateInfo2) 
@@ -161,35 +161,114 @@ server <- function(input, output,session) {
                             end = business.end, frequency = as.numeric(input$frequencyInput)) 
         
         
+        if (input$differenceInput == "Yes"){
+            business.data <- diff(business.data, differences = as.numeric(input$differenceNumericInput)) 
+        }
+        #Decompose the Time Series
+        business.data %>%
+            decompose() %>%
+            autoplot()
+        
     })
-    
+    #==================
     # multi season output
+    #==================
     output$multidecompositionPlot <- renderPlot({
+        if (input$segmentInput == 'Profit'){
+            business.xts <- xts(x = df$Profit, order.by = df$dateInfo2) 
+        } else if (input$segmentInput == 'Turnover'){
+            business.xts <- xts(x = df$Turnover, order.by = df$dateInfo2) 
+        } else {
+            business.xts <- xts(x = df$CustomerCount, order.by = df$dateInfo2) 
+        }
         
+        business.monthly <- apply.monthly(business.xts, mean) 
+        business.end <- floor(1*length(business.monthly)) 
+        business.data <- business.monthly[1:business.end,] 
+        business.start <- c(year(start(business.data)), month(start(business.data)))
+        business.end <- c(year(end(business.data)), month(end(business.data)))
+        business.data <- ts(as.numeric(business.data), start = business.start, 
+                            end = business.end, frequency = as.numeric(input$frequencyInput)) 
+        
+        
+        if (input$differenceInput == "Yes"){
+            business.data <- diff(business.data, differences = as.numeric(input$differenceNumericInput)) 
+        }
+        #Decompose the Time Series
+        business.data %>%
+            mstl() %>%
+            autoplot() 
     })
-    
+    #==================
     # ACF output
+    #==================
     output$acfPlot <- renderPlot({
+        if (input$segmentInput == 'Profit'){
+            business.xts <- xts(x = df$Profit, order.by = df$dateInfo2) 
+        } else if (input$segmentInput == 'Turnover'){
+            business.xts <- xts(x = df$Turnover, order.by = df$dateInfo2) 
+        } else {
+            business.xts <- xts(x = df$CustomerCount, order.by = df$dateInfo2) 
+        }
         
+        business.monthly <- apply.monthly(business.xts, mean) 
+        business.end <- floor(1*length(business.monthly)) 
+        business.data <- business.monthly[1:business.end,] 
+        business.start <- c(year(start(business.data)), month(start(business.data)))
+        business.end <- c(year(end(business.data)), month(end(business.data)))
+        business.data <- ts(as.numeric(business.data), start = business.start, 
+                            end = business.end, frequency = as.numeric(input$frequencyInput)) 
+        
+        if (input$logInput == "No"){
+            ggAcf(business.data)
+        } else {
+            ggAcf(log(business.data))
+        }
     })
-    
+    #==================
     # PACF output
+    #==================
     output$pacfPlot <- renderPlot({
+        if (input$segmentInput == 'Profit'){
+            business.xts <- xts(x = df$Profit, order.by = df$dateInfo2) 
+        } else if (input$segmentInput == 'Turnover'){
+            business.xts <- xts(x = df$Turnover, order.by = df$dateInfo2) 
+        } else {
+            business.xts <- xts(x = df$CustomerCount, order.by = df$dateInfo2) 
+        }
         
+        business.monthly <- apply.monthly(business.xts, mean) 
+        business.end <- floor(1*length(business.monthly)) 
+        business.data <- business.monthly[1:business.end,] 
+        business.start <- c(year(start(business.data)), month(start(business.data)))
+        business.end <- c(year(end(business.data)), month(end(business.data)))
+        business.data <- ts(as.numeric(business.data), start = business.start, 
+                            end = business.end, frequency = as.numeric(input$frequencyInput)) 
+        
+        if (input$logInput == "No"){
+            ggPacf(business.data)
+        } else {
+            ggPacf(log(business.data))
+        }
     })
     
+    #==================
     # Forecast Visualization
+    #==================
     output$forecastPlot <- renderPlot({
         
     })
     
-    
+    #==================
     # Forecast Results/Output
+    #==================
     output$forecastOutput <- DT::renderDataTable({
         
     })
     
+    #==================
     # Forecast Accuracy
+    #==================
     output$accuracyOutput <- DT::renderDataTable({
         
     })
