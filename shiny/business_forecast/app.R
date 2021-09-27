@@ -38,12 +38,12 @@ forecast_aggregate <- forecast_df %>%
 forecast_aggregate$dateInfo <- paste(forecast_aggregate$YearNo,forecast_aggregate$Month2,sep="-") 
 forecast_aggregate$dateInfo2 <- as.Date(paste(forecast_aggregate$dateInfo,"-01",sep=""))
 
-forecast_aggregate_overall <- forecast_aggregate %>%
+df <- forecast_aggregate %>%
     group_by(dateInfo2) %>%
-    dplyr::summarise(Turnover_total = sum(Turnover_total), 
-                     Profit_total = sum(Profit_total), 
-                     CustomerCount_total = sum(CustomerCount_total)) %>%
-    select(dateInfo2, Turnover_total, Profit_total, CustomerCount_total)
+    dplyr::summarise(Turnover = sum(Turnover_total), 
+                     Profit = sum(Profit_total), 
+                     CustomerCount = sum(CustomerCount_total)) %>%
+    select(dateInfo2, Turnover, Profit, CustomerCount)
 
 #=============
 # Forecast Inputs
@@ -138,9 +138,28 @@ ui <- dashboardPage(
 # Server logic 
 #=============
 server <- function(input, output,session) {
+
+    
     
     # decomoposition plot
     output$decompositionPlot <- renderPlot({
+        
+        if (input$segmentInput == 'Profit'){
+            business.xts <- xts(x = df$Profit, order.by = df$dateInfo2) 
+        } else if (input$segmentInput = 'Turnover'){
+            business.xts <- xts(x = df$Turnover, order.by = df$dateInfo2) 
+        } else {
+            business.xts <- xts(x = df$CustomerCount, order.by = df$dateInfo2) 
+        }
+        
+        business.monthly <- apply.monthly(business.xts, mean) 
+        business.end <- floor(1*length(business.monthly)) 
+        business.data <- business.monthly[1:business.end,] 
+        business.start <- c(year(start(business.data)), month(start(business.data)))
+        business.end <- c(year(end(business.data)), month(end(business.data)))
+        business.data <- ts(as.numeric(business.data), start = business.start, 
+                            end = business.end, frequency = as.numeric(input$frequencyInput)) 
+        
         
     })
     
