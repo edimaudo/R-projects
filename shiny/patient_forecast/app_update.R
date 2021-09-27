@@ -186,7 +186,7 @@ server <- function(input, output,session) {
                                end = patient.end, frequency = as.numeric(input$frequencyInput))         
         } else {
             patient.end <- floor(1*length(patient.monthly)) 
-            patient.data <- ppatient.monthly[1:patient.end,] 
+            patient.data <- patient.monthly[1:patient.end,] 
             patient.start <- c(year (start(patient.data)), month(start(patient.data)))
             patient.end <- c(year(end(patient.data)), month(end(patient.data)))
             patient.data <- ts(as.numeric(patient.data), start = patient.start, 
