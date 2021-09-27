@@ -118,7 +118,7 @@ ui <- dashboardPage(
                             submitButton("Submit")
                         ),
                         mainPanel(
-                            h1("Forecast Analysis",style="text-align: center;"), 
+                            h1("Forecasting",style="text-align: center;"), 
                             tabsetPanel(type = "tabs",
                                         tabPanel(h4("Forecast Visualization",style="text-align: center;"), 
                                                  plotOutput("forecastPlot")),
@@ -256,7 +256,17 @@ server <- function(input, output,session) {
     # Forecast Visualization
     #==================
     output$forecastPlot <- renderPlot({
+       
         
+        
+        autoplot(patient.train) +
+            autolayer(auto_arima_model,series="auto arima", alpha=0.2) +
+            autolayer(auto_exp_model, series = "auto exponential", alpha=0.2) +
+            autolayer(simple_exp_model, series= "simple exponential", alpha=0.5) +
+            autolayer(double_exp_model, series = "double exponential", alpha=0.25) +
+            autolayer(triple_exp_model, series = "triple exponential", alpha=0.25) +
+            autolayer(tbat_model, series = "tbat", alpha=0.7) + 
+            guides(colour = guide_legend("Models")) 
     })
     
     #==================
