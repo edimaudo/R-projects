@@ -257,9 +257,42 @@ server <- function(input, output,session) {
     #==================
     output$forecastPlot <- renderPlot({
        
+        if (input$segmentInput == 'Profit'){
+            business.xts <- xts(x = df$Profit, order.by = df$dateInfo2) 
+        } else if (input$segmentInput == 'Turnover'){
+            business.xts <- xts(x = df$Turnover, order.by = df$dateInfo2) 
+        } else {
+            business.xts <- xts(x = df$CustomerCount, order.by = df$dateInfo2) 
+        }
         
+        business.data <- apply.monthly(business.xts, mean) 
+        business.end <- floor(as.numeric(input$traintestInput)*length(business.data)) 
+        business.train <- business.data[1:business.end,] 
+        business.test <- business.data[(business.end+1):length(business.data),]
+        business.start <- c(year (start(business.train)), month(start(business.train)))
+        business.end <- c(year(end(business.train)), month(end(business.train)))
+        business.train <- ts(as.numeric(business.train), start = business.start, 
+                             end = business.end, frequency = as.numeric(input$frequencyInput) )
+        business.start <- c(year (start(business.test)), month(start(business.test)))
+        business.end <- c(year(end(business.test)), month(end(business.test)))
+        business.test <- ts(as.numeric(business.test), start = business.start, 
+                            end = business.end, frequency = as.numeric(input$frequencyInput))
         
-        autoplot(patient.train) +
+        # set forecast horizon
+        forecast.horizon <- as.numeric(input$horizonInput)
+        
+        # models
+        auto_exp_model <- business.train %>% ets %>% forecast(h=forecast.horizon)
+        auto_arima_model <- business.train %>% auto.arima() %>% forecast(h=forecast.horizon)
+        simple_exp_model <- business.train %>% HoltWinters(beta=FALSE, gamma=FALSE) %>% 
+            forecast(h=forecast.horizon)
+        double_exp_model <- business.train %>% HoltWinters(beta = TRUE, gamma=FALSE) %>% 
+            forecast(h=forecast.horizon)
+        triple_exp_model <- business.train %>% HoltWinters(beta = TRUE, gamma = TRUE) %>% 
+            forecast(h=forecast.horizon)
+        tbat_model <- business.train %>% tbats %>% forecast(h=forecast.horizon)
+        
+        autoplot(business.train) +
             autolayer(auto_arima_model,series="auto arima", alpha=0.2) +
             autolayer(auto_exp_model, series = "auto exponential", alpha=0.2) +
             autolayer(simple_exp_model, series= "simple exponential", alpha=0.5) +
