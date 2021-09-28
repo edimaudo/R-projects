@@ -377,7 +377,7 @@ server <- function(input, output,session) {
                                end = patient.end, frequency = as.numeric(input$frequencyInput))
         } else {
             patient.data <- apply.monthly(patient.xts, mean) 
-            patient.data <- apply.weekly(patient.xts, mean) 
+            #patient.data <- apply.weekly(patient.xts, mean) 
             patient.end <- floor(as.numeric(input$traintestInput)*length(patient.data)) 
             patient.train <- patient.data[1:patient.end,] 
             patient.test <- patient.data[(patient.end+1):length(patient.data),]
