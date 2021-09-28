@@ -306,6 +306,74 @@ server <- function(input, output,session) {
     # Forecast Results/Output
     #==================
     output$forecastOutput <- DT::renderDataTable({
+        if (input$segmentInput == 'Profit'){
+            business.xts <- xts(x = df$Profit, order.by = df$dateInfo2) 
+        } else if (input$segmentInput == 'Turnover'){
+            business.xts <- xts(x = df$Turnover, order.by = df$dateInfo2) 
+        } else {
+            business.xts <- xts(x = df$CustomerCount, order.by = df$dateInfo2) 
+        }
+        
+        business.data <- apply.monthly(business.xts, mean) 
+        business.end <- floor(as.numeric(input$traintestInput)*length(business.data)) 
+        business.train <- business.data[1:business.end,] 
+        business.test <- business.data[(business.end+1):length(business.data),]
+        business.start <- c(year (start(business.train)), month(start(business.train)))
+        business.end <- c(year(end(business.train)), month(end(business.train)))
+        business.train <- ts(as.numeric(business.train), start = business.start, 
+                             end = business.end, frequency = as.numeric(input$frequencyInput) )
+        business.start <- c(year (start(business.test)), month(start(business.test)))
+        business.end <- c(year(end(business.test)), month(end(business.test)))
+        business.test <- ts(as.numeric(business.test), start = business.start, 
+                            end = business.end, frequency = as.numeric(input$frequencyInput))
+        
+        
+        #set forecast horizon
+        forecast.horizon <- as.numeric(input$horizonInput)
+        
+        # models
+        business_train_auto_exp_forecast <- ets(business.train) %>% 
+            forecast(h=forecast.horizon)    
+        
+        business_train_auto_arima_forecast <- auto.arima(business.train) %>% 
+            forecast(h=forecast.horizon)             
+        
+        business_train_simple_exp_forecast <- HoltWinters(business.train,
+                                                          beta=FALSE, 
+                                                          gamma=FALSE) %>% 
+            forecast(h=forecast.horizon)             
+        
+        business_train_double_exp_forecast <- HoltWinters(business.train,
+                                                          beta=TRUE, 
+                                                          gamma=FALSE) %>% 
+            forecast(h=forecast.horizon)  
+        
+        business_train_triple_exp_forecast <- HoltWinters(business.train,
+                                                          beta=TRUE, 
+                                                          gamma=TRUE) %>% 
+            forecast(h=forecast.horizon)  
+        
+        business_train_tbat_forecast <-  tbats(business.train) %>% forecast(h=forecast.horizon)
+        
+        # forecast output
+        auto_exp_forecast <- as.data.frame(business_train_auto_exp_forecast$mean)
+        auto_arima_forecast <- as.data.frame(business_train_auto_arima_forecast$mean)
+        simple_exp_forecast <- as.data.frame(business_train_simple_exp_forecast$mean)
+        double_exp_forecast <- as.data.frame(business_train_double_exp_forecast$mean)
+        triple_exp_forecast <- as.data.frame(business_train_triple_exp_forecast$mean)
+        tbat_forecast <- as.data.frame(business_train_tbat_forecast$mean)
+        
+        models <- c("auto-exponential","auto-arima","simple-exponential","double-exponential",
+                    "triple-exponential","tbat")
+        
+        outputInfo <- cbind(auto_exp_forecast,auto_arima_forecast,
+                            simple_exp_forecast,double_exp_forecast,
+                            triple_exp_forecast,tbat_forecast)
+        
+        colnames(outputInfo) <- models 
+        
+        # forecast value output
+        DT::datatable(outputInfo, options = list(scrollX = TRUE))
         
     })
     
