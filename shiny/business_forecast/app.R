@@ -381,6 +381,84 @@ server <- function(input, output,session) {
     # Forecast Accuracy
     #==================
     output$accuracyOutput <- DT::renderDataTable({
+        if (input$segmentInput == 'Profit'){
+            business.xts <- xts(x = df$Profit, order.by = df$dateInfo2) 
+        } else if (input$segmentInput == 'Turnover'){
+            business.xts <- xts(x = df$Turnover, order.by = df$dateInfo2) 
+        } else {
+            business.xts <- xts(x = df$CustomerCount, order.by = df$dateInfo2) 
+        }
+        
+        business.data <- apply.monthly(business.xts, mean) 
+        business.end <- floor(as.numeric(input$traintestInput)*length(business.data)) 
+        business.train <- business.data[1:business.end,] 
+        business.test <- business.data[(business.end+1):length(business.data),]
+        business.start <- c(year (start(business.train)), month(start(business.train)))
+        business.end <- c(year(end(business.train)), month(end(business.train)))
+        business.train <- ts(as.numeric(business.train), start = business.start, 
+                             end = business.end, frequency = as.numeric(input$frequencyInput) )
+        business.start <- c(year (start(business.test)), month(start(business.test)))
+        business.end <- c(year(end(business.test)), month(end(business.test)))
+        business.test <- ts(as.numeric(business.test), start = business.start, 
+                            end = business.end, frequency = as.numeric(input$frequencyInput))
+
+        #set forecast horizon
+        forecast.horizon <- as.numeric(input$horizonInput)
+        
+        # models
+        business_train_auto_exp_forecast <- ets(business.train) %>% 
+            forecast(h=forecast.horizon)    
+        
+        business_train_auto_arima_forecast <- auto.arima(business.train) %>% 
+            forecast(h=forecast.horizon)             
+        
+        business_train_simple_exp_forecast <- HoltWinters(business.train,
+                                                          beta=FALSE, 
+                                                          gamma=FALSE) %>% 
+            forecast(h=forecast.horizon)             
+        
+        business_train_double_exp_forecast <- HoltWinters(business.train,
+                                                          beta=TRUE, 
+                                                          gamma=FALSE) %>% 
+            forecast(h=forecast.horizon)  
+        
+        business_train_triple_exp_forecast <- HoltWinters(business.train,
+                                                          beta=TRUE, 
+                                                          gamma=TRUE) %>% 
+            forecast(h=forecast.horizon)  
+        
+        business_train_tbat_forecast <-  tbats(business.train) %>% forecast(h=forecast.horizon) 
+        
+        
+        auto_exp_accuracy <- as.data.frame(accuracy(business_train_auto_exp_forecast ,business.test))
+        auto_arima_accuracy <- as.data.frame(accuracy(business_train_auto_arima_forecast ,business.test))
+        simple_exp_accuracy <- as.data.frame(accuracy(business_train_simple_exp_forecast ,business.test))
+        double_exp_accuracy <- as.data.frame(accuracy(business_train_double_exp_forecast ,business.test))
+        triple_exp_accuracy <- as.data.frame(accuracy(business_train_triple_exp_forecast ,business.test))
+        tbat_accuracy <- as.data.frame(accuracy(business_train_tbat_forecast ,business.test))
+        
+        models<- c("auto-exponential","auto-exponential",
+                   "auto-arima","auto-arima",
+                   "simple-exponential","simple-exponential",
+                   "double-exponential","double-exponential",
+                   "triple-exponential","triple-exponential",
+                   "tbat","tbat")
+        
+        data<- c("Training set", 'Test set',
+                 "Training set", 'Test set',
+                 "Training set", 'Test set',
+                 "Training set", 'Test set',
+                 "Training set", 'Test set',
+                 "Training set", 'Test set')
+        
+        outputInfo <- rbind(auto_exp_accuracy,auto_arima_accuracy,
+                            simple_exp_accuracy,double_exp_accuracy,
+                            triple_exp_accuracy,tbat_accuracy)  
+        
+        outputInfo <- cbind(models, data, outputInfo)
+        
+        # forecast accuracy output
+        DT::datatable(outputInfo, options = list(scrollX = TRUE))
         
     })
 }
