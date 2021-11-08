@@ -1,3 +1,8 @@
+# 1,500 general liability claims randomly chosen from late settlement lags that were provided by Insurance Services Office, Inc. 
+# Each claim consists of an indemnity payment (Loss) and an allocated loss adjustment expense (ALAE). 
+# ALAE are types of insurance company expenses that are specifically attributable to the settlement of individual claims such as lawyers' fees and claims investigation expenses. 
+# The dataset also has the limit of the policy (Limit) and an attribute called Censored which gives the
+# row names of the indemnity payments that were capped at their policy limit.
 
 rm(list = ls()) #clear environment
 
@@ -6,7 +11,6 @@ rm(list = ls()) #clear environment
 #===================
 packages <- c('ggplot2', 'corrplot','tidyverse',"caret","dummies","fastDummies",'dplyr',
               'plyr','mlbench','caTools','doParallel')
-
 # Load packages
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
@@ -14,7 +18,6 @@ for (package in packages) {
     library(package, character.only=T)
   }
 }
-
 
 df <- read_csv(file.choose())
 
@@ -36,3 +39,4 @@ ggplot(df, aes(x=Loss)) + geom_histogram()
 
 # ALAE Histogram
 ggplot(df, aes(x=ALAE)) + geom_histogram()
+
