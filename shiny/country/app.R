@@ -65,7 +65,7 @@ ui <- dashboardPage(
                                         choices = country_1),
                             selectInput("countryInput2", "Country Information 2", 
                                         choices = country_2),
-                            sliderInput("YearInput", "Years", min = 1999, max = 2019, 
+                            sliderInput("YearInput", "Years", min = 1960, max = 2018, 
                                         value = year_info, step=1, ticks = FALSE, sep=""),
                             submitButton("Submit")
                         ),
