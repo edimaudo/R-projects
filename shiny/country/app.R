@@ -34,6 +34,8 @@ combined_country_info <- c(gdp_info,population_info)
 country_info <- as.vector(unique(combined_country_info))
 
 # Year
+#gdp$Year <- as.integer(gdp$Year)
+#population$Year <- as.integer(gdp$Year)
 gdp_year_info <- as.vector(unique(gdp$Year)) 
 population_year_info <- as.vector(unique(population$Year)) 
 combined_year_info <- c(gdp_year_info,population_year_info)
@@ -61,12 +63,10 @@ ui <- dashboardPage(
             tabItem(tabName = "gdp_population",
                     sidebarLayout(
                         sidebarPanel(
-                            selectInput("countryInput1", "Country Information", 
+                            selectInput("countryInput1", "Country Information",selected="Afghanistan", 
                                         choices = country_1),
-                            selectInput("countryInput2", "Country Information 2", 
+                            selectInput("countryInput2", "Country Information 2",selected="Algeria",
                                         choices = country_2),
-                            sliderInput("YearInput", "Years", min = 1960, max = 2018, value = 2018,
-                                        step=1, ticks = FALSE, sep=""),
                             submitButton("Submit")
                         ),
                         mainPanel(
@@ -90,14 +90,40 @@ ui <- dashboardPage(
 #===============
 server <- function(input, output,session) {
         
-    #data<-df[df$year >= input$Years[[1]] & df$year <= input$Years[[2]],]
+
     
     output$gdpPlot <- renderPlot({
-    
+
+        gdp_data <- gdp %>%
+            filter(Country %in% c(input$countryInput1,input$countryInput2))
+            
+        ggplot(data=gdp_data, aes(x=as.factor(Year), y=GDP_value, fill=Country)) +
+            geom_bar(stat="identity", width = 0.4) + theme_classic() +
+            labs(x = "Years", y = "GDP Value ($)", fill  = "Country") +
+            scale_y_continuous(labels = comma) +
+            scale_x_discrete() +
+            theme(legend.text = element_text(size = 10),
+                  legend.title = element_text(size = 10),
+                  axis.title = element_text(size = 15),
+                  axis.text = element_text(size = 10),
+                  axis.text.x = element_text(angle = 45, hjust = 1))
+        
     })
     
     output$populationPlot <- renderPlot({
+        population_data <- population %>%
+            filter(Country %in% c(input$countryInput1,input$countryInput2))
         
+        ggplot(data=population_data, aes(x=as.factor(Year), y=Population_value, fill=Country)) +
+            geom_bar(stat="identity", width = 0.4) + theme_classic() +
+            labs(x = "Years", y = "Population Value", fill  = "Country") +
+            scale_y_continuous(labels = comma) +
+            scale_x_discrete() +
+            theme(legend.text = element_text(size = 10),
+                  legend.title = element_text(size = 10),
+                  axis.title = element_text(size = 15),
+                  axis.text = element_text(size = 10),
+                  axis.text.x = element_text(angle = 45, hjust = 1))       
     })    
     
     }
