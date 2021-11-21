@@ -73,10 +73,10 @@ ui <- dashboardPage(
                             h2("GDP and Population",style="text-align: center;"), 
                             fluidRow(
                                 h3("GDP Plot",style="text-align: center;"),
-                                #plotOutput("forecastPlot"),
+                                plotOutput("gdpPlot"),
                                 br(),
                                 h3("Population Plot",style="text-align: center;"),
-                                #plotOutput("forecastPlot"),
+                                plotOutput("populationPlot"),
                             )
                         )
                     )
@@ -89,7 +89,17 @@ ui <- dashboardPage(
 # Define server logic 
 #===============
 server <- function(input, output,session) {
-
+        
+    #data<-df[df$year >= input$Years[[1]] & df$year <= input$Years[[2]],]
+    
+    output$gdpPlot <- renderPlot({
+    
+    })
+    
+    output$populationPlot <- renderPlot({
+        
+    })    
+    
     }
 
 shinyApp(ui, server)
