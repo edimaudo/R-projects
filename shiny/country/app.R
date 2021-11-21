@@ -65,17 +65,17 @@ ui <- dashboardPage(
                                         choices = country_1),
                             selectInput("countryInput2", "Country Information 2", 
                                         choices = country_2),
-                            sliderInput("YearInput", "Years", min = 1960, max = 2018, 
-                                        value = year_info, step=1, ticks = FALSE, sep=""),
+                            sliderInput("YearInput", "Years", min = 1960, max = 2018, value = 2018,
+                                        step=1, ticks = FALSE, sep=""),
                             submitButton("Submit")
                         ),
                         mainPanel(
                             h2("GDP and Population",style="text-align: center;"), 
                             fluidRow(
-                                h3("Forecast Plot",style="text-align: center;"),
+                                h3("GDP Plot",style="text-align: center;"),
                                 #plotOutput("forecastPlot"),
                                 br(),
-                                h3("Forecast Accuracy",style="text-align: center;"),
+                                h3("Population Plot",style="text-align: center;"),
                                 #plotOutput("forecastPlot"),
                             )
                         )
