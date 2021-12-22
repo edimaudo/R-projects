@@ -86,19 +86,47 @@ unique(opinion_survey$Q5)
 # categorical variable in a different colour. Add a suitable legend to the MCA biplot.
 opinion <- opinion_survey[,c(2:6)]
 res.mca <- MCA(opinion, graph = FALSE)
-fviz_mca_biplot(res.mca)
-fviz_mca_biplot()
+summary(res.mca)
+
+fviz_mca_biplot(res.mca,
+                col.ind = "black",
+                col.var = "cos2", 
+                gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+                legend.title = list(fill = "Groups", color = "Categories"),
+                )
 
 # c) Repeat (b) but this time colour all CLPs in the same colour while distinguishing the
 # samples from the different districts using colour coding.
-
-
+fviz_mca_biplot(res.mca,
+                col.ind="cos2",
+                gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+                legend.title = list(color = "Individual Groups"),
+)
 
 
 #==============
 # Question 6
 #==============
 
+# a)
+unique(manufacture$Feature.1)
+unique(manufacture$Feature.2)
+unique(manufacture$Feature.3)
+unique(manufacture$Feature.4)
+unique(manufacture$Feature.5)
+unique(manufacture$Feature.6)
+
+#b) (b) Use function CATPCAbipl as given in package UBbipl40 to carry out a Categorical PCA on the Manufacture data
+#install.packages("UBbipl40")
+#  package ‘UBbipl40’ is not available for this version of R (4.1.0)
+
 #==============
 # Question 7
 #==============
+
+
+
+#==============
+# Question 8
+#==============
+
