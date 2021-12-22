@@ -8,7 +8,7 @@ gc()
 #=============
 packages <- c('ggplot2', 'corrplot','tidyverse',"caret",'readxl','tidyr',
               'scales','dplyr','wordcloud2','gridExtra','stopwords',
-              'tidytext','stringr','reshape2', 
+              'tidytext','stringr','reshape2', 'wordcloud2',
               'textmineR','topicmodels','textclean','pals','lubridate')
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
@@ -16,6 +16,11 @@ for (package in packages) {
     library(package, character.only=T)
   }
 }
+
+
+
+
+
 
 #=============
 # Load data
