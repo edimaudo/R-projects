@@ -59,19 +59,46 @@ corrplot(corr, method = 'number',bg="#D3D3D3")
 
 # (e) Construct a CVA biplot of the Pollution data with 90% bags added. Interpret and discuss the use of this biplot. 
 
+#==============
 # Question 2
+#==============
 
-
+#==============
 # Question 3
+#==============
 
-
+#==============
 # Question 4
+#==============
 
-
+#==============
 # Question 5
+#==============
+# (a) Ensure that the answer to each question is a categorical variable.
+unique(opinion_survey$Q1)
+unique(opinion_survey$Q2)
+unique(opinion_survey$Q3)
+unique(opinion_survey$Q4)
+unique(opinion_survey$Q5)
+
+# b) Construct an MCA biplot on the associated indicator matrix of the questions. Do not
+# colour the sample points but label them using their IDs as labels. Represent each
+# categorical variable in a different colour. Add a suitable legend to the MCA biplot.
+opinion <- opinion_survey[,c(2:6)]
+res.mca <- MCA(opinion, graph = FALSE)
+fviz_mca_biplot(res.mca)
+fviz_mca_biplot()
+
+# c) Repeat (b) but this time colour all CLPs in the same colour while distinguishing the
+# samples from the different districts using colour coding.
 
 
+
+
+#==============
 # Question 6
+#==============
 
-
+#==============
 # Question 7
+#==============
