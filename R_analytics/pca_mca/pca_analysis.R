@@ -85,7 +85,10 @@ brand_euclidean <- dist(brand_info, method = "euclidean",
 # e)
 Brands.data.ord <- apply(brand_info, 2, sort, decreasing=F)
 
-#
+# f)
+# ??daisy
+brand_disimilarity <- daisy(Brands.data.ord, metric = c("gower"))
+
 
 #==============
 # Question 4
