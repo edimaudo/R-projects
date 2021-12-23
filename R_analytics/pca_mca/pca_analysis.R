@@ -36,6 +36,18 @@ set.seed(1)
 pollutant <- pollution[,c(2:10)]
 res.pca <- prcomp(pollutant,  scale = TRUE)
 
+# Results for Variables
+# res.var <- get_pca_var(res.pca)
+# res.var$coord          # Coordinates
+# res.var$contrib        # Contributions to the PCs
+# res.var$cos2           # Quality of representation 
+# 
+# # Results for individuals
+# res.ind <- get_pca_ind(res.pca)
+# res.ind$coord          # Coordinates
+# res.ind$contrib        # Contributions to the PCs
+# res.ind$cos2           # Quality of representation 
+
 # (a) Construct a PCA biplot of the Pollution data without showing alpha bags.
 fviz_pca_biplot(res.pca)
 
@@ -51,12 +63,15 @@ fviz_pca_biplot(res.pca,
 # (c) Repeat (a) but give an optimal two-dimensional display of the correlations between the variables.
 corr <- cor(pollutant)
 corrplot(corr, method = 'number',bg="#808080")
-var <- get_pca_var(res.pca)
-corrplot(var$cos2,method = 'number', is.corr = FALSE,bg="#808080")
-# (d) Give a detailed interpretation of the plots constructed in (a), (b), and (c).
 
 # (e) Construct a CVA biplot of the Pollution data with 90% bags added. 
+#install.packages("MultBiplotR")
+#library(MultBiplotR)
+#MultBiplotR::CanonicalBiplot(pollutant,)
 
+#install.packages('Morpho')
+library(Morpho)
+Morpho::CVA(res.pca, groups = )
 #==============
 # Question 2
 #==============
