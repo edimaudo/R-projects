@@ -45,7 +45,7 @@ fviz_pca_biplot(res.pca2,
 
 # (c) Repeat (a) but give an optimal two-dimensional display of the correlations between the variables.
 corr <- cor(pollutant)
-corrplot(corr, method = 'number',bg="#D3D3D3")
+corrplot(corr, method = 'number',bg="#808080")
 
 # (d) Give a detailed interpretation of the plots constructed in (a), (b), and (c).
 
@@ -54,6 +54,21 @@ corrplot(corr, method = 'number',bg="#D3D3D3")
 #==============
 # Question 2
 #==============
+pollutant_cluster4 <- pollution %>%
+  dplyr::filter(Cluster == 4) %>%
+  dplyr::select(-c(Cluster))
+
+# a) 
+pollutant_cluster4_euclidean <- dist(pollutant_cluster4, method = "euclidean", 
+                                     diag = TRUE, upper = TRUE)
+pollutant_cluster4_canberra <- dist(pollutant_cluster4, method = "canberra", 
+                                     diag = TRUE, upper = TRUE)
+
+# b)
+pollutant_cluster4_euclidean_scaled <- dist(cmdscale(pollutant_cluster4_euclidean), method = "euclidean", 
+                                     diag = TRUE, upper = TRUE)
+pollutant_cluster4_canberra_scaled <- dist(cmdscale(pollutant_cluster4_canberra), method = "canberra", 
+                                    diag = TRUE, upper = TRUE)
 
 #==============
 # Question 3
