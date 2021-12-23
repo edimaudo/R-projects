@@ -73,7 +73,19 @@ pollutant_cluster4_canberra_scaled <- dist(cmdscale(pollutant_cluster4_canberra)
 #==============
 # Question 3
 #==============
+brand_info <- brand %>%
+  dplyr::select(-c(Brand))
 
+# a) 
+brand_euclidean <- dist(brand_info, method = "euclidean", 
+                                     diag = TRUE, upper = TRUE)
+
+# c)
+
+# e)
+Brands.data.ord <- apply(brand_info, 2, sort, decreasing=F)
+
+#
 
 #==============
 # Question 4
