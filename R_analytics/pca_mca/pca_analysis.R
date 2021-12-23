@@ -21,25 +21,18 @@ brand <- read_excel("Brands.data.xlsx")
 manufacture <- read_excel("Manufacture.data.xlsx")
 opinion_survey <- read_excel("OpinionSurvey.data.xlsx")
 pollution <- read_excel("Pollution.data.xlsx")
-sympton <- read_excel("symptoms.data.xlsx")
+symptom <- read_excel("symptoms.data.xlsx")
+
+#===============
+# Analysis
+#===============
 
 #set seed
 set.seed(1)
 
-#summary(res.pca)
-# Find PCA to plot
-#layout(matrix(1:2, ncol=2))
-#screeplot(res.pca)
-#screeplot(res.pca, type="lines")
-
-# Plot PCA
-#fviz_pca_ind(res.pca)
-#fviz_pca_ind(res.pca, label="none", habillage=pollutant$Cluster)
-
 #==============
 # Question 1
 #==============
-
 pollutant <- pollution[,c(2:10)]
 res.pca <- prcomp(pollutant,  scale = TRUE)
 # (a) Construct a PCA biplot of the Pollution data without showing alpha bags.
@@ -50,14 +43,13 @@ fviz_pca_biplot(res.pca2,
                 geom.ind = "point",
                 habillage=pollution$Cluster,addEllipses=TRUE, ellipse.level=0.95)
 
-
 # (c) Repeat (a) but give an optimal two-dimensional display of the correlations between the variables.
 corr <- cor(pollutant)
 corrplot(corr, method = 'number',bg="#D3D3D3")
 
 # (d) Give a detailed interpretation of the plots constructed in (a), (b), and (c).
 
-# (e) Construct a CVA biplot of the Pollution data with 90% bags added. Interpret and discuss the use of this biplot. 
+# (e) Construct a CVA biplot of the Pollution data with 90% bags added. 
 
 #==============
 # Question 2
@@ -116,14 +108,42 @@ unique(manufacture$Feature.4)
 unique(manufacture$Feature.5)
 unique(manufacture$Feature.6)
 
-#b) (b) Use function CATPCAbipl as given in package UBbipl40 to carry out a Categorical PCA on the Manufacture data
-#install.packages("UBbipl40")
-#  package ‘UBbipl40’ is not available for this version of R (4.1.0)
+# b) Use function CATPCAbipl as given in package UBbipl40 to carry out a Categorical PCA on the Manufacture data
+# install.packages("UBbipl40")
+# package ‘UBbipl40’ is not available for this version of R (4.1.0)
 
 #==============
 # Question 7
 #==============
+# install.packages('CTT')
+library(CTT)
 
+# a)
+
+# i) ??`CTT-package`
+
+# ii)
+symptom_item_analysis <- CTT::itemAnalysis(as.data.frame(symptom))
+
+## (b) Obtain the ‘person’ scores and transform these scores to a scale having a mean of 100
+## and a standard deviation of 15.
+symptom_score <- CTT::score(as.data.frame(symptom))
+symptom_score_transform <- CTT::score.transform(symptom_score$score,mu.new = 100,sd.new = 15)
+
+## (c) Represent the transformed person scores in the form of a unidimensional scaling graph.
+symptom_score_transform_new_scores <- as.data.frame(symptom_score_transform$new.scores)
+colnames(symptom_score_transform_new_scores) <- c('Scores')
+
+# install.packages('smacof')
+# library(smacof)
+#symptom_uni <- (symptom_score_transform_new_scores)
+#fit.uni <- uniscale(symptom_uni)
+#plot(fit.uni)
+
+#ggplot(symptom_score_transform_new_scores,aes(x=Scores)) + geom_histogram()
+
+## (d) Construct a unidimensional scale (in table and graph form) for the items and explain
+## how to interpret the scale.
 
 
 #==============
