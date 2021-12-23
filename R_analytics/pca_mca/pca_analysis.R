@@ -35,18 +35,24 @@ set.seed(1)
 #==============
 pollutant <- pollution[,c(2:10)]
 res.pca <- prcomp(pollutant,  scale = TRUE)
+
 # (a) Construct a PCA biplot of the Pollution data without showing alpha bags.
 fviz_pca_biplot(res.pca)
 
 # (b) Repeat (a) but instead of sample labels show the different groups (clusters) as 90% bags.
-fviz_pca_biplot(res.pca2, 
+fviz_pca_biplot(res.pca, 
                 geom.ind = "point",
-                habillage=pollution$Cluster,addEllipses=TRUE, ellipse.level=0.95)
+                alpha.var =1,
+                habillage=pollution$Cluster,
+                addEllipses=TRUE, 
+                select.ind = list(cos2 = 0.90),
+                ellipse.level=0.95)
 
 # (c) Repeat (a) but give an optimal two-dimensional display of the correlations between the variables.
 corr <- cor(pollutant)
 corrplot(corr, method = 'number',bg="#808080")
-
+var <- get_pca_var(res.pca)
+corrplot(var$cos2,method = 'number', is.corr = FALSE,bg="#808080")
 # (d) Give a detailed interpretation of the plots constructed in (a), (b), and (c).
 
 # (e) Construct a CVA biplot of the Pollution data with 90% bags added. 
@@ -81,6 +87,9 @@ brand_euclidean <- dist(brand_info, method = "euclidean",
                                      diag = TRUE, upper = TRUE)
 
 # c)
+res <- optim(brand_info,fn=brand_euclidean,gr=NULL,method = c("Nelder-Mead", "BFGS", 
+                                                           "CG", "L-BFGS-B", "SANN",
+                                                                    "Brent"))
 
 # e)
 Brands.data.ord <- apply(brand_info, 2, sort, decreasing=F)
