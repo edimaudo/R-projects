@@ -23,10 +23,6 @@ opinion_survey <- read_excel("OpinionSurvey.data.xlsx")
 pollution <- read_excel("Pollution.data.xlsx")
 symptom <- read_excel("symptoms.data.xlsx")
 
-#===============
-# Analysis
-#===============
-
 #set seed
 set.seed(1)
 
@@ -102,14 +98,6 @@ pollution_cva_plot +
               mapping = aes(x0 = CV1.mean, y0 = CV2.mean, r = popn.radii),
               linetype = "dashed", 
               inherit.aes = FALSE) 
-
-
-
-
-
-
-
-
 #==============
 # Question 2
 #==============
