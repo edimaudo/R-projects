@@ -59,12 +59,11 @@ fviz_pca_biplot(res.pca,
                 confidence = 0.9,
                 ellipse.level=0.95)
 
-# (c) Repeat (a) but give an optimal two-dimensional display of the correlations between the variables.
+# (c) optimal two-dimensional display of the correlations between the variables.
 corr <- cor(pollutant)
 corrplot(corr, method = 'number',bg="#808080")
 
 # (e) Construct a CVA biplot of the Pollution data with 90% bags added. 
-#install.packages("ggforce")
 pollution_lda<- lda(Cluster ~ ., pollution)
 
 pollutant2 <- 
@@ -74,16 +73,16 @@ pollutant2 <-
 
 # calculate CV scores
 CVA.scores <- pollutant2 %*% pollution_lda$scaling
-
-# create data frame with scores
 pollution.CV <- data.frame(CVA.scores)
 pollution.CV$Cluster <- pollution$Cluster
 
+# Initial plot
 pollution_cva_plot <- ggplot(pollution.CV, aes(x = LD1, y = LD2)) + 
 geom_point(aes(color=as.factor(Cluster)), alpha=0.9) + 
 labs(x = "CV1", y = "CV2", color = "Cluster") + 
 coord_fixed(ratio=1) + theme_minimal()
 
+#install.packages("ggforce")
 library(ggforce)
 chi2 <-  qchisq(0.1,2, lower.tail=FALSE)
 CIregions.mean.and.pop <-
@@ -94,6 +93,7 @@ CIregions.mean.and.pop <-
             mean.radii = sqrt(chi2/n()),
             popn.radii = sqrt(chi2))
 
+# 90% bags plot
 pollution_cva_plot + 
   ggforce::geom_circle(data = CIregions.mean.and.pop,
               mapping = aes(x0 = CV1.mean, y0 = CV2.mean, r = mean.radii),
