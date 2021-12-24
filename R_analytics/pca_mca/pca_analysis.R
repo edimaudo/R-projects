@@ -112,9 +112,11 @@ pollutant_cluster4_canberra <- dist(pollutant_cluster4, method = "canberra",
                                      diag = TRUE, upper = TRUE)
 
 # b)
-pollutant_cluster4_euclidean_scaled <- dist(cmdscale(pollutant_cluster4_euclidean), method = "euclidean", 
+pollutant_cluster4_euclidean_scaled <- dist(cmdscale(pollutant_cluster4_euclidean), 
+                                            method = "euclidean", 
                                      diag = TRUE, upper = TRUE)
-pollutant_cluster4_canberra_scaled <- dist(cmdscale(pollutant_cluster4_canberra), method = "canberra", 
+pollutant_cluster4_canberra_scaled <- dist(cmdscale(pollutant_cluster4_canberra), 
+                                           method = "canberra", 
                                     diag = TRUE, upper = TRUE)
 
 #==============
