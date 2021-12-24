@@ -54,10 +54,9 @@ fviz_pca_biplot(res.pca)
 # (b) Repeat (a) but instead of sample labels show the different groups (clusters) as 90% bags.
 fviz_pca_biplot(res.pca, 
                 geom.ind = "point",
-                alpha.var =1,
                 habillage=pollution$Cluster,
                 addEllipses=TRUE, 
-                select.ind = list(cos2 = 0.90),
+                confidence = 0.9,
                 ellipse.level=0.95)
 
 # (c) Repeat (a) but give an optimal two-dimensional display of the correlations between the variables.
@@ -65,13 +64,52 @@ corr <- cor(pollutant)
 corrplot(corr, method = 'number',bg="#808080")
 
 # (e) Construct a CVA biplot of the Pollution data with 90% bags added. 
-#install.packages("MultBiplotR")
-#library(MultBiplotR)
-#MultBiplotR::CanonicalBiplot(pollutant,)
+#install.packages("ggforce")
+pollution_lda<- lda(Cluster ~ ., pollution)
 
-#install.packages('Morpho')
-library(Morpho)
-Morpho::CVA(res.pca, groups = )
+pollutant2 <- 
+  pollution %>% 
+  dplyr::select(-Cluster) %>%
+  as.matrix 
+
+# calculate CV scores
+CVA.scores <- pollutant2 %*% pollution_lda$scaling
+
+# create data frame with scores
+pollution.CV <- data.frame(CVA.scores)
+pollution.CV$Cluster <- pollution$Cluster
+
+pollution_cva_plot <- ggplot(pollution.CV, aes(x = LD1, y = LD2)) + 
+geom_point(aes(color=as.factor(Cluster)), alpha=0.9) + 
+labs(x = "CV1", y = "CV2", color = "Cluster") + 
+coord_fixed(ratio=1) + theme_minimal()
+
+library(ggforce)
+chi2 <-  qchisq(0.1,2, lower.tail=FALSE)
+CIregions.mean.and.pop <-
+  pollution.CV %>%
+  group_by(Cluster) %>%
+  summarize(CV1.mean = mean(LD1),
+            CV2.mean = mean(LD2),
+            mean.radii = sqrt(chi2/n()),
+            popn.radii = sqrt(chi2))
+
+pollution_cva_plot + 
+  ggforce::geom_circle(data = CIregions.mean.and.pop,
+              mapping = aes(x0 = CV1.mean, y0 = CV2.mean, r = mean.radii),
+              inherit.aes = FALSE) +
+  ggforce::geom_circle(data = CIregions.mean.and.pop,
+              mapping = aes(x0 = CV1.mean, y0 = CV2.mean, r = popn.radii),
+              linetype = "dashed", 
+              inherit.aes = FALSE) 
+
+
+
+
+
+
+
+
 #==============
 # Question 2
 #==============
