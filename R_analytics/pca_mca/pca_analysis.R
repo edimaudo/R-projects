@@ -123,12 +123,28 @@ brand_euclidean <- dist(brand_info, method = "euclidean",
                                      diag = TRUE, upper = TRUE)
 
 # c)
-cmdscale(, )
+branddistmat <- as.matrix(brand_euclidean)
 
-#res <- optim(brand_info,fn=brand_euclidean,gr=NULL,method = c("Nelder-Mead", "BFGS", 
-#                                                           "CG", "L-BFGS-B", "SANN",
-#                                                                    "Brent"))
+distance <- function(sq) {  # Target function
+  sq2 <- embed(sq, 2)
+  sum(branddistmat[cbind(sq2[,2], sq2[,1])])
+}
 
+sq <- c(1:nrow(branddistmat), 1)  # Initial sequence: alphabetic
+distance(sq)
+
+# rotate for conventional orientation
+loc <- -cmdscale(brand_euclidean, add = TRUE)$points
+x <- loc[,1]; y <- loc[,2]
+s <- seq_len(nrow(branddistmat))
+tspinit <- loc[sq,]
+tspres <- loc[res$par,]
+res <- optim(sq,distance,gr=NULL)
+plot(x, y, type = "n", asp = 1, xlab = "", ylab = "",
+     main = "Using optim", axes = FALSE)
+arrows(tspres[s,1], tspres[s,2], tspres[s+1,1], tspres[s+1,2],
+       angle = 10, col = "red")
+text(x, y, labels(eurodist), cex = 0.8)
 
 
 # e)
