@@ -133,7 +133,7 @@ distance <- function(sq) {  # Target function
 sq <- c(1:nrow(branddistmat), 1)  # Initial sequence: alphabetic
 distance(sq)
 
-function(sq) {  # Generate new candidate sequence
+genseq <- function(sq) {  # Generate new candidate sequence
   idx <- seq(2, NROW(branddistmat)-1)
   changepoints <- sample(idx, size = 2, replace = FALSE)
   tmp <- sq[changepoints[1]]
@@ -145,8 +145,6 @@ function(sq) {  # Generate new candidate sequence
 res <- optim(sq, distance, genseq, method = "SANN",
              control = list(maxit = 30000, temp = 2000, trace = TRUE,
                             REPORT = 500))
-res  # Near optimum distance around 12842
-
 
 # rotate for conventional orientation
 loc <- -cmdscale(brand_euclidean, add = TRUE)$points
@@ -154,12 +152,11 @@ x <- loc[,1]; y <- loc[,2]
 s <- seq_len(nrow(branddistmat))
 tspinit <- loc[sq,]
 tspres <- loc[res$par,]
-res <- optim(sq,distance,gr=NULL)
 plot(x, y, type = "n", asp = 1, xlab = "", ylab = "",
      main = "Using optim", axes = FALSE)
 arrows(tspres[s,1], tspres[s,2], tspres[s+1,1], tspres[s+1,2],
        angle = 10, col = "red")
-text(x, y, labels(eurodist), cex = 0.8)
+text(x, y, labels(sq), cex = 0.8)
 
 
 # e)
@@ -226,18 +223,19 @@ fviz_mca_biplot(res.mca,
                 col.ind = "black",
                 col.var = "cos2", 
                 gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
-                legend.title = list(fill = "Groups", color = "Categories"),
+                legend.title = list(fill = "Groups", color = "Quality"),
                 )
 
 # c) Repeat (b) but this time colour all CLPs in the same colour while distinguishing the
 # samples from the different districts using colour coding.
 fviz_mca_biplot(res.mca,
-                col.ind="cos2",
+                col.ind = "contrib",
+                col.var = "black", 
                 gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
-                legend.title = list(color = "Individual Groups"),
+                legend.title = list( color = "Contribution")
 )
 
-
+dimdesc(res.mca)
 #==============
 # Question 6
 #==============
