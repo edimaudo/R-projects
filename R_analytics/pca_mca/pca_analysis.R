@@ -6,7 +6,6 @@ rm(list = ls()) #clear environment
 packages <- c('ggplot2', 'corrplot','tidyverse',"caret","dummies","fastDummies"
               ,'FactoMineR','factoextra','scales','dplyr','psy','nFactors',
               'MASS','psych','cluster','lattice','NbClust','gridExtra','doParallel','readxl')
-# load packages
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
     install.packages(package)
@@ -22,10 +21,7 @@ manufacture <- read_excel("Manufacture.data.xlsx")
 opinion_survey <- read_excel("OpinionSurvey.data.xlsx")
 pollution <- read_excel("Pollution.data.xlsx")
 symptom <- read_excel("symptoms.data.xlsx")
-
-#set seed
-set.seed(1)
-
+set.seed(1) #set seed
 #==============
 # Question 1
 #==============
@@ -127,9 +123,11 @@ brand_euclidean <- dist(brand_info, method = "euclidean",
                                      diag = TRUE, upper = TRUE)
 
 # c)
-res <- optim(brand_info,fn=brand_euclidean,gr=NULL,method = c("Nelder-Mead", "BFGS", 
-                                                           "CG", "L-BFGS-B", "SANN",
-                                                                    "Brent"))
+cmdscale(, )
+
+#res <- optim(brand_info,fn=brand_euclidean,gr=NULL,method = c("Nelder-Mead", "BFGS", 
+#                                                           "CG", "L-BFGS-B", "SANN",
+#                                                                    "Brent"))
 
 
 
@@ -143,17 +141,38 @@ brand_disimilarity <- daisy(Brands.data.ord, metric = c("gower"))
 # g)
 #install.packages("smacof")
 library(smacof)
-brand_info_mds1 <- smacof::mds(dist(brand_info),type = "ordinal")
-brand_info_mds2 <- smacof::driftVectors(dist(brand_info),type = c("ordinal"))
+brand_info_nmds <- smacof::mds(dist(brand_info),type = "ordinal")
+plot(brand_info_nmds)
+#brand_info_mds3  <- smacofSym(dist(brand_info), type = c("ratio", "interval", "ordinal", "mspline"))
+#brand_info_mds <- isoMDS(dist(brand_info))  
+#plot(brand_info_mds$points, type = "n")
 
-brand_info_dist <- dist(brand_info)
-brand_info_mds <- isoMDS(brand_info_dist)  
-plot(brand_info_mds$points, type = "n")
 # h)
+brand_info_feat5 <- brand %>%
+  dplyr::select(Feat5)
+brand_info_feat5_mds <- smacof::mds(dist(brand_info_feat5))
+plot(brand_info_feat5_mds)
 
 #==============
 # Question 4
 #==============
+#install.packages("vegan")
+#install.packages("smacof")
+library(vegan)
+library(smacof)
+
+brand_info <- brand %>%
+  dplyr::select(-c(Brand))
+
+#metric mds
+brand_metric_mds1 <- cmdscale(dist(brand_info), k = 2)
+
+#non metric mds
+brand_non_metric_mds <- smacof::mds(dist(brand_info), type = "ordinal")
+
+brand_procrustes <-  procrustes(X = brand_metric_mds1, Y = brand_non_metric_mds$init, symmetric = FALSE)
+summary(brand_procrustes)
+plot(brand_procrustes)
 
 #==============
 # Question 5
