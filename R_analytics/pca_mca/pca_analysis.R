@@ -123,7 +123,7 @@ brand_euclidean <- dist(brand_info, method = "euclidean",
                                      diag = TRUE, upper = TRUE)
 
 # c)
-branddistmat <- as.matrix(brand_euclidean)
+branddistmat <- as.matrix(dist(brand_info))
 
 distance <- function(sq) {  # Target function
   sq2 <- embed(sq, 2)
@@ -132,6 +132,21 @@ distance <- function(sq) {  # Target function
 
 sq <- c(1:nrow(branddistmat), 1)  # Initial sequence: alphabetic
 distance(sq)
+
+function(sq) {  # Generate new candidate sequence
+  idx <- seq(2, NROW(branddistmat)-1)
+  changepoints <- sample(idx, size = 2, replace = FALSE)
+  tmp <- sq[changepoints[1]]
+  sq[changepoints[1]] <- sq[changepoints[2]]
+  sq[changepoints[2]] <- tmp
+  sq
+}
+
+res <- optim(sq, distance, genseq, method = "SANN",
+             control = list(maxit = 30000, temp = 2000, trace = TRUE,
+                            REPORT = 500))
+res  # Near optimum distance around 12842
+
 
 # rotate for conventional orientation
 loc <- -cmdscale(brand_euclidean, add = TRUE)$points
