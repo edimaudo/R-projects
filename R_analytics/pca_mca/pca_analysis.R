@@ -32,18 +32,6 @@ set.seed(1)
 pollutant <- pollution[,c(2:10)]
 res.pca <- prcomp(pollutant,  scale = TRUE)
 
-# Results for Variables
-# res.var <- get_pca_var(res.pca)
-# res.var$coord          # Coordinates
-# res.var$contrib        # Contributions to the PCs
-# res.var$cos2           # Quality of representation 
-# 
-# # Results for individuals
-# res.ind <- get_pca_ind(res.pca)
-# res.ind$coord          # Coordinates
-# res.ind$contrib        # Contributions to the PCs
-# res.ind$cos2           # Quality of representation 
-
 # (a) Construct a PCA biplot of the Pollution data without showing alpha bags.
 fviz_pca_biplot(res.pca)
 
@@ -112,12 +100,21 @@ pollutant_cluster4_canberra <- dist(pollutant_cluster4, method = "canberra",
                                      diag = TRUE, upper = TRUE)
 
 # b)
-pollutant_cluster4_euclidean_scaled <- dist(cmdscale(pollutant_cluster4_euclidean), 
-                                            method = "euclidean", 
-                                     diag = TRUE, upper = TRUE)
-pollutant_cluster4_canberra_scaled <- dist(cmdscale(pollutant_cluster4_canberra), 
-                                           method = "canberra", 
-                                    diag = TRUE, upper = TRUE)
+pollutant_cluster4_euclidean_scaled <- cmdscale(pollutant_cluster4_euclidean, eig=FALSE, k=2)
+
+# plot solution
+x <- pollutant_cluster4_euclidean_scaled$points[,1]
+y <- pollutant_cluster4_euclidean_scaled$points[,2]
+plot(x, y, xlab="Coordinate 1", ylab="Coordinate 2",
+     main="Metric MDS", type="n")
+text(x, y, labels = row.names(pollutant_cluster4), cex=.7)
+                                   
+pollutant_cluster4_canberra_scaled <- cmdscale(pollutant_cluster4_canberra,eig=TRUE, k=2)
+x <- pollutant_cluster4_canberra_scaled$points[,1]
+y <- pollutant_cluster4_canberra_scaled$points[,2]
+plot(x, y, xlab="Coordinate 1", ylab="Coordinate 2",
+     main="Metric MDS", type="n")
+text(x, y, labels = row.names(pollutant_cluster4), cex=.7)
 
 #==============
 # Question 3
@@ -134,6 +131,8 @@ res <- optim(brand_info,fn=brand_euclidean,gr=NULL,method = c("Nelder-Mead", "BF
                                                            "CG", "L-BFGS-B", "SANN",
                                                                     "Brent"))
 
+
+
 # e)
 Brands.data.ord <- apply(brand_info, 2, sort, decreasing=F)
 
@@ -141,6 +140,16 @@ Brands.data.ord <- apply(brand_info, 2, sort, decreasing=F)
 # ??daisy
 brand_disimilarity <- daisy(Brands.data.ord, metric = c("gower"))
 
+# g)
+#install.packages("smacof")
+library(smacof)
+brand_info_mds1 <- smacof::mds(dist(brand_info),type = "ordinal")
+brand_info_mds2 <- smacof::driftVectors(dist(brand_info),type = c("ordinal"))
+
+brand_info_dist <- dist(brand_info)
+brand_info_mds <- isoMDS(brand_info_dist)  
+plot(brand_info_mds$points, type = "n")
+# h)
 
 #==============
 # Question 4
