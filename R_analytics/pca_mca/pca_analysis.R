@@ -280,12 +280,12 @@ ggplot(symptom_score_transform_new_scores,aes(x=Scores)) + geom_histogram()
 
 ## (d) Construct a unidimensional scale (in table and graph form) for the items and explain
 ## how to interpret the scale.
-
-
-
-
-## e)
-
+#install.packages("devtools")
+#library(devtools)
+#devtools::install_github('Libum/guttman')
+library(guttman)
+guttman_object =  guttman(dataset = symptom)
+summary(guttman_object)
 
 
 #==============
