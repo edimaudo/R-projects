@@ -259,9 +259,7 @@ unique(manufacture$Feature.6)
 library(CTT)
 
 # a)
-
 # i) ??`CTT-package`
-
 # ii)
 symptom_item_analysis <- CTT::itemAnalysis(as.data.frame(symptom))
 
@@ -272,21 +270,35 @@ symptom_score_transform <- CTT::score.transform(symptom_score$score,mu.new = 100
 
 ## (c) Represent the transformed person scores in the form of a unidimensional scaling graph.
 symptom_score_transform_new_scores <- as.data.frame(symptom_score_transform$new.scores)
-colnames(symptom_score_transform_new_scores) <- c('Scores')
-
 # install.packages('smacof')
-# library(smacof)
-#symptom_uni <- (symptom_score_transform_new_scores)
-#fit.uni <- uniscale(symptom_uni)
-#plot(fit.uni)
+library(smacof)
+symptom_uni_dist <- smacof::mds(dist(symptom_score_transform_new_scores),type = "ordinal")
+plot(symptom_uni_dist)
 
-#ggplot(symptom_score_transform_new_scores,aes(x=Scores)) + geom_histogram()
+#histogram
+ggplot(symptom_score_transform_new_scores,aes(x=Scores)) + geom_histogram()
 
 ## (d) Construct a unidimensional scale (in table and graph form) for the items and explain
 ## how to interpret the scale.
 
 
+
+
+## e)
+
+
+
 #==============
 # Question 8
 #==============
+#nstall.packages("ltm")
+library(ltm)
+
+# (i) fit a Rasch model to the data
+ltm::rasch()
+# (ii) find disease scores and express them in unidimensional scaling format;
+
+# (iii) obtain item characteristic curves;
+
+# (iv) obtain item information curves 
 
