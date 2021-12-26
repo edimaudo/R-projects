@@ -291,8 +291,6 @@ summary(guttman_object)
 #==============
 # Question 8
 #==============
-#install.packages("ltm")
-
 column_info <- c('V39','V16','V34','V27','V17','V15','V22','V24','V10','V8','V12',
                  'V23','V30','V46','V6','V18','V48','V36','V42','V44')
 
@@ -302,20 +300,21 @@ symptom_df <- symptom %>%
          'V23','V30','V46','V6','V18','V48','V36','V42','V44')
 new.data  <- symptom_df[row_info,]
 
+
 # (i) fit a Rasch model to the data
+#install.packages("ltm")
 library(ltm)
 symptom_rasch <- ltm::rasch(as.matrix(new.data), constraint = cbind(ncol(new.data) + 1, 1))
 
 # (ii) find disease scores and express them in unidimensional scaling format;
-
 disease_score <- factor.scores(symptom_rasch)
 ltm::plot.fscores(disease_score)
-
 
 
 library(stats4)
 library(mirt)
 mod1 <- (mirt(new.data, 1, verbose = FALSE, itemtype = 'graded', SE = TRUE))
+itemfit(mod1)
 IRT_parms <- coef(mod1, IRTpars = TRUE, simplify = TRUE)
 # (iii) obtain item characteristic curves
 plot(mod1, type='trace')
