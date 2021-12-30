@@ -15,3 +15,11 @@ for (package in packages) {
         library(package, character.only=T)
     }
 }
+
+#=============
+# Load data
+#=============
+df <- read_excel("denso.xlsx")
+
+
+
