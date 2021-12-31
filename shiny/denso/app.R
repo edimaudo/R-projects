@@ -77,12 +77,16 @@ ui <- dashboardPage(
                 sidebarLayout(
                     sidebarPanel(
                         selectInput("customerCompareInput1", "Customer 1", choices = customer_info),
-                        selectInput("customerCompareInput2", "Customer 2", choices = customer_info),
+                        selectInput("customerCompareInput2", "Customer 2", choices = customer_info,
+                                    selected = "Abdul Aziz M.Bawazeer Est"),
                         sliderInput("yearCompareInput","Year",min=min(year_info),max=max(year_info),
                                     value = c(min(year_info),max(year_info)),step =1,ticks = FALSE)
                     ),
                     mainPanel(
                         h2("Comparison",style="text-align: center; font-style: bold;"),
+                        fluidRow(
+                            
+                        )
                     )
             
                 )
