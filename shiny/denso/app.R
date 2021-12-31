@@ -88,7 +88,14 @@ ui <- dashboardPage(
                     ),
                     mainPanel(
                         h2("Comparison",style="text-align: center; font-style: bold;"), 
-                        
+                        tabBox(
+                            title = "Customer Comparison",
+                            id = "tabset3", 
+                            width = "100%",
+                            selected = "Sales",
+                            tabPanel("Sales", plotOutput("salesPlot", height = 150)),
+                            tabPanel("Revenue", plotOutput("revenuePlot", height = 150))
+                        ) 
                         )
                         
                     )
