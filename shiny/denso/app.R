@@ -57,10 +57,19 @@ ui <- dashboardPage(
                         h2("Customer",style="text-align: center; font-style: bold;"), 
                         fluidRow(
                             valueBoxOutput("salesBox"),
+                            valueBoxOutput("partsBox"),
                             valueBoxOutput("quantityBox")
                         ),
+                      
                         fluidRow(
-                            
+                            tabBox(
+                                title = "Year Insights",
+                                id = "tabset2", 
+                                width = "100%",
+                                selected = "Sales",
+                                tabPanel("Sales", plotOutput("salesPlot", height = 150)),
+                                tabPanel("Revenue", plotOutput("revenuePlot", height = 150))
+                            ) 
                         ), 
                         fluidRow(
                             DT::dataTableOutput("partsTable") 
@@ -137,6 +146,24 @@ server <- function(input, output,session) {
         )
     })
     
+    #------------------
+    # Parts box
+    #------------------
+    
+
+    #------------------
+    # Sales visualization
+    #------------------
+    output$salesPlot <- renderPlot({
+        
+    })
+    
+    #------------------
+    # Revenue visualization
+    #------------------
+    output$revenuePlot <- renderPlot({
+        
+    })   
     
     #------------------
     # Parts information
