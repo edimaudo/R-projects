@@ -254,14 +254,33 @@ server <- function(input, output,session) {
                   axis.title = element_text(size = 14),
                   axis.text = element_text(size = 14),
                   axis.text.x = element_text(angle = 00, hjust = 1))
-        
-      
-        
+
     })
     #------------------
     # Revenue compare plot
     #------------------   
-    
+    output$revenueComparePlot <- renderPlot({
+        
+        sales_df <- df %>% 
+            mutate(Revenue = `Sales Amount (Actual)` * Qty) %>%
+            filter(`Customer Name` %in% c(input$customerCompareInput1,input$customerCompareInput2),
+                   Year >= input$yearCompareInput[1] & Year <= input$yearCompareInput[2]) %>%
+            group_by(Year,`Customer Name`) %>%
+            summarise(Revenue = sum(Revenue)) %>%
+            select(Revenue,Year,`Customer Name`)
+        
+        ggplot(sales_df, aes(as.factor(Year),Revenue),color = `Customer Name`) + 
+            geom_bar(stat="identity",position="dodge",size=2 ,width = 0.4, 
+                     aes(fill = `Customer Name`)) +
+            theme_minimal() + scale_y_continuous(labels = comma) +
+            labs(x = "Year", y = "Total Revenue", color="Customer") + 
+            theme(legend.text = element_text(size = 14),
+                  legend.title = element_text(size = 15),
+                  axis.title = element_text(size = 14),
+                  axis.text = element_text(size = 14),
+                  axis.text.x = element_text(angle = 00, hjust = 1))
+        
+    })   
     #------------------
     # Parts compare plot
     #------------------  
