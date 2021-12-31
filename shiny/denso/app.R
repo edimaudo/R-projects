@@ -43,9 +43,6 @@ ui <- dashboardPage(
     ),
     dashboardBody(
         tabItems(
-        #------------------
-        # Company
-        #------------------
         tabItem(tabName = "customer",
                 sidebarLayout(
                     sidebarPanel(
@@ -60,7 +57,6 @@ ui <- dashboardPage(
                             valueBoxOutput("partsBox"),
                             valueBoxOutput("quantityBox")
                         ),
-                      
                         fluidRow(
                             tabBox(
                                 title = "Year Insights",
@@ -74,37 +70,28 @@ ui <- dashboardPage(
                         fluidRow(
                             DT::dataTableOutput("partsTable") 
                         )
-                        
                     )
-                )
+                ) 
             ),
-        tabItem(tabName = "compare",
+        tabItem(tabName = 'compare',
                 sidebarLayout(
                     sidebarPanel(
-                        selectInput("customerCompareInput", "Customer 1", choices = customer_info),
+                        selectInput("customerCompareInput1", "Customer 1", choices = customer_info),
                         selectInput("customerCompareInput2", "Customer 2", choices = customer_info),
                         sliderInput("yearCompareInput","Year",min=min(year_info),max=max(year_info),
                                     value = c(min(year_info),max(year_info)),step =1,ticks = FALSE)
                     ),
                     mainPanel(
-                        h2("Comparison",style="text-align: center; font-style: bold;"), 
-                        tabBox(
-                            title = "Customer Comparison",
-                            id = "tabset3", 
-                            width = "100%",
-                            selected = "Sales",
-                            tabPanel("Sales", plotOutput("salesPlot", height = 150)),
-                            tabPanel("Revenue", plotOutput("revenuePlot", height = 150))
-                        ) 
-                        )
-                        
+                        h2("Comparison",style="text-align: center; font-style: bold;"),
                     )
+            
                 )
-        )
-        )
-    )         
- 
+  
+         )
+    )
+)
 
+)
 ################
 # Server
 ################
