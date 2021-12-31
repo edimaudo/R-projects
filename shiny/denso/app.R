@@ -3,7 +3,7 @@
 ################
 
 ################
-# Load packages
+# Packages
 ################
 rm(list = ls()) #clear environment
 packages <- c('ggplot2', 'corrplot','tidyverse','readxl',
@@ -21,17 +21,14 @@ for (package in packages) {
 ################
 df <- read_excel("denso.xlsx")
 
-
 ################
 # Application UI
 ################
-
 #------------------
-# UI dropdowns
+# UI drop-downs
 #------------------
 customer_info <- c(sort(unique(df$`Customer Name`)))
 year_info <- c(sort(unique(df$Year)))
-
 
 ui <- dashboardPage(
     dashboardHeader(title = "Company Insights"),
@@ -78,7 +75,7 @@ ui <- dashboardPage(
                     sidebarPanel(
                         selectInput("customerCompareInput1", "Customer 1", choices = customer_info),
                         selectInput("customerCompareInput2", "Customer 2", choices = customer_info,
-                                    selected = "Abdul Aziz M.Bawazeer Est"),
+                                    selected = "Abdullah Center"),
                         sliderInput("yearCompareInput","Year",min=min(year_info),max=max(year_info),
                                     value = c(min(year_info),max(year_info)),step =1,ticks = FALSE)
                     ),
@@ -86,7 +83,7 @@ ui <- dashboardPage(
                         h2("Comparison",style="text-align: center; font-style: bold;"),
                         fluidRow(
                             tabBox(
-                                title="Comparison",
+                                title="Customers",
                                 id = "tabset3",
                                 width = "100%",
                                 selected = "Sales",
