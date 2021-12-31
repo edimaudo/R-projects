@@ -149,7 +149,20 @@ server <- function(input, output,session) {
     #------------------
     # Parts box
     #------------------
-    
+    output$partsBox <- renderValueBox({
+        
+        parts_df <- df %>%
+            filter(`Customer Name` == input$customerInput,
+                   Year >= input$yearInput[1] & Year <= input$yearInput[2]) %>%
+            summarise(parts_total = n_distinct(`Item No.`)) %>%
+            select(parts_total)
+        
+        
+        valueBox(
+            paste0(parts_df), "Parts", icon = icon("list"),
+            color = "blue"
+        )
+    })
 
     #------------------
     # Sales visualization
