@@ -29,7 +29,7 @@ df <- read_excel("denso.xlsx")
 #------------------
 # UI dropdowns
 #------------------
-customer_info <- c("All",sort(unique(df$`Customer Name`)))
+customer_info <- c(sort(unique(df$`Customer Name`)))
 year_info <- c(sort(unique(df$Year)))
 
 
@@ -83,22 +83,36 @@ server <- function(input, output,session) {
     # sales box
     #------------------
     output$salesBox <- renderValueBox({
-        if (input$customerInput == 'All'){
+         
             sales_sum_df <- df %>%
+                filter(`Customer Name` == input$customerInput,
+                       Year >= input$yearInput[1] & Year <= input$yearInput[2]) %>%
                 summarise(sales_total = sum(`Sales Amount (Actual)`)) %>%
                 select(sales_total)
-        } else {
-            sales_sum_df <- df %>%
-                filter(`Customer Name` == input$customerInput) %>%
-                summarise(sales_total = sum(`Sales Amount (Actual)`)) %>%
-                select(sales_total)
-        }
+        
         
         valueBox(
-            paste0(sales_sum_df), "Progress", icon = icon("list"),
+            paste0(sales_sum_df), "Total Sales ($)", icon = icon("credit-card"),
             color = "blue"
         )
     })
+    
+    output$quantityBox <- renderValueBox({
+        
+        quantity_sum_df <- df %>%
+            filter(`Customer Name` == input$customerInput,
+                   Year >= input$yearInput[1] & Year <= input$yearInput[2]) %>%
+            summarise(quantity_total = sum(Qty)) %>%
+            select(quantity_total)
+        
+        
+        valueBox(
+            paste0(quantity_sum_df), "Total Quantity", icon = icon("list"),
+            color = "blue"
+        )
+    })
+    
+    
     
 }
 
