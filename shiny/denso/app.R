@@ -58,7 +58,13 @@ ui <- dashboardPage(
                         fluidRow(
                             valueBoxOutput("salesBox"),
                             valueBoxOutput("quantityBox")
+                        ),
+                        fluidRow(
+                            
                         ), 
+                        fluidRow(
+                            DT::dataTableOutput("partsTable") 
+                        )
                         
                     )
                 )
@@ -112,6 +118,10 @@ server <- function(input, output,session) {
         )
     })
     
+    
+    #------------------
+    # Quantity box
+    #------------------
     output$quantityBox <- renderValueBox({
         
         quantity_sum_df <- df %>%
@@ -122,9 +132,28 @@ server <- function(input, output,session) {
         
         
         valueBox(
-            paste0(quantity_sum_df), "Total Quantity", icon = icon("list"),
+            paste0(quantity_sum_df), "Parts Quantity", icon = icon("list"),
             color = "blue"
         )
+    })
+    
+    
+    #------------------
+    # Parts information
+    #------------------
+    output$partsTable <- DT::renderDataTable({
+        parts_df <- df %>%
+            filter(`Customer Name` == input$customerInput,
+                   Year >= input$yearInput[1] & Year <= input$yearInput[2]) %>%
+            mutate(Revenue = `Sales Amount (Actual)` * Qty) %>%
+            group_by(`Item No.`, Year) %>%
+            summarise(Revenue = sum(Revenue), Sales = sum(`Sales Amount (Actual)`), 
+                      Quantity = sum(Qty)) %>%
+            arrange(desc(Revenue)) %>%
+            select(`Item No.`,Year,Sales, Quantity, Revenue) 
+        
+        DT::datatable(parts_df)
+        
     })
     
     
