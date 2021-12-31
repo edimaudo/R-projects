@@ -85,7 +85,16 @@ ui <- dashboardPage(
                     mainPanel(
                         h2("Comparison",style="text-align: center; font-style: bold;"),
                         fluidRow(
-                            
+                            tabBox(
+                                title="Comparison",
+                                id = "tabset3",
+                                width = "100%",
+                                selected = "Sales",
+                                tabPanel("Sales", plotOutput("salesComparePlot", height = 150)),
+                                tabPanel("Revenue", plotOutput("revenueComparePlot", height = 150)),
+                                tabPanel("Parts", plotOutput("partsComparePlot", height = 150)),
+                                tabPanel("Quantity", plotOutput("quantityComparePlot", height = 150))
+                            )
                         )
                     )
             
@@ -100,14 +109,6 @@ ui <- dashboardPage(
 # Server
 ################
 server <- function(input, output,session) {
-    
-    all_data_sum <- function() {
-        temp_df <- df %>%
-          summarise(sales_total = sum(`Sales Amount (Actual)`)) %>%
-        select(sales_total)
-        return (temp_df)
-    }
-    
     #------------------
     # sales box
     #------------------
@@ -227,6 +228,8 @@ server <- function(input, output,session) {
         DT::datatable(parts_df)
         
     })
+    
+    
     
     
     
