@@ -232,6 +232,40 @@ server <- function(input, output,session) {
     
     
     
+    #------------------
+    # Sales compare plot
+    #------------------
+    output$salesComparePlot <- renderPlot({
+        
+        sales_df <- df %>% 
+            filter(`Customer Name` == input$customerInput,
+                   Year >= input$yearInput[1] & Year <= input$yearInput[2]) %>%
+            group_by(Year) %>%
+            summarise(Sales = sum(`Sales Amount (Actual)`)) %>%
+            select(Sales,Year)
+        
+        ggplot(sales_df, aes(as.factor(Year),Sales)) + 
+            geom_bar(stat="identity", width = 0.5, fill="#bc5090") +
+            theme_minimal() + scale_y_continuous(labels = comma) +
+            labs(x = "Year", y = "Total Sales") + 
+            theme(legend.text = element_text(size = 10),
+                  legend.title = element_text(size = 10),
+                  axis.title = element_text(size = 10),
+                  axis.text = element_text(size = 10),
+                  axis.text.x = element_text(angle = 00, hjust = 1))
+        
+    })
+    #------------------
+    # Revenue compare plot
+    #------------------   
+    
+    #------------------
+    # Parts compare plot
+    #------------------  
+    
+    #------------------
+    # Quantity compare plot
+    #------------------  
     
 }
 
