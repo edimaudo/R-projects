@@ -284,6 +284,27 @@ server <- function(input, output,session) {
     #------------------
     # Parts compare plot
     #------------------  
+    output$partsComparePlot <- renderPlot({
+        
+        sales_df <- df %>% 
+            filter(`Customer Name` %in% c(input$customerCompareInput1,input$customerCompareInput2),
+                   Year >= input$yearCompareInput[1] & Year <= input$yearCompareInput[2]) %>%
+            group_by(Year,`Customer Name`) %>%
+            summarise(Parts= n_distinct(`Item No.`)) %>%
+            select(Parts,Year,`Customer Name`)
+        
+        ggplot(sales_df, aes(as.factor(Year),as.integer(Parts)),color = `Customer Name`) + 
+            geom_bar(stat="identity",position="dodge",size=2 ,width = 0.4, 
+                     aes(fill = `Customer Name`)) +
+            theme_minimal() + scale_y_continuous(labels = comma) +
+            labs(x = "Year", y = "Total Parts", color="Customer") + 
+            theme(legend.text = element_text(size = 14),
+                  legend.title = element_text(size = 15),
+                  axis.title = element_text(size = 14),
+                  axis.text = element_text(size = 14),
+                  axis.text.x = element_text(angle = 00, hjust = 1))
+        
+    }) 
     
     #------------------
     # Quantity compare plot
