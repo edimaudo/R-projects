@@ -58,14 +58,29 @@ ui <- dashboardPage(
                         fluidRow(
                             valueBoxOutput("salesBox"),
                             valueBoxOutput("quantityBox")
-                        )
+                        ), 
+                        
                     )
                 )
-            )
+            ),
+        tabItem(tabName = "compare",
+                sidebarLayout(
+                    sidebarPanel(
+                        selectInput("customerInput", "Customer", choices = customer_info),
+                        sliderInput("yearInput","Year",min=min(year_info),max=max(year_info),
+                                    value = c(min(year_info),max(year_info)),step =1,ticks = FALSE)
+                    ),
+                    mainPanel(
+                        h2("Comparison",style="text-align: center; font-style: bold;"), 
+                        
+                        )
+                        
+                    )
+                )
+        )
         )
     )         
- )
-
+ 
 
 ################
 # Server
