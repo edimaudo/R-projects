@@ -81,7 +81,8 @@ ui <- dashboardPage(
         tabItem(tabName = "compare",
                 sidebarLayout(
                     sidebarPanel(
-                        selectInput("customerCompareInput", "Customer", choices = customer_info),
+                        selectInput("customerCompareInput", "Customer 1", choices = customer_info),
+                        selectInput("customerCompareInput2", "Customer 2", choices = customer_info),
                         sliderInput("yearCompareInput","Year",min=min(year_info),max=max(year_info),
                                     value = c(min(year_info),max(year_info)),step =1,ticks = FALSE)
                     ),
@@ -168,6 +169,23 @@ server <- function(input, output,session) {
     # Sales visualization
     #------------------
     output$salesPlot <- renderPlot({
+     
+    sales_df <- df %>% 
+        filter(`Customer Name` == input$customerInput,
+               Year >= input$yearInput[1] & Year <= input$yearInput[2]) %>%
+        group_by(Year) %>%
+        summarise(Sales = sum(`Sales Amount (Actual)`)) %>%
+        select(Sales,Year)
+        
+        ggplot(sales_df, aes(as.factor(Year),Sales)) + 
+            geom_bar(stat="identity", width = 0.5, fill="#bc5090") +
+            theme_minimal() + scale_y_continuous(labels = comma) +
+            labs(x = "Year", y = "Total Sales") + 
+            theme(legend.text = element_text(size = 10),
+                  legend.title = element_text(size = 10),
+                  axis.title = element_text(size = 10),
+                  axis.text = element_text(size = 10),
+                  axis.text.x = element_text(angle = 00, hjust = 1))
         
     })
     
@@ -175,7 +193,23 @@ server <- function(input, output,session) {
     # Revenue visualization
     #------------------
     output$revenuePlot <- renderPlot({
+        revenue_df <- df %>% 
+            mutate(Revenue = `Sales Amount (Actual)` * Qty) %>%
+            filter(`Customer Name` == input$customerInput,
+                   Year >= input$yearInput[1] & Year <= input$yearInput[2]) %>%
+            group_by(Year) %>%
+            summarise(Revenue = sum(Revenue)) %>%
+            select(Revenue,Year)
         
+        ggplot(revenue_df, aes(as.factor(Year),Revenue)) + 
+            geom_bar(stat="identity", width = 0.5, fill="#ff6361") +
+            theme_minimal() + scale_y_continuous(labels = comma) +
+            labs(x = "Year", y = "Total Sales") + 
+            theme(legend.text = element_text(size = 10),
+                  legend.title = element_text(size = 10),
+                  axis.title = element_text(size = 10),
+                  axis.text = element_text(size = 10),
+                  axis.text.x = element_text(angle = 00, hjust = 1))
     })   
     
     #------------------
