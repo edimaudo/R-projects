@@ -1,11 +1,11 @@
-#=============
+################
 # Denso Sales Analysis
-#=============
+################
 
+################
+# Load packages
+################
 rm(list = ls()) #clear environment
-#=============
-# Packages
-#=============
 packages <- c('ggplot2', 'corrplot','tidyverse','readxl',
               'shiny','shinydashboard','scales','dplyr','mlbench','caTools',
               'forecast','lubridate')
@@ -16,19 +16,19 @@ for (package in packages) {
     }
 }
 
-#=============
+################
 # Load data
-#=============
+################
 df <- read_excel("denso.xlsx")
 
 
-#=============
+################
 # Application UI
-#=============
+################
 
-#=============
+#------------------
 # UI dropdowns
-#=============
+#------------------
 customer_info <- c("All",sort(unique(df$`Customer Name`)))
 year_info <- c(sort(unique(df$Year)))
 
@@ -37,48 +37,69 @@ ui <- dashboardPage(
     dashboardHeader(title = "Company Insights"),
     dashboardSidebar(
         sidebarMenu(
-            menuItem("Customer", tabName = "about", icon = icon("th")), 
-            menuItem(" Customer Comparison", tabName = "health", icon = icon("th"))
+            menuItem("Customer", tabName = "customer", icon = icon("th")), 
+            menuItem(" Customer Comparison", tabName = "compare", icon = icon("th"))
         )
     ),
     dashboardBody(
         tabItems(
-        ################
+        #------------------
         # Company
-        tabItem(tabName = "Customer",
+        #------------------
+        tabItem(tabName = "customer",
                 sidebarLayout(
                     sidebarPanel(
-                        selectInput("customerInput",
-                                    "Customer", choices = customer_info),
+                        selectInput("customerInput", "Customer", choices = customer_info),
                         sliderInput("yearInput","Year",min=min(year_info),max=max(year_info),
-                                    value = c(min(year_info),max(year_info)),
-                                    step =1,ticks = TRUE)
+                                value = c(min(year_info),max(year_info)),step =1,ticks = FALSE)
                     ),
                     mainPanel(
                         h2("Customer",style="text-align: center; font-style: bold;"), 
                         fluidRow(
-                            # tabBox(
-                            #     title = "Cancer care",
-                            #     id = "tabset1",
-                            #     tabPanel("Incidence", plotOutput("incidencePlot", height = 150)),
-                            #     tabPanel("Death", plotOutput("deathPlot", height = 150)),
-                            #     tabPanel("Top 5 Cancer sites", 
-                            #              plotOutput("cancerSitePlot", height = 150))
-                            # )
+                            valueBoxOutput("salesBox"),
+                            valueBoxOutput("quantityBox")
                         )
                     )
                 )
+            )
         )
-        
     )         
-)
-)
+ )
+
 
 ################
 # Server
 ################
 server <- function(input, output,session) {
-
+    
+    all_data_sum <- function() {
+        temp_df <- df %>%
+          summarise(sales_total = sum(`Sales Amount (Actual)`)) %>%
+        select(sales_total)
+        return (temp_df)
+    }
+    
+    #------------------
+    # sales box
+    #------------------
+    output$salesBox <- renderValueBox({
+        if (input$customerInput == 'All'){
+            sales_sum_df <- df %>%
+                summarise(sales_total = sum(`Sales Amount (Actual)`)) %>%
+                select(sales_total)
+        } else {
+            sales_sum_df <- df %>%
+                filter(`Customer Name` == input$customerInput) %>%
+                summarise(sales_total = sum(`Sales Amount (Actual)`)) %>%
+                select(sales_total)
+        }
+        
+        valueBox(
+            paste0(sales_sum_df), "Progress", icon = icon("list"),
+            color = "blue"
+        )
+    })
+    
 }
 
 
