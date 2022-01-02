@@ -114,16 +114,16 @@ server <- function(input, output) {
       arrange(desc(totalAmount)) %>%
       select(CategoryDescription,totalAmount)
     
-    ggplot(data=agencyCategory_df , aes(x=CategoryDescription, y=totalAmount)) +
-      geom_bar(stat="identity", width = 0.4) + theme_classic() +
+    ggplot(data=agencyCategory_df , aes(reorder(CategoryDescription,totalAmount), y=totalAmount)) +
+      geom_bar(stat="identity", width = 0.4) + theme_classic() + coord_flip() + 
       labs(x = "Category Description", y = "Contract Amount ($)") +
       scale_y_continuous(labels = comma) +
       scale_x_discrete() +
-      theme(legend.text = element_text(size = 10),
-            legend.title = element_text(size = 10),
+      theme(legend.text = element_text(size = 12),
+            legend.title = element_text(size = 12),
             axis.title = element_text(size = 15),
-            axis.text = element_text(size = 10),
-            axis.text.x = element_text(angle = 45, hjust = 1))
+            axis.text = element_text(size = 12),
+            axis.text.x = element_text(angle = 0, hjust = 1))
   })
   
   
@@ -136,16 +136,17 @@ server <- function(input, output) {
       arrange(desc(totalAmount),desc(SelectionMethodDescription)) %>%
       select(SelectionMethodDescription,totalAmount)
     
-    ggplot(data=agencySelectionMethod_df , aes(x=as.factor(SelectionMethodDescription), y=totalAmount)) +
-      geom_bar(stat="identity", width = 0.4) + theme_classic() +
+    ggplot(data=agencySelectionMethod_df , aes(x=reorder(as.factor(SelectionMethodDescription),totalAmount) , 
+                                               y=totalAmount)) +
+      geom_bar(stat="identity", width = 0.4) + theme_classic() + coord_flip() + 
       labs(x = "Selection Method", y = "Contract Amount ($)") +
       scale_y_continuous(labels = comma) +
       scale_x_discrete() +
-      theme(legend.text = element_text(size = 10),
-            legend.title = element_text(size = 10),
+      theme(legend.text = element_text(size = 12),
+            legend.title = element_text(size = 12),
             axis.title = element_text(size = 15),
-            axis.text = element_text(size = 10),
-            axis.text.x = element_text(angle = 45, hjust = 1))
+            axis.text = element_text(size = 12),
+            axis.text.x = element_text(angle = 0, hjust = 1))
   })
   
 
@@ -159,8 +160,8 @@ server <- function(input, output) {
       arrange(desc(totalAmount)) %>%
       select(AgencyName,totalAmount)
     
-    ggplot(data=agencyCategory_df , aes(x=AgencyName, y=totalAmount)) +
-      geom_bar(stat="identity", width = 0.4) + theme_classic() +
+    ggplot(data=agencyCategory_df , aes(x=reorder(AgencyName,totalAmount), y=totalAmount)) +
+      geom_bar(stat="identity", width = 0.4) + theme_classic() + coord_flip() + 
       labs(x = "Agency", y = "Contract Amount ($)") +
       scale_y_continuous(labels = comma) +
       scale_x_discrete() +
@@ -168,7 +169,7 @@ server <- function(input, output) {
             legend.title = element_text(size = 10),
             axis.title = element_text(size = 15),
             axis.text = element_text(size = 10),
-            axis.text.x = element_text(angle = 45, hjust = 1))
+            axis.text.x = element_text(angle = 20, hjust = 1))
   })
   
   
@@ -181,8 +182,9 @@ server <- function(input, output) {
       arrange(desc(totalAmount),desc(SelectionMethodDescription)) %>%
       select(SelectionMethodDescription,totalAmount)
     
-    ggplot(data=agencySelectionMethod_df , aes(x=as.factor(SelectionMethodDescription), y=totalAmount)) +
-      geom_bar(stat="identity", width = 0.4) + theme_classic() +
+    ggplot(data=agencySelectionMethod_df , aes(x=reorder(as.factor(SelectionMethodDescription),totalAmount)
+                                               , y=totalAmount)) +
+      geom_bar(stat="identity", width = 0.4) + theme_classic() + coord_flip() +
       labs(x = "Selection Method", y = "Contract Amount ($)") +
       scale_y_continuous(labels = comma) +
       scale_x_discrete() +
@@ -203,8 +205,8 @@ server <- function(input, output) {
       arrange(desc(totalAmount)) %>%
       select(AgencyName,totalAmount)
     
-    ggplot(data=agencyCategory_df , aes(x=AgencyName, y=totalAmount)) +
-      geom_bar(stat="identity", width = 0.4) + theme_classic() +
+    ggplot(data=agencyCategory_df , aes(x=reorder(AgencyName,totalAmount), y=totalAmount)) +
+      geom_bar(stat="identity", width = 0.4) + theme_classic() + coord_flip() +
       labs(x = "Agency", y = "Contract Amount ($)") +
       scale_y_continuous(labels = comma) +
       scale_x_discrete() +
@@ -219,14 +221,15 @@ server <- function(input, output) {
   output$SelectionMethodCategoryOutput <- renderPlot({
     
     agencySelectionMethod_df <- df %>%
-      group_by(CategoryDescription) %>%
       filter(SelectionMethodDescription == input$selectionInput) %>%
+      group_by(CategoryDescription) %>%
       summarize(totalAmount = sum(ContractAmount)) %>%
-      arrange(desc(totalAmount),desc(SelectionMethodDescription)) %>%
+      arrange(desc(totalAmount)) %>%
       select(CategoryDescription,totalAmount)
     
-    ggplot(data=agencySelectionMethod_df , aes(x=as.factor(CategoryDescription), y=totalAmount)) +
-      geom_bar(stat="identity", width = 0.4) + theme_classic() +
+    ggplot(data=agencySelectionMethod_df , aes(x=reorder(as.factor(CategoryDescription),totalAmount) , 
+                                               y=totalAmount)) +
+      geom_bar(stat="identity", width = 0.4) + theme_classic() + coord_flip() + 
       labs(x = "Selection Method", y = "Contract Amount ($)") +
       scale_y_continuous(labels = comma) +
       scale_x_discrete() +
