@@ -1,28 +1,37 @@
-
-#packages 
-packages <- c('ggplot2', 'corrplot','tidyverse','shiny','shinydashboard','scales')
-#load packages
+################
+# packages  
+################
+packages <- c('ggplot2', 'corrplot','tidyverse','shiny','shinydashboard','scales',
+              'dplyr','mlbench','caTools', 'forecast','lubridate')
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
     install.packages(package)
     library(package, character.only=T)
   }
 }
-
-#load data
+################
+# load data
+################
 df <- read_csv("Recent_Contract_Awards.csv")
 
 df <- df %>%
-  select(AgencyName,CategoryDescription,SelectionMethodDescription,ContractAmount)
+  dplyr::select(AgencyName,CategoryDescription,SelectionMethodDescription,ContractAmount)
 
 df <- na.omit(df)
 
+
+
+################
+# Define UI for application
+################
+
+#-----------------
+# UI dropdowns
+#-----------------
 agency <- c(sort(unique(df$AgencyName)))
 category <- c(sort(unique(df$CategoryDescription)))
 selectMethod <- c(sort(unique(df$SelectionMethodDescription)))
 
-
-# Define UI for application
 ui <- dashboardPage(
   dashboardHeader(title = "Contract Information"),
   dashboardSidebar(
@@ -39,7 +48,6 @@ ui <- dashboardPage(
       tabItem(tabName = "agency",
               sidebarLayout(
                 sidebarPanel(
-                  helpText("Select Agency information"),
                   selectInput("agencyInfo", "Agency",choices=agency),
                 ), 
                 mainPanel(
@@ -57,7 +65,6 @@ ui <- dashboardPage(
       tabItem(tabName = "category",
               sidebarLayout(
                 sidebarPanel(
-                  helpText("Select Category information"),
                   selectInput("categoryInfo","Category",choices = category)
                 ),
                 mainPanel(
@@ -75,13 +82,12 @@ ui <- dashboardPage(
       tabItem(tabName = "selectionMethod",
               sidebarLayout(
                 sidebarPanel(
-                  helpText("Select Selection Method"),
                   selectInput("selectionInput","Selection Method",choices = selectMethod)
                 ),
                 mainPanel(
                   fluidRow(
                     h2("Agencies",style="text-align: center;"),
-                    plotOutput("electionMethodAgencyOutput")
+                    plotOutput("SelectionMethodAgencyOutput")
                   ),
                   fluidRow(
                     h2("Categories",style="text-align: center;"),
@@ -94,8 +100,9 @@ ui <- dashboardPage(
   )
 )
 
-
-
+################
+# Server
+################
 server <- function(input, output) {
   
   output$agencyCategoryOutput <- renderPlot({
@@ -234,6 +241,7 @@ server <- function(input, output) {
   
   
   }
-
+################
 # Run the application 
+################
 shinyApp(ui = ui, server = server)
