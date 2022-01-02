@@ -26,8 +26,8 @@ ui <- dashboardPage(
     dashboardHeader(title = "Kickstarter Analysis"),
     dashboardSidebar(
         sidebarMenu(
-            menuItem("About", tabName = "about", icon = icon("dashboard")),
-            menuItem("Summary", tabName = "summary", icon = icon("list-alt")),
+            menuItem("About", tabName = "about", icon = icon("th")),
+            menuItem("Summary", tabName = "summary", icon = icon("th")),
             menuItem("City Analysis", tabName = "city", icon = icon("th"))
         )
     ),
@@ -38,13 +38,12 @@ ui <- dashboardPage(
                     mainPanel(
                         h2("Summary",style="text-align: center;"),
                         fluidRow(valueBoxOutput("countryOutput"),
-                                 valueBoxOutput("ciytOutput")),
+                                 valueBoxOutput("ciytOutput"),
+                                  valueBoxOutput("categoryOutput")),
                         fluidRow(
-                            valueBoxOutput("categoryOutput"),
+                            valueBoxOutput("amountRaisedOutput"),
+                            valueBoxOutput("percentofSuccessfulProjectsOutput"),
                             valueBoxOutput("subCategoryOutput")
-                        ),
-                        fluidRow(valueBoxOutput("amountRaisedOutput"),
-                                 valueBoxOutput("percentofSuccessfulProjectsOutput")
                         )
                     )
             ),
