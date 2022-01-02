@@ -132,10 +132,10 @@ server <- function(input, output,session) {
     output$pledgenumYearOutput <- renderPlot({
         
         data_df <- df %>%
-            filter(city == input$cityInput) %>%
-            filter(major_category == input$categoryInput) %>%
-            group_by(year) %>%
-            summarise(total_pledges = sum(number_of_pledgers))
+            filter(city == input$cityInput, major_category == input$categoryInput) %>%
+            dplyr::group_by(year) %>%
+            dplyr::summarise(total_pledges = sum(number_of_pledgers)) %>%
+            select(year,total_pledges)
         
         ggplot(data = data_df,aes(x = as.factor(year),y = total_pledges)) +
             geom_bar(stat = "identity", width = 0.3) + theme_light() +
@@ -159,10 +159,10 @@ server <- function(input, output,session) {
     output$pledgeYearOutput <- renderPlot({
         
         data_df <- df %>%
-            filter(city == input$cityInput) %>%
-            filter(major_category == input$categoryInput) %>%
+            filter(city == input$cityInput, major_category == input$categoryInput) %>%
             group_by(year) %>%
-            summarise(total_pledges = sum(amt_pledged_.))
+            summarise(total_pledges = sum(amt_pledged_.)) %>%
+            select(year,total_pledges)
         
         ggplot(data = data_df,aes(x = as.factor(year),y = total_pledges)) +
             geom_bar(stat = "identity", width = 0.3) + theme_light() +
@@ -177,18 +177,7 @@ server <- function(input, output,session) {
                 axis.text = element_text(size = 10),
                 axis.text.x = element_text(angle = 45, hjust = 1)
             )
-        
-        
-        
     })
-    
-
-    
-
-    
-
-    
-    
 }
 
 shinyApp(ui, server)
