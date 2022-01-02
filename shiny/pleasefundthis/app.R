@@ -15,8 +15,8 @@ for (package in packages) {
 #load data
 df <- read.csv("PleaseFundThis.csv")
 
-cities <- sort(as.vector(unique(df$city)))
-categories <- sort(as.vector(unique(df$major_category)))
+cities <- c(sort((unique(df$city))))
+categories <- c(sort(unique(df$major_category)))
 
 df$date_launched <- as.Date(df$date_launched, format = "%d/%m/%Y")
 df$year <- as.numeric(format(df$date_launched, '%Y'))
@@ -50,7 +50,7 @@ ui <- dashboardPage(
             tabItem(tabName = "city",
                     sidebarLayout(
                         sidebarPanel(
-                            selectInput("cityInput", "City", choices = cities),
+                            selectInput("cityInput", "City", choices = cities, selected = "Boston"),
                             selectInput("categoryInput", "Category", choices = categories),
                             submitButton("Submit")
                         ),
@@ -61,19 +61,22 @@ ui <- dashboardPage(
                             plotOutput("pledgeYearOutput"),
                             h3("# of pledges",style="text-align: center;"),
                             plotOutput("pledgenumYearOutput")
-                            #plotOutput(""),
                             )
                         )
                     )
-        ) # prediction model
+        )
     )
     )
 )
 
-
+################
 # Define server logic 
+################
 server <- function(input, output,session) {
     
+    ################
+    # Value boxes
+    ################
     output$countryOutput <- renderValueBox({
         valueBox(
             paste0(length(unique(df$region))),"# of Countries", 
@@ -127,8 +130,9 @@ server <- function(input, output,session) {
             color = "blue"
         )
     })
-    
+    ################
     # number of pledges by year
+    ################
     output$pledgenumYearOutput <- renderPlot({
         
         data_df <- df %>%
@@ -137,25 +141,32 @@ server <- function(input, output,session) {
             dplyr::summarise(total_pledges = sum(number_of_pledgers)) %>%
             select(year,total_pledges)
         
-        ggplot(data = data_df,aes(x = as.factor(year),y = total_pledges)) +
-            geom_bar(stat = "identity", width = 0.3) + theme_light() +
-            labs(x = "Years",
-                 y = "Total # of Pledges") +
-            scale_y_continuous(labels = comma) +
-            scale_x_discrete() +
-            theme(
-                legend.text = element_text(size = 10),
-                legend.title = element_text(size = 10),
-                axis.title = element_text(size = 15),
-                axis.text = element_text(size = 10),
-                axis.text.x = element_text(angle = 45, hjust = 1)
-            )
+        if (is.null(data_df)) {
+            
+        } else {
+            ggplot(data = data_df,aes(x = as.factor(year),y = total_pledges)) +
+                geom_bar(stat = "identity", width = 0.3) + theme_light() +
+                labs(x = "Years",
+                     y = "Total # of Pledges") +
+                scale_y_continuous(labels = comma) +
+                scale_x_discrete() +
+                theme(
+                    legend.text = element_text(size = 10),
+                    legend.title = element_text(size = 10),
+                    axis.title = element_text(size = 15),
+                    axis.text = element_text(size = 10),
+                    axis.text.x = element_text(angle = 45, hjust = 1)
+                ) 
+        }
+        
+   
         
         
         
     })
-    
+    ################
     #amount pledge by year
+    ################
     output$pledgeYearOutput <- renderPlot({
         
         data_df <- df %>%
