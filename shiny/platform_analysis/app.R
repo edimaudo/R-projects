@@ -17,3 +17,19 @@ for (package in packages) {
 # data
 ##################
 df <- read.csv("clean.csv")
+
+
+##################
+# UI
+##################
+
+
+##################
+# Server
+##################
+server <- function(input, output) {
+    
+}
+
+
+shinyApp(ui, server)
