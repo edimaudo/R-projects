@@ -1,6 +1,6 @@
 rm(list = ls())
 ##################
-#packages 
+# packages 
 ##################
 packages <- c('ggplot2', 'corrplot','tidyverse','shiny','shinydashboard','readxl',
               'scales','dplyr','mlbench','caTools',
@@ -13,3 +13,7 @@ for (package in packages) {
     }
 }
 
+##################
+# data
+##################
+df <- read.csv("clean.csv")
