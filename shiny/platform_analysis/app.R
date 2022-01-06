@@ -22,7 +22,33 @@ df <- read.csv("clean.csv")
 ##################
 # UI
 ##################
-
+ui <- dashboardPage(skin = "yellow",
+    dashboardHeader(title = "Platform analysis"),
+    dashboardSidebar(
+        sidebarMenu(
+            menuItem("Summary", tabName = "summary", icon = icon("dashboard")),
+            menuItem("Category", tabName = "category", icon = icon("th")),
+            menuItem("Sub Category", tabName = "subcategory", icon = icon("th"))
+        )
+    ),
+    dashboardBody(
+        tabItems(
+            tabItem(tabName = "summary",
+                    fluidRow()
+            )
+        ),
+        tabItems(
+            tabItem(tabName = "category",
+                    fluidRow()
+            )
+        ),
+        tabItems(
+            tabItem(tabName = "subcategory",
+                    fluidRow()
+            )
+        )
+    )
+)
 
 ##################
 # Server
