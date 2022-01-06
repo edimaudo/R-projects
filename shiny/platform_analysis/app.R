@@ -22,6 +22,11 @@ df <- read.csv("clean.csv")
 ##################
 # UI
 ##################
+
+#----------------
+# UI dropdown
+#----------------
+
 ui <- dashboardPage(skin = "yellow",
     dashboardHeader(title = "Platform analysis"),
     dashboardSidebar(
@@ -33,41 +38,46 @@ ui <- dashboardPage(skin = "yellow",
     ),
     dashboardBody(
         tabItems(
+            #----------------
+            # Summary
+            #----------------
             tabItem(tabName = "summary",
                     fluidRow(
                         h2("Summary Insights",style="text-align: center;"),
                         tabBox(
                             title="Categories",
                             id = "tabset1",
-                            width = "100%",
-                            selected = "Top 10 by Price",
-                            tabPanel("Top 10 by Price", plotOutput("salesComparePlot", height = 150)),
-                            tabPanel("Bottom 10 by Price", plotOutput("salesComparePlot", height = 150)),
-                            tabPanel("Top 10 by Ratings", plotOutput("salesComparePlot", height = 150)),
-                            tabPanel("Bottom 10 by Ratings", plotOutput("salesComparePlot", height = 150)),
-                            tabPanel("Top 10 by Sales", plotOutput("salesComparePlot", height = 150)),
-                            tabPanel("Bottom 10 by Sales", plotOutput("salesComparePlot", height = 150))
+                            width = "10%",
+                            selected = "Price",
+                            tabPanel("Price", plotOutput("categoryPricePlot",height = 250)),
+                            tabPanel("Ratings", plotOutput("categoryRatingPlot",height = 250)),
+                            tabPanel("Sales", plotOutput("categorySalesPlot",height = 250))
+                            
                         ),
-                        tabBox(
-                            title="Sub-Categories",
-                            id = "tabset2",
-                            width = "100%",
-                            selected = "Top 10 by Price",
-                            tabPanel("Top 10 by Price", plotOutput("salesComparePlot", height = 150)),
-                            tabPanel("Bottom 10 by Price", plotOutput("salesComparePlot", height = 150)),
-                            tabPanel("Top 10 by Ratings", plotOutput("salesComparePlot", height = 150)),
-                            tabPanel("Bottom 10 by Ratings", plotOutput("salesComparePlot", height = 150)),
-                            tabPanel("Top 10 by Sales", plotOutput("salesComparePlot", height = 150)),
-                            tabPanel("Bottom 10 by Sales", plotOutput("salesComparePlot", height = 150))
-                        )
+                         tabBox(
+                             title="Sub-Categories",
+                             id = "tabset2",
+                             width = "10%",
+                             selected = "Price",
+                             tabPanel("Price", plotOutput("subcategoryPricePlot", height = 250)),
+                             tabPanel("Ratings", plotOutput("subcategoryRatingPlot", height = 250)),
+                             tabPanel("Sales", plotOutput("subcategorySalesPlot", height = 250))
+                             
+                         )
                     )
             )
         ),
+        #----------------
+        # Category
+        #----------------       
         tabItems(
             tabItem(tabName = "category",
                     fluidRow()
             )
         ),
+        #----------------
+        # Sub Category
+        #----------------         
         tabItems(
             tabItem(tabName = "subcategory",
                     fluidRow()
@@ -79,7 +89,136 @@ ui <- dashboardPage(skin = "yellow",
 ##################
 # Server
 ##################
-server <- function(input, output) {
+server <- function(input, output, session) {
+    
+    output$categoryPricePlot <- renderPlot({
+        
+        category_price_df <- df %>%
+            group_by(Category) %>%
+            dplyr::summarise(`Average Price` = mean(price)) %>%
+            arrange(desc(`Average Price`)) %>%
+            top_n(10) %>%
+            dplyr::select(Category, `Average Price`)
+        
+        ggplot(category_price_df, aes(reorder(Category,`Average Price`),`Average Price`),color = Category) + 
+            geom_bar(stat="identity",position="dodge",size=2 ,width = 0.4, aes(fill = Category)) + coord_flip() +
+            theme_minimal() + scale_y_continuous(labels = comma) +
+            labs(x = "Category", y = "Average Price") + 
+            theme(legend.text = element_text(size = 12),
+                  legend.title = element_text(size = 15),
+                  axis.title = element_text(size = 12),
+                  axis.text = element_text(size = 12),
+                  axis.text.x = element_text(angle = 00, hjust = 1))
+        
+    })
+    
+    output$categoryRatingPlot <- renderPlot({
+        category_rating_df <- df %>%
+            group_by(Category) %>%
+            dplyr::summarise(`Average Rating` = mean(stars)) %>%
+            arrange(desc(`Average Rating`)) %>%
+            top_n(10) %>%
+            dplyr::select(Category, `Average Rating`)
+        
+        ggplot(category_rating_df, aes(reorder(Category,`Average Rating`),`Average Rating`),color = Category) + 
+            geom_bar(stat="identity",position="dodge",size=2 ,width = 0.4, aes(fill = Category)) + coord_flip() +
+            theme_minimal() + scale_y_continuous(labels = comma) +
+            labs(x = "Category", y = "Average Rating") + 
+            theme(legend.text = element_text(size = 12),
+                  legend.title = element_text(size = 15),
+                  axis.title = element_text(size = 12),
+                  axis.text = element_text(size = 12),
+                  axis.text.x = element_text(angle = 00, hjust = 1))
+        
+    })
+    
+    output$categorySalesPlot <- renderPlot({
+        
+        category_sales_df <- df %>%
+            group_by(Category) %>%
+            dplyr::summarise(`Average Sales` = mean(sales)) %>%
+            arrange(desc(`Average Sales`)) %>%
+            top_n(10) %>%
+            dplyr::select(Category, `Average Sales`)
+        
+        ggplot(category_sales_df, aes(reorder(Category,`Average Sales`),`Average Sales`),color = Category) + 
+            geom_bar(stat="identity",position="dodge",size=2 ,width = 0.4, aes(fill = Category)) + coord_flip() +
+            theme_minimal() + scale_y_continuous(labels = comma) +
+            labs(x = "Category", y = "Average Sales") + 
+            theme(legend.text = element_text(size = 12),
+                  legend.title = element_text(size = 15),
+                  axis.title = element_text(size = 12),
+                  axis.text = element_text(size = 12),
+                  axis.text.x = element_text(angle = 00, hjust = 1))
+        
+    })
+    
+    
+    output$subcategoryPricePlot <- renderPlot({
+        
+        subcategory_price_df <- df %>%
+            group_by(Subcat) %>%
+            dplyr::summarise(`Average Price` = mean(price)) %>%
+            arrange(desc(`Average Price`)) %>%
+            top_n(10) %>%
+            dplyr::select(Subcat, `Average Price`)
+        
+        ggplot(subcategory_price_df, aes(reorder(Subcat,`Average Price`),`Average Price`),color = Subcat) + 
+            geom_bar(stat="identity",position="dodge",size=2 ,width = 0.4, aes(fill = Subcat)) + coord_flip() +
+            theme_minimal() + scale_y_continuous(labels = comma) +
+            labs(x = "Sub Category", y = "Average Price", fill = "Sub Category") + 
+            theme(legend.text = element_text(size = 12),
+                  legend.title = element_text(size = 15),
+                  axis.title = element_text(size = 12),
+                  axis.text = element_text(size = 12),
+                  axis.text.x = element_text(angle = 00, hjust = 1))
+        
+    })
+    
+    output$subcategoryRatingPlot <- renderPlot({
+        subcategory_rating_df <- df %>%
+            group_by(Subcat) %>%
+            dplyr::summarise(`Average Rating` = mean(stars)) %>%
+            arrange(desc(`Average Rating`)) %>%
+            top_n(10) %>%
+            dplyr::select(Subcat, `Average Rating`)
+        
+        ggplot(subcategory_rating_df, aes(reorder(Subcat,`Average Rating`),`Average Rating`),color = Subcat) + 
+            geom_bar(stat="identity",position="dodge",size=2 ,width = 0.4, aes(fill = Subcat)) + coord_flip() +
+            theme_minimal() + scale_y_continuous(labels = comma) +
+            labs(x = "Sub Category", y = "Average Rating", fill="Sub Category") + 
+            theme(legend.text = element_text(size = 12),
+                  legend.title = element_text(size = 15),
+                  axis.title = element_text(size = 12),
+                  axis.text = element_text(size = 12),
+                  axis.text.x = element_text(angle = 00, hjust = 1))
+        
+    })
+    
+    output$subcategorySalesPlot <- renderPlot({
+        
+        subcategory_sales_df <- df %>%
+            group_by(Subcat) %>%
+            dplyr::summarise(`Average Sales` = mean(sales)) %>%
+            arrange(desc(`Average Sales`)) %>%
+            top_n(10) %>%
+            dplyr::select(Subcat, `Average Sales`)
+        
+        ggplot(subcategory_sales_df, aes(reorder(Subcat,`Average Sales`),`Average Sales`),color = Subcat) + 
+            geom_bar(stat="identity",position="dodge",size=2 ,width = 0.4, aes(fill = Subcat)) + coord_flip() +
+            theme_minimal() + scale_y_continuous(labels = comma) +
+            labs(x = "Sub Category", y = "Average Sales", fill="Sub Category") + 
+            theme(legend.text = element_text(size = 12),
+                  legend.title = element_text(size = 15),
+                  axis.title = element_text(size = 12),
+                  axis.text = element_text(size = 12),
+                  axis.text.x = element_text(angle = 00, hjust = 1))
+        
+    })
+    
+    
+    
+    
     
 }
 
