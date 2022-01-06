@@ -26,7 +26,7 @@ ui <- dashboardPage(skin = "yellow",
     dashboardHeader(title = "Platform analysis"),
     dashboardSidebar(
         sidebarMenu(
-            menuItem("Summary", tabName = "summary", icon = icon("dashboard")),
+            menuItem("Summary", tabName = "summary", icon = icon("clock")),
             menuItem("Category", tabName = "category", icon = icon("th")),
             menuItem("Sub Category", tabName = "subcategory", icon = icon("th"))
         )
@@ -34,7 +34,33 @@ ui <- dashboardPage(skin = "yellow",
     dashboardBody(
         tabItems(
             tabItem(tabName = "summary",
-                    fluidRow()
+                    fluidRow(
+                        h2("Summary Insights",style="text-align: center;"),
+                        tabBox(
+                            title="Categories",
+                            id = "tabset1",
+                            width = "100%",
+                            selected = "Top 10 by Price",
+                            tabPanel("Top 10 by Price", plotOutput("salesComparePlot", height = 150)),
+                            tabPanel("Bottom 10 by Price", plotOutput("salesComparePlot", height = 150)),
+                            tabPanel("Top 10 by Ratings", plotOutput("salesComparePlot", height = 150)),
+                            tabPanel("Bottom 10 by Ratings", plotOutput("salesComparePlot", height = 150)),
+                            tabPanel("Top 10 by Sales", plotOutput("salesComparePlot", height = 150)),
+                            tabPanel("Bottom 10 by Sales", plotOutput("salesComparePlot", height = 150))
+                        ),
+                        tabBox(
+                            title="Sub-Categories",
+                            id = "tabset2",
+                            width = "100%",
+                            selected = "Top 10 by Price",
+                            tabPanel("Top 10 by Price", plotOutput("salesComparePlot", height = 150)),
+                            tabPanel("Bottom 10 by Price", plotOutput("salesComparePlot", height = 150)),
+                            tabPanel("Top 10 by Ratings", plotOutput("salesComparePlot", height = 150)),
+                            tabPanel("Bottom 10 by Ratings", plotOutput("salesComparePlot", height = 150)),
+                            tabPanel("Top 10 by Sales", plotOutput("salesComparePlot", height = 150)),
+                            tabPanel("Bottom 10 by Sales", plotOutput("salesComparePlot", height = 150))
+                        )
+                    )
             )
         ),
         tabItems(
