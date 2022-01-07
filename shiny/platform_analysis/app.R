@@ -95,7 +95,6 @@ ui <- dashboardPage(skin = "yellow",
         #----------------
         # Sub Category
         #----------------         
-      
             tabItem(tabName = "subcategory",
                     h2("Sub-Category Insights",style="text-align: center;"),
                     fluidRow(
@@ -357,6 +356,36 @@ server <- function(input, output, session) {
     #----------------
     # Category Plots
     #----------------
+    
+    # Sales & Price
+    output$priceSalesCategoryPlot <- renderPlot({
+        price_sales_df <- df %>%
+            filter(Category == input$CategoryInput) %>%
+            select(price, sales)
+        
+        ggplot(price_sales_df, aes(x=price, y=sales)) + geom_point(size=2, shape=23) + 
+            theme_minimal() + 
+            labs(x = "Price", y = "Sales") + 
+            theme(legend.text = element_text(size = 12),
+                  legend.title = element_text(size = 15),
+                  axis.title = element_text(size = 12),
+                  axis.text = element_text(size = 12),
+                  axis.text.x = element_text(angle = 00, hjust = 1))
+        
+     
+        
+        
+    })
+    
+    # Price & Ratings
+    output$priceRatingsCategoryPlot <- renderPlot({
+        
+    })
+    
+    # Sales & Ratings
+    output$salesRatingsCategoryPlot<- renderPlot({
+        
+    })
     
     #----------------
     # Sub Category Plots
