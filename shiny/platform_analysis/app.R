@@ -35,8 +35,7 @@ ui <- dashboardPage(skin = "yellow",
     dashboardSidebar(
         sidebarMenu(
             menuItem("Summary", tabName = "summary", icon = icon("clock")),
-            menuItem("Category", tabName = "category", icon = icon("th")),
-            menuItem("Sub Category", tabName = "subcategory", icon = icon("th"))
+            menuItem("Category", tabName = "category", icon = icon("th"))
         )
     ),
     dashboardBody(
@@ -87,32 +86,9 @@ ui <- dashboardPage(skin = "yellow",
                         box(title = "Price & Sales", status = "primary", 
                             plotOutput("priceSalesCategoryPlot", height = 250)),
                         box(title = "Price & Ratings", status = "primary", 
-                            plotOutput("priceRatingsCategoryPlot", height = 250)),
-                        box(title = "Sales & Ratings", status = "primary", 
-                            plotOutput("salesRatingsCategoryPlot", height = 250))
-                    )
-        ),
-        #----------------
-        # Sub Category
-        #----------------         
-            tabItem(tabName = "subcategory",
-                    h2("Sub-Category Insights",style="text-align: center;"),
-                    fluidRow(
-                        column(width = 3,
-                               selectInput("SubCategoryInput", "Sub Category",choices = sub_category_info))
-                    ),
-                    fluidRow(
-                        infoBoxOutput("priceSubCategoryBox"),
-                        infoBoxOutput("salesSubCategoryBox"),
-                        infoBoxOutput("ratingSubCategoryBox")
-                    ), 
-                    fluidRow(
-                        #box(title = "Histogram", status = "primary", plotOutput("plot2", height = 250)),
-                        #box(title = "Histogram", status = "primary", plotOutput("plot2", height = 250)),
-                        #box(title = "Histogram", status = "primary", plotOutput("plot2", height = 250))
+                            plotOutput("priceRatingsCategoryPlot", height = 250))
                     )
             )
-        
     )
   )
 )
@@ -359,11 +335,11 @@ server <- function(input, output, session) {
     
     # Sales & Price
     output$priceSalesCategoryPlot <- renderPlot({
-        price_sales_df <- df %>%
+        output_df  <- df %>%
             filter(Category == input$CategoryInput) %>%
             select(price, sales)
         
-        ggplot(price_sales_df, aes(x=price, y=sales)) + geom_point(size=2, shape=23) + 
+        ggplot(output_df , aes(x=price, y=sales)) + geom_point(size=2, shape=23) + 
             theme_minimal() + 
             labs(x = "Price", y = "Sales") + 
             theme(legend.text = element_text(size = 12),
@@ -371,25 +347,27 @@ server <- function(input, output, session) {
                   axis.title = element_text(size = 12),
                   axis.text = element_text(size = 12),
                   axis.text.x = element_text(angle = 00, hjust = 1))
-        
-     
-        
-        
+
     })
     
     # Price & Ratings
     output$priceRatingsCategoryPlot <- renderPlot({
+      
+        output_df <- df %>%
+            filter(Category == input$CategoryInput) %>%
+            select(price, stars)
         
+        ggplot(output_df , aes(x=stars, y=price)) + geom_point(size=2, shape=23) + 
+            theme_minimal() + 
+            labs(x = "Price", y = "Ratings") + 
+            theme(legend.text = element_text(size = 12),
+                  legend.title = element_text(size = 15),
+                  axis.title = element_text(size = 12),
+                  axis.text = element_text(size = 12),
+                  axis.text.x = element_text(angle = 00, hjust = 1))
+          
     })
     
-    # Sales & Ratings
-    output$salesRatingsCategoryPlot<- renderPlot({
-        
-    })
-    
-    #----------------
-    # Sub Category Plots
-    #----------------
 }
 
 
