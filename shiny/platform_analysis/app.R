@@ -26,8 +26,8 @@ df <- read.csv("clean.csv")
 #----------------
 # UI dropdown
 #----------------
-category_info <- c("All",sort(unique(df$Category)))
-sub_category_info <- c("All",sort(unique(df$Subcat)))
+category_info <- c(sort(unique(df$Category)))
+sub_category_info <- c(sort(unique(df$Subcat)))
 
 
 ui <- dashboardPage(skin = "yellow",
@@ -41,9 +41,9 @@ ui <- dashboardPage(skin = "yellow",
     ),
     dashboardBody(
         tabItems(
-            #----------------
-            # Summary
-            #----------------
+        #----------------
+        # Summary
+        #----------------
             tabItem(tabName = "summary",
                     fluidRow(
                         h2("Summary Insights",style="text-align: center;"),
@@ -71,23 +71,25 @@ ui <- dashboardPage(skin = "yellow",
         #----------------
         # Category
         #----------------       
-        
             tabItem(tabName = "category",
                     h2("Category Insights",style="text-align: center;"),
                     fluidRow(
                         column(width = 3,
                                selectInput("CategoryInput", "Category",
-                                           selected = "All",choices = customer_info))
+                                           selected = "All",choices = category_info))
                         ),
                     fluidRow(
-                        valueBoxOutput("priceBox"),
-                        valueBoxOutput("salesBox"),
-                        valueBoxOutput("ratingBox")
+                        infoBoxOutput("priceCategoryBox"),
+                        infoBoxOutput("salesCategoryBox"),
+                        infoBoxOutput("ratingCategoryBox")
                     ),
                     fluidRow(
-                        #box(title = "Histogram", status = "primary", plotOutput("plot2", height = 250)),
-                        #box(title = "Histogram", status = "primary", plotOutput("plot2", height = 250)),
-                        #box(title = "Histogram", status = "primary", plotOutput("plot2", height = 250))
+                        box(title = "Price & Sales", status = "primary", 
+                            plotOutput("priceSalesCategoryPlot", height = 250)),
+                        box(title = "Price & Ratings", status = "primary", 
+                            plotOutput("priceRatingsCategoryPlot", height = 250)),
+                        box(title = "Sales & Ratings", status = "primary", 
+                            plotOutput("salesRatingsCategoryPlot", height = 250))
                     )
         ),
         #----------------
@@ -97,10 +99,14 @@ ui <- dashboardPage(skin = "yellow",
             tabItem(tabName = "subcategory",
                     h2("Sub-Category Insights",style="text-align: center;"),
                     fluidRow(
-                        #valueBoxOutput("progressBox"),
-                        #valueBoxOutput("progressBox"),
-                        #valueBoxOutput("progressBox"),
+                        column(width = 3,
+                               selectInput("SubCategoryInput", "Sub Category",choices = sub_category_info))
                     ),
+                    fluidRow(
+                        infoBoxOutput("priceSubCategoryBox"),
+                        infoBoxOutput("salesSubCategoryBox"),
+                        infoBoxOutput("ratingSubCategoryBox")
+                    ), 
                     fluidRow(
                         #box(title = "Histogram", status = "primary", plotOutput("plot2", height = 250)),
                         #box(title = "Histogram", status = "primary", plotOutput("plot2", height = 250)),
@@ -250,6 +256,111 @@ server <- function(input, output, session) {
     
     
     
+    
+    #----------------
+    # Category Info boxes
+    #----------------
+    
+    # Price Infobox
+    output$priceCategoryBox <- renderInfoBox({
+        
+        price_info <- df %>%
+            filter(Category == input$CategoryInput) %>%
+            summarize(average_price = mean(price)) %>%
+            select(average_price)
+        
+        infoBox(
+            "Average Price", paste0("$" , round(price_info$average_price,2) ), icon = icon("list"),
+            color = "blue"
+        )
+    })
+    
+    # Sales Infobox
+    output$salesCategoryBox <- renderInfoBox({
+        
+        sales_info <- df %>%
+            filter(Category == input$CategoryInput) %>%
+            summarize(average_sales = mean(sales)) %>%
+            select(average_sales)
+        
+        infoBox(
+            "Average Sales", paste0(round(sales_info$average_sales,2)), icon = icon("credit-card"),
+            color = "blue"
+        )
+    })
+    
+    # Rating Infobox
+    output$ratingCategoryBox <- renderInfoBox({
+        
+        rating_info <- df %>%
+            filter(Category == input$CategoryInput) %>%
+            summarize(average_ratings = mean(stars)) %>%
+            select(average_ratings)
+        
+        infoBox(
+            "Average Ratings", paste0( round(rating_info$average_ratings,2) ), icon = icon("star"),
+            color = "blue"
+        )
+    })
+    
+    #----------------
+    # Sub-Category Info boxes
+    #----------------
+    
+    # Price Infobox
+    output$priceSubCategoryBox <- renderInfoBox({
+        
+        price_info <- df %>%
+            filter(Subcat == input$SubCategoryInput) %>%
+            summarize(average_price = mean(price)) %>%
+            select(average_price)
+        
+        infoBox(
+            "Average Price", paste0("$" , round(price_info$average_price,2) ), icon = icon("list"),
+            color = "green"
+        )
+    })
+    
+    # Sales Infobox
+    output$salesSubCategoryBox <- renderInfoBox({
+        
+        sales_info <- df %>%
+            filter(Subcat == input$SubCategoryInput) %>%
+            summarize(average_sales = mean(sales)) %>%
+            select(average_sales)
+        
+        infoBox(
+            "Average Sales", paste0(round(sales_info$average_sales,2)), icon = icon("credit-card"),
+            color = "green"
+        )
+    })
+    
+    # Rating Infobox
+    output$ratingSubCategoryBox <- renderInfoBox({
+        
+        rating_info <- df %>%
+            filter(Subcat == input$SubCategoryInput) %>%
+            summarize(average_ratings = mean(stars)) %>%
+            select(average_ratings)
+        
+        infoBox(
+            "Average Ratings", paste0( round(rating_info$average_ratings,2) ), icon = icon("star"),
+            color = "green"
+        )
+    })
+    
+    
+    
+    
+    
+    
+    #----------------
+    # Category Plots
+    #----------------
+    
+    #----------------
+    # Sub Category Plots
+    #----------------
 }
 
 
