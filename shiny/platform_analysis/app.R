@@ -26,6 +26,9 @@ df <- read.csv("clean.csv")
 #----------------
 # UI dropdown
 #----------------
+category_info <- c("All",sort(unique(df$Category)))
+sub_category_info <- c("All",sort(unique(df$Subcat)))
+
 
 ui <- dashboardPage(skin = "yellow",
     dashboardHeader(title = "Platform analysis"),
@@ -52,7 +55,6 @@ ui <- dashboardPage(skin = "yellow",
                             tabPanel("Price", plotOutput("categoryPricePlot",height = 250)),
                             tabPanel("Ratings", plotOutput("categoryRatingPlot",height = 250)),
                             tabPanel("Sales", plotOutput("categorySalesPlot",height = 250))
-                            
                         ),
                          tabBox(
                              title="Sub-Categories",
@@ -65,32 +67,58 @@ ui <- dashboardPage(skin = "yellow",
                              
                          )
                     )
-            )
-        ),
+            ),
         #----------------
         # Category
         #----------------       
-        tabItems(
+        
             tabItem(tabName = "category",
-                    fluidRow()
-            )
+                    h2("Category Insights",style="text-align: center;"),
+                    fluidRow(
+                        column(width = 3,
+                               selectInput("CategoryInput", "Category",
+                                           selected = "All",choices = customer_info))
+                        ),
+                    fluidRow(
+                        valueBoxOutput("priceBox"),
+                        valueBoxOutput("salesBox"),
+                        valueBoxOutput("ratingBox")
+                    ),
+                    fluidRow(
+                        #box(title = "Histogram", status = "primary", plotOutput("plot2", height = 250)),
+                        #box(title = "Histogram", status = "primary", plotOutput("plot2", height = 250)),
+                        #box(title = "Histogram", status = "primary", plotOutput("plot2", height = 250))
+                    )
         ),
         #----------------
         # Sub Category
         #----------------         
-        tabItems(
+      
             tabItem(tabName = "subcategory",
-                    fluidRow()
+                    h2("Sub-Category Insights",style="text-align: center;"),
+                    fluidRow(
+                        #valueBoxOutput("progressBox"),
+                        #valueBoxOutput("progressBox"),
+                        #valueBoxOutput("progressBox"),
+                    ),
+                    fluidRow(
+                        #box(title = "Histogram", status = "primary", plotOutput("plot2", height = 250)),
+                        #box(title = "Histogram", status = "primary", plotOutput("plot2", height = 250)),
+                        #box(title = "Histogram", status = "primary", plotOutput("plot2", height = 250))
+                    )
             )
-        )
+        
     )
+  )
 )
-
 ##################
 # Server
 ##################
 server <- function(input, output, session) {
     
+    #----------------
+    # Category Summary Plot
+    #---------------- 
     output$categoryPricePlot <- renderPlot({
         
         category_price_df <- df %>%
@@ -153,7 +181,9 @@ server <- function(input, output, session) {
         
     })
     
-    
+    #----------------
+    # Sub Category Summary Plot
+    #---------------- 
     output$subcategoryPricePlot <- renderPlot({
         
         subcategory_price_df <- df %>%
