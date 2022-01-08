@@ -17,6 +17,9 @@ for (package in packages) {
 ################
 df <- read_excel("otf.xlsx")
 
+#--------------
+# data information
+#--------------
 organization <- c(sort(unique(df$Organization_name)))
 city <- budget_fund <- c(sort(unique(df$Recipient_org_city_update)))
 year <- as.integer(c(sort(unique(df$Fiscal_year_update))))
@@ -67,7 +70,9 @@ ui <- dashboardPage(
             valueBoxOutput("programBox")
           ), 
           fluidRow(
-            plotOutput("salesComparePlot", height = 150)
+            plotOutput("grantPlot", height = 300)
+            #box(title = "Grant Amount", status = "primary", 
+            #    plotOutput("grantPlot", height = 250, width="100%"))
           )
         )
       ),
@@ -94,10 +99,6 @@ ui <- dashboardPage(
       #--------------
       # Organization
       #--------------
-      
-      #--------------
-      # Organization comparison
-      #--------------
           )
         )
       )
@@ -111,7 +112,6 @@ server <- function(input, output,session) {
   #===============
   # Summary
   #===============
-  
   #--------------
   # Tab-boxes
   #--------------
@@ -161,13 +161,28 @@ server <- function(input, output,session) {
   #--------------
   # Grants across fiscal Year (Amount given)
   #--------------
-  
+  output$grantPlot <- renderPlot({
+    grant_df <- df %>%
+      group_by(Fiscal_year_update) %>%
+      summarise(grant_total = sum(Amount_awarded)) %>%
+      select(Fiscal_year_update, grant_total)
+    
+    ggplot(grant_df, aes(as.factor(Fiscal_year_update),grant_total)) + 
+      geom_bar(stat="identity", width = 0.5, fill="#bc5090") +
+      theme_minimal() + scale_y_continuous(labels = comma) +
+      labs(x = "Year", y = "Total Grant Amount") + 
+      theme(legend.text = element_text(size = 12),
+            legend.title = element_text(size = 12),
+            axis.title = element_text(size = 12),
+            axis.text = element_text(size = 12),
+            axis.text.x = element_text(angle = 45, hjust = 1))
+  })
   
 
   
-  #---------------
+  #===============
   # City Insights
-  #---------------
+  #===============
   
   # Grants by
     # Age groups
@@ -190,9 +205,9 @@ server <- function(input, output,session) {
   
   # top 10 topics
   
-  #---------------
+  #===============
   # Organization Insights
-  #---------------
+  #===============
 # Grants by
   
   # Age groups
