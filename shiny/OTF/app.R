@@ -24,15 +24,12 @@ grant_program <- c(sort(unique(df$Grant_program)))
 age_group <- c(sort(unique(df$Age_group_update)))
 budget_fund <- c(sort(unique(df$Budget_fund_update)))
 program_area <- c(sort(unique(df$Program_area_update)))
+geo_area <- c(sort(unique(df$Geographical_area_served)))
+population <- c(sort(unique(df$Population_served)))
 
 ################
 # Application UI
 ################
-#------------------
-# UI drop-downs
-#------------------
-
-
 #------------------
 # UI
 #------------------
@@ -62,9 +59,15 @@ ui <- dashboardPage(
             ),
           ),
           fluidRow(
-            valueBoxOutput("salesBox"),
-            valueBoxOutput("partsBox"),
-            valueBoxOutput("quantityBox")
+            valueBoxOutput("ageBox"),
+            valueBoxOutput("cityBox"),
+            valueBoxOutput("areaBox"),
+            valueBoxOutput("populationBox"),
+            valueBoxOutput("grantBox"),
+            valueBoxOutput("programBox")
+          ), 
+          fluidRow(
+            
           )
         )
       ),
@@ -108,29 +111,48 @@ server <- function(input, output,session) {
   #---------------
   # Summary
   #---------------
-  
-  # Age groups
-  output$progressBox <- renderValueBox({
+  output$ageBox <- renderValueBox({
     valueBox(
-      paste0(length()), "Progress", icon = icon("list"),
+      paste0(length(age_group)), "Age Groups", icon = icon("list"),
       color = "purple"
     )
   })
-  
-  
-  # Recipient org city
-  
-  # Area served
-  
-  # Population served
-  
-  # of grant programs
-  
-  # Program area
-  
-  # Budget fund
-  
-  # Province served
+  output$cityBox <- renderValueBox({
+    valueBox(
+      paste0(length(city)), "Cities", icon = icon("list"),
+      color = "purple"
+    )
+  })
+  output$areaBox <- renderValueBox({
+    valueBox(
+      paste0(length(geo_area)), "Geo. Areas", icon = icon("list"),
+      color = "purple"
+    )
+  })
+  output$populationBox <-  renderValueBox({
+    valueBox(
+      paste0(length(population)), "Population Served", icon = icon("list"),
+      color = "purple"
+    )
+  })
+  output$grantBox <-  renderValueBox({
+    valueBox(
+      paste0(length(grant_program)), "Grant Programs", icon = icon("list"),
+      color = "purple"
+    )
+  })
+  output$programBox <-  renderValueBox({
+    valueBox(
+      paste0(length(program_area)), "Program Areas", icon = icon("list"),
+      color = "purple"
+    )
+  })
+  output$budgetBox <-  renderValueBox({
+    valueBox(
+      paste0(length(budget_fund)), "Budget Fund Areas", icon = icon("list"),
+      color = "purple"
+    )
+  })
   
   # Grants across fiscal Year (Amount applied)
   
