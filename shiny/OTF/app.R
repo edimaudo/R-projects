@@ -67,7 +67,7 @@ ui <- dashboardPage(
             valueBoxOutput("programBox")
           ), 
           fluidRow(
-            
+            plotOutput("salesComparePlot", height = 150)
           )
         )
       ),
@@ -108,9 +108,13 @@ ui <- dashboardPage(
 ################
 server <- function(input, output,session) {
   
-  #---------------
+  #===============
   # Summary
-  #---------------
+  #===============
+  
+  #--------------
+  # Tab-boxes
+  #--------------
   output$ageBox <- renderValueBox({
     valueBox(
       paste0(length(age_group)), "Age Groups", icon = icon("list"),
@@ -154,9 +158,10 @@ server <- function(input, output,session) {
     )
   })
   
-  # Grants across fiscal Year (Amount applied)
-  
+  #--------------
   # Grants across fiscal Year (Amount given)
+  #--------------
+  
   
 
   
