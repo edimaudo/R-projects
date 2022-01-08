@@ -35,7 +35,20 @@ program_area <- c(sort(unique(df$Program_area_update)))
 #------------------
 # UI
 #------------------
-
+ui <- dashboardPage(
+  dashboardHeader(title = "OTF Insights"),
+  dashboardSidebar(
+    sidebarMenu(
+      menuItem("Summary", tabName = "summary", icon = icon("th")), 
+      menuItem("City", tabName = "city", icon = icon("th")),
+      menuItem("Organization", tabName = "organization", icon = icon("th")),
+    )
+  ),
+  dashboardBody(
+    tabItems(
+    )
+  )
+)
 
 
 ################
