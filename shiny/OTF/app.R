@@ -17,6 +17,13 @@ for (package in packages) {
 ################
 df <- read_excel("otf.xlsx")
 
+organization <- c(sort(unique(df$Organization_name)))
+city <- budget_fund <- c(sort(unique(df$Recipient_org_city_update)))
+year <- as.integer(c(sort(unique(df$Fiscal_year_update))))
+grant_program <- c(sort(unique(df$Grant_program)))
+age_group <- c(sort(unique(df$Age_group_update)))
+budget_fund <- c(sort(unique(df$Budget_fund_update)))
+program_area <- c(sort(unique(df$Program_area_update)))
 
 ################
 # Application UI
@@ -24,13 +31,7 @@ df <- read_excel("otf.xlsx")
 #------------------
 # UI drop-downs
 #------------------
-organization <- c(sort(unique(df$Organization_Name)))
-city <- budget_fund <- c(sort(unique(df$Recipient_org_city_update)))
-year <- c(sort(unique(df$Fiscal_year_update)))
-grant_program <- c(sort(unique(df$Grant_program)))
-age_group <- c(sort(unique(df$Age_group_update)))
-budget_fund <- c(sort(unique(df$Budget_fund_update)))
-program_area <- c(sort(unique(df$Program_area_update)))
+
 
 #------------------
 # UI
@@ -41,14 +42,62 @@ ui <- dashboardPage(
     sidebarMenu(
       menuItem("Summary", tabName = "summary", icon = icon("th")), 
       menuItem("City", tabName = "city", icon = icon("th")),
-      menuItem("Organization", tabName = "organization", icon = icon("th")),
+      menuItem("Organization", tabName = "organization", icon = icon("th"))
     )
   ),
   dashboardBody(
     tabItems(
-    )
-  )
-)
+      #--------------
+      # Summary
+      #--------------
+      tabItem(tabName = "summary",
+        mainPanel(
+          h2("Overview",style="text-align: center; font-style: bold;"), 
+          tags$div(
+            tags$p(
+            tags$a(href="https://otf.ca", "Ontario Trillium Fund (OTF)"),
+            "First is an agency of the Government of Ontario, and one of Canada’s leading 
+            granting foundations. OTF awarded $108 million to 629 projects last year to 
+            build healthy and vibrant communities in Ontario."
+            ),
+          ),
+          fluidRow(
+            valueBoxOutput("salesBox"),
+            valueBoxOutput("partsBox"),
+            valueBoxOutput("quantityBox")
+          )
+        )
+      ),
+      #--------------
+      # City
+      #--------------
+      tabItem(tabName = "city",
+              sidebarLayout(
+                sidebarPanel(
+                  selectInput("cityInput", "City", choices = city),
+                  sliderInput("yearInput","Year",min=min(year),max=max(year),
+                              value = c(min(year),max(year)),step =1,ticks = FALSE)
+                ),
+                mainPanel(
+                  h2("Customer",style="text-align: center; font-style: bold;"), 
+                  fluidRow(
+                    valueBoxOutput("salesBox"),
+                    valueBoxOutput("partsBox"),
+                    valueBoxOutput("quantityBox")
+                  )
+                )
+              )
+            )
+      #--------------
+      # Organization
+      #--------------
+      
+      #--------------
+      # Organization comparison
+      #--------------
+          )
+        )
+      )
 
 
 ################
@@ -61,6 +110,13 @@ server <- function(input, output,session) {
   #---------------
   
   # Age groups
+  output$progressBox <- renderValueBox({
+    valueBox(
+      paste0(length()), "Progress", icon = icon("list"),
+      color = "purple"
+    )
+  })
+  
   
   # Recipient org city
   
