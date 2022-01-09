@@ -52,7 +52,8 @@ ui <- dashboardPage(
       #--------------
       tabItem(tabName = "summary",
         mainPanel(
-          h2("Overview",style="text-align: center; font-style: bold;"), 
+          img(src='OTF5.png', height = "100" ,align = "right"),
+            h2("Overview",style="text-align: left; font-style: bold;"), 
           tags$div(
             tags$p(
             tags$a(href="https://otf.ca", "Ontario Trillium Fund (OTF)"),
@@ -71,8 +72,6 @@ ui <- dashboardPage(
           ), 
           fluidRow(
             plotOutput("grantPlot", height = 300)
-            #box(title = "Grant Amount", status = "primary", 
-            #    plotOutput("grantPlot", height = 250, width="100%"))
           )
         )
       ),
