@@ -79,27 +79,53 @@ ui <- dashboardPage(
       # City
       #--------------
       tabItem(tabName = "city",
+              sidebarLayout(
+                sidebarPanel(
+                  selectInput("cityInput", "City", choices = city),
+                  sliderInput("yearInput","Year",min=min(year),max=max(year),
+                              value = c(min(year),max(year)),step =1,ticks = FALSE)
+                ),
                 mainPanel(
                   h2("City Insights",style="text-align: center; font-style: bold;"), 
-                  splitLayout(
-                    selectInput("cityInput", "City", choices = city),
-                    sliderInput("yearInput","Year",min=min(year),max=max(year),
-                                value = c(min(year),max(year)),step =1,ticks = FALSE)
+                  #splitLayout(#),
+                  fluidRow(
+                    tabBox(
+                      title = "Group Insights",
+                      id = "tabset2", 
+                      width = "100%",
+                      selected = "Age Group",
+                      tabPanel("Age Group", plotOutput("ageGroupCityPlot", height = 150, width='75%')),
+                      tabPanel("Area Served", plotOutput("areaServedCityPlot", height = 150, width='75%')),
+                      tabPanel("Population",  plotOutput("populationCityPlot", height = 150, width='75%')),
+                      tabPanel("Grant Program", plotOutput("grantProgramCityPlot", height = 150, width='75%')),
+                      tabPanel("Program Area", plotOutput("programAreaCityPlot", height = 150, width='75%')),
+                      tabPanel("Budget", plotOutput("budgetCityPlot", height = 150, width='75%')),
+                      tabPanel("Geographical area", plotOutput("geoCityPlot", height = 150, width='75%'))
+                    ) 
                   ),
+                  fluidRow(
+                    # Grants across fiscal Year (Amount applied)
+                    plotOutput("grantCityPlot", height = 150, width='75%')
+                  )
                   
-                    
-                        plotOutput("priceRatingsCategoryPlot", height = 150)
-                    
+                  
+                  
+                
+                  
+                  
+
                     
                 
               )
+            )
+      )
       #--------------
       # Organization
       #--------------
           )
         )
       )
-)
+
 
 ################
 # Server
@@ -183,7 +209,27 @@ server <- function(input, output,session) {
   
   # Grants by
     # Age groups
-    
+    output$ageGroupCityPlot <- renderPlot({
+      
+      output_df <- df %>%
+        filter(Recipient_org_city_update == input$cityInput,
+               Fiscal_year_update >= input$yearInput[1] & Fiscal_year_update <= input$yearInput[2],
+               Age_group_update != "Not Specified") %>%
+        group_by(Age_group_update) %>%
+        summarise(grant_total = sum(Amount_awarded)) %>%
+        select(Age_group_update, grant_total)
+      
+      ggplot(output_df, aes(reorder(Age_group_update,grant_total),grant_total)) + 
+        geom_bar(stat="identity", width = 0.5, fill="#bc5090") + coord_flip() +
+        theme_minimal() + scale_y_continuous(labels = comma) +
+        labs(x = "Age Group", y = "Grants Total") + 
+        theme(legend.text = element_text(size = 12),
+              legend.title = element_text(size = 12),
+              axis.title = element_text(size = 12),
+              axis.text = element_text(size = 12),
+              axis.text.x = element_text(angle = 00, hjust = 1)) 
+      
+    })
     # Area served
     
     # Population served
