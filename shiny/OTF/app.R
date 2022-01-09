@@ -79,22 +79,19 @@ ui <- dashboardPage(
       # City
       #--------------
       tabItem(tabName = "city",
-              sidebarLayout(
-                sidebarPanel(
-                  selectInput("cityInput", "City", choices = city),
-                  sliderInput("yearInput","Year",min=min(year),max=max(year),
-                              value = c(min(year),max(year)),step =1,ticks = FALSE)
-                ),
                 mainPanel(
-                  h2("Customer",style="text-align: center; font-style: bold;"), 
+                  h2("City Insights",style="text-align: center; font-style: bold;"), 
+                  splitLayout(
+                    selectInput("cityInput", "City", choices = city),
+                    sliderInput("yearInput","Year",min=min(year),max=max(year),
+                                value = c(min(year),max(year)),step =1,ticks = FALSE)
+                  ),
                   fluidRow(
-                    valueBoxOutput("salesBox"),
-                    valueBoxOutput("partsBox"),
-                    valueBoxOutput("quantityBox")
+                    box(title = "Price & Ratings", status = "primary", 
+                        plotOutput("priceRatingsCategoryPlot", height = 250))
                   )
                 )
               )
-            )
       #--------------
       # Organization
       #--------------
