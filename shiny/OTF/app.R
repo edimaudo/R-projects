@@ -86,11 +86,12 @@ ui <- dashboardPage(
                     sliderInput("yearInput","Year",min=min(year),max=max(year),
                                 value = c(min(year),max(year)),step =1,ticks = FALSE)
                   ),
-                  fluidRow(
-                    box(title = "Price & Ratings", status = "primary", 
-                        plotOutput("priceRatingsCategoryPlot", height = 250))
-                  )
-                )
+                  
+                    
+                        plotOutput("priceRatingsCategoryPlot", height = 150)
+                    
+                    
+                
               )
       #--------------
       # Organization
@@ -98,7 +99,7 @@ ui <- dashboardPage(
           )
         )
       )
-
+)
 
 ################
 # Server
