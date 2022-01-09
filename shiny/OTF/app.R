@@ -100,7 +100,7 @@ ui <- dashboardPage(
                       tabPanel("Grant Program", plotOutput("grantProgramCityPlot", height = 150, width='75%')),
                       tabPanel("Program Area", plotOutput("programAreaCityPlot", height = 150, width='75%')),
                       tabPanel("Budget", plotOutput("budgetCityPlot", height = 150, width='75%')),
-                      tabPanel("Geographical area", plotOutput("geoCityPlot", height = 150, width='75%'))
+                      tabPanel("Organization", plotOutput("organizationCityPlot", height = 150, width='75%')),
                     ) 
                   ),
                   fluidRow(
@@ -230,23 +230,30 @@ server <- function(input, output,session) {
               axis.text.x = element_text(angle = 00, hjust = 1)) 
       
     })
-    # Area served
-    
-    # Population served
-    
-    # of grant programs
-    
-    # Program area
-    
-    # Budget fund
   
-    # geogrpahical region
+# Area served
+output$areaServedCityPlot <- renderPlot({})
+
+# Population served
+output$populationCityPlot <- renderPlot({})
+
+    
+# of grant programs
+output$grantProgramCityPlot <- renderPlot({})
+
+# Program area
+output$programAreaCityPlot <- renderPlot({})
   
-    # Grants across fiscal Year (Amount applied)
+# Budget fund
+output$budgetCityPlot<- renderPlot({})
+
+# Organization
+putput$organizationCityPlot <- renderPlot({})
   
-  # top 10 words
+# Grants across fiscal Year (Amount applied)
+output$grantCityPlot <- renderPlot({
   
-  # top 10 topics
+})
   
   #===============
   # Organization Insights
@@ -266,6 +273,8 @@ server <- function(input, output,session) {
   # geogrpahical region
   
   # Budget fund
+
+  # City Insight
   
   # Grants across fiscal Year (Amount applied)
   
