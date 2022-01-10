@@ -239,7 +239,6 @@ server <- function(input, output,session) {
 #===============
 # City Insights
 #===============
-  
 #----------------
 # Age groups
 #----------------
@@ -450,15 +449,70 @@ output$ageGroupOrgPlot <- renderPlot({
 #--------------
 # Area served
 #--------------
-output$areaServedOrgPlot <- renderPlot({})
+output$areaServedOrgPlot <- renderPlot({
+  output_df <- df %>%
+    filter(Organization_name  == input$organizationInput,
+           Fiscal_year_update >= input$yearInput[1] & Fiscal_year_update <= input$yearInput[2],
+           Age_group_update != "Not Specified") %>%
+    group_by(Geographical_area_served) %>%
+    summarise(grant_total = sum(Amount_awarded)) %>%
+    select(Geographical_area_served, grant_total)
+  
+  ggplot(output_df, aes(reorder(Geographical_area_served,grant_total),grant_total)) + 
+    geom_bar(stat="identity", width = 0.5, fill="#bc5090") + coord_flip() +
+    theme_minimal() + scale_y_continuous(labels = comma) +
+    labs(x = "Geographical Area", y = "Grants Total", fill="") + 
+    theme(legend.text = element_text(size = 12),
+          legend.title = element_text(size = 12),
+          axis.title = element_text(size = 12),
+          axis.text = element_text(size = 12),
+          axis.text.x = element_text(angle = 00, hjust = 1)) 
+  
+})
 #--------------
 # Population served
 #--------------
-output$populationOrgPlot <- renderPlot({})
+output$populationOrgPlot <- renderPlot({
+  output_df <- df %>%
+    filter(Organization_name == input$organizationInput,
+           Fiscal_year_update >= input$yearInput[1] & Fiscal_year_update <= input$yearInput[2],
+           Age_group_update != "Not Specified",
+           Population_served != "Not Specified") %>%
+    group_by(Population_served) %>%
+    summarise(grant_total = sum(Amount_awarded)) %>%
+    select(Population_served, grant_total)
+  
+  ggplot(output_df, aes(reorder(Population_served,grant_total),grant_total)) + 
+    geom_bar(stat="identity", width = 0.5, fill="#bc5090") + coord_flip() +
+    theme_minimal() + scale_y_continuous(labels = comma) +
+    labs(x = "Population Served", y = "Grants Total") + 
+    theme(legend.text = element_text(size = 12),
+          legend.title = element_text(size = 12),
+          axis.title = element_text(size = 12),
+          axis.text = element_text(size = 12),
+          axis.text.x = element_text(angle = 00, hjust = 1)) 
+})
 #--------------
 # of grant programs
 #--------------
-output$grantProgramOrgPlot <- renderPlot({})
+output$grantProgramOrgPlot <- renderPlot({
+  output_df <- df %>%
+    filter(Organization_name == input$organizationInput,
+           Fiscal_year_update >= input$yearInput[1] & Fiscal_year_update <= input$yearInput[2]) %>%
+    group_by(Grant_program) %>%
+    summarise(grant_total = sum(Amount_awarded)) %>%
+    select(Grant_program, grant_total)
+  
+  ggplot(output_df, aes(reorder(Grant_program,grant_total),grant_total)) + 
+    geom_bar(stat="identity", width = 0.5, fill="#bc5090") + coord_flip() +
+    theme_minimal() + scale_y_continuous(labels = comma) +
+    labs(x = "Grant program", y = "Grants Total") + 
+    theme(legend.text = element_text(size = 12),
+          legend.title = element_text(size = 12),
+          axis.title = element_text(size = 12),
+          axis.text = element_text(size = 12),
+          axis.text.x = element_text(angle = 00, hjust = 1)) 
+})
 #--------------
 # Program area
 #--------------
