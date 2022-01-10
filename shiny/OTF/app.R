@@ -516,11 +516,45 @@ output$grantProgramOrgPlot <- renderPlot({
 #--------------
 # Program area
 #--------------
-output$programAreaOrgPlot <- renderPlot({})
+output$programAreaOrgPlot <- renderPlot({
+  output_df <- df %>%
+    filter(Organization_name  == input$organizationInput,
+           Fiscal_year_update >= input$yearInput[1] & Fiscal_year_update <= input$yearInput[2]) %>%
+    group_by(Program_area_update) %>%
+    summarise(grant_total = sum(Amount_awarded)) %>%
+    select(Program_area_update, grant_total)
+  
+  ggplot(output_df, aes(reorder(Program_area_update,grant_total),grant_total)) + 
+    geom_bar(stat="identity", width = 0.5, fill="#bc5090") + coord_flip() +
+    theme_minimal() + scale_y_continuous(labels = comma) +
+    labs(x = "Program Area", y = "Grants Total") + 
+    theme(legend.text = element_text(size = 12),
+          legend.title = element_text(size = 12),
+          axis.title = element_text(size = 12),
+          axis.text = element_text(size = 12),
+          axis.text.x = element_text(angle = 00, hjust = 1)) 
+})
 #--------------
 # Budget fund
 #--------------
-output$budgetOrgPlot<- renderPlot({})
+output$budgetOrgPlot<- renderPlot({
+  output_df <- df %>%
+    filter(Organization_name == input$organizationInput,
+           Fiscal_year_update >= input$yearInput[1] & Fiscal_year_update <= input$yearInput[2]) %>%
+    group_by(Budget_fund_update) %>%
+    summarise(grant_total = sum(Amount_awarded)) %>%
+    select(Budget_fund_update, grant_total)
+  
+  ggplot(output_df, aes(reorder(Budget_fund_update,grant_total),grant_total)) + 
+    geom_bar(stat="identity", width = 0.5, fill="#bc5090") + coord_flip() +
+    theme_minimal() + scale_y_continuous(labels = comma) +
+    labs(x = "Budget Area", y = "Grants Total") + 
+    theme(legend.text = element_text(size = 12),
+          legend.title = element_text(size = 12),
+          axis.title = element_text(size = 12),
+          axis.text = element_text(size = 12),
+          axis.text.x = element_text(angle = 00, hjust = 1)) 
+})
 #--------------
 # City Insight
 #--------------
