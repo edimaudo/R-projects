@@ -281,17 +281,68 @@ output$populationCityPlot <- renderPlot({
 #----------------    
 # of grant programs
 #----------------
-output$grantProgramCityPlot <- renderPlot({})
+output$grantProgramCityPlot <- renderPlot({
+  output_df <- df %>%
+    filter(Recipient_org_city_update == input$cityInput,
+           Fiscal_year_update >= input$yearInput[1] & Fiscal_year_update <= input$yearInput[2]) %>%
+    group_by(Grant_program) %>%
+    summarise(grant_total = sum(Amount_awarded)) %>%
+    select(Grant_program, grant_total)
+  
+  ggplot(output_df, aes(reorder(Grant_program,grant_total),grant_total)) + 
+    geom_bar(stat="identity", width = 0.5, fill="#bc5090") + coord_flip() +
+    theme_minimal() + scale_y_continuous(labels = comma) +
+    labs(x = "Grant program", y = "Grants Total") + 
+    theme(legend.text = element_text(size = 12),
+          legend.title = element_text(size = 12),
+          axis.title = element_text(size = 12),
+          axis.text = element_text(size = 12),
+          axis.text.x = element_text(angle = 00, hjust = 1)) 
+})
 
 #----------------
 # Program area
 #----------------  
-output$programAreaCityPlot <- renderPlot({})
+output$programAreaCityPlot <- renderPlot({
+  output_df <- df %>%
+    filter(Recipient_org_city_update == input$cityInput,
+           Fiscal_year_update >= input$yearInput[1] & Fiscal_year_update <= input$yearInput[2]) %>%
+    group_by(Program_area_update) %>%
+    summarise(grant_total = sum(Amount_awarded)) %>%
+    select(Program_area_update, grant_total)
+  
+  ggplot(output_df, aes(reorder(Program_area_update,grant_total),grant_total)) + 
+    geom_bar(stat="identity", width = 0.5, fill="#bc5090") + coord_flip() +
+    theme_minimal() + scale_y_continuous(labels = comma) +
+    labs(x = "Program Area", y = "Grants Total") + 
+    theme(legend.text = element_text(size = 12),
+          legend.title = element_text(size = 12),
+          axis.title = element_text(size = 12),
+          axis.text = element_text(size = 12),
+          axis.text.x = element_text(angle = 00, hjust = 1)) 
+})
   
 #----------------
 # Budget fund
 #----------------
-output$budgetCityPlot<- renderPlot({})
+output$budgetCityPlot<- renderPlot({
+  output_df <- df %>%
+    filter(Recipient_org_city_update == input$cityInput,
+           Fiscal_year_update >= input$yearInput[1] & Fiscal_year_update <= input$yearInput[2]) %>%
+    group_by(Budget_fund_update) %>%
+    summarise(grant_total = sum(Amount_awarded)) %>%
+    select(Budget_fund_update, grant_total)
+  
+  ggplot(output_df, aes(reorder(Budget_fund_update,grant_total),grant_total)) + 
+    geom_bar(stat="identity", width = 0.5, fill="#bc5090") + coord_flip() +
+    theme_minimal() + scale_y_continuous(labels = comma) +
+    labs(x = "Budget Area", y = "Grants Total") + 
+    theme(legend.text = element_text(size = 12),
+          legend.title = element_text(size = 12),
+          axis.title = element_text(size = 12),
+          axis.text = element_text(size = 12),
+          axis.text.x = element_text(angle = 00, hjust = 1)) 
+})
 
 #----------------
 # Organization
