@@ -2,8 +2,8 @@
 # Packages
 ################
 rm(list = ls()) #clear environment
-packages <- c('ggplot2', 'corrplot','tidyverse','readxl','SnowballC','wordcloud', 'RColorBrewer',
-              'shiny','shinydashboard','scales','dplyr','mlbench','caTools',
+packages <- c('ggplot2', 'corrplot','tidyverse','readxl','SnowballC','wordcloud', 
+              'RColorBrewer','shiny','shinydashboard','scales','dplyr',
               'forecast','lubridate')
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
@@ -11,12 +11,10 @@ for (package in packages) {
     library(package, character.only=T)
   }
 }
-
 ################
 # Load data
 ################
 df <- read_excel("otf.xlsx")
-
 #--------------
 # data information
 #--------------
@@ -94,13 +92,20 @@ ui <- dashboardPage(
                       id = "tabset2", 
                       width = "100%",
                       selected = "Age Group",
-                      tabPanel("Age Group", plotOutput("ageGroupCityPlot", height = 150, width='75%')),
-                      tabPanel("Area Served", plotOutput("areaServedCityPlot", height = 150, width='75%')),
-                      tabPanel("Population",  plotOutput("populationCityPlot", height = 150, width='75%')),
-                      tabPanel("Grant Program", plotOutput("grantProgramCityPlot", height = 150, width='75%')),
-                      tabPanel("Program Area", plotOutput("programAreaCityPlot", height = 150, width='75%')),
-                      tabPanel("Budget", plotOutput("budgetCityPlot", height = 150, width='75%')),
-                      tabPanel("Organization", plotOutput("organizationCityPlot", height = 150, width='75%')),
+                      tabPanel("Age Group", plotOutput("ageGroupCityPlot", height = 150, 
+                                                       width='75%')),
+                      tabPanel("Area Served", plotOutput("areaServedCityPlot", height = 150, 
+                                                         width='75%')),
+                      tabPanel("Population",  plotOutput("populationCityPlot", height = 150,
+                                                         width='75%')),
+                      tabPanel("Grant Program", plotOutput("grantProgramCityPlot", height = 150, 
+                                                           width='75%')),
+                      tabPanel("Program Area", plotOutput("programAreaCityPlot", height = 150, 
+                                                          width='75%')),
+                      tabPanel("Budget", plotOutput("budgetCityPlot", height = 150, 
+                                                    width='75%')),
+                      tabPanel("Organization", plotOutput("organizationCityPlot", height = 150, 
+                                                          width='75%')),
                     ) 
                   ),
                   fluidRow(
@@ -127,13 +132,20 @@ ui <- dashboardPage(
                       id = "tabset3", 
                       width = "100%",
                       selected = "Age Group",
-                      tabPanel("Age Group", plotOutput("ageGroupOrgPlot", height = 150, width='75%')),
-                      tabPanel("Area Served", plotOutput("areaServedOrgPlot", height = 150, width='75%')),
-                      tabPanel("Population",  plotOutput("populationOrgPlot", height = 150, width='75%')),
-                      tabPanel("Grant Program", plotOutput("grantProgramOrgPlot", height = 150, width='75%')),
-                      tabPanel("Program Area", plotOutput("programAreaOrgPlot", height = 150, width='75%')),
-                      tabPanel("Budget", plotOutput("budgetOrgPlot", height = 150, width='75%')),
-                      tabPanel("City", plotOutput("cityOrgPlot", height = 150, width='75%')),
+                      tabPanel("Age Group", plotOutput("ageGroupOrgPlot", height = 150, 
+                                                       width='75%')),
+                      tabPanel("Area Served", plotOutput("areaServedOrgPlot", height = 150, 
+                                                         width='75%')),
+                      tabPanel("Population",  plotOutput("populationOrgPlot", height = 150, 
+                                                         width='75%')),
+                      tabPanel("Grant Program", plotOutput("grantProgramOrgPlot", height = 150, 
+                                                           width='75%')),
+                      tabPanel("Program Area", plotOutput("programAreaOrgPlot", height = 150, 
+                                                          width='75%')),
+                      tabPanel("Budget", plotOutput("budgetOrgPlot", height = 150, 
+                                                    width='75%')),
+                      tabPanel("City", plotOutput("cityOrgPlot", height = 150,
+                                                  width='75%')),
                     ) 
                   ),
                   fluidRow(
