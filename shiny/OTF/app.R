@@ -425,25 +425,64 @@ output$grantCityPlot <- renderPlot({
 #===============
 # Organization Insights
 #===============
+#--------------
 # Age groups
-output$ageGroupOrgPlot <- renderPlot({})
+#--------------
+output$ageGroupOrgPlot <- renderPlot({
+  output_df <- df %>%
+    filter(Organization_name == input$organizationInput,
+           Fiscal_year_update >= input$yearInput[1] & Fiscal_year_update <= input$yearInput[2],
+           Age_group_update != "Not Specified") %>%
+    group_by(Age_group_update) %>%
+    summarise(grant_total = sum(Amount_awarded)) %>%
+    select(Age_group_update, grant_total)
+  
+  ggplot(output_df, aes(reorder(Age_group_update,grant_total),grant_total)) + 
+    geom_bar(stat="identity", width = 0.5, fill="#bc5090") + coord_flip() +
+    theme_minimal() + scale_y_continuous(labels = comma) +
+    labs(x = "Age Group", y = "Grants Total") + 
+    theme(legend.text = element_text(size = 12),
+          legend.title = element_text(size = 12),
+          axis.title = element_text(size = 12),
+          axis.text = element_text(size = 12),
+          axis.text.x = element_text(angle = 00, hjust = 1)) 
+})
+#--------------
 # Area served
+#--------------
 output$areaServedOrgPlot <- renderPlot({})
+#--------------
 # Population served
+#--------------
 output$populationOrgPlot <- renderPlot({})
+#--------------
 # of grant programs
+#--------------
 output$grantProgramOrgPlot <- renderPlot({})
+#--------------
 # Program area
+#--------------
 output$programAreaOrgPlot <- renderPlot({})
+#--------------
 # Budget fund
+#--------------
 output$budgetOrgPlot<- renderPlot({})
+#--------------
 # City Insight
+#--------------
 output$cityOrgPlot <- renderPlot({})
+#--------------
 # Grants across fiscal Year (Amount applied)
-  
+#--------------
+
+#--------------  
 # top words
+#--------------
   
+#--------------
 # Average sentiment of descriptions
+#--------------
+  
 }
 
 shinyApp(ui, server)
