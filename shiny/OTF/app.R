@@ -21,7 +21,7 @@ df <- read_excel("otf.xlsx")
 # data information
 #--------------
 organization <- c(sort(unique(df$Organization_name)))
-city <- budget_fund <- c(sort(unique(df$Recipient_org_city_update)))
+city <- c(sort(unique(df$Recipient_org_city_update)))
 year <- as.integer(c(sort(unique(df$Fiscal_year_update))))
 grant_program <- c(sort(unique(df$Grant_program)))
 age_group <- c(sort(unique(df$Age_group_update)))
@@ -257,7 +257,26 @@ output$areaServedCityPlot <- renderPlot({
 #----------------
 # Population served
 #----------------
-output$populationCityPlot <- renderPlot({})
+output$populationCityPlot <- renderPlot({
+  output_df <- df %>%
+    filter(Recipient_org_city_update == input$cityInput,
+           Fiscal_year_update >= input$yearInput[1] & Fiscal_year_update <= input$yearInput[2],
+           Age_group_update != "Not Specified",
+           Population_served != "Not Specified") %>%
+    group_by(Population_served) %>%
+    summarise(grant_total = sum(Amount_awarded)) %>%
+    select(Population_served, grant_total)
+  
+  ggplot(output_df, aes(reorder(Population_served,grant_total),grant_total)) + 
+    geom_bar(stat="identity", width = 0.5, fill="#bc5090") + coord_flip() +
+    theme_minimal() + scale_y_continuous(labels = comma) +
+    labs(x = "Population Served", y = "Grants Total") + 
+    theme(legend.text = element_text(size = 12),
+          legend.title = element_text(size = 12),
+          axis.title = element_text(size = 12),
+          axis.text = element_text(size = 12),
+          axis.text.x = element_text(angle = 00, hjust = 1)) 
+})
 
 #----------------    
 # of grant programs
