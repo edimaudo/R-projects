@@ -104,18 +104,8 @@ ui <- dashboardPage(
                     ) 
                   ),
                   fluidRow(
-                    # Grants across fiscal Year (Amount applied)
-                    plotOutput("grantCityPlot", height = 150, width='75%')
+                    plotOutput("grantCityPlot", height = 150)
                   )
-                  
-                  
-                  
-                
-                  
-                  
-
-                    
-                
               )
             )
       )
@@ -347,12 +337,45 @@ output$budgetCityPlot<- renderPlot({
 #----------------
 # Organization
 #----------------
-output$organizationCityPlot <- renderPlot({})
+output$organizationCityPlot <- renderPlot({
+  output_df <- df %>%
+    filter(Recipient_org_city_update == input$cityInput,
+           Fiscal_year_update >= input$yearInput[1] & Fiscal_year_update <= input$yearInput[2]) %>%
+    group_by(Organization_name) %>%
+    summarise(grant_total = sum(Amount_awarded)) %>%
+    select(Organization_name, grant_total)
+  
+  ggplot(output_df, aes(reorder(Organization_name,grant_total),grant_total)) + 
+    geom_bar(stat="identity", width = 0.5, fill="light green") + coord_flip() +
+    theme_minimal() + scale_y_continuous(labels = comma) +
+    labs(x = "Organization", y = "Grants Total") + 
+    theme(legend.text = element_text(size = 12),
+          legend.title = element_text(size = 12),
+          axis.title = element_text(size = 12),
+          axis.text = element_text(size = 12),
+          axis.text.x = element_text(angle = 00, hjust = 1)) 
+})
 
 #----------------  
 # Grants across fiscal Year (Amount applied)
 #----------------
 output$grantCityPlot <- renderPlot({
+  output_df <- df %>%
+    filter(Recipient_org_city_update == input$cityInput,
+           Fiscal_year_update >= input$yearInput[1] & Fiscal_year_update <= input$yearInput[2]) %>%
+    group_by(Fiscal_year_update) %>%
+    summarise(grant_total = sum(Amount_awarded)) %>%
+    select(Fiscal_year_update, grant_total)
+  
+  ggplot(output_df, aes(as.factor(Fiscal_year_update),grant_total)) + 
+    geom_bar(stat="identity", width = 0.5, fill="blue") + 
+    theme_minimal() + scale_y_continuous(labels = comma) +
+    labs(x = "Year", y = "Grants Total") + 
+    theme(legend.text = element_text(size = 12),
+          legend.title = element_text(size = 12),
+          axis.title = element_text(size = 12),
+          axis.text = element_text(size = 12),
+          axis.text.x = element_text(angle = 00, hjust = 1)) 
   
 })
   
