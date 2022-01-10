@@ -108,13 +108,26 @@ ui <- dashboardPage(
                   )
               )
             )
-      )
+      ),
       #--------------
       # Organization
       #--------------
+      tabItem(tabName = "organization",
+              sidebarLayout(
+                sidebarPanel(
+                  selectInput("organizationInput", "Organization", choices = organization),
+                  sliderInput("yearInput","Year",min=min(year),max=max(year),
+                              value = c(min(year),max(year)),step =1,ticks = FALSE)
+                ),
+                mainPanel(
+                  h2("Organization Insights",style="text-align: center; font-style: bold;"), 
           )
         )
       )
+    )
+  )
+)
+
 
 
 ################
@@ -375,7 +388,7 @@ output$grantCityPlot <- renderPlot({
           legend.title = element_text(size = 12),
           axis.title = element_text(size = 12),
           axis.text = element_text(size = 12),
-          axis.text.x = element_text(angle = 00, hjust = 1)) 
+          axis.text.x = element_text(angle = 45, hjust = 1)) 
   
 })
   
