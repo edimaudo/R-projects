@@ -47,9 +47,9 @@ ui <- dashboardPage(
   ),
   dashboardBody(
     tabItems(
-      #--------------
-      # Summary
-      #--------------
+#--------------
+# Summary
+#--------------
       tabItem(tabName = "summary",
         mainPanel(
           img(src='OTF5.png', height = "100" ,align = "right"),
@@ -75,9 +75,9 @@ ui <- dashboardPage(
           )
         )
       ),
-      #--------------
-      # City
-      #--------------
+#--------------
+# City
+#--------------
       tabItem(tabName = "city",
               sidebarLayout(
                 sidebarPanel(
@@ -109,9 +109,9 @@ ui <- dashboardPage(
               )
             )
       ),
-      #--------------
-      # Organization
-      #--------------
+#--------------
+# Organization
+#--------------
       tabItem(tabName = "organization",
               sidebarLayout(
                 sidebarPanel(
@@ -121,6 +121,24 @@ ui <- dashboardPage(
                 ),
                 mainPanel(
                   h2("Organization Insights",style="text-align: center; font-style: bold;"), 
+                  fluidRow(
+                    tabBox(
+                      title = "Organization Insights",
+                      id = "tabset3", 
+                      width = "100%",
+                      selected = "Age Group",
+                      tabPanel("Age Group", plotOutput("ageGroupOrgPlot", height = 150, width='75%')),
+                      tabPanel("Area Served", plotOutput("areaServedOrgPlot", height = 150, width='75%')),
+                      tabPanel("Population",  plotOutput("populationOrgPlot", height = 150, width='75%')),
+                      tabPanel("Grant Program", plotOutput("grantProgramOrgPlot", height = 150, width='75%')),
+                      tabPanel("Program Area", plotOutput("programAreaOrgPlot", height = 150, width='75%')),
+                      tabPanel("Budget", plotOutput("budgetOrgPlot", height = 150, width='75%')),
+                      tabPanel("City", plotOutput("cityOrgPlot", height = 150, width='75%')),
+                    ) 
+                  ),
+                  fluidRow(
+                    plotOutput("grantOrgPlot", height = 150)
+                  )
           )
         )
       )
@@ -135,12 +153,12 @@ ui <- dashboardPage(
 ################
 server <- function(input, output,session) {
   
-  #===============
-  # Summary
-  #===============
-  #--------------
-  # Tab-boxes
-  #--------------
+#===============
+# Summary
+#===============
+#--------------
+# Tab-boxes
+#--------------
   output$ageBox <- renderValueBox({
     valueBox(
       paste0(length(age_group)), "Age Groups", icon = icon("list"),
@@ -184,9 +202,9 @@ server <- function(input, output,session) {
     )
   })
   
-  #--------------
-  # Grants across fiscal Year
-  #--------------
+#--------------
+# Grants across fiscal Year
+#--------------
   output$grantPlot <- renderPlot({
     grant_df <- df %>%
       group_by(Fiscal_year_update) %>%
@@ -395,29 +413,25 @@ output$grantCityPlot <- renderPlot({
 #===============
 # Organization Insights
 #===============
-# Grants by
+# Age groups
+output$ageGroupOrgPlot <- renderPlot({})
+# Area served
+output$areaServedOrgPlot <- renderPlot({})
+# Population served
+output$populationOrgPlot <- renderPlot({})
+# of grant programs
+output$grantProgramOrgPlot <- renderPlot({})
+# Program area
+output$programAreaOrgPlot <- renderPlot({})
+# Budget fund
+output$budgetOrgPlot<- renderPlot({})
+# City Insight
+output$cityOrgPlot <- renderPlot({})
+# Grants across fiscal Year (Amount applied)
   
-  # Age groups
+# top words
   
-  # Area served
-  
-  # Population served
-  
-  # of grant programs
-  
-  # Program area
-  
-  # geogrpahical region
-  
-  # Budget fund
-
-  # City Insight
-  
-  # Grants across fiscal Year (Amount applied)
-  
-  # top words
-  
-  # Average sentiment of descriptions
+# Average sentiment of descriptions
 }
 
 shinyApp(ui, server)
