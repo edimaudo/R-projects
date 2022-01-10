@@ -185,7 +185,7 @@ server <- function(input, output,session) {
   })
   
   #--------------
-  # Grants across fiscal Year (Amount given)
+  # Grants across fiscal Year
   #--------------
   output$grantPlot <- renderPlot({
     grant_df <- df %>%
