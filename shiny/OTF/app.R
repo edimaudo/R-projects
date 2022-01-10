@@ -203,12 +203,13 @@ server <- function(input, output,session) {
   
 
   
-  #===============
-  # City Insights
-  #===============
+#===============
+# City Insights
+#===============
   
-  # Grants by
-    # Age groups
+#----------------
+# Age groups
+#----------------
     output$ageGroupCityPlot <- renderPlot({
       
       output_df <- df %>%
@@ -230,34 +231,64 @@ server <- function(input, output,session) {
               axis.text.x = element_text(angle = 00, hjust = 1)) 
       
     })
-  
+#----------------
 # Area served
-output$areaServedCityPlot <- renderPlot({})
+#----------------
+output$areaServedCityPlot <- renderPlot({
+  output_df <- df %>%
+    filter(Recipient_org_city_update == input$cityInput,
+           Fiscal_year_update >= input$yearInput[1] & Fiscal_year_update <= input$yearInput[2],
+           Age_group_update != "Not Specified") %>%
+    group_by(Geographical_area_served) %>%
+    summarise(grant_total = sum(Amount_awarded)) %>%
+    select(Geographical_area_served, grant_total)
+  
+  ggplot(output_df, aes(reorder(Geographical_area_served,grant_total),grant_total)) + 
+    geom_bar(stat="identity", width = 0.5, fill="#bc5090") + coord_flip() +
+    theme_minimal() + scale_y_continuous(labels = comma) +
+    labs(x = "Geographical Area", y = "Grants Total", fill="") + 
+    theme(legend.text = element_text(size = 12),
+          legend.title = element_text(size = 12),
+          axis.title = element_text(size = 12),
+          axis.text = element_text(size = 12),
+          axis.text.x = element_text(angle = 00, hjust = 1)) 
+})
 
+#----------------
 # Population served
+#----------------
 output$populationCityPlot <- renderPlot({})
 
-    
+#----------------    
 # of grant programs
+#----------------
 output$grantProgramCityPlot <- renderPlot({})
 
+#----------------
 # Program area
+#----------------  
 output$programAreaCityPlot <- renderPlot({})
   
+#----------------
 # Budget fund
+#----------------
 output$budgetCityPlot<- renderPlot({})
 
+#----------------
 # Organization
-putput$organizationCityPlot <- renderPlot({})
-  
+#----------------
+output$organizationCityPlot <- renderPlot({})
+
+#----------------  
 # Grants across fiscal Year (Amount applied)
+#----------------
 output$grantCityPlot <- renderPlot({
   
 })
   
-  #===============
-  # Organization Insights
-  #===============
+#===============
+# Organization Insights
+#===============
 # Grants by
   
   # Age groups
