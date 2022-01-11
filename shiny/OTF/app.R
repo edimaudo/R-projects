@@ -640,6 +640,23 @@ output$sentimentOrgPlot <- renderPlot({
     unnest_tokens(word, English_description) %>%
     select(Organization_name,word)
   
+  full_words_sentiment <- full_words %>%
+    right_join(get_sentiments("nrc")) %>%
+    filter(!is.na(sentiment)) %>%
+    count(sentiment, sort = TRUE)
+  
+  ggplot(full_words_sentiment, aes(reorder(sentiment,n),n)) + 
+    geom_bar(stat="identity", width = 0.5, fill="blue") + 
+    theme_minimal() + scale_y_continuous(labels = comma) + coord_flip() +
+    labs(x = "Sentiment Info", y = "Score") + 
+    theme(legend.text = element_text(size = 12),
+          legend.title = element_text(size = 12),
+          axis.title = element_text(size = 12),
+          axis.text = element_text(size = 12),
+          axis.text.x = element_text(angle = 00, hjust = 1))  
+  
+  
+  
 })
 }
 
