@@ -2,9 +2,10 @@
 # Packages
 ################
 rm(list = ls()) #clear environment
-packages <- c('ggplot2', 'corrplot','tidyverse','readxl','SnowballC','wordcloud', 
+packages <- c('ggplot2','corrplot','tidyverse','readxl', 
               'RColorBrewer','shiny','shinydashboard','scales','dplyr',
-              'forecast','lubridate')
+              'forecast','lubridate','stopwords','tidytext','stringr',
+              'reshape2', 'textmineR','topicmodels','textclean')
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
     install.packages(package)
@@ -151,8 +152,8 @@ ui <- dashboardPage(
                   fluidRow(
                     plotOutput("grantOrgPlot", height = 150), 
                     br(),
-                    box(title = "Top Words", status = "primary", plotOutput("plot2", height = 150)),
-                    box(title = "Sentiment", status = "primary", plotOutput("plot3", height = 150))
+                    box(title = "Top Words", status = "primary", plotOutput("wordOrgPlot", height = 150)),
+                    box(title = "Sentiment", status = "primary", plotOutput("sentimentOrgPlot", height = 150))
                   )
           )
         )
@@ -496,7 +497,7 @@ output$populationOrgPlot <- renderPlot({
           axis.text.x = element_text(angle = 00, hjust = 1)) 
 })
 #--------------
-# of grant programs
+# Number of grant programs
 #--------------
 output$grantProgramOrgPlot <- renderPlot({
   output_df <- df %>%
@@ -584,7 +585,7 @@ output$cityOrgPlot <- renderPlot({
 #--------------
 output$grantOrgPlot <- renderPlot({
   output_df <- df %>%
-    filter(Recipient_org_city_update == input$cityInput,
+    filter(Organization_name  == input$organizationInput,
            Fiscal_year_update >= input$yearInput[1] & Fiscal_year_update <= input$yearInput[2]) %>%
     group_by(Fiscal_year_update) %>%
     summarise(grant_total = sum(Amount_awarded)) %>%
@@ -604,13 +605,42 @@ output$grantOrgPlot <- renderPlot({
   
   
 #--------------  
-# top words
+# Top words
 #--------------
+output$wordOrgPlot <- renderPlot({
+  full_word_count <- df %>%
+    filter(Organization_name == input$organizationInput,
+           Fiscal_year_update >= input$yearInput[1] & Fiscal_year_update <= input$yearInput[2]) %>%
+    unnest_tokens(word, English_description) %>%
+    group_by(Recipient_org_city_update) %>%
+    summarise(num_words = n()) %>%
+    arrange(desc(num_words))
+
+    # word count visualization
+      ggplot(full_word_count,aes(reorder(Recipient_org_city_update,num_words),y=num_words)) +
+      geom_bar(stat = "identity", position = "dodge") +
+      coord_flip() +
+      ylab("Word Count") +
+      xlab("City") +
+      theme(plot.title = element_text(hjust = 0.5),
+            legend.title = element_blank(),
+            panel.grid.minor.y = element_blank())
+})
   
+
+
 #--------------
-# Average sentiment of descriptions
+# Sentiment Analysis
 #--------------
+output$sentimentOrgPlot <- renderPlot({
+    
+  full_words <- df %>%
+    filter(Organization_name == input$organizationInput,
+           Fiscal_year_update >= input$yearInput[1] & Fiscal_year_update <= input$yearInput[2]) %>%
+    unnest_tokens(word, English_description) %>%
+    select(Organization_name,word)
   
+})
 }
 
 shinyApp(ui, server)
