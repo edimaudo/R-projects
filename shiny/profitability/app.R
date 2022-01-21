@@ -16,6 +16,12 @@ for (package in packages) {
 ##################
 df <- read.csv("Profitability.csv")
 
+#----------------
+# data updates
+#----------------
+df$DateComplete <- as.Date(df$DateComplete, format =  "%d/%m/%Y")
+df$DateLogged <- as.Date(df$DateLogged, format =  "%d/%m/%Y")
+
 ##################
 # UI
 ##################
