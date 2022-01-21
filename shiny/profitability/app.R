@@ -32,42 +32,36 @@ df$DateLogged <- as.Date(df$DateLogged, format =  "%d/%m/%Y")
 date_info <- c(sort(unique(df$DateLogged)))
 
 ui <- dashboardPage(skin = "yellow",
-                    dashboardHeader(title = "Platform analysis"),
-                    dashboardSidebar(
-                        sidebarMenu(
-                            menuItem("Summary", tabName = "summary", icon = icon("th"))
-                        )
-                    ),
-                    dashboardBody(
-                        tabItems(
-                            #----------------
-                            # Summary
-                            #----------------
-                            tabItem(tabName = "summary",
-                                    fluidRow(
-                                        h2("Summary Insights",style="text-align: center;"),
-                                        tabBox(
-                                            title="Categories",
-                                            id = "tabset1",
-                                            width = "10%",
-                                            selected = "Price",
-                                            tabPanel("Price", plotOutput("categoryPricePlot",height = 250)),
-                                            tabPanel("Ratings", plotOutput("categoryRatingPlot",height = 250)),
-                                            tabPanel("Sales", plotOutput("categorySalesPlot",height = 250))
-                                        ),
-                                        tabBox(
-                                            title="Sub-Categories",
-                                            id = "tabset2",
-                                            width = "10%",
-                                            selected = "Price",
-                                            tabPanel("Price", plotOutput("subcategoryPricePlot", height = 250)),
-                                            tabPanel("Ratings", plotOutput("subcategoryRatingPlot", height = 250)),
-                                            tabPanel("Sales", plotOutput("subcategorySalesPlot", height = 250))
-                                            
-                                        )
-                                    )
-                            ),
+        dashboardHeader(title = "Platform analysis"),
+            dashboardSidebar(
+                sidebarMenu(
+                    menuItem("Dashboard", tabName = "dashboard", icon = icon("th"))
+                )
+            ),
+            dashboardBody(
+                tabItems(
+                #----------------
+                # Dashboard
+                #----------------
+                    tabItem(tabName = "dashboard",
+                            sidebarLayout(
+                                sidebarPanel(
+                                    sliderInput("dateInput","Dates",min=min(date_info),
+                                                max=max(date_info),
+                                                value = c(min(date_info),max(date_info)),
+                                                step =1,ticks = FALSE)   
+                                  ),
+                                mainPanel(
+                                    h2("Insights",style="text-align: center; font-style: bold;"), 
+                                    
 
+                                    
+                                )
+                            )
+                        )
+                    )
+            )
+)
 
 ##################
 # Server
