@@ -53,7 +53,7 @@ ui <- dashboardPage(skin = "yellow",
                                   ),
                                 mainPanel(
                                     h2("Insights",style="text-align: center; font-style: bold;"), 
-                                    
+                                    box(plotOutput("jobStatusPlot")),
 
                                     
                                 )
@@ -66,7 +66,16 @@ ui <- dashboardPage(skin = "yellow",
 ##################
 # Server
 ##################
-server <- function(input, output, session) {}
+server <- function(input, output, session) {
+    
+    # Job status plot
+    output$jobStatusPlot <- renderPlot({
+        
+    })
+    
+    
+    
+}
 
 
 shinyApp(ui, server)
