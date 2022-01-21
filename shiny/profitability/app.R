@@ -29,3 +29,14 @@ df$DateLogged <- as.Date(df$DateLogged, format =  "%d/%m/%Y")
 #----------------
 # UI dropdown
 #----------------
+date_info <- c(sort(unique(df$DateLogged)))
+
+
+
+
+##################
+# Server
+##################
+server <- function(input, output, session) {}
+
+
