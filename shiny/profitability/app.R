@@ -15,3 +15,11 @@ for (package in packages) {
 # data
 ##################
 df <- read.csv("Profitability.csv")
+
+##################
+# UI
+##################
+
+#----------------
+# UI dropdown
+#----------------
