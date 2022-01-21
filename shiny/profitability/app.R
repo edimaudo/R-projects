@@ -40,3 +40,4 @@ date_info <- c(sort(unique(df$DateLogged)))
 server <- function(input, output, session) {}
 
 
+shinyApp(ui, server)
