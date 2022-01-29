@@ -19,4 +19,18 @@ for (package in packages) {
 #================
 df <- read.csv(file.choose(),sep = ",")
 
+#----------------
+# Check for missing values
+#----------------
+missing_data <- apply(df, 2, function(x) any(is.na(x)))
+print(missing_data)
 
+#----------------
+#check columns
+#----------------
+unique(df$Category)
+unique(df$PAccuracyuct)
+unique(df$Country)
+unique(df$Date)
+unique(df$Year)
+unique(df$Verified)
