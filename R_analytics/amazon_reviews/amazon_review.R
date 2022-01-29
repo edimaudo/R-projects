@@ -34,3 +34,12 @@ unique(df$Country)
 unique(df$Date)
 unique(df$Year)
 unique(df$Verified)
+
+#================
+# Text analysis and modeling
+#================
+
+#================
+# Machine learning modeling
+#================
+
