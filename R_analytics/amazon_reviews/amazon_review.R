@@ -35,11 +35,6 @@ unique(df$Date)
 unique(df$Year)
 unique(df$Verified)
 
-
-
-
-
-
 #select only needed columns
 df <- df %>%
   select(PAccuracyuct,Country,Month,Year, Verified, Helpful,Title, Body, Rating) %>%
