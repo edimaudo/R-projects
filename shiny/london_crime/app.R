@@ -33,3 +33,12 @@ model_info <- c('auto-arima','auto-exponential','simple-exponential',
                 'double-exponential','triple-exponential', 'tbat')
                 #other models ETS, ARIMA, STL-ETS, NNAR
                 #https://otexts.com/fpp2/combinations.html
+
+
+
+#=============
+# Define server logic 
+#=============
+server <- function(input, output,session) {
+    
+}
