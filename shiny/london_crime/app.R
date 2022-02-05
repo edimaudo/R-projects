@@ -17,11 +17,12 @@ for (package in packages) {
 #=============
 # Data
 #=============
-
+offences_past <- read_excel("Met Police Offence Data.xlsx",sheet="Offences Apr 2010 - Sep 2019")
+offences_future <- read_excel("Met Police Offence Data.xlsx",sheet="Offences Oct 2019 - Mar 2020")
 
 
 #=============
-# dropdowns
+# Dropdowns
 #=============
 crime_info <- c()
 aggregate_info <- c('weekly','monthly')
