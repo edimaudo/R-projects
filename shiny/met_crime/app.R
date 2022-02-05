@@ -1,0 +1,328 @@
+# MET Police Crime Forecast
+rm(list = ls()) #clear environment
+#=============
+# Packages
+#=============
+packages <- c('ggplot2', 'corrplot','tidyverse','readxl',
+              'shiny','shinydashboard','scales','dplyr','mlbench','caTools',
+              'forecast','TTR','xts','lubridate','plotly')
+
+for (package in packages) {
+    if (!require(package, character.only=T, quietly=T)) {
+        install.packages(package)
+        library(package, character.only=T)
+    }
+}
+
+#=============
+# Data
+#=============
+offences_past <- read_excel("Met Police Offence Data.xlsx",sheet="Offences Apr 2010 - Sep 2019")
+offences_future <- read_excel("Met Police Offence Data.xlsx",sheet="Offences Oct 2019 - Mar 2020")
+
+
+#=============
+# Dropdowns
+#=============
+crime_info <- c()
+aggregate_info <- c('weekly','monthly')
+horizon_info <- c(1:50) 
+frequency_info <- c(7, 12, 52, 365)
+difference_info <- c("Yes","No")
+log_info <- c("Yes","No")
+model_info <- c('auto-arima','auto-exponential','simple-exponential',
+                'double-exponential','triple-exponential', 'tbat')
+                #other models ETS, ARIMA, STL-ETS, NNAR
+                #https://otexts.com/fpp2/combinations.html
+
+#=============
+# Define UI for application
+#=============
+ui <- dashboardPage(
+    dashboardHeader(title = "Met Crime Forecaster"),
+    dashboardSidebar(
+        sidebarMenu(
+            menuItem("Data Overview", tabName = "overview", icon = icon("th")),
+            menuItem("Analysis", tabName = "analysis", icon = icon("th")),
+            menuItem("Forecasting", tabName = "forecast", icon = icon("th"))
+        )
+    ),
+    dashboardBody(
+        tabItems(
+            tabItem(tabName = "overview",
+                    mainPanel(
+                        h1("Overivew",style="text-align: center;"), 
+                        
+                    )    
+            ),
+            tabItem(tabName = "analysis",
+                    sidebarLayout(
+                        sidebarPanel(
+                            selectInput("aggregateInput", "Aggregate", 
+                                        choices = aggregate_info, selected = 'weekly'),
+                            selectInput("frequencyInput", "Frequency", 
+                                        choices = frequency_info, selected = 7),
+                            radioButtons("differenceInput","Difference",
+                                         choices = difference_info, selected = "No"),
+                            numericInput("differenceNumericInput", "Difference Input", 
+                                         1, min = 1, max = 52, step = 0.5),
+                            radioButtons("logInput","Log",
+                                         choices = log_info, selected = "No"),
+                            submitButton("Submit")
+                        ),
+                        mainPanel(
+                            h1("Analysis",style="text-align: center;"), 
+                            tabsetPanel(type = "tabs",
+                                        tabPanel(
+                                            h4("Decomposition",
+                                               style="text-align: center;"),
+                                            plotOutput("decompositionPlot")),
+                                        tabPanel(
+                                            h4("Multi seasonal Decomposition",
+                                               style="text-align: center;"),
+                                            plotOutput("multidecompositionPlot")),
+                                        tabPanel(
+                                            h4("ACF Plot",style="text-align: center;"), 
+                                            plotOutput("acfPlot")),
+                                        tabPanel(
+                                            h4("PACF Plot",style="text-align: center;"), 
+                                            plotOutput("pacfPlot"))
+                            )
+                        )
+                    )  
+            ),
+            tabItem(tabName = "forecast",
+                    sidebarLayout(
+                        sidebarPanel(
+                            selectInput("aggregateInput", "Aggregate", 
+                                        choices = aggregate_info, selected = 'weekly'),
+                            selectInput("horizonInput", "Horizon", 
+                                        choices = horizon_info, selected = 14),
+                            selectInput("frequencyInput", "Frequency", 
+                                        choices = frequency_info, selected = 7),
+                            sliderInput("traintestInput", "Train/Test Split",
+                                        min = 0, max = 1,value = 0.8),
+                            checkboxGroupInput("modelInput", "Models",choices = model_info, 
+                                               selected = model_info),
+                            sliderInput("autoInput", "Auto-regression",
+                                        min = 0, max = 100,value = 0),
+                            sliderInput("difference2Input", "Difference",
+                                        min = 0, max = 52,value = 0),
+                            sliderInput("maInput", "Moving Average",
+                                        min = 0, max = 100,value = 0),
+                            submitButton("Submit")
+                        ),
+                        mainPanel(
+                            h1("Forecast Analysis",style="text-align: center;"), 
+                            tabsetPanel(type = "tabs",
+                                        tabPanel(h4("Forecast Visualization",style="text-align: center;"), 
+                                                 plotOutput("forecastPlot")),
+                                        tabPanel(h4("Forecast Results",style="text-align: center;"), 
+                                                 DT::dataTableOutput("forecastOutput")),
+                                        tabPanel(h4("Forecast Accuracy",style="text-align: center;"), 
+                                                 DT::dataTableOutput("accuracyOutput"))
+                            )
+                        )
+                    )
+            ) 
+        )
+    ) 
+)   
+
+
+#=============
+# Define server logic 
+#=============
+server <- function(input, output,session) {
+    
+}
+
+
+# MET Police Crime Forecast
+rm(list = ls()) #clear environment
+#=============
+# Packages
+#=============
+packages <- c('ggplot2', 'corrplot','tidyverse','readxl',
+              'shiny','shinydashboard','scales','dplyr','mlbench','caTools',
+              'forecast','TTR','xts','lubridate')
+
+for (package in packages) {
+    if (!require(package, character.only=T, quietly=T)) {
+        install.packages(package)
+        library(package, character.only=T)
+    }
+}
+
+#=============
+# Data
+#=============
+offences_past <- read_excel("Met Police Offence Data.xlsx",sheet="Offences Apr 2010 - Sep 2019")
+offences_future <- read_excel("Met Police Offence Data.xlsx",sheet="Offences Oct 2019 - Mar 2020")
+
+crime_columns <- c( 'Month','Burglary - Business and Community','Burglary - Residential','Other Sexual Offences',
+                    'Rape',
+                    'Bicycle Theft','Other Theft',	'Shoplifting',	'Theft from Person',
+                    'Homicide',	'Violence with Injury',	'Violence without Injury')
+
+offences_past <- offences_past %>%
+    select(crime_columns)
+
+offences_future <- offences_future %>%
+    select(crime_columns)
+
+#=============
+# Dropdowns
+#=============
+crime_info <- crime_columns[-c(1)]
+aggregate_info <- c('weekly','monthly')
+horizon_info <- c(1:50) 
+frequency_info <- c(7, 12, 52, 365)
+difference_info <- c("Yes","No")
+log_info <- c("Yes","No")
+model_info <- c('auto-arima','auto-exponential','simple-exponential',
+                'double-exponential','triple-exponential', 'tbat')
+#other models ETS, ARIMA, STL-ETS, NNAR
+#https://otexts.com/fpp2/combinations.html
+
+#=============
+# Define UI for application
+#=============
+ui <- dashboardPage(
+    dashboardHeader(title = "Met Crime Forecaster"),
+    dashboardSidebar(
+        sidebarMenu(
+            menuItem("Data Overview", tabName = "overview", icon = icon("th")),
+            menuItem("Analysis", tabName = "analysis", icon = icon("th")),
+            menuItem("Forecasting", tabName = "forecast", icon = icon("th"))
+        ) 
+    ),
+    dashboardBody(
+        tabItems(
+            tabItem(tabName = 'overview',
+                    sidebarLayout(
+                        sidebarPanel(
+                            selectInput("crimeInput", "Type of Crime", 
+                                        choices = crime_info, 
+                                        selected = 'Burglary - Business and Community'),
+                            submitButton("Submit")
+                        ),
+                        mainPanel(
+                            h1("Overview",style="text-align: center;"), 
+                            plotlyOutput("overviewGraph")
+                        )
+                    )
+            ),
+            #----------
+            # Analysis
+            #----------
+            tabItem(tabName = "analysis",
+                    sidebarLayout(
+                        sidebarPanel(
+                            selectInput("aggregateInput", "Aggregate", 
+                                        choices = aggregate_info, selected = 'weekly'),
+                            selectInput("frequencyInput", "Frequency", 
+                                        choices = frequency_info, selected = 7),
+                            radioButtons("differenceInput","Difference",
+                                         choices = difference_info, selected = "No"),
+                            numericInput("differenceNumericInput", "Difference Input", 
+                                         1, min = 1, max = 52, step = 0.5),
+                            radioButtons("logInput","Log",
+                                         choices = log_info, selected = "No"),
+                            submitButton("Submit")
+                        ),
+                        mainPanel(
+                            h1("Analysis",style="text-align: center;"), 
+                            tabsetPanel(type = "tabs",
+                                        tabPanel(
+                                            h4("Decomposition",
+                                               style="text-align: center;"),
+                                            plotOutput("decompositionPlot")),
+                                        tabPanel(
+                                            h4("Multi seasonal Decomposition",
+                                               style="text-align: center;"),
+                                            plotOutput("multidecompositionPlot")),
+                                        tabPanel(
+                                            h4("ACF Plot",style="text-align: center;"), 
+                                            plotOutput("acfPlot")),
+                                        tabPanel(
+                                            h4("PACF Plot",style="text-align: center;"), 
+                                            plotOutput("pacfPlot"))
+                            )
+                        )
+                    )  
+            ),
+            #-----------
+            # Forecast
+            #-----------
+            tabItem(tabName = "forecast",
+                    sidebarLayout(
+                        sidebarPanel(
+                            selectInput("aggregateInput", "Aggregate", 
+                                        choices = aggregate_info, selected = 'weekly'),
+                            selectInput("horizonInput", "Horizon", 
+                                        choices = horizon_info, selected = 14),
+                            selectInput("frequencyInput", "Frequency", 
+                                        choices = frequency_info, selected = 7),
+                            sliderInput("traintestInput", "Train/Test Split",
+                                        min = 0, max = 1,value = 0.8),
+                            checkboxGroupInput("modelInput", "Models",choices = model_info, 
+                                               selected = model_info),
+                            sliderInput("autoInput", "Auto-regression",
+                                        min = 0, max = 100,value = 0),
+                            sliderInput("difference2Input", "Difference",
+                                        min = 0, max = 52,value = 0),
+                            sliderInput("maInput", "Moving Average",
+                                        min = 0, max = 100,value = 0),
+                            submitButton("Submit")
+                        ),
+                        mainPanel(
+                            h1("Forecast Analysis",style="text-align: center;"), 
+                            tabsetPanel(type = "tabs",
+                                        tabPanel(h4("Forecast Visualization",style="text-align: center;"), 
+                                                 plotOutput("forecastPlot")),
+                                        tabPanel(h4("Forecast Results",style="text-align: center;"), 
+                                                 DT::dataTableOutput("forecastOutput")),
+                                        tabPanel(h4("Forecast Accuracy",style="text-align: center;"), 
+                                                 DT::dataTableOutput("accuracyOutput"))
+                            )
+                        )
+                    )
+            ) 
+        )
+    ) 
+)   
+
+
+#=============
+# Define server logic 
+#=============
+server <- function(input, output,session) {
+    
+    output$overviewGraph <- renderPlotly({
+        
+        offences_df <- offences_past %>%
+            select(c('Month',input$crimeInput))
+       
+        
+        fig <- plot_ly(offences_df , type = 'scatter', mode = 'lines')%>%
+            add_trace(x = ~Month, y = ~input$crimeInput)%>%
+            layout(showlegend = F)
+        fig <- fig %>%
+            layout(
+                xaxis = list(zerolinecolor = '#ffff',
+                             zerolinewidth = 2,
+                             gridcolor = 'ffff'),
+                yaxis = list(zerolinecolor = '#ffff',
+                             zerolinewidth = 2,
+                             gridcolor = 'ffff'),
+                plot_bgcolor='#e5ecf6', width = 900)
+        fig
+        }
+    )
+    
+}
+
+
+# Run the application 
+shinyApp(ui = ui, server = server)
