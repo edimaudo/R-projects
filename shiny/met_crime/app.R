@@ -192,27 +192,12 @@ ui <- dashboardPage(
     dashboardHeader(title = "Met Crime Forecaster"),
     dashboardSidebar(
         sidebarMenu(
-            menuItem("Data Overview", tabName = "overview", icon = icon("th")),
             menuItem("Analysis", tabName = "analysis", icon = icon("th")),
             menuItem("Forecasting", tabName = "forecast", icon = icon("th"))
         ) 
     ),
-    dashboardBody(
+    dashboardBody(color="green",
         tabItems(
-            tabItem(tabName = 'overview',
-                    sidebarLayout(
-                        sidebarPanel(
-                            selectInput("crimeInput", "Type of Crime", 
-                                        choices = crime_info, 
-                                        selected = 'Burglary - Business and Community'),
-                            submitButton("Submit")
-                        ),
-                        mainPanel(
-                            h1("Overview",style="text-align: center;"), 
-                            plotlyOutput("overviewGraph")
-                        )
-                    )
-            ),
             #----------
             # Analysis
             #----------
@@ -298,28 +283,6 @@ ui <- dashboardPage(
 # Define server logic 
 #=============
 server <- function(input, output,session) {
-    
-    output$overviewGraph <- renderPlotly({
-        
-        offences_df <- offences_past %>%
-            select(c('Month',input$crimeInput))
-       
-        
-        fig <- plot_ly(offences_df , type = 'scatter', mode = 'lines')%>%
-            add_trace(x = ~Month, y = ~input$crimeInput)%>%
-            layout(showlegend = F)
-        fig <- fig %>%
-            layout(
-                xaxis = list(zerolinecolor = '#ffff',
-                             zerolinewidth = 2,
-                             gridcolor = 'ffff'),
-                yaxis = list(zerolinecolor = '#ffff',
-                             zerolinewidth = 2,
-                             gridcolor = 'ffff'),
-                plot_bgcolor='#e5ecf6', width = 900)
-        fig
-        }
-    )
     
 }
 
