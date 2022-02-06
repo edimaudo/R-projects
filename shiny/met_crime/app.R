@@ -88,7 +88,8 @@ ui <- dashboardPage(
                                         tabPanel(
                                             h4("Trend Visualization",
                                                style="text-align: center;"), 
-                                            plotOutput("trendPlot"),
+                                                plotOutput("trendPlot")),
+                                        tabPanel(
                                             h4("Decomposition",
                                                style="text-align: center;"),
                                             plotOutput("decompositionPlot")),
