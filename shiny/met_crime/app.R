@@ -54,21 +54,21 @@ ui <- dashboardPage(
     dashboardHeader(title = "Met Crime Forecaster"),
     dashboardSidebar(
         sidebarMenu(
-            menuItem("Introduction",tabName = "intro",icon=icon("th")),
+            #menuItem("Introduction",tabName = "intro",icon=icon("th")),
             menuItem("Analysis", tabName = "analysis", icon = icon("th")),
             menuItem("Forecasting", tabName = "forecast", icon = icon("th"))
         ) 
     ),
     dashboardBody(
         tabItems(
-            tabItem(tabName = "intro",includeMarkdown("about.md"),hr()),
+            #tabItem(tabName = "intro",includeMarkdown("about.md"),hr()),
             #----------
             # Analysis
             #----------
             tabItem(tabName = "analysis",
                     sidebarLayout(
                         sidebarPanel(
-                            selectInput('crimeTypeInput',"Crime Type", choices=crime_info,
+                            selectInput('crimeTypeInput',"Crime Type",choices=crime_info,
                                         selected = 'Homicide'),
                             selectInput("aggregateInput", "Aggregate", 
                                         choices = aggregate_info, selected = 'weekly'),
@@ -83,27 +83,28 @@ ui <- dashboardPage(
                             submitButton("Submit")
                         ),
                         mainPanel(
-                            h1("Analysis",style="text-align: center;"), 
-                            tabsetPanel(type = "tabs",
-                                        tabPanel(
-                                            h4("Trend Visualization",
-                                               style="text-align: center;"), 
-                                                plotOutput("trendPlot")),
-                                        tabPanel(
-                                            h4("Decomposition",
-                                               style="text-align: center;"),
-                                            plotOutput("decompositionPlot")),
-                                        tabPanel(
-                                            h4("Multi seasonal Decomposition",
-                                               style="text-align: center;"),
-                                            plotOutput("multidecompositionPlot")),
-                                        tabPanel(
-                                            h4("ACF Plot",style="text-align: center;"), 
-                                            plotOutput("acfPlot")),
-                                        tabPanel(
-                                            h4("PACF Plot",style="text-align: center;"), 
-                                            plotOutput("pacfPlot"))
-                            )
+                            #h1("Analysis",style="text-align: center;"), 
+                            DT::dataTableOutput("test")
+                            # tabsetPanel(type = "tabs",
+                            #             tabPanel(
+                            #                 h4("Trend Visualization",
+                            #                    style="text-align: center;"), 
+                            #                     plotOutput("trendPlot")),
+                            #             tabPanel(
+                            #                 h4("Decomposition",
+                            #                    style="text-align: center;"),
+                            #                 plotOutput("decompositionPlot")),
+                            #             tabPanel(
+                            #                 h4("Multi seasonal Decomposition",
+                            #                    style="text-align: center;"),
+                            #                 plotOutput("multidecompositionPlot")),
+                            #             tabPanel(
+                            #                 h4("ACF Plot",style="text-align: center;"), 
+                            #                 plotOutput("acfPlot")),
+                            #             tabPanel(
+                            #                 h4("PACF Plot",style="text-align: center;"), 
+                            #                 plotOutput("pacfPlot"))
+                            # )
                         )
                     )  
             ),
@@ -157,6 +158,15 @@ server <- function(input, output,session) {
     #----------
     # Analysis
     #----------
+    output$test <- DT::renderDataTable({
+        column_info <- colnames(offences_past)
+        columndata <- column_info[column_info %in% c('Month',input$crimeTypeInput)]
+        output_df <- offences_past %>%
+            select(columndata)
+            #select(!!!input$crimeTypeInput, Month)
+        DT::datatable(output_df)
+    })
+    
     output$trendPlot <- renderPlot({
         
     })
