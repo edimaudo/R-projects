@@ -23,8 +23,7 @@ offences_past <- read_excel("Met Police Offence Data.xlsx",sheet="Offences Apr 2
 offences_future <- read_excel("Met Police Offence Data.xlsx",sheet="Offences Oct 2019 - Mar 2020")
 
 crime_columns <- c( 'Month','Burglary - Business and Community','Burglary - Residential','Other Sexual Offences',
-                    'Rape',
-                    'Bicycle Theft','Other Theft',	'Shoplifting',	'Theft from Person',
+                    'Rape','Bicycle Theft','Other Theft',	'Shoplifting',	'Theft from Person',
                     'Homicide',	'Violence with Injury',	'Violence without Injury')
 
 offences_past <- offences_past %>%
@@ -38,7 +37,7 @@ offences_past$Month <- lubridate::my(offences_past$Month)
 offences_future$Month <- lubridate::my(offences_future$Month)
 
 #=============
-# Dropdowns
+# Drop-downs
 #=============
 crime_info <- crime_columns[-c(1)]
 horizon_info <- c(1:50) 
@@ -202,6 +201,10 @@ server <- function(input, output,session) {
     #----------
     # Forecast
     #----------
+    #model_info <- c('auto-arima','auto-exponential','simple-exponential',
+    #                'double-exponential','triple-exponential', 'tbat')
+    #other models ETS, ARIMA, STL-ETS, NNAR
+    #https://otexts.com/fpp2/combinations.html
 }
 
 
