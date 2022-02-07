@@ -33,11 +33,14 @@ offences_past <- offences_past %>%
 offences_future <- offences_future %>%
     select(crime_columns)
 
+# convert Month to a Date format
+offences_past$Month <- lubridate::my(offences_past$Month)
+offences_future$Month <- lubridate::my(offences_future$Month)
+
 #=============
 # Dropdowns
 #=============
 crime_info <- crime_columns[-c(1)]
-aggregate_info <- c('weekly','monthly')
 horizon_info <- c(1:50) 
 frequency_info <- c(7, 12, 52, 365)
 difference_info <- c("Yes","No")
@@ -70,8 +73,6 @@ ui <- dashboardPage(
                         sidebarPanel(
                             selectInput('crimeTypeInput',"Crime Type",choices=crime_info,
                                         selected = 'Homicide'),
-                            selectInput("aggregateInput", "Aggregate", 
-                                        choices = aggregate_info, selected = 'weekly'),
                             selectInput("frequencyInput", "Frequency", 
                                         choices = frequency_info, selected = 7),
                             radioButtons("differenceInput","Difference",
@@ -83,28 +84,28 @@ ui <- dashboardPage(
                             submitButton("Submit")
                         ),
                         mainPanel(
-                            #h1("Analysis",style="text-align: center;"), 
-                            DT::dataTableOutput("test")
-                            # tabsetPanel(type = "tabs",
-                            #             tabPanel(
-                            #                 h4("Trend Visualization",
-                            #                    style="text-align: center;"), 
-                            #                     plotOutput("trendPlot")),
-                            #             tabPanel(
-                            #                 h4("Decomposition",
-                            #                    style="text-align: center;"),
-                            #                 plotOutput("decompositionPlot")),
-                            #             tabPanel(
-                            #                 h4("Multi seasonal Decomposition",
-                            #                    style="text-align: center;"),
-                            #                 plotOutput("multidecompositionPlot")),
-                            #             tabPanel(
-                            #                 h4("ACF Plot",style="text-align: center;"), 
-                            #                 plotOutput("acfPlot")),
-                            #             tabPanel(
-                            #                 h4("PACF Plot",style="text-align: center;"), 
-                            #                 plotOutput("pacfPlot"))
-                            # )
+                            h1("Analysis",style="text-align: center;"), 
+                            #DT::dataTableOutput("test")
+                            tabsetPanel(type = "tabs",
+                                        tabPanel(
+                                            h4("Trend Visualization",
+                                               style="text-align: center;"),
+                                                plotOutput("trendPlot")),
+                                        tabPanel(
+                                            h4("Decomposition",
+                                               style="text-align: center;"),
+                                            plotOutput("decompositionPlot")),
+                                        tabPanel(
+                                            h4("Multi seasonal Decomposition",
+                                               style="text-align: center;"),
+                                            plotOutput("multidecompositionPlot")),
+                                        tabPanel(
+                                            h4("ACF Plot",style="text-align: center;"),
+                                            plotOutput("acfPlot")),
+                                        tabPanel(
+                                            h4("PACF Plot",style="text-align: center;"),
+                                            plotOutput("pacfPlot"))
+                            )
                         )
                     )  
             ),
@@ -114,8 +115,8 @@ ui <- dashboardPage(
             tabItem(tabName = "forecast",
                     sidebarLayout(
                         sidebarPanel(
-                            selectInput("aggregateInput", "Aggregate", 
-                                        choices = aggregate_info, selected = 'weekly'),
+                            selectInput('crimeTypeInput',"Crime Type",choices=crime_info,
+                                        selected = 'Homicide'),
                             selectInput("horizonInput", "Horizon", 
                                         choices = horizon_info, selected = 14),
                             selectInput("frequencyInput", "Frequency", 
@@ -158,16 +159,31 @@ server <- function(input, output,session) {
     #----------
     # Analysis
     #----------
-    output$test <- DT::renderDataTable({
-        column_info <- colnames(offences_past)
-        columndata <- column_info[column_info %in% c('Month',input$crimeTypeInput)]
-        output_df <- offences_past %>%
-            select(columndata)
-            #select(!!!input$crimeTypeInput, Month)
-        DT::datatable(output_df)
-    })
+    # output$test <- DT::renderDataTable({
+    #     column_info <- colnames(offences_past)
+    #     columndata <- column_info[column_info %in% c('Month',input$crimeTypeInput)]
+    #     output_df <- offences_past %>%
+    #         select(columndata)
+    #         #select(!!!input$crimeTypeInput, Month)
+    #     DT::datatable(output_df)
+    # })
     
     output$trendPlot <- renderPlot({
+        crime_name <- as.character(input$crimeTypeInput)
+        column_data <- crime_columns[crime_columns %in% c('Month',input$crimeTypeInput)]
+        
+        offences_df <- offences_past %>%
+        select(column_data)
+        colnames(offences_df) <- c('DateInfo',"CrimeType")
+            
+        ggplot(offences_df, aes(x=DateInfo, y=CrimeType)) +
+        geom_line() +theme_minimal() + scale_y_continuous(labels = comma) +
+            labs(x = "Date", y = crime_name) + 
+            theme(legend.text = element_text(size = 12),
+                  legend.title = element_text(size = 15),
+                  axis.title = element_text(size = 12),
+                  axis.text = element_text(size = 12),
+                  axis.text.x = element_text(angle = 00, hjust = 1))
         
     })
     
