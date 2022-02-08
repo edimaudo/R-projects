@@ -237,15 +237,59 @@ server <- function(input, output,session) {
             mstl() %>%
             autoplot()
     })
-    
+    #---------------
     # ACF output
+    #---------------
     output$acfPlot <- renderPlot({
+        crime_name <- as.character(input$crimeTypeInput)
+        column_data <- crime_columns[crime_columns %in% c('Month',input$crimeTypeInput)]
+        df <- offences_past %>%
+            select(column_data)
+        colnames(df) <- c('DateInfo',"CrimeType")
+        
+        crime.xts <- xts(x = df$CrimeType, order.by = df$DateInfo) 
+        crime.monthly <- apply.monthly(crime.xts, mean) 
+        
+        crime.end <- floor(1*length(crime.monthly)) 
+        crime.data <- crime.monthly[1:crime.end,] 
+        crime.start <- c(year (start(crime.data)), month(start(crime.data)))
+        crime.end <- c(year(end(crime.data)), month(end(crime.data)))
+        crime.data <- ts(as.numeric(crime.data), start = crime.start, 
+                         end = crime.end, frequency = as.numeric(input$frequencyInput)) 
+        
+        if (input$logInput == "No"){
+            #acf(patient.train)
+            ggAcf(crime.data)
+        } else {
+            ggAcf(log(crime.data))
+        }
         
     })
-    
+    #---------------
     # PACF output
+    #---------------
     output$pacfPlot <- renderPlot({
+        crime_name <- as.character(input$crimeTypeInput)
+        column_data <- crime_columns[crime_columns %in% c('Month',input$crimeTypeInput)]
+        df <- offences_past %>%
+            select(column_data)
+        colnames(df) <- c('DateInfo',"CrimeType")
         
+        crime.xts <- xts(x = df$CrimeType, order.by = df$DateInfo) 
+        crime.monthly <- apply.monthly(crime.xts, mean) 
+        
+        crime.end <- floor(1*length(crime.monthly)) 
+        crime.data <- crime.monthly[1:crime.end,] 
+        crime.start <- c(year (start(crime.data)), month(start(crime.data)))
+        crime.end <- c(year(end(crime.data)), month(end(crime.data)))
+        crime.data <- ts(as.numeric(crime.data), start = crime.start, 
+                         end = crime.end, frequency = as.numeric(input$frequencyInput)) 
+        
+        if (input$logInput == "No"){
+            ggPacf(crime.data) 
+        } else {
+            ggPacf(log(crime.data))
+        }
     })
     
     #----------
