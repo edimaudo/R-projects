@@ -154,18 +154,13 @@ ui <- dashboardPage(
 #=============
 server <- function(input, output,session) {
     
-    #----------
+    #===============
     # Analysis
-    #----------
-    # output$test <- DT::renderDataTable({
-    #     column_info <- colnames(offences_past)
-    #     columndata <- column_info[column_info %in% c('Month',input$crimeTypeInput)]
-    #     output_df <- offences_past %>%
-    #         select(columndata)
-    #         #select(!!!input$crimeTypeInput, Month)
-    #     DT::datatable(output_df)
-    # })
-    
+    #===============
+
+    #---------------
+    # trend plot
+    #---------------
     output$trendPlot <- renderPlot({
         crime_name <- as.character(input$crimeTypeInput)
         column_data <- crime_columns[crime_columns %in% c('Month',input$crimeTypeInput)]
@@ -184,8 +179,9 @@ server <- function(input, output,session) {
                   axis.text.x = element_text(angle = 00, hjust = 1))
         
     })
-    
+    #---------------
     # decomposition plot
+    #---------------
     output$decompositionPlot <- renderPlot({
         crime_name <- as.character(input$crimeTypeInput)
         column_data <- crime_columns[crime_columns %in% c('Month',input$crimeTypeInput)]
@@ -213,7 +209,9 @@ server <- function(input, output,session) {
         
     })
     
+    #---------------
     # multi season output
+    #---------------
     output$multidecompositionPlot <- renderPlot({
         crime_name <- as.character(input$crimeTypeInput)
         column_data <- crime_columns[crime_columns %in% c('Month',input$crimeTypeInput)]
@@ -240,6 +238,12 @@ server <- function(input, output,session) {
             autoplot()
     })
     
+    # ACF output
+    output$acfPlot <- renderPlot({
+        
+    })
+    
+    # PACF output
     output$pacfPlot <- renderPlot({
         
     })
