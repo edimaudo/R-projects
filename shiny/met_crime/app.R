@@ -236,7 +236,7 @@ server <- function(input, output,session) {
         }
         #Decompose the Time Series
         crime.data %>%
-            decompose() %>%
+            mstl() %>%
             autoplot()
     })
     
