@@ -84,7 +84,6 @@ ui <- dashboardPage(
                         ),
                         mainPanel(
                             h1("Analysis",style="text-align: center;"), 
-                            #DT::dataTableOutput("test")
                             tabsetPanel(type = "tabs",
                                         tabPanel(
                                             h4("Trend Visualization",
@@ -186,12 +185,59 @@ server <- function(input, output,session) {
         
     })
     
+    # decomposition plot
     output$decompositionPlot <- renderPlot({
+        crime_name <- as.character(input$crimeTypeInput)
+        column_data <- crime_columns[crime_columns %in% c('Month',input$crimeTypeInput)]
+        df <- offences_past %>%
+            select(column_data)
+        colnames(df) <- c('DateInfo',"CrimeType")
+        
+        crime.xts <- xts(x = df$CrimeType, order.by = df$DateInfo) 
+        crime.monthly <- apply.monthly(crime.xts, mean) 
+        
+        crime.end <- floor(1*length(crime.monthly)) 
+        crime.data <- crime.monthly[1:crime.end,] 
+        crime.start <- c(year (start(crime.data)), month(start(crime.data)))
+        crime.end <- c(year(end(crime.data)), month(end(crime.data)))
+        crime.data <- ts(as.numeric(crime.data), start = crime.start, 
+                           end = crime.end, frequency = as.numeric(input$frequencyInput))  
+        
+        if (input$differenceInput == "Yes"){
+            crime.data <- diff(crime.data, differences = as.numeric(input$differenceNumericInput)) 
+        }
+        #Decompose the Time Series
+        crime.data %>%
+            decompose() %>%
+            autoplot()
         
     })
     
+    # multi season output
     output$multidecompositionPlot <- renderPlot({
+        crime_name <- as.character(input$crimeTypeInput)
+        column_data <- crime_columns[crime_columns %in% c('Month',input$crimeTypeInput)]
+        df <- offences_past %>%
+            select(column_data)
+        colnames(df) <- c('DateInfo',"CrimeType")
         
+        crime.xts <- xts(x = df$CrimeType, order.by = df$DateInfo) 
+        crime.monthly <- apply.monthly(crime.xts, mean) 
+        
+        crime.end <- floor(1*length(crime.monthly)) 
+        crime.data <- crime.monthly[1:crime.end,] 
+        crime.start <- c(year (start(crime.data)), month(start(crime.data)))
+        crime.end <- c(year(end(crime.data)), month(end(crime.data)))
+        crime.data <- ts(as.numeric(crime.data), start = crime.start, 
+                         end = crime.end, frequency = as.numeric(input$frequencyInput))  
+        
+        if (input$differenceInput == "Yes"){
+            crime.data <- diff(crime.data, differences = as.numeric(input$differenceNumericInput)) 
+        }
+        #Decompose the Time Series
+        crime.data %>%
+            decompose() %>%
+            autoplot()
     })
     
     output$pacfPlot <- renderPlot({
