@@ -45,8 +45,8 @@ frequency_info <- c(7, 12, 52, 365)
 difference_info <- c("Yes","No")
 log_info <- c("Yes","No")
 model_info <- c('auto-arima','auto-exponential','simple-exponential',
-                'double-exponential','triple-exponential', 'tbat','ETS','STL','NNAR',
-                'combined')
+                'double-exponential','triple-exponential', 'tbat',
+                'stl','nnar','combined')
 
 #=============
 # Define UI for application
@@ -295,22 +295,47 @@ server <- function(input, output,session) {
         
         crime_name <- as.character(input$crimeTypeInput)
         column_data <- crime_columns[crime_columns %in% c('Month',input$crimeTypeInput)]
-        df <- offences_past %>%
+        
+        train_df <- offences_past %>%
             select(column_data)
-        colnames(df) <- c('DateInfo',"CrimeType")
+        colnames(train_df) <- c('DateInfo',"CrimeType")
         
-        crime.xts <- xts(x = df$CrimeType, order.by = df$DateInfo) 
-        crime.monthly <- apply.monthly(crime.xts, mean) 
+        test_df <- offences_future %>%
+            select(column_data)
+        colnames(test_df) <- c('DateInfo',"CrimeType")
         
-        crime.end <- floor(1*length(crime.monthly)) 
-        crime.data <- crime.monthly[1:crime.end,] 
-        crime.start <- c(year (start(crime.data)), month(start(crime.data)))
-        crime.end <- c(year(end(crime.data)), month(end(crime.data)))
-        crime.data <- ts(as.numeric(crime.data), start = crime.start, 
-                         end = crime.end, frequency = as.numeric(input$frequencyInput)) 
+        crime_train_xts <- xts(x = train_df$CrimeType, order.by = train_df$DateInfo) 
+        crime_test_xts <- xts(x = test_df$CrimeType, order.by = test_df$DateInfo) 
+        
+        crime.train <- apply.monthly(crime_train_xts, mean) 
+        crime.test <- apply.monthly(crime_test_xts, mean) 
+        
+        #crime.end <- floor(as.numeric(input$traintestInput)*length(crime.data)) 
+        #crime.train <- crime.data[1:crime.end,] 
+        #crime.test <- crime.data[(crime.end+1):length(crime.data),]
+        
+        crime.start <- c(year (start(crime.train)), month(start(crime.train)))
+        crime.end <- c(year(end(crime.train)), month(end(crime.train)))
+        crime.train <- ts(as.numeric(crime.train), start = crime.start, 
+                          end = crime.end, frequency = as.numeric(input$frequencyInput))
+        crime.start <- c(year (start(crime.test)), month(start(crime.test)))
+        crime.end <- c(year(end(crime.test)), month(end(crime.test)))
+        crime.test <- ts(as.numeric(crime.test), start = crime.start, 
+                         end = crime.end, frequency = as.numeric(input$frequencyInput))
         
         # set forecast horizon
         forecast.horizon <- as.numeric(input$horizonInput)
+        
+        # models
+        auto_exp_model <- crime.train %>% ets %>% forecast(h=forecast.horizon)
+        auto_arima_model <- crime.train %>% auto.arima() %>% forecast(h=forecast.horizon)
+        simple_exp_model <- crime.train %>% HoltWinters(beta=FALSE, gamma=FALSE) %>% 
+            forecast(h=forecast.horizon)
+        double_exp_model <- crime.train %>% HoltWinters(beta = TRUE, gamma=FALSE) %>% 
+            forecast(h=forecast.horizon)
+        triple_exp_model <- crime.train %>% HoltWinters(beta = TRUE, gamma = TRUE) %>% 
+            forecast(h=forecast.horizon)
+        tbat_model <- crime.train %>% tbats %>% forecast(h=forecast.horizon)
         
     })
     
