@@ -53,7 +53,7 @@ model_info <- c('auto-arima','auto-exponential','simple-exponential',
 # Define UI for application
 #=============
 ui <- dashboardPage(
-    dashboardHeader(title = "Met Crime Forecaster"),
+    dashboardHeader(title = "MET Crime Forecaster"),
     dashboardSidebar(
         sidebarMenu(
             #menuItem("Introduction",tabName = "intro",icon=icon("th")),
@@ -121,14 +121,14 @@ ui <- dashboardPage(
                                         choices = frequency_info, selected = 7),
                             sliderInput("traintestInput", "Train/Test Split",
                                         min = 0, max = 1,value = 0.8),
-                            checkboxGroupInput("modelInput", "Models",choices = model_info, 
-                                               selected = model_info),
                             sliderInput("autoInput", "Auto-regression",
                                         min = 0, max = 100,value = 0),
                             sliderInput("difference2Input", "Difference",
                                         min = 0, max = 52,value = 0),
                             sliderInput("maInput", "Moving Average",
                                         min = 0, max = 100,value = 0),
+                            checkboxGroupInput("modelInput", "Models",choices = model_info, 
+                                               selected = model_info),
                             submitButton("Submit")
                         ),
                         mainPanel(
@@ -295,10 +295,11 @@ server <- function(input, output,session) {
     #----------
     # Forecast
     #----------
-    #model_info <- c('auto-arima','auto-exponential','simple-exponential',
-    #                'double-exponential','triple-exponential', 'tbat')
-    #other models ETS, ARIMA, STL-ETS, NNAR
     #https://otexts.com/fpp2/combinations.html
+    #model_info <- c('auto-arima','auto-exponential','simple-exponential',
+    #                'double-exponential','triple-exponential', 'tbat','ETS', 'STL', 'NNAR','Combined')
+    
+    
 }
 
 
