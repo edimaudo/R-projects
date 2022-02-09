@@ -44,6 +44,7 @@ horizon_info <- c(1:50)
 frequency_info <- c(7, 12, 52, 365)
 difference_info <- c("Yes","No")
 log_info <- c("Yes","No")
+
 model_info <- c('auto-arima','auto-exponential','simple-exponential',
                 'double-exponential','triple-exponential', 'tbat',
                 'stl','nnar','combined')
@@ -281,8 +282,11 @@ server <- function(input, output,session) {
         }
     })
     
-    #----------
+    #==============
     # Forecast
+    #==============
+    #----------
+    #Forecast Plot
     #----------
     output$forecastPlot <- renderPlot({
         
@@ -341,7 +345,9 @@ server <- function(input, output,session) {
                 guides(colour = guide_legend("Models")) 
         
     })
-    
+    #----------
+    #Forecast Output
+    #----------
     output$forecastOutput <- DT::renderDataTable({
         crime_name <- as.character(input$crimeTypeInput)
         column_data <- crime_columns[crime_columns %in% c('Month',input$crimeTypeInput)]
@@ -402,6 +408,23 @@ server <- function(input, output,session) {
             is.num <- sapply(df, is.numeric)
             df[is.num] <- lapply(df[is.num], round, 0)           
             return (df)
+            
+            auto_exp_forecast <- numeric_update(auto_exp_forecast)
+            auto_arima_forecast <- numeric_update(auto_arima_forecast)
+            simple_exp_forecast <- numeric_update(simple_exp_forecast)
+            double_exp_forecast <- numeric_update(double_exp_forecast)
+            triple_exp_forecast <- numeric_update(triple_exp_forecast)
+            tbat_forecast <- numeric_update(tbat_forecast)
+            stl_forecast <- numeric_update(stl_forecast)
+            nnar_forecast <- numeric_update(nnar_forecast)
+            combo_forecast <- numeric_update(combo_forecast)
+            
+            outputInfo <- cbind(auto_exp_forecast,auto_arima_forecast,
+                                simple_exp_forecast,double_exp_forecast,
+                                triple_exp_forecast,tbat_forecast,
+                                stl_forecast,nnar_forecast,combo_forecast)
+            
+            colnames(outputInfo) <- model_info 
         }
     })
     
