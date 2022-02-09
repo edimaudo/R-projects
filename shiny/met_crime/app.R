@@ -56,7 +56,7 @@ ui <- dashboardPage(
     dashboardSidebar(
         sidebarMenu(
             #menuItem("Introduction",tabName = "intro",icon=icon("th")),
-            menuItem("Analysis", tabName = "analysis", icon = icon("th")),
+            #menuItem("Analysis", tabName = "analysis", icon = icon("th")),
             menuItem("Forecasting", tabName = "forecast", icon = icon("th"))
         ) 
     ),
@@ -330,27 +330,22 @@ server <- function(input, output,session) {
         combo_model<- (auto_exp_model[["mean"]] + auto_arima_model[["mean"]] +
                            stl_model[["mean"]] + nnar_model[["mean"]] + tbat_model[["mean"]])/5
         
-        # model output
-        #auto_arima <- "auto-arima"        %in% input$modelInput
-        #auto_exp   <- 'auto-exponential'  %in% input$modelInput
-        #simple_exp <- "simple-exponential" %in% input$modelInput
-        #double_exp <- "double-exponential" %in% input$modelInput
-        #triple_exp <- "triple-exponential" %in% input$modelInput
-        #tbat <- "tbat"  %in% input$modelInput
-        
-        
         model_selection <- unlist(strsplit(input$modelInput, split=" "))
         model_count <- length(model_selection)
         
         if (is.null(input$modelInput)){
             
         } else {
-            autolayer(auto_arima_model,series="auto arima", alpha=0.2) +
+            autoplot(crime.train) +
+                autolayer(auto_arima_model,series="auto arima", alpha=0.2) +
                 autolayer(auto_exp_model, series = "auto exponential", alpha=0.2) +
                 autolayer(simple_exp_model, series= "simple exponential", alpha=0.5) +
                 autolayer(double_exp_model, series = "double exponential", alpha=0.25) +
                 autolayer(triple_exp_model, series = "triple exponential", alpha=0.25) +
                 autolayer(tbat_model, series = "tbat", alpha=0.7) + 
+                autolayer(stl_model, series = "stl", alpha=0.7) + 
+                autolayer(nnar_model, series = "nnar", alpha=0.7) + 
+                autolayer(combo_model, series = "combined", alpha=0.7) + 
                 guides(colour = guide_legend("Models")) 
         }
         
