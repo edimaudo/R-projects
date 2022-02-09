@@ -335,6 +335,22 @@ server <- function(input, output,session) {
         combo_model<- (auto_exp_model[["mean"]] + auto_arima_model[["mean"]] +
                            stl_model[["mean"]] + nnar_model[["mean"]] + tbat_model[["mean"]])/5
         
+        # model output
+        auto_arima <- "auto-arima"        %in% input$modelInput
+        auto_exp   <- 'auto-exponential'  %in% input$modelInput
+        simple_exp <- "simple-exponential" %in% input$modelInput
+        double_exp <- "double-exponential" %in% input$modelInput
+        triple_exp <- "triple-exponential" %in% input$modelInput
+        tbat <- "tbat"  %in% input$modelInput
+        
+        
+        model_selection <- unlist(strsplit(input$modelInput, split=" "))
+        model_count <- length(model_selection)
+        
+        if (is.null(input$modelInput)){
+            
+        }
+        
     })
     
 }
