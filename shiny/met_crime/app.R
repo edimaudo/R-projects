@@ -328,26 +328,81 @@ server <- function(input, output,session) {
         combo_model<- (auto_exp_model[["mean"]] + auto_arima_model[["mean"]] +
                            stl_model[["mean"]] + nnar_model[["mean"]] + tbat_model[["mean"]])/5
         
-        model_selection <- unlist(strsplit(input$modelInput, split=" "))
-        model_count <- length(model_selection)
-        
-        if (!is.null(input$modelInput)){
-            
-        } 
-            
             autoplot(crime.train) +
-                autolayer(auto_arima_model,series="auto arima", alpha=0.2) +
-                autolayer(auto_exp_model, series = "auto exponential", alpha=0.2) +
-                autolayer(simple_exp_model, series= "simple exponential", alpha=0.5) +
-                autolayer(double_exp_model, series = "double exponential", alpha=0.25) +
-                autolayer(triple_exp_model, series = "triple exponential", alpha=0.25) +
+                autolayer(auto_arima_model,series="auto arima", alpha=0.7) +
+                autolayer(auto_exp_model, series = "auto exponential", alpha=0.7) +
+                autolayer(simple_exp_model, series= "simple exponential", alpha=0.7) +
+                autolayer(double_exp_model, series = "double exponential", alpha=0.7) +
+                autolayer(triple_exp_model, series = "triple exponential", alpha=0.7) +
                 autolayer(tbat_model, series = "tbat", alpha=0.7) + 
                 autolayer(stl_model, series = "stl", alpha=0.7) + 
                 autolayer(nnar_model, series = "nnar", alpha=0.7) + 
                 autolayer(combo_model, series = "combined", alpha=0.7) + 
                 guides(colour = guide_legend("Models")) 
-        }
         
+    })
+    
+    output$forecastOutput <- DT::renderDataTable({
+        crime_name <- as.character(input$crimeTypeInput)
+        column_data <- crime_columns[crime_columns %in% c('Month',input$crimeTypeInput)]
+        
+        train_df <- offences_past %>%
+            select(column_data)
+        colnames(train_df) <- c('DateInfo',"CrimeType")
+        
+        test_df <- offences_future %>%
+            select(column_data)
+        colnames(test_df) <- c('DateInfo',"CrimeType")
+        
+        crime_train_xts <- xts(x = train_df$CrimeType, order.by = train_df$DateInfo) 
+        crime_test_xts <- xts(x = test_df$CrimeType, order.by = test_df$DateInfo) 
+        crime.train <- apply.monthly(crime_train_xts, mean) 
+        crime.test <- apply.monthly(crime_test_xts, mean) 
+        crime.start <- c(year (start(crime.train)), month(start(crime.train)))
+        crime.end <- c(year(end(crime.train)), month(end(crime.train)))
+        crime.train <- ts(as.numeric(crime.train), start = crime.start, 
+                          end = crime.end, frequency = as.numeric(input$frequencyInput))
+        crime.start <- c(year (start(crime.test)), month(start(crime.test)))
+        crime.end <- c(year(end(crime.test)), month(end(crime.test)))
+        crime.test <- ts(as.numeric(crime.test), start = crime.start, 
+                         end = crime.end, frequency = as.numeric(input$frequencyInput))
+        
+        # set forecast horizon
+        forecast.horizon <- as.numeric(input$horizonInput)
+        
+        # models
+        auto_exp_model <- crime.train %>% ets %>% forecast(h=forecast.horizon)
+        auto_arima_model <- crime.train %>% auto.arima() %>% forecast(h=forecast.horizon)
+        simple_exp_model <- crime.train %>% HoltWinters(beta=FALSE, gamma=FALSE) %>% 
+            forecast(h=forecast.horizon)
+        double_exp_model <- crime.train %>% HoltWinters(beta = TRUE, gamma=FALSE) %>% 
+            forecast(h=forecast.horizon)
+        triple_exp_model <- crime.train %>% HoltWinters(beta = TRUE, gamma = TRUE) %>% 
+            forecast(h=forecast.horizon)
+        tbat_model <- crime.train %>% tbats %>% forecast(h=forecast.horizon)
+        stl_model <- stlf(crime.train, lambda=0, h=forecast.horizon, biasadj=TRUE)
+        nnar_model <- forecast(nnetar(crime.train), h=forecast.horizon)
+        combo_model<- (auto_exp_model[["mean"]] + auto_arima_model[["mean"]] +
+                           stl_model[["mean"]] + nnar_model[["mean"]] + tbat_model[["mean"]])/5
+        
+        
+        # forecast output
+        auto_exp_forecast <- as.data.frame(auto_exp_model$mean)
+        auto_arima_forecast <- as.data.frame(auto_arima_model$mean)
+        simple_exp_forecast <- as.data.frame(simple_exp_model$mean)
+        double_exp_forecast <- as.data.frame(double_exp_model$mean)
+        triple_exp_forecast <- as.data.frame(triple_exp_model$mean)
+        tbat_forecast <- as.data.frame(tbat_model$mean)
+        stl_forecast <- as.data.frame(stl_model$mean)
+        nnar_forecast <- as.data.frame(nnar_model$mean)
+        combo_forecast <- as.data.frame(combo_model$mean)
+        
+        numeric_update <- function(df){
+            rownames(df) <- c()
+            is.num <- sapply(df, is.numeric)
+            df[is.num] <- lapply(df[is.num], round, 0)           
+            return (df)
+        }
     })
     
 }
