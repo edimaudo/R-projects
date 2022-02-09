@@ -408,6 +408,7 @@ server <- function(input, output,session) {
             is.num <- sapply(df, is.numeric)
             df[is.num] <- lapply(df[is.num], round, 0)           
             return (df)
+        }
             
             auto_exp_forecast <- numeric_update(auto_exp_forecast)
             auto_arima_forecast <- numeric_update(auto_arima_forecast)
@@ -428,7 +429,7 @@ server <- function(input, output,session) {
             
             # forecast value output
             DT::datatable(outputInfo, options = list(scrollX = TRUE))
-        }
+        
     })
     
 }
