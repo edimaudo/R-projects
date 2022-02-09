@@ -118,8 +118,6 @@ ui <- dashboardPage(
                                         choices = horizon_info, selected = 14),
                             selectInput("frequencyInput", "Frequency", 
                                         choices = frequency_info, selected = 7),
-                            sliderInput("difference2Input", "Difference",
-                                        min = 0, max = 52,value = 0),
                             checkboxGroupInput("modelInput", "Models",choices = model_info, 
                                                selected = model_info),
                             submitButton("Submit")
@@ -288,9 +286,6 @@ server <- function(input, output,session) {
     #----------
     # Forecast
     #----------
-    #https://otexts.com/fpp2/combinations.html
-    #model_info <- c('auto-arima','auto-exponential','simple-exponential',
-    #                'double-exponential','triple-exponential', 'tbat','ETS', 'STL', 'NNAR','Combined')
     output$forecastPlot <- renderPlot({
         
         crime_name <- as.character(input$crimeTypeInput)
@@ -336,12 +331,12 @@ server <- function(input, output,session) {
                            stl_model[["mean"]] + nnar_model[["mean"]] + tbat_model[["mean"]])/5
         
         # model output
-        auto_arima <- "auto-arima"        %in% input$modelInput
-        auto_exp   <- 'auto-exponential'  %in% input$modelInput
-        simple_exp <- "simple-exponential" %in% input$modelInput
-        double_exp <- "double-exponential" %in% input$modelInput
-        triple_exp <- "triple-exponential" %in% input$modelInput
-        tbat <- "tbat"  %in% input$modelInput
+        #auto_arima <- "auto-arima"        %in% input$modelInput
+        #auto_exp   <- 'auto-exponential'  %in% input$modelInput
+        #simple_exp <- "simple-exponential" %in% input$modelInput
+        #double_exp <- "double-exponential" %in% input$modelInput
+        #triple_exp <- "triple-exponential" %in% input$modelInput
+        #tbat <- "tbat"  %in% input$modelInput
         
         
         model_selection <- unlist(strsplit(input$modelInput, split=" "))
@@ -349,6 +344,14 @@ server <- function(input, output,session) {
         
         if (is.null(input$modelInput)){
             
+        } else {
+            autolayer(auto_arima_model,series="auto arima", alpha=0.2) +
+                autolayer(auto_exp_model, series = "auto exponential", alpha=0.2) +
+                autolayer(simple_exp_model, series= "simple exponential", alpha=0.5) +
+                autolayer(double_exp_model, series = "double exponential", alpha=0.25) +
+                autolayer(triple_exp_model, series = "triple exponential", alpha=0.25) +
+                autolayer(tbat_model, series = "tbat", alpha=0.7) + 
+                guides(colour = guide_legend("Models")) 
         }
         
     })
