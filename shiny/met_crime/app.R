@@ -401,7 +401,7 @@ server <- function(input, output,session) {
         tbat_forecast <- as.data.frame(tbat_model$mean)
         stl_forecast <- as.data.frame(stl_model$mean)
         nnar_forecast <- as.data.frame(nnar_model$mean)
-        combo_forecast <- as.data.frame(combo_model$mean)
+        combo_forecast <- as.data.frame(combo_model)
         
         numeric_update <- function(df){
             rownames(df) <- c()
@@ -429,6 +429,13 @@ server <- function(input, output,session) {
             
             # forecast value output
             DT::datatable(outputInfo, options = list(scrollX = TRUE))
+        
+    })
+    
+    #--------------
+    # Forecast Accuracy
+    #--------------
+    output$accuracyOutput <- DT::renderDataTable({
         
     })
     
