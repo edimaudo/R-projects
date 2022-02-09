@@ -45,9 +45,8 @@ frequency_info <- c(7, 12, 52, 365)
 difference_info <- c("Yes","No")
 log_info <- c("Yes","No")
 model_info <- c('auto-arima','auto-exponential','simple-exponential',
-                'double-exponential','triple-exponential', 'tbat')
-#other models ETS, ARIMA, STL-ETS, NNAR
-#https://otexts.com/fpp2/combinations.html
+                'double-exponential','triple-exponential', 'tbat','ETS','STL','NNAR',
+                'combined')
 
 #=============
 # Define UI for application
@@ -119,14 +118,8 @@ ui <- dashboardPage(
                                         choices = horizon_info, selected = 14),
                             selectInput("frequencyInput", "Frequency", 
                                         choices = frequency_info, selected = 7),
-                            sliderInput("traintestInput", "Train/Test Split",
-                                        min = 0, max = 1,value = 0.8),
-                            sliderInput("autoInput", "Auto-regression",
-                                        min = 0, max = 100,value = 0),
                             sliderInput("difference2Input", "Difference",
                                         min = 0, max = 52,value = 0),
-                            sliderInput("maInput", "Moving Average",
-                                        min = 0, max = 100,value = 0),
                             checkboxGroupInput("modelInput", "Models",choices = model_info, 
                                                selected = model_info),
                             submitButton("Submit")
@@ -298,7 +291,28 @@ server <- function(input, output,session) {
     #https://otexts.com/fpp2/combinations.html
     #model_info <- c('auto-arima','auto-exponential','simple-exponential',
     #                'double-exponential','triple-exponential', 'tbat','ETS', 'STL', 'NNAR','Combined')
-    
+    output$forecastPlot <- renderPlot({
+        
+        crime_name <- as.character(input$crimeTypeInput)
+        column_data <- crime_columns[crime_columns %in% c('Month',input$crimeTypeInput)]
+        df <- offences_past %>%
+            select(column_data)
+        colnames(df) <- c('DateInfo',"CrimeType")
+        
+        crime.xts <- xts(x = df$CrimeType, order.by = df$DateInfo) 
+        crime.monthly <- apply.monthly(crime.xts, mean) 
+        
+        crime.end <- floor(1*length(crime.monthly)) 
+        crime.data <- crime.monthly[1:crime.end,] 
+        crime.start <- c(year (start(crime.data)), month(start(crime.data)))
+        crime.end <- c(year(end(crime.data)), month(end(crime.data)))
+        crime.data <- ts(as.numeric(crime.data), start = crime.start, 
+                         end = crime.end, frequency = as.numeric(input$frequencyInput)) 
+        
+        # set forecast horizon
+        forecast.horizon <- as.numeric(input$horizonInput)
+        
+    })
     
 }
 
