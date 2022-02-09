@@ -336,17 +336,24 @@ server <- function(input, output,session) {
         if (is.null(input$modelInput)){
             
         } else {
+            
             autoplot(crime.train) +
-                autolayer(auto_arima_model,series="auto arima", alpha=0.2) +
-                autolayer(auto_exp_model, series = "auto exponential", alpha=0.2) +
-                autolayer(simple_exp_model, series= "simple exponential", alpha=0.5) +
-                autolayer(double_exp_model, series = "double exponential", alpha=0.25) +
-                autolayer(triple_exp_model, series = "triple exponential", alpha=0.25) +
-                autolayer(tbat_model, series = "tbat", alpha=0.7) + 
-                autolayer(stl_model, series = "stl", alpha=0.7) + 
-                autolayer(nnar_model, series = "nnar", alpha=0.7) + 
-                autolayer(combo_model, series = "combined", alpha=0.7) + 
-                guides(colour = guide_legend("Models")) 
+                if ("auto-arima" %in% model_selection){
+                    autolayer(auto_arima_model,series="auto arima", alpha=0.2) +
+                        guides(colour = guide_legend("Models")) 
+                } else {
+                    
+                }
+                # autolayer(auto_arima_model,series="auto arima", alpha=0.2) +
+                # autolayer(auto_exp_model, series = "auto exponential", alpha=0.2) +
+                # autolayer(simple_exp_model, series= "simple exponential", alpha=0.5) +
+                # autolayer(double_exp_model, series = "double exponential", alpha=0.25) +
+                # autolayer(triple_exp_model, series = "triple exponential", alpha=0.25) +
+                # autolayer(tbat_model, series = "tbat", alpha=0.7) + 
+                # autolayer(stl_model, series = "stl", alpha=0.7) + 
+                # autolayer(nnar_model, series = "nnar", alpha=0.7) + 
+                # autolayer(combo_model, series = "combined", alpha=0.7) + 
+                # guides(colour = guide_legend("Models")) 
         }
         
     })
