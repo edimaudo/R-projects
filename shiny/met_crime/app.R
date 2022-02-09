@@ -306,14 +306,8 @@ server <- function(input, output,session) {
         
         crime_train_xts <- xts(x = train_df$CrimeType, order.by = train_df$DateInfo) 
         crime_test_xts <- xts(x = test_df$CrimeType, order.by = test_df$DateInfo) 
-        
         crime.train <- apply.monthly(crime_train_xts, mean) 
         crime.test <- apply.monthly(crime_test_xts, mean) 
-        
-        #crime.end <- floor(as.numeric(input$traintestInput)*length(crime.data)) 
-        #crime.train <- crime.data[1:crime.end,] 
-        #crime.test <- crime.data[(crime.end+1):length(crime.data),]
-        
         crime.start <- c(year (start(crime.train)), month(start(crime.train)))
         crime.end <- c(year(end(crime.train)), month(end(crime.train)))
         crime.train <- ts(as.numeric(crime.train), start = crime.start, 
@@ -336,6 +330,10 @@ server <- function(input, output,session) {
         triple_exp_model <- crime.train %>% HoltWinters(beta = TRUE, gamma = TRUE) %>% 
             forecast(h=forecast.horizon)
         tbat_model <- crime.train %>% tbats %>% forecast(h=forecast.horizon)
+        stl_model <- stlf(crime.train, lambda=0, h=forecast.horizon, biasadj=TRUE)
+        nnar_model <- forecast(nnetar(crime.train), h=forecast.horizon)
+        combo_model<- (auto_exp_model[["mean"]] + auto_arima_model[["mean"]] +
+                           stl_model[["mean"]] + nnar_model[["mean"]] + tbat_model[["mean"]])/5
         
     })
     
