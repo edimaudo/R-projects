@@ -424,7 +424,10 @@ server <- function(input, output,session) {
                                 triple_exp_forecast,tbat_forecast,
                                 stl_forecast,nnar_forecast,combo_forecast)
             
-            colnames(outputInfo) <- model_info 
+            colnames(outputInfo) <- model_info
+            
+            # forecast value output
+            DT::datatable(outputInfo, options = list(scrollX = TRUE))
         }
     })
     
