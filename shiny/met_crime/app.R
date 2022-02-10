@@ -480,6 +480,15 @@ server <- function(input, output,session) {
                            stl_model[["mean"]] + nnar_model[["mean"]] + tbat_model[["mean"]])/5
         
         
+        auto_exp_accuracy <- as.data.frame(accuracy( auto_exp_model ,crime.test))
+        auto_arima_accuracy <- as.data.frame(accuracy(auto_arima_model ,crime.test))
+        simple_exp_accuracy <- as.data.frame(accuracy(simple_exp_model ,crime.test))
+        double_exp_accuracy <- as.data.frame(accuracy(double_exp_model ,crime.test))
+        triple_exp_accuracy <- as.data.frame(accuracy(triple_exp_model ,crime.test))
+        tbat_accuracy <- as.data.frame(accuracy(tbat_model,crime.test))
+        stl_accuracy <- as.data.frame(accuracy(stl_model,crime.test))
+        nnar_accuracy <- as.data.frame(accuracy(nnar_model,crime.test))
+        combo_accuracy <- as.data.frame(accuracy(combo_model,crime.test))
        
         
     })
