@@ -497,8 +497,40 @@ server <- function(input, output,session) {
             return (df)
         }
         
+        auto_exp_accuracy <- numeric_update(auto_exp_accuracy)
+        auto_arima_accuracy <- numeric_update(auto_arima_accuracy)
+        simple_exp_accuracy <- numeric_update(simple_exp_accuracy)
+        double_exp_accuracy <- numeric_update(double_exp_accuracy)
+        triple_exp_accuracy <- numeric_update(triple_exp_accuracy)
+        tbat_accuracy <- numeric_update(tbat_accuracy)
+        stl_accuracy <- numeric_update(stl_accuracy)
+        nnar_accuracy <- numeric_update(nnar_accuracy)
+        combo_accuracy <- numeric_update(combo_accuracy)
         
-       
+        models<- c("auto-exponential","auto-exponential",
+                   "auto-arima","auto-arima",
+                   "simple-exponential","simple-exponential",
+                   "double-exponential","double-exponential",
+                   "triple-exponential","triple-exponential",
+                   "tbat","tbat",
+                   "stl","stl",
+                   'nnar','nnar',
+                   'combo','combo')
+        
+        data<- c("Training set", 'Test set',
+                 "Training set", 'Test set',
+                 "Training set", 'Test set',
+                 "Training set", 'Test set',
+                 "Training set", 'Test set',
+                 "Training set", 'Test set',
+                 "Training set", 'Test set',
+                 "Training set", 'Test set',
+                 "Training set", 'Test set')
+        
+        outputInfo <- rbind(auto_exp_accuracy,auto_arima_accuracy,
+                            simple_exp_accuracy,double_exp_accuracy,
+                            triple_exp_accuracy,tbat_accuracy,
+                            stl_accuracy,nnar_accuracy,combo_accuracy) 
         
     })
     
