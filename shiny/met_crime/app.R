@@ -532,6 +532,8 @@ server <- function(input, output,session) {
                             triple_exp_accuracy,tbat_accuracy,
                             stl_accuracy,nnar_accuracy,combo_accuracy) 
         
+        outputInfo <- cbind(models, data, outputInfo)
+        
     })
     
 }
