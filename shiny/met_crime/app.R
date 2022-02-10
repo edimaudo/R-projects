@@ -534,6 +534,9 @@ server <- function(input, output,session) {
         
         outputInfo <- cbind(models, data, outputInfo)
         
+        # forecast accuracy output
+        DT::datatable(outputInfo, options = list(scrollX = TRUE))
+        
     })
     
 }
