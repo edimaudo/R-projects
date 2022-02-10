@@ -489,6 +489,15 @@ server <- function(input, output,session) {
         stl_accuracy <- as.data.frame(accuracy(stl_model,crime.test))
         nnar_accuracy <- as.data.frame(accuracy(nnar_model,crime.test))
         combo_accuracy <- as.data.frame(accuracy(combo_model,crime.test))
+        
+        numeric_update <- function(df){
+            rownames(df) <- c()
+            is.num <- sapply(df, is.numeric)
+            df[is.num] <- lapply(df[is.num], round, 2)           
+            return (df)
+        }
+        
+        
        
         
     })
