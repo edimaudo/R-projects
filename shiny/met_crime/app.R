@@ -476,8 +476,6 @@ server <- function(input, output,session) {
         tbat_model <- crime.train %>% tbats %>% forecast(h=forecast.horizon)
         stl_model <- stlf(crime.train, lambda=0, h=forecast.horizon, biasadj=TRUE)
         nnar_model <- forecast(nnetar(crime.train), h=forecast.horizon)
-        combo_model<- (auto_exp_model[["mean"]] + auto_arima_model[["mean"]] +
-                           stl_model[["mean"]] + nnar_model[["mean"]] + tbat_model[["mean"]])/5
         
         
         auto_exp_accuracy <- as.data.frame(accuracy( auto_exp_model ,crime.test))
@@ -488,7 +486,7 @@ server <- function(input, output,session) {
         tbat_accuracy <- as.data.frame(accuracy(tbat_model,crime.test))
         stl_accuracy <- as.data.frame(accuracy(stl_model,crime.test))
         nnar_accuracy <- as.data.frame(accuracy(nnar_model,crime.test))
-        combo_accuracy <- as.data.frame(accuracy(combo_model,crime.test))
+        
         
         numeric_update <- function(df){
             rownames(df) <- c()
@@ -505,20 +503,18 @@ server <- function(input, output,session) {
         tbat_accuracy <- numeric_update(tbat_accuracy)
         stl_accuracy <- numeric_update(stl_accuracy)
         nnar_accuracy <- numeric_update(nnar_accuracy)
-        combo_accuracy <- numeric_update(combo_accuracy)
         
-        models<- c("auto-exponential","auto-exponential",
+        
+        models <- c("auto-exponential","auto-exponential",
                    "auto-arima","auto-arima",
                    "simple-exponential","simple-exponential",
                    "double-exponential","double-exponential",
                    "triple-exponential","triple-exponential",
                    "tbat","tbat",
                    "stl","stl",
-                   'nnar','nnar',
-                   'combo','combo')
+                   'nnar','nnar')
         
         data<- c("Training set", 'Test set',
-                 "Training set", 'Test set',
                  "Training set", 'Test set',
                  "Training set", 'Test set',
                  "Training set", 'Test set',
@@ -530,7 +526,7 @@ server <- function(input, output,session) {
         outputInfo <- rbind(auto_exp_accuracy,auto_arima_accuracy,
                             simple_exp_accuracy,double_exp_accuracy,
                             triple_exp_accuracy,tbat_accuracy,
-                            stl_accuracy,nnar_accuracy,combo_accuracy) 
+                            stl_accuracy,nnar_accuracy) 
         
         outputInfo <- cbind(models, data, outputInfo)
         
