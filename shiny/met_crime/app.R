@@ -437,6 +437,51 @@ server <- function(input, output,session) {
     #--------------
     output$accuracyOutput <- DT::renderDataTable({
         
+        crime_name <- as.character(input$crimeTypeInput)
+        column_data <- crime_columns[crime_columns %in% c('Month',input$crimeTypeInput)]
+        
+        train_df <- offences_past %>%
+            select(column_data)
+        colnames(train_df) <- c('DateInfo',"CrimeType")
+        
+        test_df <- offences_future %>%
+            select(column_data)
+        colnames(test_df) <- c('DateInfo',"CrimeType")
+        
+        crime_train_xts <- xts(x = train_df$CrimeType, order.by = train_df$DateInfo) 
+        crime_test_xts <- xts(x = test_df$CrimeType, order.by = test_df$DateInfo) 
+        crime.train <- apply.monthly(crime_train_xts, mean) 
+        crime.test <- apply.monthly(crime_test_xts, mean) 
+        crime.start <- c(year (start(crime.train)), month(start(crime.train)))
+        crime.end <- c(year(end(crime.train)), month(end(crime.train)))
+        crime.train <- ts(as.numeric(crime.train), start = crime.start, 
+                          end = crime.end, frequency = as.numeric(input$frequencyInput))
+        crime.start <- c(year (start(crime.test)), month(start(crime.test)))
+        crime.end <- c(year(end(crime.test)), month(end(crime.test)))
+        crime.test <- ts(as.numeric(crime.test), start = crime.start, 
+                         end = crime.end, frequency = as.numeric(input$frequencyInput))
+        
+        # set forecast horizon
+        forecast.horizon <- as.numeric(input$horizonInput)
+        
+        # models
+        auto_exp_model <- crime.train %>% ets %>% forecast(h=forecast.horizon)
+        auto_arima_model <- crime.train %>% auto.arima() %>% forecast(h=forecast.horizon)
+        simple_exp_model <- crime.train %>% HoltWinters(beta=FALSE, gamma=FALSE) %>% 
+            forecast(h=forecast.horizon)
+        double_exp_model <- crime.train %>% HoltWinters(beta = TRUE, gamma=FALSE) %>% 
+            forecast(h=forecast.horizon)
+        triple_exp_model <- crime.train %>% HoltWinters(beta = TRUE, gamma = TRUE) %>% 
+            forecast(h=forecast.horizon)
+        tbat_model <- crime.train %>% tbats %>% forecast(h=forecast.horizon)
+        stl_model <- stlf(crime.train, lambda=0, h=forecast.horizon, biasadj=TRUE)
+        nnar_model <- forecast(nnetar(crime.train), h=forecast.horizon)
+        combo_model<- (auto_exp_model[["mean"]] + auto_arima_model[["mean"]] +
+                           stl_model[["mean"]] + nnar_model[["mean"]] + tbat_model[["mean"]])/5
+        
+        
+       
+        
     })
     
 }
