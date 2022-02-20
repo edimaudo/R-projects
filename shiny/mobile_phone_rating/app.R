@@ -30,7 +30,7 @@ ui <- dashboardPage(
     dashboardHeader(title = "Mobile phone rating"),
     dashboardSidebar(
         sidebarMenu(
-            menuItem("Phone Ratings", tabName = "rating", icon = icon("dashboard")),
+            menuItem("Phone Ratings", tabName = "rating", icon = icon("dashboard"))
         )
     ),
     dashboardBody(
@@ -38,12 +38,18 @@ ui <- dashboardPage(
             tabItem(tabName = "rating",
                     sidebarLayout(
                         sidebarPanel(
-                            sliderInput("Years", "Years:", min = 1999, max = 2019, 
-                                        step=1, ticks = FALSE, sep="")
+                            selectInput("deviceInput", "Device",choices=model),
+                            br(),
+                            submitButton("Submit")
                         ),
                         mainPanel(
+                            h2("Device Insights",style="text-align: center;"),
+                            column(width=2,
+                            #infoBoxOutput("yearInfo"),
+                            #infoBoxOutput("grantInfo")
+                            ),
+                            
                             fluidRow(
-                                h2("Grants and Amount Awarded",style="text-align: center;"),
                                 plotOutput("grantAwarded")
                             )
                     )
@@ -63,6 +69,5 @@ server <- function(input, output,session) {
 shinyApp(ui, server)
 
 
-fluidRow(
-    infoBoxOutput("yearInfo"),
-    infoBoxOutput("grantInfo")
+
+   
