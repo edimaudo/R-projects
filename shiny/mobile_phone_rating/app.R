@@ -31,3 +31,6 @@ df <- read.csv("mobile phone rating.csv")
 #=========
 # Server
 #=========
+server <- function(input, output,session) {}
+
+shinyApp(ui, server)
