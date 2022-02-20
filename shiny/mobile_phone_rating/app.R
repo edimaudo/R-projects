@@ -13,4 +13,21 @@ for (package in packages) {
     }
 }
 
+#=========
+# Load data
+#=========
 df <- read.csv("mobile phone rating.csv")
+
+#----------
+# UI Dropdown
+#----------
+
+
+#=========
+# UI
+#=========
+
+
+#=========
+# Server
+#=========
