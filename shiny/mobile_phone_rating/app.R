@@ -80,6 +80,14 @@ server <- function(input, output,session) {
     
     # Price Information
     output$priceInfo <- renderInfoBox({
+        price_df <- df %>%
+            filter(model == input$deviceInput) %>%
+            select(price)
+        
+        infoBox(
+            "Price", paste0("$ ",launch_df), icon = icon("list"),
+            color = "blue"
+        )
         
     })
     
