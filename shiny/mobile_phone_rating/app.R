@@ -2,10 +2,8 @@
 # Mobile Phone Ratings
 #=========
 
-packages <- c('ggplot2', 'corrplot','tidyverse','readxl',
-              'shiny','shinydashboard','scales','dplyr','mlbench','caTools',
-              'forecast','TTR','xts','lubridate','plotly')
-
+packages <- c('ggplot2','tidyverse','shiny','shinydashboard',
+              'scales','dplyr','lubridate','reshape2')
 for (package in packages) {
     if (!require(package, character.only=T, quietly=T)) {
         install.packages(package)
@@ -51,7 +49,7 @@ ui <- dashboardPage(
                                 )
                             ),
                             fluidRow(
-                                plotOutput("propertiesPlot")
+                                #plotOutput("propertiesPlot")
                             )
                     )
                 
@@ -65,14 +63,11 @@ ui <- dashboardPage(
 #=========
 server <- function(input, output,session) {
     
-    
     # Launch Information
     output$launchInfo <- renderInfoBox({
-        
         launch_df <- df %>%
             filter(model == input$deviceInput) %>%
             select(launch)
-        
         infoBox(
             "Launch Date", paste0(launch_df$launch), icon = icon("thumbs-up"),
             color = "blue", fill = TRUE
@@ -84,7 +79,6 @@ server <- function(input, output,session) {
         price_df <- df %>%
             filter(model == input$deviceInput) %>%
             select(price)
-        
         infoBox(
             "Price", paste0("$ ",price_df$price), icon = icon("credit-card"),
             color = "green", fill = TRUE
@@ -97,7 +91,15 @@ server <- function(input, output,session) {
     output$propertiesPlot <- renderPlot({
         properties_df <- df %>%
             filter(model == input$deviceInput) %>%
-            select(launch)
+            select(price, camera, selfie, audio, display, battery)
+        
+        #melt data frame into long format
+        plot_df <- melt(properties_df,  id.vars = 'price', variable.name = 'series')
+        
+        #create line plot for each column in data frame
+        ggplot(df, aes(index, value)) +
+          geom_bar()
+            
         
     })
     
