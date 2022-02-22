@@ -44,11 +44,12 @@ ui <- dashboardPage(
                         ),
                         mainPanel(
                             h2("Device Insights",style="text-align: center;"),
-                            column(width=2,
-                            infoBoxOutput("launchInfo"),
-                            infoBoxOutput("priceInfo")
+                            fluidRow(
+                                column(width=12,
+                                       infoBoxOutput("launchInfo"),
+                                       infoBoxOutput("priceInfo")
+                                )
                             ),
-                            
                             fluidRow(
                                 plotOutput("propertiesPlot")
                             )
@@ -73,7 +74,7 @@ server <- function(input, output,session) {
             select(launch)
         
         infoBox(
-            "Launch Date", paste0(launch_df), icon = icon("list"),
+            "Launch Date", paste0(launch_df$launch), icon = icon("list"),
             color = "blue"
         )
     })
@@ -85,7 +86,7 @@ server <- function(input, output,session) {
             select(price)
         
         infoBox(
-            "Price", paste0("$ ",launch_df), icon = icon("list"),
+            "Price", paste0("$ ",price_df$price), icon = icon("list"),
             color = "blue"
         )
         
@@ -93,6 +94,12 @@ server <- function(input, output,session) {
     
     
     # Properties Plot
+    output$propertiesPlot <- renderPlot({
+        properties_df <- df %>%
+            filter(model == input$deviceInput) %>%
+            select(launch)
+        
+    })
     
 }
 
