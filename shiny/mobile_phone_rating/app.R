@@ -45,12 +45,12 @@ ui <- dashboardPage(
                         mainPanel(
                             h2("Device Insights",style="text-align: center;"),
                             column(width=2,
-                            #infoBoxOutput("yearInfo"),
-                            #infoBoxOutput("grantInfo")
+                            infoBoxOutput("launchInfo"),
+                            infoBoxOutput("priceInfo")
                             ),
                             
                             fluidRow(
-                                plotOutput("grantAwarded")
+                                plotOutput("propertiesPlot")
                             )
                     )
                 
@@ -63,6 +63,28 @@ ui <- dashboardPage(
 # Server
 #=========
 server <- function(input, output,session) {
+    
+    
+    # Launch Information
+    output$launchInfo <- renderInfoBox({
+        
+        launch_df <- df %>%
+            filter(model == input$deviceInput) %>%
+            select(launch)
+        
+        infoBox(
+            "Launch Date", paste0(launch_df), icon = icon("list"),
+            color = "blue"
+        )
+    })
+    
+    # Price Information
+    output$priceInfo <- renderInfoBox({
+        
+    })
+    
+    
+    # Properties Plot
     
 }
 
