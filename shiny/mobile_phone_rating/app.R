@@ -74,8 +74,8 @@ server <- function(input, output,session) {
             select(launch)
         
         infoBox(
-            "Launch Date", paste0(launch_df$launch), icon = icon("list"),
-            color = "blue"
+            "Launch Date", paste0(launch_df$launch), icon = icon("thumbs-up"),
+            color = "blue", fill = TRUE
         )
     })
     
@@ -86,8 +86,8 @@ server <- function(input, output,session) {
             select(price)
         
         infoBox(
-            "Price", paste0("$ ",price_df$price), icon = icon("list"),
-            color = "blue"
+            "Price", paste0("$ ",price_df$price), icon = icon("credit-card"),
+            color = "green", fill = TRUE
         )
         
     })
