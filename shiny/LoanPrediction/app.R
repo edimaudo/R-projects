@@ -56,7 +56,7 @@ server <- function(output,input){
   output$clustering <- renderPlot({
     main_data <- df_new
     k = kmeans(main_data, centers = as.numeric(input$nameInfo), nstart = 25) 
-    fviz_cluster(k, geom = "point", data = df_new) + ggtitle("k = " + input$nameInfo)
+    fviz_cluster(k, geom = "point", data = df_new) + ggtitle("k = ")
   })
   
 }
