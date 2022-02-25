@@ -13,10 +13,8 @@ for (package in packages) {
 # load data
 ################
 df <- read_csv("Recent_Contract_Awards.csv")
-
 df <- df %>%
   dplyr::select(AgencyName,CategoryDescription,SelectionMethodDescription,ContractAmount)
-
 df <- na.omit(df)
 
 
@@ -108,11 +106,11 @@ server <- function(input, output) {
   output$agencyCategoryOutput <- renderPlot({
     
     agencyCategory_df <- df %>%
-      group_by(CategoryDescription) %>%
-      filter(AgencyName == input$agencyInfo) %>%
-      summarize(totalAmount = sum(ContractAmount)) %>%
-      arrange(desc(totalAmount)) %>%
-      select(CategoryDescription,totalAmount)
+      dplyr::filter(AgencyName == input$agencyInfo) %>%
+      dplyr::group_by(CategoryDescription) %>%
+      dplyr::summarize(totalAmount = sum(ContractAmount)) %>%
+      dplyr::arrange(desc(totalAmount)) %>%
+      dplyr::select(CategoryDescription,totalAmount)
     
     ggplot(data=agencyCategory_df , aes(reorder(CategoryDescription,totalAmount), y=totalAmount)) +
       geom_bar(stat="identity", width = 0.4) + theme_classic() + coord_flip() + 
@@ -130,11 +128,11 @@ server <- function(input, output) {
   output$agencySelectionMethodOutput <- renderPlot({
     
     agencySelectionMethod_df <- df %>%
-      group_by(SelectionMethodDescription) %>%
-      filter(AgencyName == input$agencyInfo) %>%
-      summarize(totalAmount = sum(ContractAmount)) %>%
-      arrange(desc(totalAmount),desc(SelectionMethodDescription)) %>%
-      select(SelectionMethodDescription,totalAmount)
+      dplyr::filter(AgencyName == input$agencyInfo) %>%
+      dplyr::group_by(SelectionMethodDescription) %>%
+      dplyr::summarize(totalAmount = sum(ContractAmount)) %>%
+      dplyr::arrange(desc(totalAmount),desc(SelectionMethodDescription)) %>%
+      dplyr::select(SelectionMethodDescription,totalAmount)
     
     ggplot(data=agencySelectionMethod_df , aes(x=reorder(as.factor(SelectionMethodDescription),totalAmount) , 
                                                y=totalAmount)) +
@@ -154,11 +152,11 @@ server <- function(input, output) {
   output$CategoryAgencyOutput <- renderPlot({
     
     agencyCategory_df <- df %>%
-      group_by(AgencyName) %>%
-      filter(CategoryDescription == input$categoryInfo) %>%
-      summarize(totalAmount = sum(ContractAmount)) %>%
-      arrange(desc(totalAmount)) %>%
-      select(AgencyName,totalAmount)
+      dplyr::group_by(AgencyName) %>%
+      dplyr::filter(CategoryDescription == input$categoryInfo) %>%
+      dplyr::summarize(totalAmount = sum(ContractAmount)) %>%
+      dplyr::arrange(desc(totalAmount)) %>%
+      dplyr::select(AgencyName,totalAmount)
     
     ggplot(data=agencyCategory_df , aes(x=reorder(AgencyName,totalAmount), y=totalAmount)) +
       geom_bar(stat="identity", width = 0.4) + theme_classic() + coord_flip() + 
@@ -176,11 +174,11 @@ server <- function(input, output) {
   output$CategorySelectionMethodOutput <- renderPlot({
     
     agencySelectionMethod_df <- df %>%
-      group_by(SelectionMethodDescription) %>%
-      filter(CategoryDescription == input$categoryInfo) %>%
-      summarize(totalAmount = sum(ContractAmount)) %>%
-      arrange(desc(totalAmount),desc(SelectionMethodDescription)) %>%
-      select(SelectionMethodDescription,totalAmount)
+      dplyr::group_by(SelectionMethodDescription) %>%
+      dplyr::filter(CategoryDescription == input$categoryInfo) %>%
+      dplyr::summarize(totalAmount = sum(ContractAmount)) %>%
+      dplyr::arrange(desc(totalAmount),desc(SelectionMethodDescription)) %>%
+      dplyr::select(SelectionMethodDescription,totalAmount)
     
     ggplot(data=agencySelectionMethod_df , aes(x=reorder(as.factor(SelectionMethodDescription),totalAmount)
                                                , y=totalAmount)) +
@@ -199,11 +197,11 @@ server <- function(input, output) {
   output$SelectionMethodAgencyOutput <- renderPlot({
     
     agencyCategory_df <- df %>%
-      group_by(AgencyName) %>%
-      filter(SelectionMethodDescription == input$selectionInput) %>%
-      summarize(totalAmount = sum(ContractAmount)) %>%
-      arrange(desc(totalAmount)) %>%
-      select(AgencyName,totalAmount)
+      dplyr::group_by(AgencyName) %>%
+      dplyr::filter(SelectionMethodDescription == input$selectionInput) %>%
+      dplyr::summarize(totalAmount = sum(ContractAmount)) %>%
+      dplyr::arrange(desc(totalAmount)) %>%
+      dplyr::select(AgencyName,totalAmount)
     
     ggplot(data=agencyCategory_df , aes(x=reorder(AgencyName,totalAmount), y=totalAmount)) +
       geom_bar(stat="identity", width = 0.4) + theme_classic() + coord_flip() +
@@ -221,11 +219,11 @@ server <- function(input, output) {
   output$SelectionMethodCategoryOutput <- renderPlot({
     
     agencySelectionMethod_df <- df %>%
-      filter(SelectionMethodDescription == input$selectionInput) %>%
-      group_by(CategoryDescription) %>%
-      summarize(totalAmount = sum(ContractAmount)) %>%
-      arrange(desc(totalAmount)) %>%
-      select(CategoryDescription,totalAmount)
+      dplyr::filter(SelectionMethodDescription == input$selectionInput) %>%
+      dplyr::group_by(CategoryDescription) %>%
+      dplyr::summarize(totalAmount = sum(ContractAmount)) %>%
+      dplyr::arrange(desc(totalAmount)) %>%
+      dplyr::select(CategoryDescription,totalAmount)
     
     ggplot(data=agencySelectionMethod_df , aes(x=reorder(as.factor(CategoryDescription),totalAmount) , 
                                                y=totalAmount)) +
