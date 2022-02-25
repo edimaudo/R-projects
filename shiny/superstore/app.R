@@ -2,7 +2,7 @@
 rm(list = ls())
 ## app.R ##
 #packages
-packages <- c("tidyverse",'shiny','shinydashboard','readxl')
+packages <- c("tidyverse",'shiny','shinydashboard','readxl','ggplot2','dplyr')
 
 #load packages
 for (package in packages) {
@@ -30,8 +30,7 @@ ui <- fluidPage(
     
     # Define the sidebar with one input
     sidebarPanel(
-      selectInput("nameInfo", "State:", 
-                  choices=state)
+      selectInput("nameInfo", "State:", choices=state)
     ),
     
     # Create a spot for the barplot
