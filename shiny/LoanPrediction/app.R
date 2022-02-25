@@ -1,12 +1,10 @@
-#remove old data
-rm(list=ls())
-#load libraries
-#packages
-packages <- c("tidyverse",'shiny','shinydashboard','ggplot2', 'corrplot','caret','mice', 'caTools',
-              'dummies',
-              'cluster','factoextra','psy','lattice','nFactors','scales','NbClust')
 
-#load packages
+rm(list=ls()) #remove old data
+#packages
+packages <- c("tidyverse",'shiny','shinydashboard','ggplot2', 
+              'corrplot','caret','mice', 'caTools',
+              'dummies','cluster','factoextra','psy','lattice',
+              'nFactors','scales','NbClust')
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
     install.packages(package)
@@ -35,28 +33,21 @@ df_cat_new <- dummy.data.frame(as.data.frame(df_cat), sep = "_")
 df_cts <- df[,c(6,7,8,9,10)]
 
 df_new <- cbind(df_cat_new, df_cts)
-
 df_new <- scale(df_new)
 
 # Use a fluid Bootstrap layout
 ui <- fluidPage(    
-  
   # Give the page a title
   titlePanel("Data clusters"),
-  
   # Generate a row with a sidebar
   sidebarLayout(      
-    
     # Define the sidebar with one input
     sidebarPanel(
-      selectInput("nameInfo", "Options:", 
-                  choices=options)
+      selectInput("nameInfo", "Options:", choices=options)
     ),
-    
     mainPanel(
       plotOutput("clustering")
     )
-    
   )
 )
 
