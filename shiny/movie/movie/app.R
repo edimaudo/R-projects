@@ -34,13 +34,15 @@ sidebar <- dashboardSidebar(
 
 page <- dashboardBody(
   fluidRow(
-    box(width = 6, amChartsOutput("top_box_office_collections"), title = "Top 10 Box Office Collections"), 
-    box(width = 6, amChartsOutput("top_imdb_ratings"), title = "Top 10 IMDB Ratings")
+    #box(width = 6, amChartsOutput("top_box_office_collections"), title = "Top 10 Box Office Collections"), 
+    box(width = 4, amChartsOutput("top_imdb_ratings"), title = "Top 10 IMDB Ratings"),
+    box(width = 4, plotOutput("actors_wordcloud"), title = "Active Actors"), 
+    box(width = 4, amChartsOutput("year_on_year_movies"), title = "Year On Year Movies")
   ),
-  fluidRow(
-    box(width = 6, plotOutput("actors_wordcloud"), title = "Active Actors"), 
-    box(width = 6, amChartsOutput("year_on_year_movies"), title = "Year On Year Movies")
-  ),
+  #fluidRow(
+  #  box(width = 6, plotOutput("actors_wordcloud"), title = "Active Actors"), 
+  #  box(width = 6, amChartsOutput("year_on_year_movies"), title = "Year On Year Movies")
+  #),
   fluidRow(
     box(width = 12, DT::DTOutput("movies_table"), title = "All Filtered Movies")
   )
@@ -75,7 +77,7 @@ server<-(function(input, output) {
   
   output$top_box_office_collections <- renderAmCharts({
     box_office_collections_plot <- filtered_data()
-    box_office_collections_plot <- box_office_collections_plot[order(box_office_collections_plot$Revenue_in_Millions, decreasing = T), ]
+    box_office_collections_plot <- box_office_collections_plot[order(box_office_collections_plot$`Revenue (Millions)`, decreasing = T), ]
     box_office_collections_plot <- head(box_office_collections_plot, 10)
     amBarplot(x = "Title", y = "Revenue_in_Millions", data = box_office_collections_plot,
               labelRotation = -45) 
