@@ -1,22 +1,27 @@
-#clear data
-rm(list = ls())
-## app.R ##
-#packages
-packages <- c("tidyverse",'shiny','shinydashboard','readxl','ggplot2','dplyr')
+# Super Store
+rm(list = ls()) #clear data
 
-#load packages
+###############
+# Packages
+###############
+packages <- c("tidyverse",'shiny','shinydashboard','readxl','ggplot2','dplyr')
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
     install.packages(package)
     library(package, character.only=T)
   }
 }
-
-#load data
+###############
+# Load data
+###############
 file_path <- "Sample - Superstore.xls"
-superstore <- read_excel(file_path)
-newdata <- superstore[order(superstore$State),]
+superstore <- read_excel(file_path,sheet="Orders")
 
+###############
+# UI
+###############
+
+# UI Dropdown
 state <- unique(newdata$State)
 
 # Use a fluid Bootstrap layout
@@ -43,6 +48,9 @@ ui <- fluidPage(
   )
 )
 
+###############
+# Server
+###############
 server <- function(input, output) { 
   
   output$salesCategory <- renderPlot({
