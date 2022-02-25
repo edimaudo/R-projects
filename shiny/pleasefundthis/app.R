@@ -81,7 +81,7 @@ server <- function(input, output,session) {
         valueBox(
             paste0(length(unique(df$region))),"# of Countries", 
             icon = icon("list"),
-            width = 12,
+            width = 15,
             color = "blue"
         )
     })
@@ -90,7 +90,7 @@ server <- function(input, output,session) {
         valueBox(
             paste0(length(unique(df$city))),"# of cities",
             icon = icon("list"),
-            width = 12,
+            width = 15,
             color = "blue"
         )
     })
@@ -98,7 +98,7 @@ server <- function(input, output,session) {
     output$categoryOutput <- renderValueBox({
         valueBox(
             paste0(length(unique(df$major_category))),"# of categories", icon = icon("list"),
-            width = 12,
+            width = 15,
             color = "aqua"
         )
     })
@@ -106,7 +106,7 @@ server <- function(input, output,session) {
     output$subCategoryOutput <- renderValueBox({
         valueBox(
             paste0(length(unique(df$minor_category))),"# of sub-categories", icon = icon("list"),
-            width = 12,
+            width = 15,
             color = "aqua"
         )
     })
@@ -116,17 +116,22 @@ server <- function(input, output,session) {
         valueBox(
             paste0(value1),"Amount raised in $", 
             icon = icon("credit-card"),
-            width = 12,
+            width = 15,
             color = "blue"
         )
     })
     
     output$percentofSuccessfulProjectsOutput <- renderValueBox({
-        value1 <- no_success / length(df$project_success)
+        no_success <- df %>%
+            dplyr::filter(project_success == 'TRUE') %>%
+            dplyr::summarize(total=n()) %>%
+            dplyr::select(total)
+        
+        value1 <- no_success$total / length(df$project_success)
         valueBox(
             paste0(round(value1*100 , 2),"%"), "% of successful projects ",
             icon = icon("thumbs-up"),
-            width = 12,
+            width = 15,
             color = "blue"
         )
     })
