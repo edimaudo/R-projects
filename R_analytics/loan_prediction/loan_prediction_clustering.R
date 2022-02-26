@@ -1,7 +1,8 @@
 #remove old data
 rm(list=ls())
 #packages
-packages <- c('ggplot2', 'corrplot','tidyverse','caret','mlbench','mice', 'caTools','dummies','readxl',
+packages <- c('ggplot2', 'corrplot','tidyverse','caret','mlbench','mice', 
+              'caTools','dummies','readxl','gridExtra',
               'cluster','factoextra','psy','lattice','nFactors','scales','NbClust')
 #load packages
 for (package in packages) {
@@ -22,25 +23,37 @@ df <- rbind(df_train,df_test)
 #get summary
 summary(df)
 
-#remove missing data
 #check for missing data
 missing_data <- apply(df, 2, function(x) any(is.na(x))) #no missing data
 print(missing_data)
 df <- na.omit(df)
 
-#drop unncessary columns
-#delete first column
+#drop unnecessary columns
 df[1] <- NULL
 
-#recode categorical data
+#variable recoding
 df_cat <- df[,c(1,2,3,4,5,11)]
 df_cat_new <- dummy.data.frame(as.data.frame(df_cat), sep = "_")
-
 df_cts <- df[,c(6,7,8,9,10)]
-
 df_new <- cbind(df_cat_new, df_cts)
-
 df_new <- scale(df_new)
+
+#variable recoding 2
+#Label Encoder
+labelEncoder <-function(x){
+  as.numeric(factor(x))-1
+}
+#normalize data
+normalize <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x)))
+}
+
+df_cat <- df[,c(1,2,3,4,5,11)]
+df_cts <- df[,c(6,7,8,9,10)]
+df_cts <- as.data.frame(lapply(df_cts, normalize))
+df_cat <- as.data.frame(lapply(df_cat, labelEncoder))
+df_new <- cbind(df_cts,df_cat)
+
 
 #clusters
 k2 <- kmeans(df_new, centers = 2, nstart = 25)
@@ -54,13 +67,13 @@ p2 <- fviz_cluster(k3, geom = "point",  data = df_new) + ggtitle("k = 3")
 p3 <- fviz_cluster(k4, geom = "point",  data = df_new) + ggtitle("k = 4")
 p4 <- fviz_cluster(k5, geom = "point",  data = df_new) + ggtitle("k = 5")
 
-library(gridExtra)
+
 grid.arrange(p1, p2, p3, p4, nrow = 2)
 
-#get optimium # of clusters
-#elbow method
-set.seed(123)
+#get optimum # of clusters
 
+set.seed(123)
+#elbow method
 fviz_nbclust(df_new, kmeans, method = "wss")
 
 # function to compute total within-cluster sum of square 
@@ -107,7 +120,6 @@ gap_stat <- clusGap(df_new, FUN = kmeans, nstart = 25,
                     K.max = 10, B = 50)
 # Print the result
 print(gap_stat, method = "firstmax")
-
 fviz_gap_stat(gap_stat)
 
 # Compute k-means clustering with k = 4
