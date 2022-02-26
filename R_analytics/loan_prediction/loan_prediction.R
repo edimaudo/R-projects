@@ -124,9 +124,6 @@ fit.dtree <- train(as.factor(Target)~., data=train,
 #knn
 fit.knn <- train(as.factor(Target)~., data=train, 
                  method="kknn", metric = "Accuracy", trControl = control)
-#ensemble
-fit.ensemble <- train(as.factor(Target)~., data=train, 
-                      method="nodeHarvest", metric = "Accuracy", trControl = control)
 
 stopCluster(cl)
 
@@ -142,7 +139,6 @@ results <- resamples(list(randomforest = fit.rf,
                           logisticregression = fit.glm, 
                           `decision tree` = fit.dtree, 
                           `naive bayes` = fit.naive,
-                          `ensemble` = fit.ensemble, 
                           `knn` = fit.knn))
 
 summary(results)
@@ -155,33 +151,29 @@ bwplot(results)
 #===============
 dotplot(results)
 
-#===============
-# Model accuracy
-#===============
-#mean(predicted.classes == test$Target)
+
 
 #===============
 # Make predictions
 #===============
-predicted.classes <- fit.knn %>% predict(test)
+predicted.classes <- fit.gbm %>% predict(test)
 output <- confusionMatrix(data = predicted.classes, reference = test$Target, mode = "everything")
 output
 
 #===============
 #Variable Importance
 #===============
-
-caret::varImp(fit.rf)
+#caret::varImp(fit.gbm$method)
 
 #===============
 # Confusion Matrix
 #===============
-output2 <- as.data.frame(output$table)
-colnames(output2) <- c("Predicted",'Actual',"Freq")
-cm_d_p <-  ggplot(data =output2, aes(x = Predicted , y =  Actual, fill = Freq))+
-  geom_tile() +
-  geom_text(aes(label = paste("",Freq)), color = 'white', size = 8) +
-  theme_light() +
-  guides(fill=FALSE) 
-
-cm_d_p
+# output2 <- as.data.frame(output$table)
+# colnames(output2) <- c("Predicted",'Actual',"Freq")
+# cm_d_p <-  ggplot(data =output2, aes(x = Predicted , y =  Actual, fill = Freq))+
+#   geom_tile() +
+#   geom_text(aes(label = paste("",Freq)), color = 'white', size = 8) +
+#   theme_light() +
+#   guides(fill=FALSE) 
+# 
+# cm_d_p
