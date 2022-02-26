@@ -3,7 +3,7 @@ rm(list=ls()) # remove old data
 # packages
 ################
 packages <- c('ggplot2', 'corrplot','tidyverse','caret','mlbench','mice', 
-              'caTools','dummies','readxl','grid','gridExtra',
+              'caTools','dummies','readxl','grid','gridExtra','doParallel',
               'cluster','factoextra','psy','lattice','nFactors','scales','NbClust')
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
@@ -89,39 +89,43 @@ test <- cbind(df_cts,df_cat)
 #===============
 cl <- makePSOCKcluster(4)
 registerDoParallel(cl)
+
+#cross fold validation
+control <- trainControl(method="repeatedcv", number=10, repeats=5, classProbs = FALSE)
+
 #glm
-fit.glm <- train(as.factor(crime)~., data=train, method="glm",family=binomial(),
+fit.glm <- train(as.factor(Target)~., data=train, method="glm",family=binomial(),
                  metric = "Accuracy", trControl = control)
 #random forest
-fit.rf <- train(as.factor(crime)~., data=train, method="rf", 
+fit.rf <- train(as.factor(Target)~., data=train, method="rf", 
                 metric = "Accuracy", trControl = control)
 #boosting algorithm - Stochastic Gradient Boosting (Generalized Boosted Modeling)
-fit.gbm <- train(as.factor(crime)~., data=train, method="gbm", 
+fit.gbm <- train(as.factor(Target)~., data=train, method="gbm", 
                  metric = "Accuracy", trControl = control)
 #svm
-fit.svm <- train(as.factor(crime)~., data=train, method="svmRadial", 
+fit.svm <- train(as.factor(Target)~., data=train, method="svmRadial", 
                  metric = "Accuracy", trControl = control)
 #nnet
-fit.nnet <- train(as.factor(crime)~., data=train, method="nnet", 
+fit.nnet <- train(as.factor(Target)~., data=train, method="nnet", 
                   metric = "Accuracy", trControl = control)
 #naive
-fit.naive <- train(as.factor(crime)~., data=train, 
+fit.naive <- train(as.factor(Target)~., data=train, 
                    method="naive_bayes", metric = "Accuracy", 
                    trControl = control)
 #extreme gradient boosting
-fit.xgb <- train(as.factor(crime)~., data=train, 
+fit.xgb <- train(as.factor(Target)~., data=train, 
                  method="xgbTree", metric = "Accuracy", trControl = control)
 #bagged cart
-fit.bg <- train(as.factor(crime)~., data=train, 
+fit.bg <- train(as.factor(Target)~., data=train, 
                 method="treebag", metric = "Accuracy", trControl = control)
 #decision tree
-fit.dtree <- train(as.factor(crime)~., data=train, 
+fit.dtree <- train(as.factor(Target)~., data=train, 
                    method="C5.0", metric = "Accuracy", trControl = control)
 #knn
-fit.knn <- train(as.factor(crime)~., data=train, 
+fit.knn <- train(as.factor(Target)~., data=train, 
                  method="kknn", metric = "Accuracy", trControl = control)
 #ensemble
-fit.ensemble <- train(as.factor(crime)~., data=train, 
+fit.ensemble <- train(as.factor(Target)~., data=train, 
                       method="nodeHarvest", metric = "Accuracy", trControl = control)
 
 stopCluster(cl)
@@ -154,13 +158,13 @@ dotplot(results)
 #===============
 # Model accuracy
 #===============
-#mean(predicted.classes == test$crime)
+#mean(predicted.classes == test$Target)
 
 #===============
 # Make predictions
 #===============
 predicted.classes <- fit.knn %>% predict(test)
-output <- confusionMatrix(data = predicted.classes, reference = test$crime, mode = "everything")
+output <- confusionMatrix(data = predicted.classes, reference = test$Target, mode = "everything")
 output
 
 #===============
