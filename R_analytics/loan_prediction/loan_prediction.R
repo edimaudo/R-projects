@@ -42,44 +42,47 @@ df_test[1] <- NULL
 # Approach 1
 #===============
 # Train
-df_train_cat <- df_train[,c(1,2,3,4,5,11)]
-df_train_cat_new <- dummy.data.frame(as.data.frame(df_train_cat), sep = "_")
-df_train_cts <- df_train[,c(6,7,8,9,10)]
-Loan_status <- as.factor(df_train$Loan_Status)
-df_train_new <- cbind(df_train_cat_new, df_train_cts,Loan_status)
-
-# TEST
-df_test_cat <- df_test[,c(1,2,3,4,5,11)]
-df_test_cat_new <- dummy.data.frame(as.data.frame(df_test_cat), sep = "_")
-df_test_cts <- df_test[,c(6,7,8,9,10)]
-df_test_new <- cbind(df_test_cat_new, df_test_cts)
+# df_train_cat <- df_train[,c(1,2,3,4,5,11)]
+# df_train_cat_new <- dummy.data.frame(as.data.frame(df_train_cat), sep = "_")
+# df_train_cts <- df_train[,c(6,7,8,9,10)]
+# Loan_status <- as.factor(df_train$Loan_Status)
+# df_train_new <- cbind(df_train_cat_new, df_train_cts,Loan_status)
+# 
+# # TEST
+# df_test_cat <- df_test[,c(1,2,3,4,5,11)]
+# df_test_cat_new <- dummy.data.frame(as.data.frame(df_test_cat), sep = "_")
+# df_test_cts <- df_test[,c(6,7,8,9,10)]
+# df_test_new <- cbind(df_test_cat_new, df_test_cts)
 
 #===============
 # Approach 2
 #===============
-#Label Encoder
+# Label Encoder
 labelEncoder <-function(x){
   as.numeric(factor(x))-1
 }
-#normalize data
+# normalize data
 normalize <- function(x) {
   return ((x - min(x)) / (max(x) - min(x)))
 }
 
+df_Target <- as.data.frame(df_train[,c(12)])
+colnames(df_Target) <- c("Target")
+
 # Train
-df_cat <- df[,c(1,2,3,4,5,11)]
-df_cts <- df[,c(6,7,8,9,10)]
+df_cat <- df_train[,c(1,2,3,4,5,11)]
+df_cts <- df_train[,c(6,7,8,9,10)]
 df_cts <- as.data.frame(lapply(df_cts, normalize))
 df_cat <- as.data.frame(lapply(df_cat, labelEncoder))
-df_train <- cbind(df_cts,df_cat)
+train <- cbind(df_cts,df_cat, df_Target)
 
 
 # Test
-df_cat <- df[,c(1,2,3,4,5,11)]
-df_cts <- df[,c(6,7,8,9,10)]
+df_cat <- df_test[,c(1,2,3,4,5,11)]
+df_cts <- df_test[,c(6,7,8,9,10)]
 df_cts <- as.data.frame(lapply(df_cts, normalize))
 df_cat <- as.data.frame(lapply(df_cat, labelEncoder))
-df_test <- cbind(df_cts,df_cat)
+test <- cbind(df_cts,df_cat)
 
 #===============
 #model training
