@@ -193,7 +193,7 @@ ui <- dashboardPage(
                         ),
                         mainPanel(
                             h1("Topic Modeling",style="text-align: center;"),
-                            dataTableOutput("termtable")
+                            DT::dataTableOutput("termtable")
                         )
                     )
             )
@@ -488,6 +488,8 @@ server <- function(input, output,session) {
             top_terms<- modsum %>% 
                 arrange(desc(coherence)) %>%
                 slice(1:5)
+            
+            DT::datatable(top_terms,options = list(scrollX = TRUE))
             
             
             
