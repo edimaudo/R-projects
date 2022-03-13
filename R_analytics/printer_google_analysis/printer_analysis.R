@@ -49,16 +49,12 @@ fix.contractions <- function(doc) {
 
 # function to remove special characters
 removeSpecialChars <- function(x) gsub("[^a-zA-Z0-9 ]", " ", x)
-
 # fix (expand) contractions
 df$Review <- sapply(df$Review, fix.contractions)
-
 # remove special characters
 df$Review <- sapply(df$Review, removeSpecialChars)
-
 # convert everything to lower case
 df$Review <- sapply(df$Review, tolower)
-
 remove_keywords <- c("printer","print", "printing","app")
 
 # word breakdown 
