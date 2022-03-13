@@ -68,9 +68,7 @@ ui <- dashboardPage(
                                     tabPanel(h4("Printer Score Count",style="text-align: center;"), 
                                         plotOutput("countPrinterScoreplot")),
                                     tabPanel(h4("Printer Score Average over time",style="text-align: center;"), 
-                                         plotOutput("avgPrinterScoreYearplot")),
-                                    tabPanel(h4("Printer Score Count over time",style="text-align: center;"), 
-                                         plotOutput("countPrinterScoreYearplot"))
+                                         plotOutput("avgPrinterScoreYearplot"))
                             )
                         )
                     )
@@ -78,6 +76,10 @@ ui <- dashboardPage(
         )
     )
 )
+
+# sentiment analysis
+# topic modeling
+# TF-IDF
 
 # Define server logic 
 server <- function(input, output,session) {
