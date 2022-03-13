@@ -806,4 +806,49 @@ bing_word_counts %>%
   geom_bar(alpha = 0.8, stat = "identity", show.legend = FALSE) +
   facet_wrap(~sentiment, scales = "free_y") +
   labs(y = "Contribution to sentiment", x = NULL) +
-  coord_flip()
+  coord_flip
+
+
+
+
+df <- df %>%
+  filter(score %in% rating_selection, Product %in% printer_selection)
+
+set.seed(1502)
+clean <- textcleaner(df$Review)
+clean <- clean %>% mutate(id = rownames(clean))
+
+# crete dtm
+dtm_r <- CreateDtm(doc_vec = clean$x,
+                   doc_names = clean$id,
+                   ngram_window = c(1,2),
+                   stopword_vec = stopwords("en"),
+                   verbose = F)
+
+dtm_r <- dtm_r[,colSums(dtm_r)>2]
+
+mod_lda <- FitLdaModel(dtm = dtm_r,
+                       k = 10, # number of topic
+                       iterations = 500,
+                       burnin = 180,
+                       alpha = 0.1,beta = 0.05,
+                       optimize_alpha = T,
+                       calc_likelihood = T,
+                       calc_coherence = T,
+                       calc_r2 = T)
+
+mod_lda$top_terms <- GetTopTerms(phi = mod_lda$phi,M = 15)
+mod_lda$prevalence <- colSums(mod_lda_5$theta)/sum(mod_lda$theta)*100
+
+mod_lda$summary <- data.frame(topic = rownames(mod_lda$phi),
+                              coherence = round(mod_lda$coherence,3),
+                              prevalence = round(mod_lda$prevalence,3),
+                              top_terms = apply(mod_lda$top_terms,2,
+                                                function(x){paste(x,collapse = ", ")}))
+
+modsum <- mod_lda$summary %>%
+  `rownames<-`(NULL)
+
+top_terms<- modsum %>% 
+  arrange(desc(coherence)) %>%
+  slice(1:5)
