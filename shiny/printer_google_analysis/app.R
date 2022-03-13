@@ -125,21 +125,14 @@ ui <- dashboardPage(
                                checkboxGroupInput("printerInput", "Printers",
                                                   choices = printer_info, 
                                                   selected = printer_info),
+                               checkboxGroupInput("ratingInput", "Ratings",
+                                                  choices = score_info, 
+                                                  selected = score_info),
                                submitButton("Submit")
                            ),
                            mainPanel(
-                               h1("Simple Stats.",style="text-align: center;"), 
-                               tabsetPanel(type = "tabs",
-                                           tabPanel(h4("Average Printer Score",
-                                                       style="text-align: center;"), 
-                                                    plotOutput("avgPrinterScoreplot")),
-                                           tabPanel(h4("Printer Score Count",
-                                                       style="text-align: center;"), 
-                                                    plotOutput("countPrinterScoreplot")),
-                                           tabPanel(h4("Average Printer Score over time",
-                                                       style="text-align: center;"), 
-                                                    plotOutput("avgPrinterScoreYearplot"))
-                               )
+                               h1("Sentiment Analysis",style="text-align: center;"),
+                               plotOutput("sentimentplot")
                            )
                     )
                  ),
@@ -318,6 +311,52 @@ server <- function(input, output,session) {
                 )
         }
     })
+    
+    #----------------
+    # Sentiment Analysis
+    #----------------
+    
+    output$sentimentplot <- renderPlot({
+
+        if (is.null(input$printerInput) | is.null(input$ratingInput)){
+            
+        } else {
+            printer_selection <- unlist(strsplit(input$printerInput, split=" "))
+            rating_selection <- unlist(strsplit(input$ratingInput, split=" "))
+            rating_selection <- c(rating_selection)
+            printer_selection <- c(printer_selection)
+            
+            # word breakdown 
+            review_words <- df %>%
+                unnest_tokens(word, Review) %>%
+                anti_join(stop_words) %>%
+                distinct() %>%
+                filter(nchar(word) > 3,!word %in% remove_keywords) 
+            
+            bing_word_counts <- review_words %>%
+                filter(Product %in% printer_selection,
+                       score %in% rating_selection) %>%
+                inner_join(get_sentiments("bing")) %>%
+                count(word, sentiment, sort = TRUE) %>%
+                ungroup()
+            
+            bing_word_counts %>%
+                group_by(sentiment) %>%
+                top_n(10) %>%
+                ggplot(aes(reorder(word, n), n, fill = sentiment)) +
+                geom_bar(alpha = 0.8, stat = "identity", show.legend = FALSE) +
+                facet_wrap(~sentiment, scales = "free_y") +
+                labs(y = "Contribution to sentiment", x = NULL) +
+                coord_flip()
+        
+        }    
+            
+        
+
+                
+    })
+    
+
     
 }
 
