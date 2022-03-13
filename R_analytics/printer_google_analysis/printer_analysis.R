@@ -25,12 +25,16 @@ for (package in packages) {
 #=============
 # Load data
 #=============
-df <- read_excel(file.choose())
+df <- read_csv("reviews_v2.csv")
 df.backup <- df #backup
 
-#df$Product <- ifelse(df$appId == "com.hp.printercontrol", 'HP',
-#                     ifelse(df$appId == "jp.co.canon.bsd.ad.pixmaprint", 'Canon',
-#                            ifelse(df$appId == "epson.print", 'Epson', 'Epson-Smart')))
+#=============
+# Data cleaning
+#=============
+
+df$Product <- ifelse(df$appId == "com.hp.printercontrol", 'HP',
+                    ifelse(df$appId == "jp.co.canon.bsd.ad.pixmaprint", 'Canon',
+                           ifelse(df$appId == "epson.print", 'Epson', 'Epson-Smart')))
 
 #=============
 # Text analytics
