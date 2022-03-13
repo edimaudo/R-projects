@@ -145,10 +145,14 @@ ui <- dashboardPage(
                             checkboxGroupInput("printerInput", "Printers",
                                                choices = printer_info, 
                                                selected = printer_info),
+                            checkboxGroupInput("ratingInput", "Ratings",
+                                               choices = score_info, 
+                                               selected = score_info),
                             submitButton("Submit")
                         ),
                         mainPanel(
-                            h1("Simple Stats.",style="text-align: center;"), 
+                            h1("TF-IDF",style="text-align: center;"), 
+                            plotOutput("termplot")
                            
                         )
                     )
@@ -315,7 +319,6 @@ server <- function(input, output,session) {
     #----------------
     # Sentiment Analysis
     #----------------
-    
     output$sentimentplot <- renderPlot({
 
         if (is.null(input$printerInput) | is.null(input$ratingInput)){
@@ -358,6 +361,24 @@ server <- function(input, output,session) {
     
 
     
+    
+    #
+    # Term Frequency
+    #
+    
+    output$termplot <- renderPlot({
+        
+        if (is.null(input$printerInput) | is.null(input$ratingInput)){
+            
+        } else {
+            printer_selection <- unlist(strsplit(input$printerInput, split=" "))
+            rating_selection <- unlist(strsplit(input$ratingInput, split=" "))
+            rating_selection <- c(rating_selection)
+            printer_selection <- c(printer_selection)
+            
+        }
+        
+    })
 }
 
 shinyApp(ui, server)
