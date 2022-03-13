@@ -212,7 +212,7 @@ textcleaner <- function(x){
 }
 
 #=====================
-# Topic modellings by scores
+# Topic modelling by scores
 #=====================
 data_1 <- df %>% filter(score == 1)
 data_2 <- df %>% filter(score  == 2)
@@ -522,7 +522,7 @@ write.csv(top_5_terms_1, "top_5_terms1.csv")
 # Topics
 
 #=====================
-# Topic modellings by product
+# Topic modelling by product
 #=====================
 
 data_canon <- df %>% filter(Product == "Canon PRINT")
@@ -738,3 +738,21 @@ top_5_terms_hp <- modsum_hp %>%
   slice(1:5)
 write.csv(top_5_terms_hp, "top_5_hp.csv")
 
+
+
+#=====================
+# Sentiment Analysis
+#=====================
+bing_word_counts <- review_words %>%
+  inner_join(get_sentiments("bing")) %>%
+  count(word, sentiment, sort = TRUE) %>%
+  ungroup()
+
+bing_word_counts %>%
+  group_by(sentiment) %>%
+  top_n(10) %>%
+  ggplot(aes(reorder(word, n), n, fill = sentiment)) +
+  geom_bar(alpha = 0.8, stat = "identity", show.legend = FALSE) +
+  facet_wrap(~sentiment, scales = "free_y") +
+  labs(y = "Contribution to sentiment", x = NULL) +
+  coord_flip()
