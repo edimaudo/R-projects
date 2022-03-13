@@ -26,17 +26,12 @@ df$at <- as.Date(df$at, format = "%m/%d/%Y")
 df$year <- lubridate::year(df$at)
 df$month <- lubridate::month((df$at))
 
-
-#=============
-# Add printer column
-#=============
-df$printer <- ifelse(df$appId == "com.hp.printercontrol", 'HP',
+#---------------
+# Add printer column 
+#---------------
+df$Product <- ifelse(df$appId == "com.hp.printercontrol", 'HP',
                      ifelse(df$appId == "jp.co.canon.bsd.ad.pixmaprint", 'Canon',
                             ifelse(df$appId == "epson.print", 'Epson', 'Epson-Smart')))
-
-
-printer_info <- c('Canon','Epson','Epson-Smart','HP')
-score_info <- c(1,2,3,4,5)
 
 #============= 
 # Define UI for application
@@ -45,6 +40,8 @@ score_info <- c(1,2,3,4,5)
 #--------------
 # Dropdown information
 #--------------
+printer_info <- c('Canon','Epson','Epson-Smart','HP')
+score_info <- c(1,2,3,4,5)
 
 #--------------
 # UI
@@ -258,7 +255,9 @@ server <- function(input, output,session) {
             ) 
         }
     })
-    
+    #----------------
+    # Printer Score over time
+    #----------------
     output$countPrinterScoreYearplot <- renderPlot({
         
         if (is.null(input$printerInput)){
