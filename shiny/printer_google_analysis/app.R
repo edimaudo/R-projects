@@ -316,9 +316,9 @@ server <- function(input, output,session) {
         }
     })
     
-    #----------------
+    #=================
     # Sentiment Analysis
-    #----------------
+    #=================
     output$sentimentplot <- renderPlot({
 
         if (is.null(input$printerInput) | is.null(input$ratingInput)){
@@ -365,7 +365,6 @@ server <- function(input, output,session) {
     #=================
     # Term Frequency
     #=================
-    
     output$termplot <- renderPlot({
         
         if (is.null(input$printerInput)){
@@ -412,6 +411,12 @@ server <- function(input, output,session) {
         }
         
     })
+    #=================
+    # TOpic Modeling
+    #=================
+    
+    
+    
 }
 
 shinyApp(ui, server)
