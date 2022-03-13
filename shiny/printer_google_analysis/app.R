@@ -1,8 +1,8 @@
-# User content sentiment analysis
+# Printer Review analysis
 rm(list = ls()) #clear environment
 
 #=============
-# libraries
+# Libraries
 #=============
 packages <- c('ggplot2', 'corrplot','tidyverse',"caret","dummies",'readxl',
               'shiny','shinydashboard','scales','dplyr','mlbench','caTools',
@@ -15,7 +15,7 @@ for (package in packages) {
 }
 
 #=============
-# load data
+# Load data
 #=============
 df <- read.csv("reviews_v2.csv")
 
@@ -34,13 +34,21 @@ df$printer <- ifelse(df$appId == "com.hp.printercontrol", 'HP',
                      ifelse(df$appId == "jp.co.canon.bsd.ad.pixmaprint", 'Canon',
                             ifelse(df$appId == "epson.print", 'Epson', 'Epson-Smart')))
 
-#=============
-# Dropdown information
-#=============                        
+
 printer_info <- c('Canon','Epson','Epson-Smart','HP')
 score_info <- c(1,2,3,4,5)
 
+#============= 
 # Define UI for application
+#============= 
+
+#--------------
+# Dropdown information
+#--------------
+
+#--------------
+# UI
+#--------------
 ui <- dashboardPage(
     dashboardHeader(title = "Printer Analysis"),
     dashboardSidebar(
@@ -69,11 +77,14 @@ ui <- dashboardPage(
                         mainPanel(
                             h1("Simple Stats.",style="text-align: center;"), 
                             tabsetPanel(type = "tabs",
-                                    tabPanel(h4("Average Printer Score",style="text-align: center;"), 
+                                    tabPanel(h4("Average Printer Score",
+                                                style="text-align: center;"), 
                                         plotOutput("avgPrinterScoreplot")),
-                                    tabPanel(h4("Printer Score Count",style="text-align: center;"), 
+                                    tabPanel(h4("Printer Score Count",
+                                                style="text-align: center;"), 
                                         plotOutput("countPrinterScoreplot")),
-                                    tabPanel(h4("Average Printer Score over time",style="text-align: center;"), 
+                                    tabPanel(h4("Average Printer Score over time",
+                                                style="text-align: center;"), 
                                          plotOutput("avgPrinterScoreYearplot"))
                             )
                         )
@@ -93,11 +104,14 @@ ui <- dashboardPage(
                            mainPanel(
                                h1("Simple Stats.",style="text-align: center;"), 
                                tabsetPanel(type = "tabs",
-                                           tabPanel(h4("Average Printer Score",style="text-align: center;"), 
+                                           tabPanel(h4("Average Printer Score",
+                                                       style="text-align: center;"), 
                                                     plotOutput("avgPrinterScoreplot")),
-                                           tabPanel(h4("Printer Score Count",style="text-align: center;"), 
+                                           tabPanel(h4("Printer Score Count",
+                                                       style="text-align: center;"), 
                                                     plotOutput("countPrinterScoreplot")),
-                                           tabPanel(h4("Average Printer Score over time",style="text-align: center;"), 
+                                           tabPanel(h4("Average Printer Score over time",
+                                                       style="text-align: center;"), 
                                                     plotOutput("avgPrinterScoreYearplot"))
                                )
                            )
@@ -146,6 +160,9 @@ ui <- dashboardPage(
 # Define server logic 
 server <- function(input, output,session) {
    
+    #------------------
+    # Average Printer score plot
+    #------------------
     output$avgPrinterScoreplot <- renderPlot({
         
         if (is.null(input$printerInput)){
@@ -175,7 +192,9 @@ server <- function(input, output,session) {
                 )                
         }
     })
-    
+    #------------------
+    # Printer Score Count Plot 
+    #------------------
     output$countPrinterScoreplot <- renderPlot({
         
         if (is.null(input$printerInput)){
@@ -206,7 +225,9 @@ server <- function(input, output,session) {
         }
         
     })
-    
+    #------------------
+    # Average score plot
+    #------------------
     output$avgPrinterScoreYearplot <- renderPlot({
         if (is.null(input$printerInput)){
             
