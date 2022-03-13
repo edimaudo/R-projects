@@ -72,6 +72,29 @@ df$Review <- sapply(df$Review, removeSpecialChars)
 df$Review <- sapply(df$Review, tolower)
 remove_keywords <- c("printer","print", "printing","app")
 
+textcleaner <- function(x){
+    x <- as.character(x)
+    
+    x <- x %>%
+        str_to_lower() %>%  # convert all the string to low alphabet
+        replace_contraction() %>% # replace contraction to their multi-word forms
+        replace_internet_slang() %>% # replace internet slang to normal words
+        #replace_emoji(replacement = " ") %>% # replace emoji to words
+        #replace_emoticon(replacement = " ") %>% # replace emoticon to words
+        replace_hash(replacement = "") %>% # remove hashtag
+        replace_word_elongation() %>% # replace informal writing with known semantic replacements
+        replace_number(remove = T) %>% # remove number
+        replace_date(replacement = "") %>% # remove date
+        replace_time(replacement = "") %>% # remove time
+        str_remove_all(pattern = "[[:punct:]]") %>% # remove punctuation
+        str_remove_all(pattern = "[^\\s]*[0-9][^\\s]*") %>% # remove mixed string n number
+        str_squish() %>% # reduces repeated whitespace inside a string.
+        str_trim() # removes whitespace from start and end of string
+    
+    return(as.data.frame(x))
+    
+}
+
 #--------------
 # UI
 #--------------
@@ -169,8 +192,8 @@ ui <- dashboardPage(
                             submitButton("Submit")
                         ),
                         mainPanel(
-                            h1("Simple Stats.",style="text-align: center;") 
-                           
+                            h1("Topic Modeling",style="text-align: center;"),
+                            dataTableOutput("termtable")
                         )
                     )
             )
@@ -412,8 +435,65 @@ server <- function(input, output,session) {
         
     })
     #=================
-    # TOpic Modeling
+    # Topic Modeling
     #=================
+    output$termtable <- renderDataTable({
+        
+        if (is.null(input$printerInput) && is.null(input$ratingInput) ){
+            
+        } else {
+            printer_selection <- unlist(strsplit(input$printerInput, split=" "))
+            rating_selection <- unlist(strsplit(input$ratingInput, split=" "))
+            rating_selection <- c(rating_selection)
+            printer_selection <- c(printer_selection)
+            
+            set.seed(1502)
+            df <- df %>%
+                filter(score %in% rating_selection, Product %in% printer_selection)
+            
+            clean <- textcleaner(df$Review)
+            clean <- clean %>% mutate(id = rownames(clean))
+            
+            # crete dtm
+            dtm_r <- CreateDtm(doc_vec = clean$x,
+                                 doc_names = clean$id,
+                                 ngram_window = c(1,2),
+                                 stopword_vec = stopwords("en"),
+                                 verbose = F)
+            
+            dtm_r <- dtm_r[,colSums(dtm_r)>2]
+            
+            mod_lda <- FitLdaModel(dtm = dtm_r,
+                                     k = 10, # number of topic
+                                     iterations = 500,
+                                     burnin = 180,
+                                     alpha = 0.1,beta = 0.05,
+                                     optimize_alpha = T,
+                                     calc_likelihood = T,
+                                     calc_coherence = T,
+                                     calc_r2 = T)
+            
+            mod_lda$top_terms <- GetTopTerms(phi = mod_lda$phi,M = 15)
+            mod_lda$prevalence <- colSums(mod_lda$theta)/sum(mod_lda$theta)*100
+            
+            mod_lda$summary <- data.frame(topic = rownames(mod_lda$phi),
+                                            coherence = round(mod_lda$coherence,3),
+                                            prevalence = round(mod_lda$prevalence,3),
+                                            top_terms = apply(mod_lda$top_terms,2,
+                                                              function(x){paste(x,collapse = ", ")}))
+            
+            modsum <- mod_lda$summary %>%
+                `rownames<-`(NULL)
+            
+            top_terms<- modsum %>% 
+                arrange(desc(coherence)) %>%
+                slice(1:5)
+            
+            
+            
+        }
+        
+    })
     
     
     
