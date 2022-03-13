@@ -1,8 +1,5 @@
 rm(list = ls()) #clear environment
-
 gc()
-
-
 #=============
 # Packages
 #=============
@@ -16,11 +13,6 @@ for (package in packages) {
     library(package, character.only=T)
   }
 }
-
-
-
-
-
 
 #=============
 # Load data
@@ -79,19 +71,19 @@ review_words <- df %>%
 # word frequency
 full_word_count <- df %>%
   unnest_tokens(word, Review) %>%
-  group_by(Product,Rating) %>%
+  group_by(Product,score) %>%
   summarise(num_words = n()) %>%
   arrange(desc(num_words)) 
 
-write.csv(full_word_count,"product_rating.csv")
+write.csv(full_word_count,"product_score.csv")
 
 # word count visualization
 full_word_count %>%
-  ggplot(aes(x = Rating,y=num_words, fill = Product )) +
+  ggplot(aes(x = score,y=num_words, fill = Product )) +
   geom_bar(stat = "identity", position = "dodge") +
   coord_flip() + 
   ylab("Word Count") + 
-  xlab("Rating") +
+  xlab("score") +
   theme(plot.title = element_text(hjust = 0.5),
         legend.title = element_blank(),
         panel.grid.minor.y = element_blank())
@@ -121,14 +113,14 @@ review_words %>%
   ggtitle("Top 20 Most Frequently Used Words") +
   coord_flip()
 
-# keywords by Product and ratings
-review_product_rating <- review_words %>%
-  group_by(Product, Rating) %>%
+# keywords by Product and scores
+review_product_score <- review_words %>%
+  group_by(Product, score) %>%
   count(word, sort = TRUE) %>%
-  select(Product, Rating, word, n) %>%
-  arrange(desc(Product,Rating))  
+  select(Product, score, word, n) %>%
+  arrange(desc(Product,score))  
 
-write.csv(review_product_rating, "review_product_rating.csv")
+write.csv(review_product_score, "review_product_score.csv")
 
 review_product <- review_words %>%
   group_by(Product) %>%
@@ -138,13 +130,13 @@ review_product <- review_words %>%
 
 write.csv(review_product, "review_product.csv")
 
-review_rating <- review_words %>%
-  group_by(Rating) %>%
+review_score <- review_words %>%
+  group_by(score) %>%
   count(word, sort = TRUE) %>%
-  select(Rating, word, n) %>%
-  arrange(desc(Rating)) 
+  select(score, word, n) %>%
+  arrange(desc(score)) 
 
-write.csv(review_rating, "review_rating.csv")
+write.csv(review_score, "review_score.csv")
 
 # word cloud
 words_counts <- review_words %>%
@@ -156,22 +148,22 @@ wordcloud2(words_counts[1:100, ], size = 1)
 # TF-IDF analysis
 #=============
 
-# tf-idf by Product & Rating
+# tf-idf by Product & score
 popular_tfidf_words <- df %>%
   unnest_tokens(word, Review) %>%
   distinct() %>%
   filter(nchar(word) > 3, !word %in% remove_keywords) %>%
-  count(Product, Rating, word, sort = TRUE) %>%
+  count(Product, score, word, sort = TRUE) %>%
   ungroup() %>%
-  bind_tf_idf(word, Rating, n)
+  bind_tf_idf(word, score, n)
 
 top_popular_tfidf_words <- popular_tfidf_words %>%
   arrange(desc(tf_idf)) %>%
   mutate(word = factor(word, levels = rev(unique(word)))) %>%
-  group_by(Product, Rating) %>% 
+  group_by(Product, score) %>% 
   slice(seq_len(8)) %>%
   ungroup() %>%
-  arrange(desc(Product, Rating)) %>%
+  arrange(desc(Product, score)) %>%
   mutate(row = row_number())
 
 #td-idf by Product
@@ -220,18 +212,18 @@ textcleaner <- function(x){
 }
 
 #=====================
-# Topic modellings by ratings
+# Topic modellings by scores
 #=====================
-data_1 <- df %>% filter(Rating == 1)
-data_2 <- df %>% filter(Rating  == 2)
-data_3 <- df %>% filter(Rating  == 3)
-data_4 <- df %>% filter(Rating  == 4)
-data_5 <- df %>% filter(Rating  == 5)
-table(df$Rating)
+data_1 <- df %>% filter(score == 1)
+data_2 <- df %>% filter(score  == 2)
+data_3 <- df %>% filter(score  == 3)
+data_4 <- df %>% filter(score  == 4)
+data_5 <- df %>% filter(score  == 5)
+table(df$score)
 
 set.seed(1502)
 
-# Rating 5
+# score 5
 # apply textcleaner function. note: we only clean the text without convert it to dtm
 clean_5 <- textcleaner(data_5$Review)
 clean_5 <- clean_5 %>% mutate(id = rownames(clean_5))
@@ -274,7 +266,7 @@ modsum_5 %>% pivot_longer(cols = c(coherence,prevalence)) %>%
   facet_wrap(~name,scales = "free_y",nrow = 2) +
   theme_minimal() +
   labs(title = "Best topics by coherence and prevalence score",
-       subtitle = "Text review with 5 rating",
+       subtitle = "Text review with 5 score",
        x = "Topics", y = "Value")
 
 # denodogram clustering
@@ -290,7 +282,7 @@ write.csv(top_5_terms_5, "top_5_terms5.csv")
 
 #top_terms_5 <- data.frame(mod_lda_5$top_terms)
 
-# Rating 4
+# score 4
 clean_4 <- textcleaner(data_4$Review)
 clean_4 <- clean_4 %>% mutate(id = rownames(clean_4))
 
@@ -332,7 +324,7 @@ modsum_4 %>% pivot_longer(cols = c(coherence,prevalence)) %>%
   facet_wrap(~name,scales = "free_y",nrow = 2) +
   theme_minimal() +
   labs(title = "Best topics by coherence and prevalence score",
-       subtitle = "Text review with 4 rating",
+       subtitle = "Text review with 4 score",
        x = "Topics", y = "Value")
 
 # denodogram clustering
@@ -349,7 +341,7 @@ write.csv(top_5_terms_4, "top_5_terms4.csv")
 #top_terms_4 <- data.frame(mod_lda_4$top_terms)
 
 
-# Rating 3
+# score 3
 clean_3 <- textcleaner(data_3$Review)
 clean_3 <- clean_3 %>% mutate(id = rownames(clean_3))
 
@@ -392,7 +384,7 @@ modsum_3 %>% pivot_longer(cols = c(coherence,prevalence)) %>%
   facet_wrap(~name,scales = "free_y",nrow = 2) +
   theme_minimal() +
   labs(title = "Best topics by coherence and prevalence score",
-       subtitle = "Text review with 3 rating",
+       subtitle = "Text review with 3 score",
        x = "Topics", y = "Value")
 
 # denodogram clustering
@@ -409,7 +401,7 @@ write.csv(top_5_terms_3, "top_5_terms3.csv")
 
 #top_terms_3 <- data.frame(mod_lda_3$top_terms)
 
-# Rating 2
+# score 2
 clean_2 <- textcleaner(data_2$Review)
 clean_2 <- clean_2 %>% mutate(id = rownames(clean_2))
 
@@ -451,7 +443,7 @@ modsum_2 %>% pivot_longer(cols = c(coherence,prevalence)) %>%
   facet_wrap(~name,scales = "free_y",nrow = 2) +
   theme_minimal() +
   labs(title = "Best topics by coherence and prevalence score",
-       subtitle = "Text review with 2 rating",
+       subtitle = "Text review with 2 score",
        x = "Topics", y = "Value")
 
 # denodogram clustering
@@ -469,7 +461,7 @@ write.csv(top_5_terms_2, "top_5_terms2.csv")
 
 #top_terms_2 <- data.frame(mod_lda_2$top_terms)
 
-# Rating 1
+# score 1
 clean_1 <- textcleaner(data_1$Review)
 clean_1 <- clean_1 %>% mutate(id = rownames(clean_1))
 
@@ -511,7 +503,7 @@ modsum_1 %>% pivot_longer(cols = c(coherence,prevalence)) %>%
   facet_wrap(~name,scales = "free_y",nrow = 2) +
   theme_minimal() +
   labs(title = "Best topics by coherence and prevalence score",
-       subtitle = "Text review with 1 rating",
+       subtitle = "Text review with 1 score",
        x = "Topics", y = "Value")
 
 # denodogram clustering
