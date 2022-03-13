@@ -38,6 +38,7 @@ df$printer <- ifelse(df$appId == "com.hp.printercontrol", 'HP',
 # Dropdown information
 #=============                        
 printer_info <- c('Canon','Epson','Epson-Smart','HP')
+score_info <- c(1,2,3,4,5)
 
 # Define UI for application
 ui <- dashboardPage(
@@ -46,12 +47,17 @@ ui <- dashboardPage(
         sidebarMenu(
             menuItem("Overview", tabName = "overview", icon = icon("th")),
             menuItem("Analysis", tabName = "analysis", icon = icon("th")),
-            menuItem("Sentiment Analysis", tabName = "sentiment", icon = icon("th"))
+            menuItem("Sentiment Analysis", tabName = "sentiment", icon = icon("th")),
+            menuItem("Term Frequency", tabName = "term", icon = icon("th")),
+            menuItem("Topic Modeling", tabName = "topic", icon = icon("th"))
         )
     ),
     dashboardBody(
         tabItems(
             tabItem(tabName = "overview",includeMarkdown("readme.md"),hr()),
+            #==============
+            #Analysis UI
+            #==============
             tabItem(tabName = "analysis",
                     sidebarLayout(
                         sidebarPanel(
@@ -63,23 +69,79 @@ ui <- dashboardPage(
                         mainPanel(
                             h1("Simple Stats.",style="text-align: center;"), 
                             tabsetPanel(type = "tabs",
-                                    tabPanel(h4("Printer Score Average",style="text-align: center;"), 
+                                    tabPanel(h4("Average Printer Score",style="text-align: center;"), 
                                         plotOutput("avgPrinterScoreplot")),
                                     tabPanel(h4("Printer Score Count",style="text-align: center;"), 
                                         plotOutput("countPrinterScoreplot")),
-                                    tabPanel(h4("Printer Score Average over time",style="text-align: center;"), 
+                                    tabPanel(h4("Average Printer Score over time",style="text-align: center;"), 
                                          plotOutput("avgPrinterScoreYearplot"))
                             )
                         )
                     )
-            ), tabItem(tabName = "sentiment")
+            ), 
+            #==============
+            # Sentiment Analysis UI
+            #==============
+            tabItem(tabName = "sentiment",
+                       sidebarLayout(
+                           sidebarPanel(
+                               checkboxGroupInput("printerInput", "Printers",
+                                                  choices = printer_info, 
+                                                  selected = printer_info),
+                               submitButton("Submit")
+                           ),
+                           mainPanel(
+                               h1("Simple Stats.",style="text-align: center;"), 
+                               tabsetPanel(type = "tabs",
+                                           tabPanel(h4("Average Printer Score",style="text-align: center;"), 
+                                                    plotOutput("avgPrinterScoreplot")),
+                                           tabPanel(h4("Printer Score Count",style="text-align: center;"), 
+                                                    plotOutput("countPrinterScoreplot")),
+                                           tabPanel(h4("Average Printer Score over time",style="text-align: center;"), 
+                                                    plotOutput("avgPrinterScoreYearplot"))
+                               )
+                           )
+                    )
+                 ),
+            #==============
+            # Term frequency
+            #==============
+            tabItem(tabName = "term",
+                    sidebarLayout(
+                        sidebarPanel(
+                            checkboxGroupInput("printerInput", "Printers",
+                                               choices = printer_info, 
+                                               selected = printer_info),
+                            submitButton("Submit")
+                        ),
+                        mainPanel(
+                            h1("Simple Stats.",style="text-align: center;"), 
+                           
+                        )
+                    )
+            ),
+            #==============
+            # Topic modeling
+            #==============
+            tabItem(tabName = "topic",
+                    sidebarLayout(
+                        sidebarPanel(
+                            checkboxGroupInput("printerInput", "Printers",
+                                               choices = printer_info, 
+                                               selected = printer_info),
+                            submitButton("Submit")
+                        ),
+                        mainPanel(
+                            h1("Simple Stats.",style="text-align: center;") 
+                           
+                        )
+                    )
+            )
         )
     )
+
 )
 
-# sentiment analysis
-# topic modeling
-# TF-IDF
 
 # Define server logic 
 server <- function(input, output,session) {
@@ -101,7 +163,7 @@ server <- function(input, output,session) {
                 geom_bar(stat = "identity", width = 0.3, fill = "#FF6566") + theme_light()  + 
                 coord_flip() + 
                 guides(fill = FALSE) + 
-                ggtitle("Average score of Printers") + 
+                #ggtitle("Average score of Printers") + 
                 xlab("Printer") + 
                 ylab("Average. Score") + 
                 theme(
@@ -131,7 +193,7 @@ server <- function(input, output,session) {
                 geom_bar(stat = "identity", width = 0.3, fill = "#AA6566") + theme_light()  + 
                 coord_flip() + 
                 guides(fill = FALSE) + 
-                ggtitle("Score Count of Printers") + 
+                #ggtitle("Score Count of Printers") + 
                 xlab("Printer") + 
                 ylab("Score Count") + 
                 theme(
@@ -158,22 +220,21 @@ server <- function(input, output,session) {
                 summarise(score_avg = mean(score), score_count = n()) %>%
                 select(printer,year, score_avg, score_count)
             
-            ggplot(df_score, aes(x = year, y = score_avg, fill=printer)) + 
-                geom_bar(stat = "identity", position = "dodge", width = 0.3) + theme_light()  + 
-                coord_flip() + 
-                # 
-                ggtitle("Score Average of Printers by Year") + 
-                 xlab("Year") + 
-                ylab("Score Average") #+ 
-                # theme(legend.position="bottom") +
-                # theme(
-                #     plot.title = element_text(hjust = 0.5),
-                #     legend.text = element_text(size = 10),
-                #     legend.title = element_text(size = 10),
-                #     axis.title = element_text(size = 15),
-                #     axis.text = element_text(size = 15), 
-                #     
-                # )
+            ggplot(df_score, aes(x = year, y = score_avg)) + 
+                geom_line(size=2, alpha=1, linetype=1,
+                          aes(color = printer, linetype = printer)) +
+                geom_point() + 
+                theme_light()  + 
+                #ggtitle("Average Score of Printers by Year") + 
+                xlab("Year") + 
+                ylab("Average Score") + 
+            theme(
+                plot.title = element_text(hjust = 0.5),
+                legend.text = element_text(size = 20),
+                legend.title = element_text(size = 25),
+                axis.title = element_text(size = 15),
+                axis.text = element_text(size = 15)
+            ) 
         }
     })
     
@@ -195,7 +256,7 @@ server <- function(input, output,session) {
                 geom_bar(stat = "identity", width = 0.3,position = "dodge") + theme_light()  + 
                 coord_flip() + 
                 
-                ggtitle("Score count of Printers by Year") + 
+                #ggtitle("Score count of Printers by Year") + 
                 xlab("Year") + 
                 ylab("Score Count") + 
                 theme(legend.position="bottom") +
