@@ -61,7 +61,7 @@ ui <- dashboardPage(
                             submitButton("Submit")
                         ),
                         mainPanel(
-                            h1("Analysis",style="text-align: center;"), 
+                            h1("Simple Stats.",style="text-align: center;"), 
                             tabsetPanel(type = "tabs",
                                     tabPanel(h4("Printer Score Average",style="text-align: center;"), 
                                         plotOutput("avgPrinterScoreplot")),
