@@ -76,6 +76,16 @@ sample <- sample.split(df_new,SplitRatio = 0.75)
 train <- subset(df_new,sample ==TRUE)
 test <- subset(df_new, sample==FALSE)
 
+# #weight due to 
+model_weights <- ifelse(train$crime == 0,
+                         (1/table(train$crime)[1]) * 0.5,
+                         (1/table(train$crime)[2]) * 0.5)
+# #cross fold validation
+# control <- trainControl(method="repeatedcv", number=10, repeats=5, classProbs = FALSE)
+# #glm
+# fit.glm <- train(as.factor(crime)~., data=train, method="glm",family=binomial(),
+#                  metric = "Accuracy", trControl = control, weights = model_weights)
+
 #model training
 cl <- makePSOCKcluster(4)
 registerDoParallel(cl)
