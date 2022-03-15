@@ -46,11 +46,11 @@ df <- df %>%
   select(CANTIDAD,CANTIDAD_FISICA,CODIGO_CERTIFICADO,NOMBRE_PROVEEDOR,NOMBRE_EQUIPO,
          MODELO, PARTIDA_ARANCELARIA,MARCA_EQUIPO,FACTURA,UM_FISICA_ID,label)
 
-#Label Encoder
+# Label Encoder
 labelEncoder <-function(x){
   as.numeric(factor(x))-1
 }
-#normalize data
+# Normalize data
 normalize <- function(x) {
   return ((x - min(x)) / (max(x) - min(x)))
 }
@@ -65,32 +65,31 @@ df_cat<- df %>%
   select(CODIGO_CERTIFICADO,NOMBRE_PROVEEDOR,NOMBRE_EQUIPO,
          MODELO, PARTIDA_ARANCELARIA,MARCA_EQUIPO,FACTURA)
 
-#combine data
+# Combine data
 df_cts <- as.data.frame(lapply(df_cts, normalize))
 df_cat <- as.data.frame(lapply(df_cat, labelEncoder))
 df_new <- cbind(df_cts,df_cat,df_other)
+df_new$label <- as.factor(df_new$label)
 
-#create train and test data
+# Create train and test data
 set.seed(2020)
 sample <- sample.split(df_new,SplitRatio = 0.75)
 train <- subset(df_new,sample ==TRUE)
 test <- subset(df_new, sample==FALSE)
 
-# #weight due to 
-model_weights <- ifelse(train$crime == 0,
-                         (1/table(train$crime)[1]) * 0.5,
-                         (1/table(train$crime)[2]) * 0.5)
-# #cross fold validation
-# control <- trainControl(method="repeatedcv", number=10, repeats=5, classProbs = FALSE)
-# #glm
-# fit.glm <- train(as.factor(crime)~., data=train, method="glm",family=binomial(),
-#                  metric = "Accuracy", trControl = control, weights = model_weights)
+# Weights
+model_weights <- ifelse(train$label == 0,
+                         (1/table(train$label)[1]) * 0.5,
+                         (1/table(train$label)[2]) * 0.5)
+# Cross fold validation
+control <- trainControl(method="repeatedcv", number=10, repeats=5, classProbs = FALSE)
 
-#model training
+# Models
 cl <- makePSOCKcluster(4)
 registerDoParallel(cl)
+
 #glm
-fit.glm <- train(as.factor(label)~., data=train, method="glm",family=binomial(),
+fit.glm <- train(label~., data=train, method="glm",family=binomial(),
                  metric = "Accuracy", trControl = control)
 #random forest
 fit.rf <- train(as.factor(label)~., data=train, method="rf", 
