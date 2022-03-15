@@ -69,6 +69,7 @@ df_cat<- df %>%
 df_cts <- as.data.frame(lapply(df_cts, normalize))
 df_cat <- as.data.frame(lapply(df_cat, labelEncoder))
 df_new <- cbind(df_cts,df_cat,df_other)
+df_new <- na.omit(df_new)
 df_new$label <- as.factor(df_new$label)
 
 # Create train and test data
@@ -88,40 +89,46 @@ control <- trainControl(method="repeatedcv", number=10, repeats=5, classProbs = 
 cl <- makePSOCKcluster(4)
 registerDoParallel(cl)
 
-#glm
+# glm
 fit.glm <- train(label~., data=train, method="glm",family=binomial(),
-                 metric = "Accuracy", trControl = control)
-#random forest
+                 metric = "Accuracy", trControl = control, 
+                 weights = model_weights)
+# random forest
 fit.rf <- train(as.factor(label)~., data=train, method="rf", 
-                metric = "Accuracy", trControl = control)
-#boosting algorithm - Stochastic Gradient Boosting (Generalized Boosted Modeling)
+                metric = "Accuracy", trControl = control, 
+                weights = model_weights)
+# boosting algorithm - Stochastic Gradient Boosting 
 fit.gbm <- train(as.factor(label)~., data=train, method="gbm", 
-                 metric = "Accuracy", trControl = control)
-#svm
+                 metric = "Accuracy", trControl = control, 
+                 weights = model_weights)
+# svm
 fit.svm <- train(as.factor(label)~., data=train, method="svmRadial", 
-                 metric = "Accuracy", trControl = control)
-#nnet
+                 metric = "Accuracy", trControl = control, 
+                 weights = model_weights)
+# nnet
 fit.nnet <- train(as.factor(label)~., data=train, method="nnet", 
-                  metric = "Accuracy", trControl = control)
-#naive
+                  metric = "Accuracy", trControl = control, 
+                  weights = model_weights)
+# naive
 fit.naive <- train(as.factor(label)~., data=train, 
                    method="naive_bayes", metric = "Accuracy", 
-                   trControl = control)
-#extreme gradient boosting
+                   trControl = control, weights = model_weights)
+# extreme gradient boosting
 fit.xgb <- train(as.factor(label)~., data=train, 
-                 method="xgbTree", metric = "Accuracy", trControl = control)
-#bagged cart
+                 method="xgbTree", metric = "Accuracy", trControl = control, 
+                 weights = model_weights)
+# bagged cart
 fit.bg <- train(as.factor(label)~., data=train, 
-                method="treebag", metric = "Accuracy", trControl = control)
-#decision tree
+                method="treebag", metric = "Accuracy", trControl = control,
+                weights = model_weights)
+# decision tree
 fit.dtree <- train(as.factor(label)~., data=train, 
-                   method="C5.0", metric = "Accuracy", trControl = control)
-#knn
+                   method="C5.0", metric = "Accuracy", trControl = control, 
+                   weights = model_weights)
+# knn
 fit.knn <- train(as.factor(label)~., data=train, 
-                 method="kknn", metric = "Accuracy", trControl = control)
-#ensemble
-fit.ensemble <- train(as.factor(label)~., data=train, 
-                      method="nodeHarvest", metric = "Accuracy", trControl = control)
+                 method="kknn", metric = "Accuracy", trControl = control,
+                 weights = model_weights)
 
 stopCluster(cl)
 
@@ -137,7 +144,6 @@ results <- resamples(list(randomforest = fit.rf,
                           logisticregression = fit.glm, 
                           `decision tree` = fit.dtree, 
                           `naive bayes` = fit.naive,
-                          `ensemble` = fit.ensemble, 
                           `knn` = fit.knn))
 
 summary(results)
@@ -148,17 +154,16 @@ dotplot(results)
 
 # Model accuracy
 #mean(predicted.classes == test$label)
-#test data accuracy
+
+# Test data accuracy
+
 # Make predictions
 predicted.classes <- fit.knn %>% predict(test)
 output <- confusionMatrix(data = predicted.classes, reference = test$label, mode = "everything")
 output
-#other metrics
 
+# Variable Importance
 caret::varImp(fit.rf)
-
-#confusion matrix output
-#write.csv(as.data.frame(output$byClass),"output.csv")
 
 #plot confusion matrix of selected option
 
