@@ -20,3 +20,11 @@ for (package in packages) {
 #===============
 df <- read.csv("offwhite.csv")
 
+#===================
+# Data Overview
+#===================
+summary(df)
+
+# Check for missing variables
+missing_data <- apply(df, 2, function(x) any(is.na(x)))
+print(missing_data)
