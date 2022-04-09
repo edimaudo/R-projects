@@ -28,3 +28,39 @@ summary(df)
 # Check for missing variables
 missing_data <- apply(df, 2, function(x) any(is.na(x)))
 print(missing_data)
+
+
+#===================
+# Visualization
+#===================
+# Gender
+df %>% 
+  group_by(Gender) %>%
+  summarize(Count= n()) %>%
+  arrange(desc(Count)) %>%
+  ggplot(aes(x = reorder(Gender, Count), y = Count, fill = Gender)) + 
+  geom_bar(stat = "identity", position = "dodge") + 
+  coord_flip() + 
+  guides(scale = "none") + 
+  xlab("Gender") + 
+  ylab("Count")
+
+# Age 
+df %>% 
+  group_by(Age) %>%
+  summarize(Count= n()) %>%
+  arrange(desc(Count)) %>%
+  ggplot(aes(x = reorder(Age, Count), y = Count, fill = Age)) + 
+  geom_bar(stat = "identity", position = "dodge") + 
+  coord_flip() + 
+  guides(scale = "none") + 
+  xlab("Gender") + 
+  ylab("Count")
+
+# Questionnaire likert scale
+
+#===================
+# Cronbach alpha
+#===================
+library(ltm)
+ltm::cronbach.alpha(df[, c("BA1","BA2","BA3")])
