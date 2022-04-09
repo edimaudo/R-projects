@@ -14,3 +14,9 @@ for (package in packages) {
     library(package, character.only=T)
   }
 }
+
+#===============
+# Load data
+#===============
+df <- read.csv("offwhite.csv")
+
