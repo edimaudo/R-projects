@@ -17,9 +17,14 @@ for (package in packages) {
 ################
 df <- read.csv("Amazon_Reviews_Vitamin_C.csv")
 
-#--------------
+################
+# Load data
+################
+
+
+################
 # UI
-#--------------
+################
 ui <- dashboardPage(
     dashboardHeader(title = "Amazon Review Analysis"),
     dashboardSidebar(
@@ -143,3 +148,15 @@ ui <- dashboardPage(
     )
     
 )
+
+################
+# Server
+################
+
+# Define server logic 
+server <- function(input, output,session) {
+    
+}
+
+
+shinyApp(ui, server)
