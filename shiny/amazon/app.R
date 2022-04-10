@@ -17,9 +17,59 @@ for (package in packages) {
 ################
 df <- read.csv("Amazon_Reviews_Vitamin_C.csv")
 
-################
-# Load data
-################
+#=============
+# Text analytics
+#=============
+# function to expand contractions in an English-language source
+fix.contractions <- function(doc) {
+    # "won't" is a special case as it does not expand to "wo not"
+    doc <- gsub("won't", "will not", doc)
+    doc <- gsub("can't", "can not", doc)
+    doc <- gsub("n't", " not", doc)
+    doc <- gsub("'ll", " will", doc)
+    doc <- gsub("'re", " are", doc)
+    doc <- gsub("'ve", " have", doc)
+    doc <- gsub("'m", " am", doc)
+    doc <- gsub("'d", " would", doc)
+    # 's could be 'is' or could be possessive: it has no expansion
+    doc <- gsub("'s", "", doc)
+    return(doc)
+}
+
+# function to remove special characters
+removeSpecialChars <- function(x) gsub("[^a-zA-Z0-9 ]", " ", x)
+# fix (expand) contractions
+df$Review <- sapply(df$Review, fix.contractions)
+# remove special characters
+df$Review <- sapply(df$Review, removeSpecialChars)
+# convert everything to lower case
+df$Review <- sapply(df$Review, tolower)
+remove_keywords <- c("printer","print", "printing","app")
+
+textcleaner <- function(x){
+    x <- as.character(x)
+    
+    x <- x %>%
+        str_to_lower() %>%  # convert all the string to low alphabet
+        replace_contraction() %>% # replace contraction to their multi-word forms
+        replace_internet_slang() %>% # replace internet slang to normal words
+        #replace_emoji(replacement = " ") %>% # replace emoji to words
+        #replace_emoticon(replacement = " ") %>% # replace emoticon to words
+        replace_hash(replacement = "") %>% # remove hashtag
+        replace_word_elongation() %>% # replace informal writing with known semantic replacements
+        replace_number(remove = T) %>% # remove number
+        replace_date(replacement = "") %>% # remove date
+        replace_time(replacement = "") %>% # remove time
+        str_remove_all(pattern = "[[:punct:]]") %>% # remove punctuation
+        str_remove_all(pattern = "[^\\s]*[0-9][^\\s]*") %>% # remove mixed string n number
+        str_squish() %>% # reduces repeated whitespace inside a string.
+        str_trim() # removes whitespace from start and end of string
+    
+    return(as.data.frame(x))
+    
+}
+
+
 
 
 ################
