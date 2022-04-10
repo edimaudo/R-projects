@@ -58,6 +58,19 @@ df %>%
   ylab("Count")
 
 # Questionnaire likert scale
+library(reshape2)
+df_questionnaire <- df[,c(1:18)]
+mb <- melt(df_questionnaire)
+
+g2 <- ggplot()+
+  geom_bar(data = mb, aes(x = reorder(Timestamp,value), y=value, fill=variable), 
+           position="stack", stat="identity")+
+  coord_flip() + 
+  ylab("Score")+
+  xlab("Questions")+
+  theme(legend.position="bottom")
+
+g2
 
 #===================
 # Cronbach alpha
