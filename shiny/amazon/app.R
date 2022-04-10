@@ -24,6 +24,7 @@ ui <- dashboardPage(
     dashboardHeader(title = "Amazon Review Analysis"),
     dashboardSidebar(
         sidebarMenu(
+            menuItem("Summary", tabName = "summary", icon = icon("th")),
             menuItem("Analysis", tabName = "analysis", icon = icon("th")),
             menuItem("Sentiment Analysis", tabName = "sentiment", icon = icon("th")),
             menuItem("Term Frequency", tabName = "term", icon = icon("th")),
@@ -35,20 +36,20 @@ ui <- dashboardPage(
             #===============
             # Summary
             #===============
-            tabItem(tabName = "analysis",
+            tabItem(tabName = "summary",
                         mainPanel(
-                            h1("Overview.",style="text-align: center;"), 
-                            tabsetPanel(type = "tabs",
-                                        tabPanel(h4("Average Printer Score",
-                                                    style="text-align: center;"), 
-                                                 plotOutput("avgPrinterScoreplot")),
-                                        tabPanel(h4("Printer Score Count",
-                                                    style="text-align: center;"), 
-                                                 plotOutput("countPrinterScoreplot")),
-                                        tabPanel(h4("Average Printer Score over time",
-                                                    style="text-align: center;"), 
-                                                 plotOutput("avgPrinterScoreYearplot"))
-                            )
+                            h1("Summart",style="text-align: center;"), 
+                            # tabsetPanel(type = "tabs",
+                            #             tabPanel(h4("Average Printer Score",
+                            #                         style="text-align: center;"), 
+                            #                      plotOutput("avgPrinterScoreplot")),
+                            #             tabPanel(h4("Printer Score Count",
+                            #                         style="text-align: center;"), 
+                            #                      plotOutput("countPrinterScoreplot")),
+                            #             tabPanel(h4("Average Printer Score over time",
+                            #                         style="text-align: center;"), 
+                            #                      plotOutput("avgPrinterScoreYearplot"))
+                            # )
                         )
                     ),
                     
@@ -59,24 +60,24 @@ ui <- dashboardPage(
             tabItem(tabName = "analysis",
                     sidebarLayout(
                         sidebarPanel(
-                            checkboxGroupInput("printerInput", "Printers",
-                                               choices = printer_info, 
-                                               selected = printer_info),
+                            # checkboxGroupInput("printerInput", "Printers",
+                            #                    choices = printer_info, 
+                            #                    selected = printer_info),
                             submitButton("Submit")
                         ),
                         mainPanel(
-                            h1("Simple Stats.",style="text-align: center;"), 
-                            tabsetPanel(type = "tabs",
-                                        tabPanel(h4("Average Printer Score",
-                                                    style="text-align: center;"), 
-                                                 plotOutput("avgPrinterScoreplot")),
-                                        tabPanel(h4("Printer Score Count",
-                                                    style="text-align: center;"), 
-                                                 plotOutput("countPrinterScoreplot")),
-                                        tabPanel(h4("Average Printer Score over time",
-                                                    style="text-align: center;"), 
-                                                 plotOutput("avgPrinterScoreYearplot"))
-                            )
+                            h1("Analysis",style="text-align: center;"), 
+                            # tabsetPanel(type = "tabs",
+                            #             tabPanel(h4("Average Printer Score",
+                            #                         style="text-align: center;"), 
+                            #                      plotOutput("avgPrinterScoreplot")),
+                            #             tabPanel(h4("Printer Score Count",
+                            #                         style="text-align: center;"), 
+                            #                      plotOutput("countPrinterScoreplot")),
+                            #             tabPanel(h4("Average Printer Score over time",
+                            #                         style="text-align: center;"), 
+                            #                      plotOutput("avgPrinterScoreYearplot"))
+                            # )
                         )
                     )
             ), 
@@ -86,13 +87,13 @@ ui <- dashboardPage(
             tabItem(tabName = "sentiment",
                     sidebarLayout(
                         sidebarPanel(
-                            checkboxGroupInput("printerInput", "Printers",
-                                               choices = printer_info, 
-                                               selected = printer_info),
-                            checkboxGroupInput("ratingInput", "Ratings",
-                                               choices = score_info, 
-                                               selected = score_info),
-                            submitButton("Submit")
+                            # checkboxGroupInput("printerInput", "Printers",
+                            #                    choices = printer_info, 
+                            #                    selected = printer_info),
+                            # checkboxGroupInput("ratingInput", "Ratings",
+                            #                    choices = score_info, 
+                            #                    selected = score_info),
+                            # submitButton("Submit")
                         ),
                         mainPanel(
                             h1("Sentiment Analysis",style="text-align: center;"),
@@ -124,12 +125,12 @@ ui <- dashboardPage(
             tabItem(tabName = "topic",
                     sidebarLayout(
                         sidebarPanel(
-                            checkboxGroupInput("printerInput", "Printers",
-                                               choices = printer_info, 
-                                               selected = printer_info),
-                            checkboxGroupInput("ratingInput", "Ratings",
-                                               choices = score_info, 
-                                               selected = score_info),
+                            # checkboxGroupInput("printerInput", "Printers",
+                            #                    choices = printer_info, 
+                            #                    selected = printer_info),
+                            # checkboxGroupInput("ratingInput", "Ratings",
+                            #                    choices = score_info, 
+                            #                    selected = score_info),
                             submitButton("Submit")
                         ),
                         mainPanel(
