@@ -85,7 +85,7 @@ textcleaner <- function(x){
         replace_word_elongation() %>% # replace informal writing with known semantic replacements
         replace_number(remove = T) %>% # remove number
         replace_date(replacement = "") %>% # remove date
-        replace_time(replacement = "") %>% # remove time
+        #replace_time(replacement = "") %>% # remove time
         str_remove_all(pattern = "[[:punct:]]") %>% # remove punctuation
         str_remove_all(pattern = "[^\\s]*[0-9][^\\s]*") %>% # remove mixed string n number
         str_squish() %>% # reduces repeated whitespace inside a string.
