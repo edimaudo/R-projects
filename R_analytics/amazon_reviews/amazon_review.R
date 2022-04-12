@@ -17,7 +17,7 @@ for (package in packages) {
 #================
 # Load data
 #================
-df <- read.csv(file.choose(),sep = ",")
+df <- read.csv("Amazon_Reviews_Vitamin_C.csv",sep = ",")
 
 #----------------
 # Check for missing values
