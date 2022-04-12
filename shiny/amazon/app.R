@@ -27,16 +27,16 @@ months <- c("January","February","March","April",'May',"June","July","August","S
 ################
 
 #----------------
-#UI dropdowns
+#UI drop-downs
 #----------------
 product_info <- sort(unique(df$Procuct))
-countryinfo <- sort(unique(df$Country))
+country_info <- sort(unique(df$Country))
 month_info <- sort(unique(df$Month))
 year_info <- sort(unique(df$Year))
 rating_info <- sort(unique(df$Rating))
 
 #----------------
-#UI 
+#UI design
 #----------------
 ui <- dashboardPage(
     dashboardHeader(title = "Amazon Review Analysis"),
@@ -91,20 +91,21 @@ ui <- dashboardPage(
                             selectInput("ProductInput", "Product", choices = product_info, 
                                         selected="B000GG87V2"),
                             selectInput("CountryInput", "Country", choices = country_info,
-                                        selected="United States"),
+                                        selected="United States "),
                             selectInput("monthInput", "Month", choices = month_info, 
                                         selected="January"),
-                            selectInput("ratingInput", "Rating", choices = rating_info),
+                            selectInput("ratingInput", "Rating", choices = rating_info,
+                                        selected="5"),
                             sliderInput("yearInput","Year",min=min(year_info),max=max(year_info),
                                         value = c(min(year_info),
                                                   max(year_info)),step =1,ticks = FALSE),
                             submitButton("Submit")
                         ),
                         mainPanel(
-                            h1("Text Analysis",style="text-align: center;")#,
-                            #plotOutput("sentimentPlot"),
-                            #plotOutput("termFrequencyPlot"),
-                            #plotOutput("topicPlot")
+                            h1("Text Analysis",style="text-align: center;"),
+                            plotOutput("sentimentPlot"),
+                            plotOutput("termFrequencyPlot"),
+                            DT::dataTableOutput("topicTable")
                         )
                     )
             )
@@ -209,11 +210,17 @@ server <- function(input, output,session) {
     #==============
     # Text analytics logic
     #==============
-    # sentimentPlot
-    # 
-    # termFrequencyPlot
-    # 
-    # topicPlot
+    output$sentimentPlot <- renderPlot({
+        
+    })
+     
+    termFrequencyPlot <- renderPlot({
+        
+    })
+     
+    output$topicTable <- renderDataTable({
+        
+    })
     
 }
 
