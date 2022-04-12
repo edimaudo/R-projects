@@ -22,24 +22,29 @@ months <- c("January","February","March","April",'May',"June","July","August","S
 #=============
 
 
-
-
-
-
-
-
 ################
 # UI
 ################
+
+#----------------
+#UI dropdowns
+#----------------
+product_info <- sort(unique(df$Procuct))
+countryinfo <- sort(unique(df$Country))
+month_info <- sort(unique(df$Month))
+year_info <- sort(unique(df$Year))
+rating_info <- sort(unique(df$Rating))
+
+#----------------
+#UI 
+#----------------
 ui <- dashboardPage(
     dashboardHeader(title = "Amazon Review Analysis"),
     dashboardSidebar(
         sidebarMenu(
             menuItem("Summary", tabName = "summary", icon = icon("clock")),
             menuItem("Explore", tabName = "explore", icon = icon("th")),
-            menuItem("Text Analysis", tabName = "text", icon = icon("th"))#,
-            #menuItem("Term Frequency", tabName = "term", icon = icon("th")),
-            #menuItem("Topic Modeling", tabName = "topic", icon = icon("th"))
+            menuItem("Text Analysis", tabName = "text", icon = icon("th"))
         )
     ),
     dashboardBody(
@@ -83,17 +88,23 @@ ui <- dashboardPage(
             tabItem(tabName = "text",
                     sidebarLayout(
                         sidebarPanel(
-                            # checkboxGroupInput("printerInput", "Printers",
-                            #                    choices = printer_info, 
-                            #                    selected = printer_info),
-                            # checkboxGroupInput("ratingInput", "Ratings",
-                            #                    choices = score_info, 
-                            #                    selected = score_info),
-                            # submitButton("Submit")
+                            selectInput("ProductInput", "Product", choices = product_info, 
+                                        selected="B000GG87V2"),
+                            selectInput("CountryInput", "Country", choices = country_info,
+                                        selected="United States"),
+                            selectInput("monthInput", "Month", choices = month_info, 
+                                        selected="January"),
+                            selectInput("ratingInput", "Rating", choices = rating_info),
+                            sliderInput("yearInput","Year",min=min(year_info),max=max(year_info),
+                                        value = c(min(year_info),
+                                                  max(year_info)),step =1,ticks = FALSE),
+                            submitButton("Submit")
                         ),
                         mainPanel(
-                            #h1("Sentiment Analysis",style="text-align: center;"),
-                            #plotOutput("sentimentplot")
+                            h1("Text Analysis",style="text-align: center;")#,
+                            #plotOutput("sentimentPlot"),
+                            #plotOutput("termFrequencyPlot"),
+                            #plotOutput("topicPlot")
                         )
                     )
             )
@@ -198,6 +209,12 @@ server <- function(input, output,session) {
     #==============
     # Text analytics logic
     #==============
+    # sentimentPlot
+    # 
+    # termFrequencyPlot
+    # 
+    # topicPlot
+    
 }
 
 
