@@ -1,7 +1,6 @@
 ################
 # Packages
 ################
-rm(list = ls()) #clear environment
 packages <- c('ggplot2','corrplot','tidyverse','readxl', 
               'RColorBrewer','shiny','shinydashboard','scales','dplyr',
               'forecast','lubridate','stopwords','tidytext','stringr',
@@ -51,10 +50,10 @@ ui <- dashboardPage(
                         mainPanel(
                             h1("Summary",style="text-align: center;"), 
                             fluidRow(
-                                valueBoxOutput("productBox"),
-                                valueBoxOutput("countryBox"),
-                                valueBoxOutput("yearBox"),
-                                valueBoxOutput("ratingBox"),
+                                valueBoxOutput("productBox", width = 3),
+                                valueBoxOutput("countryBox",width = 3),
+                                valueBoxOutput("yearBox",width = 3),
+                                valueBoxOutput("ratingBox",width = 3),
                             ),
                             
                              tabsetPanel(type = "tabs",
@@ -128,20 +127,50 @@ ui <- dashboardPage(
 # Define server logic 
 server <- function(input, output,session) {
     
+ 
+    
     #===============
     # Summary logic
     #===============
-    output$productBox
+    output$productBox <- renderValueBox({
+        valueBox(
+            paste0(length(unique(df$Procuct))), "Products", icon = icon("list"),
+            color = "green"
+        )
+    })
     
-    output$countryBox
+    output$countryBox <- renderValueBox({
+        valueBox(
+            paste0(length(unique(df$Country))), "Countries", icon = icon("list"),
+            color = "green"
+        )
+    })
     
-    output$yearBox
+    output$yearBox <- renderValueBox({
+        valueBox(
+            paste0(length(unique(df$Year))), "Years", icon = icon("list"),
+            color = "green"
+        )
+    })
     
-    output$ratingBox
+    output$ratingBox <- renderValueBox({
+        output <- mean(na.omit(df$Rating))
+        output <- format(round(output, 1), nsmall = 2)
+        valueBox(
+            paste0(output), "Avg. Ratings", icon = icon("list"),
+            color = "green"
+        )
+    })
     
-    output$avgMonthRatingPlot
+    output$avgMonthRatingPlot <- renderPlot({
+        
+        
+    })
     
-    output$avgYearRatingPlot
+    output$avgYearRatingPlot <- renderPlot({
+        
+        
+    })
     
     #==============
     #Explore logic
