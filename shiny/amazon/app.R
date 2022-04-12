@@ -15,7 +15,8 @@ for (package in packages) {
 # Load data
 ################
 df <- read.csv("Amazon_Reviews_Vitamin_C.csv")
-
+months <- c("January","February","March","April",'May',"June","July","August","September","October",
+            "November","December")
 #=============
 # Text analytics
 #=============
@@ -34,9 +35,9 @@ ui <- dashboardPage(
     dashboardHeader(title = "Amazon Review Analysis"),
     dashboardSidebar(
         sidebarMenu(
-            menuItem("Summary", tabName = "summary", icon = icon("dashboard")),
+            menuItem("Summary", tabName = "summary", icon = icon("clock")),
             menuItem("Explore", tabName = "explore", icon = icon("th")),
-            menuItem("Text Analysis", tabName = "text", icon = icon("clock"))#,
+            menuItem("Text Analysis", tabName = "text", icon = icon("th"))#,
             #menuItem("Term Frequency", tabName = "term", icon = icon("th")),
             #menuItem("Topic Modeling", tabName = "topic", icon = icon("th"))
         )
@@ -72,28 +73,9 @@ ui <- dashboardPage(
             #Explore UI
             #==============
             tabItem(tabName = "explore",
-                    sidebarLayout(
-                        sidebarPanel(
-                            # checkboxGroupInput("printerInput", "Printers",
-                            #                    choices = printer_info, 
-                            #                    selected = printer_info),
-                            submitButton("Submit")
-                        ),
                         mainPanel(
-                            h1("Analysis",style="text-align: center;"), 
-                            # tabsetPanel(type = "tabs",
-                            #             tabPanel(h4("Average Printer Score",
-                            #                         style="text-align: center;"), 
-                            #                      plotOutput("avgPrinterScoreplot")),
-                            #             tabPanel(h4("Printer Score Count",
-                            #                         style="text-align: center;"), 
-                            #                      plotOutput("countPrinterScoreplot")),
-                            #             tabPanel(h4("Average Printer Score over time",
-                            #                         style="text-align: center;"), 
-                            #                      plotOutput("avgPrinterScoreYearplot"))
-                            # )
+                            DT::dataTableOutput("exploreTable")  
                         )
-                    )
             ), 
             #==============
             # Text analytics UI
@@ -126,12 +108,12 @@ ui <- dashboardPage(
 
 # Define server logic 
 server <- function(input, output,session) {
-    
- 
-    
     #===============
     # Summary logic
     #===============
+    #--------------
+    # Tab-boxes
+    #--------------
     output$productBox <- renderValueBox({
         valueBox(
             paste0(length(unique(df$Procuct))), "Products", icon = icon("list"),
@@ -162,19 +144,56 @@ server <- function(input, output,session) {
         )
     })
     
+    #--------------
+    # Ratings plot
+    #--------------
     output$avgMonthRatingPlot <- renderPlot({
+        output_df <- df %>%
+            mutate(Month = factor(Month, levels = months)) %>%
+            group_by(Month) %>%
+            summarise(avg_rating = mean(na.omit(Rating))) %>%
+            select(Month, avg_rating)
+        output_df <- na.omit(output_df)
         
+        ggplot(output_df, aes(as.factor(Month),avg_rating)) + 
+            geom_bar(stat="identity", width = 0.5, fill="#bc5090") + 
+            theme_minimal() + scale_y_continuous(labels = comma) +
+            labs(x = "Month", y = "Average Rating") + 
+            theme(legend.text = element_text(size = 12),
+                  legend.title = element_text(size = 12),
+                  axis.title = element_text(size = 12),
+                  axis.text = element_text(size = 12),
+                  axis.text.x = element_text(angle = 45, hjust = 1)) 
         
     })
     
     output$avgYearRatingPlot <- renderPlot({
+        output_df <- df %>%
+            group_by(Year) %>%
+            summarise(avg_rating = mean(na.omit(Rating))) %>%
+            select(Year, avg_rating)
+        output_df <- na.omit(output_df)
         
-        
+        ggplot(output_df, aes(as.factor(Year),avg_rating)) + 
+            geom_bar(stat="identity", width = 0.5, fill="#bc5090") + 
+            theme_minimal() + scale_y_continuous(labels = comma) +
+            labs(x = "Year", y = "Average Rating") + 
+            theme(legend.text = element_text(size = 13),
+                  legend.title = element_text(size = 13),
+                  axis.title = element_text(size = 13),
+                  axis.text = element_text(size = 13),
+                  axis.text.x = element_text(angle = 00, hjust = 1)) 
     })
     
     #==============
     #Explore logic
     #==============
+    output$exploreTable <- renderDataTable({
+        output_df <- df %>%
+            dplyr::select(Procuct,Country, Month, Year, Title, Body, Rating)
+        DT::datatable(output_df,options = list(scrollX = TRUE))
+    })
+    
     
     #==============
     # Text analytics logic
