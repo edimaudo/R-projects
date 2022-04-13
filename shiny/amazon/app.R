@@ -1,7 +1,7 @@
 ################
 # Packages
 ################
-packages <- c('ggplot2','corrplot','tidyverse','readxl', 
+packages <- c('ggplot2','corrplot','tidyverse','readxl','DT',
               'RColorBrewer','shiny','shinydashboard','scales','dplyr',
               'forecast','lubridate','stopwords','tidytext','stringr',
               'reshape2', 'textmineR','topicmodels','textclean')
@@ -203,11 +203,15 @@ server <- function(input, output,session) {
     #==============
     #Explore logic
     #==============
-    output$exploreTable <- renderDataTable({
+    output$exploreTable <- DT::renderDataTable({
         output_df <- df %>%
             dplyr::select(Procuct,Country, Month, Year, Title, Body, Rating)
-        DT::datatable(df,options = list(scrollX = TRUE))
+        DT::datatable(output_df,options = list(pageLength = 20,scrollX = TRUE,scrollY = "500px"))
+        
     })
+        
+    
+    
     
     
     #==============
