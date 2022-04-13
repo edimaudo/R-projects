@@ -36,7 +36,6 @@ df$Product <- ifelse(df$appId == "com.hp.printercontrol", 'HP',
 #============= 
 # Define UI for application
 #============= 
-
 #--------------
 # Dropdown information
 #--------------
@@ -202,8 +201,9 @@ ui <- dashboardPage(
 
 )
 
-
+######################
 # Define server logic 
+######################
 server <- function(input, output,session) {
    
     #------------------
@@ -217,12 +217,12 @@ server <- function(input, output,session) {
             printer_selection <- unlist(strsplit(input$printerInput, split=" "))
             printer_selection <- c(printer_selection)
             df_avg_score <- df %>%
-                group_by(printer) %>%
-                filter(printer %in% printer_selection) %>%
+                group_by(Product) %>%
+                filter(Product %in% printer_selection) %>%
                 summarise(score_avg = mean(score), score_count = n()) %>%
-                select(printer,score_avg, score_count) 
+                select(Product,score_avg, score_count) 
             
-            ggplot(df_avg_score, aes(x = reorder(printer,score_avg), y = score_avg)) + 
+            ggplot(df_avg_score, aes(x = reorder(Product,score_avg), y = score_avg)) + 
                 geom_bar(stat = "identity", width = 0.3, fill = "#FF6566") + theme_light()  + 
                 coord_flip() + 
                 guides(fill = FALSE) + 
@@ -249,12 +249,12 @@ server <- function(input, output,session) {
             printer_selection <- unlist(strsplit(input$printerInput, split=" "))
             printer_selection <- c(printer_selection)
             df_avg_score <- df %>%
-                group_by(printer) %>%
-                filter(printer %in% printer_selection) %>%
+                group_by(Product) %>%
+                filter(Product %in% printer_selection) %>%
                 summarise(score_avg = mean(score), score_count = n()) %>%
-                select(printer,score_avg, score_count) 
+                select(Product,score_avg, score_count) 
             
-            ggplot(df_avg_score, aes(x = reorder(printer,score_count), y = score_count)) + 
+            ggplot(df_avg_score, aes(x = reorder(Product,score_count), y = score_count)) + 
                 geom_bar(stat = "identity", width = 0.3, fill = "#AA6566") + theme_light()  + 
                 coord_flip() + 
                 guides(fill = FALSE) + 
@@ -282,14 +282,14 @@ server <- function(input, output,session) {
             printer_selection <- c(printer_selection)
             
             df_score <- df %>%
-                group_by(printer, year) %>%
-                filter(printer %in% printer_selection) %>%
+                group_by(Product, year) %>%
+                filter(Product %in% printer_selection) %>%
                 summarise(score_avg = mean(score), score_count = n()) %>%
-                select(printer,year, score_avg, score_count)
+                select(Product,year, score_avg, score_count)
             
             ggplot(df_score, aes(x = year, y = score_avg)) + 
                 geom_line(size=2, alpha=1, linetype=1,
-                          aes(color = printer, linetype = printer)) +
+                          aes(color = Product, linetype = Product)) +
                 geom_point() + 
                 theme_light()  + 
                 #ggtitle("Average Score of Printers by Year") + 
@@ -316,12 +316,12 @@ server <- function(input, output,session) {
             printer_selection <- c(printer_selection)
             
             df_score <- df %>%
-                group_by(printer, year) %>%
-                filter(printer %in% printer_selection) %>%
+                group_by(Product, year) %>%
+                filter(Product %in% printer_selection) %>%
                 summarise(score_avg = mean(score), score_count = n()) %>%
-                select(printer,year, score_avg, score_count)
+                select(Product,year, score_avg, score_count)
             
-            ggplot(df_score, aes(x = reorder(year, score_count), y = score_count, fill=printer)) + 
+            ggplot(df_score, aes(x = reorder(year, score_count), y = score_count, fill=Product)) + 
                 geom_bar(stat = "identity", width = 0.3,position = "dodge") + theme_light()  + 
                 coord_flip() + 
                 
@@ -437,7 +437,7 @@ server <- function(input, output,session) {
     #=================
     # Topic Modeling
     #=================
-    output$termtable <- renderDataTable({
+    output$termtable <- DT::renderDT(
         
         if (is.null(input$printerInput) && is.null(input$ratingInput) ){
             
@@ -489,13 +489,13 @@ server <- function(input, output,session) {
                 arrange(desc(coherence)) %>%
                 slice(1:5)
             
-            DT::datatable(top_terms,options = list(scrollX = TRUE))
-            
+            #DT::datatable(top_terms,options = list(scrollX = TRUE))
+            top_terms
             
             
         }
         
-    })
+    )
     
     
     
