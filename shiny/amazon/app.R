@@ -112,9 +112,9 @@ ui <- dashboardPage(
             tabItem(tabName = "text",
                     sidebarLayout(
                         sidebarPanel(
-                            selectInput("ProductInput", "Product", choices = product_info, 
+                            selectInput("productInput", "Product", choices = product_info, 
                                         selected="B000GG87V2"),
-                            selectInput("CountryInput", "Country", choices = country_info,
+                            selectInput("countryInput", "Country", choices = country_info,
                                         selected="United States "),
                             selectInput("monthInput", "Month", choices = month_info, 
                                         selected="January"),
@@ -127,8 +127,8 @@ ui <- dashboardPage(
                         ),
                         mainPanel(
                             h1("Text Analysis",style="text-align: center;"),
-                            plotOutput("sentimentPlot"),
-                            plotOutput("termFrequencyPlot"),
+                            #plotOutput("sentimentPlot"),
+                            #plotOutput("termFrequencyPlot"),
                             DT::dataTableOutput("topicTable")
                         )
                     )
@@ -141,8 +141,6 @@ ui <- dashboardPage(
 ################
 # Server
 ################
-
-# Define server logic 
 server <- function(input, output,session) {
     #===============
     # Summary logic
@@ -238,13 +236,74 @@ server <- function(input, output,session) {
     # Sentiment analysis
     #==============
     output$sentimentPlot <- renderPlot({
+        # word breakdown 
+        review_words <- df %>%
+            unnest_tokens(word, Body) %>%
+            anti_join(stop_words) %>%
+            distinct() %>%
+            filter(nchar(word) > 3) 
         
+        bing_word_counts <- review_words %>%
+            filter(input$productInput == Procuct, 
+                   input$countryInput == Country,
+                   input$monthInput == Month,
+                   input$ratingInput == Country,
+                   input$yearInput == Year) %>%
+            inner_join(get_sentiments("bing")) %>%
+            count(word, sentiment, sort = TRUE) %>%
+            ungroup()
+        
+        bing_word_counts %>%
+            group_by(sentiment) %>%
+            top_n(10) %>%
+            ggplot(aes(reorder(word, n), n, fill = sentiment)) +
+            geom_bar(alpha = 0.8, stat = "identity", show.legend = FALSE) +
+            facet_wrap(~sentiment, scales = "free_y") +
+            labs(y = "Contribution to sentiment", x = NULL) +
+            coord_flip()
     })
     
     #==============
     #Term frequency
     #==============
-    termFrequencyPlot <- renderPlot({
+    output$termFrequencyPlot <- renderPlot({
+        
+        # tf-idf by Rating & Product
+        popular_tfidf_words <- df %>%
+            unnest_tokens(word, Body) %>%
+            distinct() %>%
+            filter(nchar(word) > 3,
+                   input$productInput == Procuct, 
+                   input$countryInput == Country,
+                   input$monthInput == Month,
+                   input$ratingInput == Country,
+                   input$yearInput == Year) %>%
+            count(Rating, Procuct,word, sort = TRUE) %>%
+            ungroup() %>%
+            bind_tf_idf(word, Rating, n)
+        
+        top_popular_tfidf_words <- popular_tfidf_words %>%
+            arrange(desc(tf_idf)) %>%
+            mutate(word = factor(word, levels = rev(unique(word)))) %>%
+            group_by(Procuct, Rating) %>% 
+            slice(seq_len(8)) %>%
+            ungroup() %>%
+            arrange(desc(Procuct, Rating)) %>%
+            mutate(row = row_number())
+        
+        #td-idf by Product
+        top_popular_tfidf_words %>%
+            ggplot(aes(x = row, tf_idf, 
+                       fill = Procuct)) +
+            geom_col(show.legend = NULL) +
+            labs(x = NULL, y = "TF-IDF") + 
+            ggtitle("Important Words using TF-IDF by Product") +
+            theme_bw() +  
+            facet_wrap(~Procuct, ncol = 6, scales = "free") +
+            scale_x_continuous(  # This handles replacement of row 
+                breaks = top_popular_tfidf_words$row, # notice need to reuse data frame
+                labels = top_popular_tfidf_words$word) +
+            coord_flip()
         
     })
     #==============
@@ -253,9 +312,13 @@ server <- function(input, output,session) {
     output$topicTable <- DT::renderDataTable({
         set.seed(1502)
         df <- df %>%
-            filter(score %in% rating_selection, Product %in% printer_selection)
+            filter(input$productInput == Procuct, 
+                   input$countryInput == Country,
+                   input$monthInput == Month,
+                   input$ratingInput == Country,
+                   input$yearInput == Year)
         
-        clean <- textcleaner(df$Review)
+        clean <- textcleaner(df$Body)
         clean <- clean %>% mutate(id = rownames(clean))
         
         # crete dtm
@@ -293,9 +356,7 @@ server <- function(input, output,session) {
             arrange(desc(coherence)) %>%
             slice(1:5)
         
-        #DT::datatable(top_terms,options = list(scrollX = TRUE))
-        top_terms
-        DT::datatable(output_df,options = list(pageLength = 20,scrollX = TRUE,scrollY = "500px"))
+        DT::datatable(top_terms,options = list(pageLength = 10,scrollX = TRUE,scrollY = "500px"))
         
     })
     
