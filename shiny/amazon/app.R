@@ -79,7 +79,8 @@ ui <- dashboardPage(
             #==============
             tabItem(tabName = "explore",
                         mainPanel(
-                            DT::dataTableOutput("exploreTable")  
+                            h1("Data Exploration",style="text-align: center;"),
+                            DT::dataTableOutput("exploreTable")
                         )
             ), 
             #==============
@@ -106,6 +107,8 @@ ui <- dashboardPage(
                             plotOutput("sentimentPlot"),
                             plotOutput("termFrequencyPlot"),
                             DT::dataTableOutput("topicTable")
+                            
+                            
                         )
                     )
             )
@@ -203,7 +206,7 @@ server <- function(input, output,session) {
     output$exploreTable <- renderDataTable({
         output_df <- df %>%
             dplyr::select(Procuct,Country, Month, Year, Title, Body, Rating)
-        DT::datatable(output_df,options = list(scrollX = TRUE))
+        DT::datatable(df,options = list(scrollX = TRUE))
     })
     
     
