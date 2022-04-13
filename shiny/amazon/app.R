@@ -22,6 +22,29 @@ months <- c("January","February","March","April",'May',"June","July","August","S
 #=============
 
 
+textcleaner <- function(x){
+    x <- as.character(x)
+    
+    x <- x %>%
+        str_to_lower() %>%  # convert all the string to low alphabet
+        replace_contraction() %>% # replace contraction to their multi-word forms
+        replace_internet_slang() %>% # replace internet slang to normal words
+        #replace_emoji(replacement = " ") %>% # replace emoji to words
+        #replace_emoticon(replacement = " ") %>% # replace emoticon to words
+        replace_hash(replacement = "") %>% # remove hashtag
+        replace_word_elongation() %>% # replace informal writing with known semantic replacements
+        replace_number(remove = T) %>% # remove number
+        replace_date(replacement = "") %>% # remove date
+        #replace_time(replacement = "") %>% # remove time
+        str_remove_all(pattern = "[[:punct:]]") %>% # remove punctuation
+        str_remove_all(pattern = "[^\\s]*[0-9][^\\s]*") %>% # remove mixed string n number
+        str_squish() %>% # reduces repeated whitespace inside a string.
+        str_trim() # removes whitespace from start and end of string
+    
+    return(as.data.frame(x))
+    
+}
+
 ################
 # UI
 ################
@@ -107,8 +130,6 @@ ui <- dashboardPage(
                             plotOutput("sentimentPlot"),
                             plotOutput("termFrequencyPlot"),
                             DT::dataTableOutput("topicTable")
-                            
-                            
                         )
                     )
             )
@@ -209,23 +230,72 @@ server <- function(input, output,session) {
         DT::datatable(output_df,options = list(pageLength = 20,scrollX = TRUE,scrollY = "500px"))
         
     })
-        
-    
-    
-    
-    
     #==============
     # Text analytics logic
+    #==============
+    
+    #==============
+    # Sentiment analysis
     #==============
     output$sentimentPlot <- renderPlot({
         
     })
-     
+    
+    #==============
+    #Term frequency
+    #==============
     termFrequencyPlot <- renderPlot({
         
     })
-     
-    output$topicTable <- renderDataTable({
+    #==============
+    # Topic modeling
+    #==============
+    output$topicTable <- DT::renderDataTable({
+        set.seed(1502)
+        df <- df %>%
+            filter(score %in% rating_selection, Product %in% printer_selection)
+        
+        clean <- textcleaner(df$Review)
+        clean <- clean %>% mutate(id = rownames(clean))
+        
+        # crete dtm
+        dtm_r <- CreateDtm(doc_vec = clean$x,
+                           doc_names = clean$id,
+                           ngram_window = c(1,2),
+                           stopword_vec = stopwords("en"),
+                           verbose = F)
+        
+        dtm_r <- dtm_r[,colSums(dtm_r)>2]
+        
+        mod_lda <- FitLdaModel(dtm = dtm_r,
+                               k = 10, # number of topic
+                               iterations = 500,
+                               burnin = 180,
+                               alpha = 0.1,beta = 0.05,
+                               optimize_alpha = T,
+                               calc_likelihood = T,
+                               calc_coherence = T,
+                               calc_r2 = T)
+        
+        mod_lda$top_terms <- GetTopTerms(phi = mod_lda$phi,M = 15)
+        mod_lda$prevalence <- colSums(mod_lda$theta)/sum(mod_lda$theta)*100
+        
+        mod_lda$summary <- data.frame(topic = rownames(mod_lda$phi),
+                                      coherence = round(mod_lda$coherence,3),
+                                      prevalence = round(mod_lda$prevalence,3),
+                                      top_terms = apply(mod_lda$top_terms,2,
+                                                        function(x){paste(x,collapse = ", ")}))
+        
+        modsum <- mod_lda$summary %>%
+            `rownames<-`(NULL)
+        
+        top_terms<- modsum %>% 
+            arrange(desc(coherence)) %>%
+            slice(1:5)
+        
+        #DT::datatable(top_terms,options = list(scrollX = TRUE))
+        top_terms
+        DT::datatable(output_df,options = list(pageLength = 20,scrollX = TRUE,scrollY = "500px"))
         
     })
     
