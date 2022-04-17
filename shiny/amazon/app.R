@@ -126,9 +126,12 @@ ui <- dashboardPage(
                         ),
                         mainPanel(
                             h1("Text Analysis",style="text-align: center;"),
-                            plotOutput("sentimentPlot"),
-                            #plotOutput("termFrequencyPlot"),
-                            #DT::dataTableOutput("topicTable")
+                            fluidRow(
+                                plotOutput("sentimentPlot"),
+                                plotOutput("termFrequencyPlot"),
+                                DT::dataTableOutput("topicTable") 
+                            )
+                            
                         )
                     )
             )
@@ -246,7 +249,7 @@ server <- function(input, output,session) {
             filter(input$productInput == Procuct, 
                    input$countryInput == Country,
                    input$monthInput == Month,
-                   input$ratingInput == Country,
+                   input$ratingInput == Rating,
                    input$yearInput == Year) %>%
             inner_join(get_sentiments("bing")) %>%
             count(word, sentiment, sort = TRUE) %>%
@@ -275,7 +278,7 @@ server <- function(input, output,session) {
                    input$productInput == Procuct, 
                    input$countryInput == Country,
                    input$monthInput == Month,
-                   input$ratingInput == Country,
+                   input$ratingInput == Rating,
                    input$yearInput == Year) %>%
             count(Rating, Procuct,word, sort = TRUE) %>%
             ungroup() %>%
@@ -314,7 +317,7 @@ server <- function(input, output,session) {
             filter(input$productInput == Procuct, 
                    input$countryInput == Country,
                    input$monthInput == Month,
-                   input$ratingInput == Country,
+                   input$ratingInput == Rating,
                    input$yearInput == Year)
         
         clean <- textcleaner(df$Body)
