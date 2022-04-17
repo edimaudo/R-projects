@@ -120,16 +120,15 @@ ui <- dashboardPage(
                                         selected="January"),
                             selectInput("ratingInput", "Rating", choices = rating_info,
                                         selected="5"),
-                            sliderInput("yearInput","Year",min=min(year_info),max=max(year_info),
-                                        value = c(min(year_info),
-                                                  max(year_info)),step =1,ticks = FALSE),
+                            selectInput("yearInput", "Year", choices = year_info,
+                                        selected="2020"),
                             submitButton("Submit")
                         ),
                         mainPanel(
                             h1("Text Analysis",style="text-align: center;"),
-                            #plotOutput("sentimentPlot"),
+                            plotOutput("sentimentPlot"),
                             #plotOutput("termFrequencyPlot"),
-                            DT::dataTableOutput("topicTable")
+                            #DT::dataTableOutput("topicTable")
                         )
                     )
             )
