@@ -35,7 +35,7 @@ item_code_dropdown <- c("All",item_code_dropdown)
 country_dropdown <- sort(as.vector(unique(df$Country))) # Country
 country_dropdown<- c("All",country_dropdown)
 horizon_info  <- c(1:100) #forecast range
-aggregate_info <- c('weekly','monthly')
+aggregate_info <- c('daily','weekly','monthly')
 frequency_info <- c(7, 12, 52, 365)
 model_info <- c('auto arima','auto exponential','simple exponential',
                 'double exponential','triple exponential')
@@ -54,10 +54,24 @@ ui <- dashboardPage(
             tabItem(tabName = "data",
                     sidebarLayout(
                         sidebarPanel(
-                            
+                            selectInput("itemCodeInput", "City", choices = item_code_dropdown),
+                            selectInput("countryInput", "Country", choices = country_dropdown),
+                            submitButton("Submit")
                         ),
                         mainPanel(
-                            tableOutput("contents")
+                            h1("Analysis",style="text-align: center;"), 
+                            tabsetPanel(type = "tabs",
+                                        tabPanel(
+                                            h4("Decomposition",
+                                               style="text-align: center;"),
+                                            plotOutput("decompositionPlot")),
+                                        tabPanel(
+                                            h4("Multi seasonal Decomposition",
+                                               style="text-align: center;"),
+                                            plotOutput("multidecompositionPlot")),
+                                        tabPanel(
+                                            h4("ACF Plot",style="text-align: center;"), 
+                                            plotOutput("acfPlot")),
                         )
                     )
             )
