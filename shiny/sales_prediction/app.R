@@ -30,6 +30,41 @@ df <- read_excel("Sales.xlsx")
 # Application UI
 ################
 
+item_code_dropdown <- sort(as.vector(unique(df$`Item Code`))) # Item code 
+item_code_dropdown <- c("All",item_code_dropdown)
+country_dropdown <- sort(as.vector(unique(df$Country))) # Country
+country_dropdown<- c("All",country_dropdown)
+horizon_info  <- c(1:100) #forecast range
+aggregate_info <- c('weekly','monthly')
+frequency_info <- c(7, 12, 52, 365)
+model_info <- c('auto arima','auto exponential','simple exponential',
+                'double exponential','triple exponential')
+
+ui <- dashboardPage(
+    dashboardHeader(title = "Patient Forecast"),
+    dashboardSidebar(
+        sidebarMenu(
+            menuItem("Data", tabName = "data", icon = icon("th")),
+            menuItem("Analysis", tabName = "analysis", icon = icon("th")),
+            menuItem("Forecasting", tabName = "Forecast", icon = icon("th"))
+        )
+    ),
+    dashboardBody(
+        tabItems(
+            tabItem(tabName = "data",
+                    sidebarLayout(
+                        sidebarPanel(
+                            
+                        ),
+                        mainPanel(
+                            tableOutput("contents")
+                        )
+                    )
+            )
+        )
+        )
+    )
+    
 ################
 # Server
 ################
