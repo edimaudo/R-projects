@@ -60,18 +60,29 @@ ui <- dashboardPage(
                         ),
                         mainPanel(
                             h1("Analysis",style="text-align: center;"), 
+                            # Sales Trend
+                            
+                            # Sales Info
                             tabsetPanel(type = "tabs",
                                         tabPanel(
-                                            h4("Decomposition",
+                                            h4("Top 5 Quantity by Country",
                                                style="text-align: center;"),
                                             plotOutput("decompositionPlot")),
                                         tabPanel(
-                                            h4("Multi seasonal Decomposition",
+                                            h4("Bottom 5 Quantity by Country",
                                                style="text-align: center;"),
                                             plotOutput("multidecompositionPlot")),
                                         tabPanel(
-                                            h4("ACF Plot",style="text-align: center;"), 
+                                            h4("Top 5 Quantity by Item Code",
+                                               style="text-align: center;"), 
                                             plotOutput("acfPlot")),
+                                        tabPanel(
+                                            h4("Bottom 5 Quantity by Item Code",
+                                               style="text-align: center;"), 
+                                            plotOutput("acfPlot"))
+                            )
+                            
+                            # Sales data
                         )
                     )
             )
