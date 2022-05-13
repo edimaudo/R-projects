@@ -41,7 +41,7 @@ model_info <- c('auto arima','auto exponential','simple exponential',
                 'double exponential','triple exponential')
 
 ui <- dashboardPage(
-    dashboardHeader(title = "Patient Forecast"),
+    dashboardHeader(title = "Sales Insights & Prediction"),
     dashboardSidebar(
         sidebarMenu(
             menuItem("Data", tabName = "data", icon = icon("th")),
@@ -54,7 +54,7 @@ ui <- dashboardPage(
             tabItem(tabName = "data",
                     sidebarLayout(
                         sidebarPanel(
-                            selectInput("itemCodeInput", "City", choices = item_code_dropdown),
+                            selectInput("itemCodeInput", "Item Code", choices = item_code_dropdown),
                             selectInput("countryInput", "Country", choices = country_dropdown),
                             submitButton("Submit")
                         ),
