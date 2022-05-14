@@ -61,28 +61,29 @@ ui <- dashboardPage(
                         mainPanel(
                             h1("Analysis",style="text-align: center;"), 
                             # Sales Trend
-                            
+                            plotOutput("salesTrendPlot"),
                             # Sales Info
                             tabsetPanel(type = "tabs",
                                         tabPanel(
                                             h4("Top 5 Quantity by Country",
                                                style="text-align: center;"),
-                                            plotOutput("decompositionPlot")),
+                                            plotOutput("topCountryPlot")),
                                         tabPanel(
                                             h4("Bottom 5 Quantity by Country",
                                                style="text-align: center;"),
-                                            plotOutput("multidecompositionPlot")),
+                                            plotOutput("bottomCountryPlot")),
                                         tabPanel(
                                             h4("Top 5 Quantity by Item Code",
                                                style="text-align: center;"), 
-                                            plotOutput("acfPlot")),
+                                            plotOutput("itemTopPlot")),
                                         tabPanel(
                                             h4("Bottom 5 Quantity by Item Code",
                                                style="text-align: center;"), 
-                                            plotOutput("acfPlot"))
-                            )
+                                            plotOutput("itemBottomPlot"))
+                            ),
                             
                             # Sales data
+                            DT::dataTableOutput("salesOutput")
                         )
                     )
             )
@@ -94,6 +95,26 @@ ui <- dashboardPage(
 # Server
 ################
 server <- function(input, output,session) {
+    
+    sales_info <- function(){
+        
+        if 
+        
+        sales_df <- df %>%
+            
+            group_by(Date) %>%
+            summarise(Quantity_total = sum(`Item Code`)) %>%
+            select(Date, Quantity_total )
+    }
+    
+    output$salesTrendPlot <- renderPlot({
+        
+    })
+    
+    
+    output$salesOutput <- DT::renderDataTable({
+        
+    })
     
 }
 
