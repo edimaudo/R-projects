@@ -135,32 +135,36 @@ server <- function(input, output,session) {
     # Sales Trend Graph
     #--------------------
     output$salesTrendPlot <- renderPlot({
+        #sales_output_df <- as.data.frame(sales_output)
+        #sales_Qty <- xts::xts(sales_output_df$Quantity_total, order.by = sales_output_df$Date) 
+        #autoplot(sales_Qty)
+        sales_output
         
     })
     
     #--------------------
-    # Sales Output table
+    # Top 5 country plot
     #--------------------
     output$topCountryPlot <- renderPlot({
         
     })
     
     #--------------------
-    # Sales Output table
+    # Bottom 5 country plot
     #--------------------
     output$bottomCountryPlot <- renderPlot({
         
     })
     
     #--------------------
-    # Sales Output table
+    # top 5 Items
     #--------------------
     output$itemTopPlot <- renderPlot({
         
     })
     
     #--------------------
-    # Sales Output table
+    # Bottom 5 Items
     #--------------------
     output$itemBottomPlot <- renderPlot({
         
