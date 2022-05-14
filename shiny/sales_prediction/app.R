@@ -93,6 +93,9 @@ ui <- dashboardPage(
                         ),
                         mainPanel(
                             h1("Analysis",style="text-align: center;"), 
+                            br(),
+                            DT::dataTableOutput("testOutput"),
+                            br(),
                             tabsetPanel(type = "tabs",
                                         tabPanel(
                                             h4("Decomposition",
@@ -152,10 +155,35 @@ sales_info <- function(item,country){
 }
 
 #----------------------
-# Forecast analysis Information
+# Analysis Information
 #----------------------
 analysis_info <- function(item, country,aggregateType, frequency){
-    analysis_df <- sales_info(item,country)
+    if (item == 'All' && country == "All"){
+        analysis_df <- df %>%
+            group_by(Date) %>%
+            summarise(Quantity_total = sum(`Item Code`)) %>%
+            select(Date, Quantity_total )
+    } else if (item != 'All' && country == "All"){
+        analysis_df <- df %>%
+            filter(`Item Code`  == item) %>%
+            group_by(Date) %>%
+            summarise(Quantity_total = sum(`Item Code`)) %>%
+            select(Date, Quantity_total )
+    } else if (item == 'All' && country != "All"){
+        analysis_df <- df %>%
+            filter(Country == country) %>%
+            group_by(Date) %>%
+            summarise(Quantity_total = sum(`Item Code`)) %>%
+            select(Date, Quantity_total )
+    } else {
+        analysis_df <- df %>%
+            filter(`Item Code`  == item,Country == country) %>%
+            group_by(Date) %>%
+            summarise(Quantity_total = sum(`Item Code`)) %>%
+            select(Date, Quantity_total )
+    }
+
+    
     analysis.xts <- xts(analysis_df$Quantity_total, order.by = analysis_df$Date) 
     analysis.daily <- apply.daily(analysis.xts,mean)
     analysis.weekly <- apply.weekly(analysis.xts, mean) 
@@ -220,21 +248,57 @@ server <- function(input, output,session) {
     # Analysis
     #====================
     
+   
+    
     # decomposition output
     output$decompositionPlot <- renderPlot({
+        
+        analysis.data <- analysis_output()
+        
+        if (input$differenceInput == "Yes"){
+            analysis.data <- diff(analysis_output(), 
+                                  differences = as.numeric(input$differenceNumericInput)) 
+        }
+        #Decompose the Time Series
+        analysis.data %>%
+            decompose() %>%
+            autoplot()
         
     })
     
     # multi season output
     output$multidecompositionPlot <- renderPlot({
+        analysis.data <- analysis_output()
+        
+        if (input$differenceInput == "Yes"){
+            analysis.data <- diff(analysis.data, differences = as.numeric(input$differenceNumericInput))
+        }
+        #Decompose the Time Series
+        analysis.data %>%
+            mstl() %>%
+            autoplot()
         
     })
     
     # ACF output
-    output$acfPlot <- renderPlot({})
+    output$acfPlot <- renderPlot({
+        analysis.data <- analysis_output()
+        if (input$logInput == "No"){
+            ggAcf(analysis.data)
+        } else {
+            ggAcf(log(analysis.data))
+        }
+    })
     
     # PACF output
-    output$pacfPlot <- renderPlot({})
+    output$pacfPlot <- renderPlot({
+        analysis.data <- analysis_output()
+        if (input$logInput == "No"){
+            ggPacf(analysis.data) #pacf(patient.train)
+        } else {
+            ggPacf(log(analysis.data))
+        }
+    })
     
     
 }
