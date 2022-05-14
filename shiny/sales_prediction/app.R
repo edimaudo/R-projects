@@ -152,6 +152,11 @@ sales_info <- function(item,country){
     }
 }
 
+#----------------------
+# Forecast analysis Information
+#----------------------
+
+
 ################
 # Server
 ################
@@ -175,6 +180,27 @@ server <- function(input, output,session) {
     output$salesOutput <- DT::renderDataTable({
         sales_output()
     })
+    
+    #====================
+    # Analysis
+    #====================
+    
+    # decomposition output
+    output$decompositionPlot <- renderPlot({
+        
+    })
+    
+    # multi season output
+    output$multidecompositionPlot <- renderPlot({
+        
+    })
+    
+    # ACF output
+    output$acfPlot <- renderPlot({})
+    
+    # PACF output
+    output$pacfPlot <- renderPlot({})
+    
     
 }
 
