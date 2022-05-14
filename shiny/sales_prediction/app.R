@@ -159,6 +159,19 @@ sales_info <- function(item,country){
 #----------------------
 analysis_info <- function(item, country,aggregateType){
     analysis_df <- sales_info(item,country)
+    analysis.xts <- xts(analysis_df$Quantity_total, order.by = analysis_df$Date) 
+    analysis.daily <- apply.daily(analysis.xts,mean)
+    analysis.weekly <- apply.weekly(analysis.xts, mean) 
+    analysis.monthly <- apply.monthly(analysis.xts, mean) 
+    
+    
+    if (aggregateType == 'daily'){
+        
+    } else if (aggregateType == 'weekly'){
+        
+    } else {
+        
+    }
 }
 
 
