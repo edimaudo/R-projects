@@ -22,10 +22,6 @@ for (package in packages) {
 ################
 df <- read_excel("Sales.xlsx")
 
-#===============
-# Data Munging
-#===============
-
 ################
 # Application UI
 ################
@@ -34,6 +30,7 @@ item_code_dropdown <- sort(as.vector(unique(df$`Item Code`))) # Item code
 item_code_dropdown <- c("All",item_code_dropdown)
 country_dropdown <- sort(as.vector(unique(df$Country))) # Country
 country_dropdown<- c("All",country_dropdown)
+
 horizon_info  <- c(1:100) #forecast range
 aggregate_info <- c('daily','weekly','monthly')
 frequency_info <- c(7, 12, 52, 365)
@@ -157,21 +154,40 @@ sales_info <- function(item,country){
 #----------------------
 # Forecast analysis Information
 #----------------------
-analysis_info <- function(item, country,aggregateType){
+analysis_info <- function(item, country,aggregateType, frequency){
     analysis_df <- sales_info(item,country)
     analysis.xts <- xts(analysis_df$Quantity_total, order.by = analysis_df$Date) 
     analysis.daily <- apply.daily(analysis.xts,mean)
     analysis.weekly <- apply.weekly(analysis.xts, mean) 
     analysis.monthly <- apply.monthly(analysis.xts, mean) 
     
-    
-    if (aggregateType == 'daily'){
-        
-    } else if (aggregateType == 'weekly'){
-        
+    if (aggregateType== 'daily'){
+        analysis.end <- floor(1*length(analysis.daily)) 
+        analysis.data <- analysis.daily[1:analysis.end,] 
+        analysis.start <- c(year (start(analysis.data)), month(start(analysis.data)),
+                            day(start(analysis.data)))
+        analysis.end <- c(year(end(analysis.data)), month(end(analysis.data)), 
+                          day(end(analysis.data)))
+        analysis.data <- ts(as.numeric(analysis.data), start = analysis.start, 
+                            end = analysis.end, frequency = as.numeric(frequency))             
+    } else if(aggregateType== 'weekly'){
+        analysis.end <- floor(1*length(analysis.weekly)) 
+        analysis.data <- analysis.weekly[1:analysis.end,] 
+        analysis.start <- c(year (start(analysis.data)), month(start(analysis.data)),
+                            week(start(analysis.data)))
+        analysis.end <- c(year(end(analysis.data)), month(end(analysis.data)), 
+                          week(end(analysis.data)))
+        analysis.data <- ts(as.numeric(analysis.data), start = analysis.start, 
+                            end = analysis.end, frequency = as.numeric(frequency))         
     } else {
-        
-    }
+        analysis.end <- floor(1*length(analysis.monthly)) 
+        analysis.data <- analysis.monthly[1:analysis.end,] 
+        analysis.start <- c(year (start(analysis.data)), month(start(analysis.data)))
+        analysis.end <- c(year(end(analysis.data)), month(end(analysis.data)))
+        analysis.data <- ts(as.numeric(analysis.data), start = analysis.start, 
+                            end = analysis.end, frequency = as.numeric(frequency))               
+    } 
+   
 }
 
 
@@ -181,6 +197,8 @@ analysis_info <- function(item, country,aggregateType){
 server <- function(input, output,session) {
     
     sales_output <- reactive({sales_info(input$itemCodeInput,input$countryInput)})
+    analysis_output <- reactive({analysis_info(input$itemCodeInput,input$countryInput,
+                                               input$aggregateInput, input$frequencyInput)})
     
     #--------------------
     # Sales Trend Plot
@@ -191,7 +209,6 @@ server <- function(input, output,session) {
         autoplot(sales_Qty)
     })
     
-   
     #--------------------
     # Sales Output table
     #--------------------
@@ -205,7 +222,7 @@ server <- function(input, output,session) {
     
     # decomposition output
     output$decompositionPlot <- renderPlot({
-        analysis_info(input$itemCodeInput,input$countryInput,input$aggregateInput)
+        
     })
     
     # multi season output
