@@ -59,9 +59,10 @@ ui <- dashboardPage(
                             submitButton("Submit")
                         ),
                         mainPanel(
-                            h1("Analysis",style="text-align: center;"), 
+                            h1("Sales Overview",style="text-align: center;"), 
                             # Sales Trend
                             plotOutput("salesTrendPlot"),
+                            br(),
                             # Sales Info
                             tabsetPanel(type = "tabs",
                                         tabPanel(
@@ -81,7 +82,7 @@ ui <- dashboardPage(
                                                style="text-align: center;"), 
                                             plotOutput("itemBottomPlot"))
                             ),
-                            
+                            br(),
                             # Sales data
                             DT::dataTableOutput("salesOutput")
                         )
@@ -94,11 +95,11 @@ ui <- dashboardPage(
 
 
 #----------------------
-# Get sales information
+# Sales Information
 #----------------------
 sales_info <- function(item,country){
     
-    if (item== 'All' && country == "All"){
+    if (item == 'All' && country == "All"){
         sales_df <- df %>%
             group_by(Date) %>%
             summarise(Quantity_total = sum(`Item Code`)) %>%
@@ -129,16 +130,16 @@ sales_info <- function(item,country){
 ################
 server <- function(input, output,session) {
     
-    sales_output <- reactive({ sales_info(input$itemCodeInput,input$countryInput) })
+    sales_output <- reactive({sales_info(input$itemCodeInput,input$countryInput)})
     
     #--------------------
-    # Sales Trend Graph
+    # Sales Trend Plot
     #--------------------
     output$salesTrendPlot <- renderPlot({
-        #sales_output_df <- as.data.frame(sales_output)
-        #sales_Qty <- xts::xts(sales_output_df$Quantity_total, order.by = sales_output_df$Date) 
-        #autoplot(sales_Qty)
-        sales_output
+        sales_output_df <- as.data.frame(sales_output())
+        sales_Qty <- xts::xts(sales_output_df$Quantity_total, order.by = sales_output_df$Date) 
+        autoplot(sales_Qty)
+        #sales_output_df
         
     })
     
