@@ -37,6 +37,8 @@ country_dropdown<- c("All",country_dropdown)
 horizon_info  <- c(1:100) #forecast range
 aggregate_info <- c('daily','weekly','monthly')
 frequency_info <- c(7, 12, 52, 365)
+difference_info <- c("Yes","No")
+log_info <- c("Yes","No")
 model_info <- c('auto arima','auto exponential','simple exponential',
                 'double exponential','triple exponential')
 
@@ -51,6 +53,9 @@ ui <- dashboardPage(
     ),
     dashboardBody(
         tabItems(
+            #--------------
+            # data UI
+            #--------------
             tabItem(tabName = "data",
                     sidebarLayout(
                         sidebarPanel(
@@ -63,34 +68,56 @@ ui <- dashboardPage(
                             # Sales Trend
                             plotOutput("salesTrendPlot"),
                             br(),
-                            # Sales Info
-                            tabsetPanel(type = "tabs",
-                                        tabPanel(
-                                            h4("Top 5 Quantity by Country",
-                                               style="text-align: center;"),
-                                            plotOutput("topCountryPlot")),
-                                        tabPanel(
-                                            h4("Bottom 5 Quantity by Country",
-                                               style="text-align: center;"),
-                                            plotOutput("bottomCountryPlot")),
-                                        tabPanel(
-                                            h4("Top 5 Quantity by Item Code",
-                                               style="text-align: center;"), 
-                                            plotOutput("itemTopPlot")),
-                                        tabPanel(
-                                            h4("Bottom 5 Quantity by Item Code",
-                                               style="text-align: center;"), 
-                                            plotOutput("itemBottomPlot"))
-                            ),
                             br(),
                             # Sales data
                             DT::dataTableOutput("salesOutput")
                         )
                     )
+            ),
+            #--------------
+            # analysis UI
+            #--------------
+            tabItem(tabName = "analysis",
+                    sidebarLayout(
+                        sidebarPanel(
+                            selectInput("aggregateInput", "Aggregate", 
+                                        choices = aggregate_info, selected = 'daily'),
+                            selectInput("frequencyInput", "Frequency", 
+                                        choices = frequency_info, selected = 7),
+                            radioButtons("differenceInput","Difference",
+                                         choices = difference_info, selected = "No"),
+                            numericInput("differenceNumericInput", "Difference Input", 
+                                         1, min = 1, max = 52, step = 0.5),
+                            radioButtons("logInput","Log",
+                                         choices = log_info, selected = "No"),
+                            submitButton("Submit")
+                        ),
+                        mainPanel(
+                            h1("Analysis",style="text-align: center;"), 
+                            tabsetPanel(type = "tabs",
+                                        tabPanel(
+                                            h4("Decomposition",
+                                               style="text-align: center;"),
+                                            plotOutput("decompositionPlot")),
+                                        tabPanel(
+                                            h4("Multi seasonal Decomposition",
+                                               style="text-align: center;"),
+                                            plotOutput("multidecompositionPlot")),
+                                        tabPanel(
+                                            h4("ACF Plot",style="text-align: center;"), 
+                                            plotOutput("acfPlot")),
+                                        tabPanel(
+                                            h4("PACF Plot",style="text-align: center;"), 
+                                            plotOutput("pacfPlot"))
+                            )
+                        )
+                    )
+            
             )
         )
-        )
+        
     )
+)
     
 
 
@@ -139,37 +166,9 @@ server <- function(input, output,session) {
         sales_output_df <- as.data.frame(sales_output())
         sales_Qty <- xts::xts(sales_output_df$Quantity_total, order.by = sales_output_df$Date) 
         autoplot(sales_Qty)
-        #sales_output_df
-        
     })
     
-    #--------------------
-    # Top 5 country plot
-    #--------------------
-    output$topCountryPlot <- renderPlot({
-        
-    })
-    
-    #--------------------
-    # Bottom 5 country plot
-    #--------------------
-    output$bottomCountryPlot <- renderPlot({
-        
-    })
-    
-    #--------------------
-    # top 5 Items
-    #--------------------
-    output$itemTopPlot <- renderPlot({
-        
-    })
-    
-    #--------------------
-    # Bottom 5 Items
-    #--------------------
-    output$itemBottomPlot <- renderPlot({
-        
-    })
+   
     #--------------------
     # Sales Output table
     #--------------------
