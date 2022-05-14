@@ -80,6 +80,8 @@ ui <- dashboardPage(
             tabItem(tabName = "analysis",
                     sidebarLayout(
                         sidebarPanel(
+                            selectInput("itemCodeInput", "Item Code", choices = item_code_dropdown),
+                            selectInput("countryInput", "Country", choices = country_dropdown),
                             selectInput("aggregateInput", "Aggregate", 
                                         choices = aggregate_info, selected = 'daily'),
                             selectInput("frequencyInput", "Frequency", 
@@ -155,6 +157,9 @@ sales_info <- function(item,country){
 #----------------------
 # Forecast analysis Information
 #----------------------
+analysis_info <- function(item, country,aggregateType){
+    analysis_df <- sales_info(item,country)
+}
 
 
 ################
