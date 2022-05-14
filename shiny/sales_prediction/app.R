@@ -192,7 +192,7 @@ server <- function(input, output,session) {
     
     # decomposition output
     output$decompositionPlot <- renderPlot({
-        
+        analysis_info(input$itemCodeInput,input$countryInput,input$aggregateInput)
     })
     
     # multi season output
