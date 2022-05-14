@@ -91,29 +91,85 @@ ui <- dashboardPage(
         )
     )
     
+
+
+#----------------------
+# Get sales information
+#----------------------
+sales_info <- function(item,country){
+    
+    if (item== 'All' && country == "All"){
+        sales_df <- df %>%
+            group_by(Date) %>%
+            summarise(Quantity_total = sum(`Item Code`)) %>%
+            select(Date, Quantity_total )
+    } else if (item != 'All' && country == "All"){
+        sales_df <- df %>%
+            filter(`Item Code`  == item) %>%
+            group_by(Date) %>%
+            summarise(Quantity_total = sum(`Item Code`)) %>%
+            select(Date, Quantity_total )
+    } else if (item == 'All' && country != "All"){
+        sales_df <- df %>%
+            filter(Country == country) %>%
+            group_by(Date) %>%
+            summarise(Quantity_total = sum(`Item Code`)) %>%
+            select(Date, Quantity_total )
+    } else {
+        sales_df <- df %>%
+            filter(`Item Code`  == item,Country == country) %>%
+            group_by(Date) %>%
+            summarise(Quantity_total = sum(`Item Code`)) %>%
+            select(Date, Quantity_total )
+    }
+}
+
 ################
 # Server
 ################
 server <- function(input, output,session) {
     
-    sales_info <- function(){
-        
-        if 
-        
-        sales_df <- df %>%
-            
-            group_by(Date) %>%
-            summarise(Quantity_total = sum(`Item Code`)) %>%
-            select(Date, Quantity_total )
-    }
+    sales_output <- reactive({ sales_info(input$itemCodeInput,input$countryInput) })
     
+    #--------------------
+    # Sales Trend Graph
+    #--------------------
     output$salesTrendPlot <- renderPlot({
         
     })
     
-    
-    output$salesOutput <- DT::renderDataTable({
+    #--------------------
+    # Sales Output table
+    #--------------------
+    output$topCountryPlot <- renderPlot({
         
+    })
+    
+    #--------------------
+    # Sales Output table
+    #--------------------
+    output$bottomCountryPlot <- renderPlot({
+        
+    })
+    
+    #--------------------
+    # Sales Output table
+    #--------------------
+    output$itemTopPlot <- renderPlot({
+        
+    })
+    
+    #--------------------
+    # Sales Output table
+    #--------------------
+    output$itemBottomPlot <- renderPlot({
+        
+    })
+    #--------------------
+    # Sales Output table
+    #--------------------
+    output$salesOutput <- DT::renderDataTable({
+        sales_output()
     })
     
 }
