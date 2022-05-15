@@ -46,19 +46,15 @@ filtered_df <- df %>%
   group_by(Time) %>%
   select(Time, Load, Price)
 
-# ggplot(filtered_df, aes(Time, y = value, color = variable)) +
-#   geom_point(aes(y =Load, col = "Load")) +
-#   geom_point(aes(y = Price, col = "Price"))
-
-# Load Plot
-load_plot <- xts::xts(filtered_df$Load, order.by = filtered_df$Time) 
-load_plot %>%
-  autoplot() + labs(y="Load",title="2019 - 2020 data")
-
-# Price Plot
-price_plot <- xts::xts(filtered_df$Price, order.by = filtered_df$Time) 
-price_plot %>%
-  autoplot() + labs(y="Price",title="2019 - 2020 data")
+ggplot(filtered_df, aes(Price,Load)) + 
+  geom_bar(stat="identity", width = 0.5, fill="#bc5090") +
+  theme_minimal() + scale_y_continuous(labels = comma) +
+  labs(x = "Price", y = "Load", title="Load and Price Plot") + 
+  theme(legend.text = element_text(size = 12),
+        legend.title = element_text(size = 12),
+        axis.title = element_text(size = 12),
+        axis.text = element_text(size = 12),
+        axis.text.x = element_text(angle = 0, hjust = 1))
 
 # All hours on Saturday
 filtered_day_df <- df %>%
