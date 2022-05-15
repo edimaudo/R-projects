@@ -4,7 +4,7 @@ rm(list = ls()) # clear environment
 # Packages
 #=============
 packages <- c('ggplot2', 'corrplot','tidyverse','readxl','feasts','tsibble',
-              'scales','dplyr','mlbench','caTools','reshape2',
+              'scales','dplyr','mlbench','caTools','reshape2','forcats',
               'forecast','TTR','xts','lubridate')
 
 for (package in packages) {
@@ -33,7 +33,7 @@ df$Time <- lubridate::dmy_hms(df$Time)
 df$Year <- lubridate::year(df$Time)
 df$Day <- weekdays(as.Date(df$Time))
 df$Hour <- lubridate::hour(df$Time)
-df$Month <- lubridate::month(df$Time)
+df$Month <- lubridate::month(df$Time, label = TRUE)
 df$Date <- as.Date(df$Time)
 
 #=============
@@ -89,28 +89,68 @@ ggplot(filtered_hour_df, aes(Price,Load)) +
 
 
 #=============
-# Seasonal and weekly plots 2019-2020 data
+# Daily and weekly plots 2019-2020 data
 #=============
-load_data <- df %>%
+# Week
+weekly_data <- df %>%
   filter(Year %in% c(2019,2020)) %>%
-  select(Time, Load, Price,Date) %>%
-  as_tsibble(key = c(Time,Load, Price), index=Date)
-  
-# Weekly Load
-load_data %>% feasts::gg_season(Load,period = "week") +
-  labs(y="Load ",title = "Weekly Load Amount")
+  group_by(Day) %>%
+  summarize(Load = mean(Load), Price=mean(Price)) %>%
+  arrange(Price,Load) %>%
+  mutate(Day= factor(Day, levels = c("Monday","Tuesday","Wednesday","Thursday",
+                          "Friday","Saturday","Sunday"))) %>%
+  select(Day,Price,Load)
 
-# Daily Load
-load_data %>% feasts::gg_season(Load,period = "day") +
-  labs(y="Load", title = "Daily Load Amount")
+# Weekly load
+ggplot(weekly_data, aes(Day,Load,group=1)) + 
+  geom_point(size = 0.5, color="#bc5090") + geom_line() + 
+  theme_minimal() + scale_y_continuous(labels = comma) +
+  labs(x = "Day", y = "Avg. Load", title="Load Amount") + 
+  theme(legend.text = element_text(size = 12),
+        legend.title = element_text(size = 12),
+        axis.title = element_text(size = 12),
+        axis.text = element_text(size = 12),
+        axis.text.x = element_text(angle = 0, hjust = 1))
 
 # Weekly Price
-load_data %>% feasts::gg_season(Price,period = "week") +
-  labs(y="Price ",title = "Weekly Price Amount")
+ggplot(weekly_data, aes(Day,Price,group=1)) + 
+  geom_point(size = 0.5, color="#bc5090") + geom_line() + 
+  theme_minimal() + scale_y_continuous(labels = comma) +
+  labs(x = "Time", y = "Avg. Price", title="Price Amount") + 
+  theme(legend.text = element_text(size = 12),
+        legend.title = element_text(size = 12),
+        axis.title = element_text(size = 12),
+        axis.text = element_text(size = 12),
+        axis.text.x = element_text(angle = 0, hjust = 1))
+
+# Daily
+daily_data <- df %>%
+  filter(Year %in% c(2019,2020)) %>%
+  group_by(Hour) %>%
+  summarize(Load = mean(Load), Price=mean(Price)) %>%
+  select(Hour,Price,Load)
+
+# Daily Load
+ggplot(daily_data, aes(Hour,Load,group=1)) + 
+  geom_point(size = 0.5, color="#bc5090") + geom_line(size = 0.5, color="#bc5090") + 
+  theme_minimal() + scale_y_continuous(labels = comma) +
+  labs(x = "Time", y = "Avg. Load", title="Load Amount") + 
+  theme(legend.text = element_text(size = 12),
+        legend.title = element_text(size = 12),
+        axis.title = element_text(size = 12),
+        axis.text = element_text(size = 12),
+        axis.text.x = element_text(angle = 0, hjust = 1))
 
 # Daily Price
-load_data %>% feasts::gg_season(Price,period = "day") +
-  labs(y="Price", title = "Daily Price Amount")
+ggplot(daily_data, aes(Hour,Price,group=1)) + 
+  geom_point(size = 0.5, color="#bc5090") + geom_line(size = 0.5, color="#bc5090") + 
+  theme_minimal() + scale_y_continuous(labels = comma) +
+  labs(x = "Time", y = "Avg. Price", title="Price Amount") + 
+  theme(legend.text = element_text(size = 12),
+        legend.title = element_text(size = 12),
+        axis.title = element_text(size = 12),
+        axis.text = element_text(size = 12),
+        axis.text.x = element_text(angle = 0, hjust = 1))
 
 #=============
 # Naive models
