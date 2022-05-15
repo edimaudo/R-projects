@@ -89,7 +89,7 @@ ggplot(filtered_hour_df, aes(Price,Load)) +
 
 
 #=============
-# Daily and weekly plots 2019-2020 data
+# Daily and weekly  seasonal plots 2019-2020 data
 #=============
 # Week
 weekly_data <- df %>%
@@ -155,13 +155,27 @@ ggplot(daily_data, aes(Hour,Price,group=1)) +
 #=============
 # Naive models
 #=============
-filtered_df <- df %>%
-  filter(Year %in% c(2021))
+
 #-----------------------
 # 2021 data Naive #1 model forecast 
 #-----------------------
-
-
+naive_df <- df %>%
+  filter(Year %in% c(2021)) %>%
+  select(Time, Price)
+naive.xts <- xts(x = naive_df$Price, order.by = naive_df$Time) 
+naive.data <- apply.daily(naive.xts,mean)
+naive.end <- floor(length(naive.data)-7)
+naive.train <- naive.data[1:naive.end,] 
+naive.start <- c(year (start(naive.train)), month(start(naive.train)),
+                 day(start(naive.train)))
+naive.end <- c(year(end(naive.train)), month(end(naive.train)), 
+               day(end(naive.train)))
+naive.train <- ts(naive.train, start = naive.start, 
+                  end = naive.end,frequency = 12)
+fit <- forecast::naive(naive.train,h=1,level = c(80, 95))
+fit
+fit %>%
+  autoplot()
 #-----------------------
 # 2021 data Naive #2 model forecast
 #-----------------------
