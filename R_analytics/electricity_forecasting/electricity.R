@@ -94,18 +94,25 @@ ggplot(filtered_hour_df, aes(Price,Load)) +
 # Week
 weekly_data <- df %>%
   filter(Year %in% c(2019,2020)) %>%
-  group_by(Day) %>%
-  summarize(Load = mean(Load), Price=mean(Price)) %>%
+  group_by(Time,Day) %>%
   arrange(Price,Load) %>%
-  mutate(Day= factor(Day, levels = c("Monday","Tuesday","Wednesday","Thursday",
-                          "Friday","Saturday","Sunday"))) %>%
-  select(Day,Price,Load)
+  #mutate(Day= factor(Day, levels = c("Monday","Tuesday","Wednesday","Thursday",
+  #                        "Friday","Saturday","Sunday"))) %>%
+  select(Time,Day,Price,Load)
+
+weekly_ts_data <- df %>%
+  filter(Year %in% c(2019,2020)) %>%
+  group_by(Time) %>%
+  select(Time, Date, Load, Price) %>%
+  as_tsibble(key=c(Time,Price,Load), index = Date)
+
+weekly_ts_data %>% gg_season(Load,period='day')
 
 # Weekly load
-ggplot(weekly_data, aes(Day,Load,group=1)) + 
+ggplot(weekly_data, aes(Day,Load, group=1)) + 
   geom_point(size = 0.5, color="#bc5090") + geom_line() + 
   theme_minimal() + scale_y_continuous(labels = comma) +
-  labs(x = "Day", y = "Avg. Load", title="Load Amount") + 
+  labs(x = "Time", y = "Load", title="Load Amount") + 
   theme(legend.text = element_text(size = 12),
         legend.title = element_text(size = 12),
         axis.title = element_text(size = 12),
