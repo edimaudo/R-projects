@@ -159,6 +159,8 @@ ggplot(daily_data, aes(Hour,Price,group=1)) +
 #-----------------------
 # 2021 data Naive #1 model forecast 
 #-----------------------
+
+#overall
 naive_df <- df %>%
   filter(Year %in% c(2021)) %>%
   select(Time, Price)
@@ -176,6 +178,13 @@ fit <- forecast::naive(naive.train,h=1,level = c(80, 95))
 fit
 fit %>%
   autoplot()
+
+accuracy_data <- accuracy(fit)
+naive_1_mae <- accuracy_data[,3]
+naive_1_rmse <- accuracy_data[,2]
+
+# hour
+
 #-----------------------
 # 2021 data Naive #2 model forecast
 #-----------------------
