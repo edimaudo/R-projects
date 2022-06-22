@@ -25,6 +25,13 @@ crimes_data <- crimes_data %>%
   dplyr::select(-'Charge Descritpion') %>% # Remove charge description
   mutate_if(is.character, as.factor)# Convert character type variable to factor type
 
+cost.age.lm <- lm(Cost ~ Age, data = crimes_data)
+summary(cost.age.lm)
+
+par(mfrow=c(2,2))
+plot(cost.age.lm)
+par(mfrow=c(1,1))
+
 # review values
 # unique(crimes_data$Year)
 # unique(crimes_data$Gender)
@@ -65,6 +72,8 @@ crimes_data %>%
   ggtitle("Number of victims by Nationality") + 
   xlab("Nationality") + 
   ylab("Victims")
+
+
 
 #victims by job
 crimes_data %>% 
