@@ -21,9 +21,30 @@ for (package in packages) {
 df <- read_csv("survey_results_public.csv")
 
 ## UI dropdowns
+developer_style <- sort(unique(df$MainBranch))
+age <- sort(unique(df$Age))
+employment <- sort(unique(df$Employment))
+work_style <- sort(unique(df$RemoteWork))
+education <- sort(unique(df$EdLevel))
+devtype <- sort(unique(df$DevType))
+orgsize <- sort(unique(df$OrgSize))
+country <- sort(unique(df$Country))
+indistry <- sort(unique(df$Industry))
 
 
 ## UI 
-
+ui <- dashboardPage(
+  dashboardHeader(title = "2023 Stack Overflow Survey Insights"),
+  dashboardSidebar(
+    sidebarMenu(
+      menuItem("Overview", tabName = "overview", icon = icon("th")),
+      
+    )
+  ),
+  dashboardBody(
+    
+  ),
+)
 
 ## Server
+server <- function(input, output, session) {}
