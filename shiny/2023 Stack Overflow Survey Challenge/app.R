@@ -34,7 +34,7 @@ indistry <- sort(unique(df$Industry))
 
 ## UI 
 ui <- dashboardPage(
-  dashboardHeader(title = "2023 Stack Overflow Survey Insights"),
+  dashboardHeader(title = "2023 Survey Insights"),
   dashboardSidebar(
     sidebarMenu(
       menuItem("About", tabName = "about", icon = icon("th")),
@@ -46,7 +46,8 @@ ui <- dashboardPage(
   ),
   dashboardBody(
     tabItems(
-      tabItem(tabName = "about",includeMarkdown("readme.md"),hr())
+      tabItem(tabName = "about",includeMarkdown("readme.md"),hr()),
+      tabItem(tabName="demographics")
     
    )
  )
@@ -54,3 +55,6 @@ ui <- dashboardPage(
 
 ## Server
 server <- function(input, output, session) {}
+
+# Run the application 
+shinyApp(ui = ui, server = server)
