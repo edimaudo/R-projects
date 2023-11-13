@@ -37,13 +37,19 @@ ui <- dashboardPage(
   dashboardHeader(title = "2023 Stack Overflow Survey Insights"),
   dashboardSidebar(
     sidebarMenu(
-      menuItem("Overview", tabName = "overview", icon = icon("th")),
-      
+      menuItem("About", tabName = "about", icon = icon("th")),
+      menuItem("Demographics", tabName = "overview", icon = icon("th")),
+      menuItem("Experience", tabName = "overview", icon = icon("th")),
+      menuItem("Learning", tabName = "overview", icon = icon("th")),
+      menuItem("Tooling", tabName = "overview", icon = icon("th"))
     )
   ),
   dashboardBody(
+    tabItems(
+      tabItem(tabName = "about",includeMarkdown("readme.md"),hr())
     
-  ),
+   )
+ )
 )
 
 ## Server
