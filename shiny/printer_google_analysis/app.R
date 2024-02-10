@@ -99,11 +99,11 @@ textcleaner <- function(x){
 # UI
 #--------------
 ui <- dashboardPage(
-    dashboardHeader(title = "Printer Analysis"),
+    dashboardHeader(title = "Presilo"),
     dashboardSidebar(
         sidebarMenu(
+            menuItem("About", tabName = "about", icon = icon("th")),
             menuItem("Overview", tabName = "overview", icon = icon("th")),
-            menuItem("Analysis", tabName = "analysis", icon = icon("th")),
             menuItem("Sentiment Analysis", tabName = "sentiment", icon = icon("th")),
             menuItem("Term Frequency", tabName = "term", icon = icon("th")),
             menuItem("Topic Modeling", tabName = "topic", icon = icon("th"))
@@ -111,11 +111,11 @@ ui <- dashboardPage(
     ),
     dashboardBody(
         tabItems(
-            tabItem(tabName = "overview",includeMarkdown("readme.md"),hr()),
+            tabItem(tabName = "about",includeMarkdown("readme.md"),hr()),
             #==============
             #Analysis UI
             #==============
-            tabItem(tabName = "analysis",
+            tabItem(tabName = "overview",
                     sidebarLayout(
                         sidebarPanel(
                             checkboxGroupInput("printerInput", "Printers",
@@ -339,6 +339,9 @@ server <- function(input, output,session) {
                 )
         }
     })
+    #----------------
+    # Printer thumbs Up Count
+    #----------------
     
     #=================
     # Sentiment Analysis
