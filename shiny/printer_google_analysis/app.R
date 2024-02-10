@@ -6,7 +6,8 @@ rm(list = ls()) #clear environment
 #=============
 packages <- c('ggplot2', 'corrplot','tidyverse',"caret","dummies",'readxl',
               'shiny','shinydashboard','scales','dplyr','mlbench','caTools',
-              'forecast','TTR','xts','lubridate')
+              'forecast','TTR','xts','lubridate','DT','stopwords','tidytext',
+              'stringr','reshape2', 'textmineR','topicmodels','textclean')
 for (package in packages) {
     if (!require(package, character.only=T, quietly=T)) {
         install.packages(package)
