@@ -166,19 +166,19 @@ ui <- dashboardPage(
             # Term frequency
             #==============
             tabItem(tabName = "term",
-                    #sidebarLayout(
-                        #sidebarPanel(
-                            #checkboxGroupInput("printerInput", "Printers",
-                            #                   choices = printer_info, 
-                            #                   selected = printer_info),
-                            #submitButton("Submit")
-                       # ),
+                    sidebarLayout(
+                    sidebarPanel(
+                    checkboxGroupInput("printerInput", "Printers",
+                                      choices = printer_info,
+                                      selected = printer_info),
+                    submitButton("Submit")
+                    ),
                         mainPanel(
                             h1("TF-IDF",style="text-align: center;"), 
                             plotOutput("termplot")
                            
                         )
-                   # )
+                   )
             ),
             #==============
             # Topic modeling
@@ -407,7 +407,7 @@ server <- function(input, output,session) {
                 group_by(sentiment) %>%
                 top_n(10) %>%
                 ggplot(aes(reorder(word, n), n, fill = sentiment)) +
-                geom_bar(alpha = 0.8, stat = "identity", show.legend = FALSE) +
+                geom_bar(alpha = 0.9, stat = "identity", show.legend = FALSE) +
                 facet_wrap(~sentiment, scales = "free_y") +
                 labs(y = "Contribution to sentiment", x = NULL) +
                 coord_flip()
@@ -425,52 +425,52 @@ server <- function(input, output,session) {
     #=================
     # Term Frequency
     #=================
-    output$termplot <- renderPlot({
-        
-        if (is.null(input$printerInput)){
-            
-        } else {
-            printer_selection <- unlist(strsplit(input$printerInput, split=" "))
-            printer_selection <- c(printer_selection)
-            NUMBER_COLUMNS = length(printer_selection)
-            
-            # tf-idf by Product & score
-            popular_tfidf_words <- df %>%
-                unnest_tokens(word, Review) %>%
-                distinct() %>%
-                filter(nchar(word) > 3, !word %in% remove_keywords,
-                       Product %in% printer_selection) %>%
-                count(Product, score, word, sort = TRUE) %>%
-                ungroup() %>%
-                bind_tf_idf(word, score, n)
-            
-            top_popular_tfidf_words <- popular_tfidf_words %>%
-                arrange(desc(tf_idf)) %>%
-                mutate(word = factor(word, levels = rev(unique(word)))) %>%
-                group_by(Product, score) %>% 
-                slice(seq_len(8)) %>%
-                ungroup() %>%
-                arrange(desc(Product, score)) %>%
-                mutate(row = row_number())
-            
-            #td-idf by Product
-            top_popular_tfidf_words %>%
-                ggplot(aes(x = row, tf_idf, 
-                           fill = Product)) +
-                geom_col(show.legend = NULL) +
-                labs(x = NULL, y = "TF-IDF") + 
-                #ggtitle("Important Words using TF-IDF by Product") +
-                theme_bw() +  
-                facet_wrap(~Product, ncol = NUMBER_COLUMNS, scales = "free") +
-                scale_x_continuous(  # This handles replacement of row 
-                    breaks = top_popular_tfidf_words$row, # notice need to reuse data frame
-                    labels = top_popular_tfidf_words$word) +
-                coord_flip()
-            
-            
-        }
-        
-    })
+    # output$termplot <- renderPlot({
+    #     
+    #     if (is.null(input$printerInput)){
+    #         
+    #     } else {
+    #         printer_selection <- unlist(strsplit(input$printerInput, split=" "))
+    #         printer_selection <- c(printer_selection)
+    #         NUMBER_COLUMNS = length(printer_selection)
+    #         
+    #         # tf-idf by Product & score
+    #         popular_tfidf_words <- df %>%
+    #             unnest_tokens(word, Review) %>%
+    #             distinct() %>%
+    #             filter(nchar(word) > 3, !word %in% remove_keywords,
+    #                    Product %in% printer_selection) %>%
+    #             count(Product, score, word, sort = TRUE) %>%
+    #             ungroup() %>%
+    #             bind_tf_idf(word, score, n)
+    #         
+    #         top_popular_tfidf_words <- popular_tfidf_words %>%
+    #             arrange(desc(tf_idf)) %>%
+    #             mutate(word = factor(word, levels = rev(unique(word)))) %>%
+    #             group_by(Product, score) %>% 
+    #             slice(seq_len(8)) %>%
+    #             ungroup() %>%
+    #             arrange(desc(Product, score)) %>%
+    #             mutate(row = row_number())
+    #         
+    #         #td-idf by Product
+    #         top_popular_tfidf_words %>%
+    #             ggplot(aes(x = row, tf_idf, 
+    #                        fill = Product)) +
+    #             geom_col(show.legend = NULL) +
+    #             labs(x = NULL, y = "TF-IDF") + 
+    #             #ggtitle("Important Words using TF-IDF by Product") +
+    #             theme_bw() +  
+    #             facet_wrap(~Product, ncol = NUMBER_COLUMNS, scales = "free") +
+    #             scale_x_continuous(  # This handles replacement of row 
+    #                 breaks = top_popular_tfidf_words$row, # notice need to reuse data frame
+    #                 labels = top_popular_tfidf_words$word) +
+    #             coord_flip()
+    #         
+    #         
+    #     }
+    #     
+    # })
     #=================
     # Topic Modeling
     #=================
