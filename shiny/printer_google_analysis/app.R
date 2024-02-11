@@ -113,7 +113,7 @@ ui <- dashboardPage(
         tabItems(
             tabItem(tabName = "about",includeMarkdown("readme.md"),hr()),
             #==============
-            #Analysis UI
+            #Data Overview
             #==============
             tabItem(tabName = "overview",
                     sidebarLayout(
@@ -124,7 +124,7 @@ ui <- dashboardPage(
                             submitButton("Submit")
                         ),
                         mainPanel(
-                            h1("Simple Stats.",style="text-align: center;"), 
+                            h1("Data Overview",style="text-align: center;"), 
                             tabsetPanel(type = "tabs",
                                     tabPanel(h4("Average Printer Score",
                                                 style="text-align: center;"), 
@@ -134,7 +134,10 @@ ui <- dashboardPage(
                                         plotOutput("countPrinterScoreplot")),
                                     tabPanel(h4("Average Printer Score over time",
                                                 style="text-align: center;"), 
-                                         plotOutput("avgPrinterScoreYearplot"))
+                                         plotOutput("avgPrinterScoreYearplot")),
+                                    tabPanel(h4("Average Thumbs Up",
+                                                style="text-align: center;"), 
+                                             plotOutput("avgThumbsUpplot"))
                             )
                         )
                     )
@@ -340,8 +343,38 @@ server <- function(input, output,session) {
         }
     })
     #----------------
-    # Printer thumbs Up Count
+    # Avg Printer thumbs Up
     #----------------
+    output$avgThumbsUpplot <- renderPlot({
+      
+      if (is.null(input$printerInput)){
+        
+      } else {
+        printer_selection <- unlist(strsplit(input$printerInput, split=" "))
+        printer_selection <- c(printer_selection)
+        df_avg_score <- df %>%
+          group_by(Product) %>%
+          filter(Product %in% printer_selection) %>%
+          summarise(score_avg = mean(thumbsUpCount), score_count = n()) %>%
+          select(Product,score_avg, score_count) 
+        
+        ggplot(df_avg_score, aes(x = reorder(Product,score_avg), y = score_avg)) + 
+          geom_bar(stat = "identity", width = 0.3, fill = "#FF6566") + theme_light()  + 
+          coord_flip() + 
+          guides(fill = FALSE) + 
+          #ggtitle("Average score of Printers") + 
+          xlab("Printer") + 
+          ylab("Average. Thumbs Up Count") + 
+          theme(
+            plot.title = element_text(hjust = 0.5),
+            legend.text = element_text(size = 20),
+            legend.title = element_text(size = 25),
+            axis.title = element_text(size = 15),
+            axis.text = element_text(size = 15)
+          )                
+      }
+    })
+    
     
     #=================
     # Sentiment Analysis
