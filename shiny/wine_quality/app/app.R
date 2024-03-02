@@ -19,4 +19,3 @@ for (package in packages) {
 }
 
 #load data
-load("wine_dfR.RData")
