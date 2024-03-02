@@ -22,8 +22,8 @@ for (package in packages) {
 ################
 #Load data
 ################
-red_df <- read.csv("winequality-red.csv")
-white__df <- read.csv("winequality-white.csv")
+red_df <- read.csv("winequality-red.csv",sep=";")
+white__df <- read.csv("winequality-white.csv",sep=";")
 
 ################
 #Define UI for application
