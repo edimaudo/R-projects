@@ -19,3 +19,5 @@ for (package in packages) {
 }
 
 #load data
+red_df <- read.csv("winequality-red.csv")
+white__df <- read.csv("winequality-white.csv")
