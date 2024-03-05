@@ -32,6 +32,8 @@ white_df$quality <- as.factor(white_df$quality)
 ################
 #Load models
 ################
+white_wine_model <- load("white_wine_model.RData")
+red_wine_model <- load("red_wine_model.RData")
 
 ################
 #Define UI for application
@@ -70,6 +72,7 @@ ui <- dashboardPage(
               sidebarLayout(
                 sidebarPanel(
                   selectInput("wineTypeInput", "Wine Type", choices = c("Red","White"), selected = "Red"),
+                  selectInput("qualityInput", "Quality", choices = c("Bad","Good"), selected = "Good"),
                   sliderInput("fixedAcidityInput", "Fixed Acidity:",min = 1, max = 20, value = 2,step = 0.5),
                   sliderInput("volatileAcidityInput", "Volatile Acidity:",min = 0, max = 2, value = 0.5,step = 0.01),
                   sliderInput("citricAcidInput", "Citric Acid:",min = 0, max = 2, value = 0.1,step = 0.01),
@@ -84,19 +87,15 @@ ui <- dashboardPage(
                   submitButton("Submit")
                 ),
               mainPanel(
-                
-                #h3("Wine Properties Correlation",style="text-align: center;"),
-                #plotOutput("WineCorrelationPlot"),  
-                #h3("Quality vs pH",style="text-align: center;"),
-                #plotOutput("QualitypHPlot"),
-                #h3("Quality vs Alcohol Content",style="text-align: center;"),
-                #plotOutput("QualityAlcoholPlot")
-               
                 tabsetPanel(
                   type = "tabs",
-                  tabPanel("Plot", plotOutput("plot")),
-                  tabPanel("Summary", tableOutput("summary")),
-                  tabPanel("Data", DT::dataTableOutput("data"))
+                  tabPanel("Correlation", plotOutput("plot")),
+                  tabPanel("Free-Total Sulphur", tableOutput("summary")),
+                  tabPanel("Sulphates-Chloride", tableOutput("summary")),
+                  tabPanel("pH-Density", tableOutput("summary")),
+                  tabPanel("Residual Sugar-Alcohol", tableOutput("summary")),
+                  tabPanel("Fixed-Volatile acidity", tableOutput("summary")),
+                  tabPanel("ML Prediction", tableOutput("summary")),
                 )
               )
               )
