@@ -41,8 +41,23 @@ ui <- dashboardPage(
     tabItems(
       tabItem(tabName = "about",includeMarkdown("about.md"),hr()),
       tabItem(tabName = "overview",
-              mainPanel(
-                h2("Wine Quality Overview",style="text-align: center;")
+              sidebarLayout(
+                sidebarPanel(
+                  selectInput("wineTypeInput", "Wine Type", choices = c("Red","White"), selected = "Red"),
+                  submitButton("Submit")
+                ),
+                mainPanel(
+                  h2("Wine Quality Overview",style="text-align: center;"), 
+                  fluidRow(
+                    h3("Wine Quality distribution",style="text-align: center;"),
+                    
+                    h3("Wine Properties Correlation",style="text-align: center;"),
+                    
+                    h3("Quality vs pH",style="text-align: center;"),
+                    
+                    h3("Quality vs Alchol Content",style="text-align: center;"),
+                  )
+                )
               )
       ),
       tabItem(tabName="prediction",
