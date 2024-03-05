@@ -24,6 +24,8 @@ for (package in packages) {
 ################
 red_df <- read.csv("winequality-red.csv",sep=";")
 white_df <- read.csv("winequality-white.csv",sep=";")
+
+# clean up quality logic
 red_df$quality <- ifelse(red_df$quality < 6, 'bad', 'good')
 red_df$quality <- as.factor(red_df$quality)
 white_df$quality <- ifelse(white_df$quality < 6, 'bad', 'good')
