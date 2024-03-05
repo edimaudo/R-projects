@@ -23,8 +23,7 @@ for (package in packages) {
 #Load data
 ################
 red_df <- read.csv("winequality-red.csv",sep=";")
-white__df <- read.csv("winequality-white.csv",sep=";")
-
+white_df <- read.csv("winequality-white.csv",sep=";")
 ################
 #Define UI for application
 ################
@@ -47,7 +46,6 @@ ui <- dashboardPage(
                   submitButton("Submit")
                 ),
                 mainPanel(
-                  h2("Wine Quality Overview",style="text-align: center;"), 
                   h3("Wine Quality distribution",style="text-align: center;"),
                   plotOutput("WineQualityPlot"),
                   h3("Wine Properties Correlation",style="text-align: center;"),
@@ -74,6 +72,30 @@ ui <- dashboardPage(
 # Define server logic 
 ################
 server <- function(input, output,session) {
+  
+  if (wineTypeInput == 'White'){
+    df = white_df
+  } else {
+    df = red_df
+  }
+  
+  output$WineQualityPlot <- renderPlot({
+    
+  })
+  
+  output$WineCorrelationyPlot <- renderPlot({
+    
+  })
+  
+  
+  output$QualitypHPlot <- renderPlot({
+    
+  })
+  
+  
+  output$QualityAlcoholPlot <- renderPlot({
+    
+  })
   
 }
 
