@@ -7,7 +7,7 @@ rm(list = ls())
 #packages 
 ################
 packages <- c(
-              'ggplot2', 'corrplot','tidyverse','shiny','shinydashboard',
+              'ggplot2', 'corrplot','tidyverse','shiny','shinydashboard','dplyr',
               'mlbench','caTools','gridExtra','doParallel','grid',
               'caret','dummies','mlbench','tidyr','Matrix','lubridate',
               'data.table', 'rsample','scales'
@@ -24,6 +24,10 @@ for (package in packages) {
 ################
 red_df <- read.csv("winequality-red.csv",sep=";")
 white_df <- read.csv("winequality-white.csv",sep=";")
+red_df$quality <- ifelse(red_df$quality < 6, 'bad', 'good')
+red_df$quality <- as.factor(red_df$quality)
+white_df$quality <- ifelse(white_df$quality < 6, 'bad', 'good')
+white_df$quality <- as.factor(white_df$quality)
 ################
 #Define UI for application
 ################
@@ -73,17 +77,36 @@ ui <- dashboardPage(
 ################
 server <- function(input, output,session) {
   
-  if (wineTypeInput == 'White'){
-    df = white_df
+  
+df <- reactive({
+  if (input$wineTypeInput == 'White'){
+    white_df
   } else {
-    df = red_df
+    red_df
   }
+})  
+  
+
+ 
   
   output$WineQualityPlot <- renderPlot({
     
+    wine_info <- df() %>%
+    group_by(quality) %>%
+    summarise(total_count=n()) %>%
+    select(quality,total_count)
+    
+    ggplot(wine_info, aes(x = quality ,y = total_count)) + 
+      geom_bar(stat = "identity",width = 0.5, fill="steelblue") + theme_classic() + 
+      labs(x = "Variety", y = "Count") +
+      theme(legend.text = element_text(size = 15),
+            legend.title = element_text(size = 15),
+            axis.title = element_text(size = 20),
+            axis.text = element_text(size = 15))  
+    
   })
   
-  output$WineCorrelationyPlot <- renderPlot({
+  output$WineCorrelationPlot <- renderPlot({
     
   })
   
