@@ -100,7 +100,7 @@ ui <- dashboardPage(
                   tabPanel("ML Prediction", tableOutput("summary")),
                 )
               )
-              )
+        )
     )
   )
  )
@@ -121,7 +121,10 @@ df <- reactive({
     red_df
   }
 })  
-  
+
+##==========
+# Overview
+##=========
 
   output$WineQualityPlot <- renderPlot({
     
@@ -141,17 +144,14 @@ df <- reactive({
   })
   
   output$WineCorrelationPlot <- renderPlot({
-    
     corr_df <- df() %>%
       select (- quality)
-    
     corrplot(cor(corr_df),method="number")
     
   })
   
   
   output$QualitypHPlot <- renderPlot({
-    
     wine_info <- df()
     ggplot(wine_info, aes(x = quality, y = pH, fill = quality)) +
       geom_violin(trim = FALSE) +
@@ -163,9 +163,6 @@ df <- reactive({
   output$QualityAlcoholPlot <- renderPlot({
     
     wine_info <- df()
-    ##ggplot(wine_info, aes(x = quality, y = alcohol, color = quality)) +
-    ##  geom_beeswarm(cex = 3)
-    
     ggplot(wine_info, aes(x = quality, y = alcohol, fill = quality)) +
       geom_violin(trim = FALSE) +
       geom_boxplot(width = 0.07)
@@ -173,5 +170,10 @@ df <- reactive({
   })
   
 }
+
+##==========
+# Insights
+##=========
+
 
 shinyApp(ui, server)
