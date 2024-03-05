@@ -7,7 +7,7 @@ rm(list = ls())
 #packages 
 ################
 packages <- c(
-              'ggplot2','ggbeeswarm', 'corrplot','tidyverse','shiny','shinydashboard','dplyr',
+              'ggplot2','ggbeeswarm', 'corrplot','tidyverse','shiny','shinydashboard',
               'mlbench','caTools','gridExtra','doParallel','grid',
               'caret','dummies','mlbench','tidyr','Matrix','lubridate',
               'data.table', 'rsample','scales'
@@ -28,6 +28,11 @@ red_df$quality <- ifelse(red_df$quality < 6, 'bad', 'good')
 red_df$quality <- as.factor(red_df$quality)
 white_df$quality <- ifelse(white_df$quality < 6, 'bad', 'good')
 white_df$quality <- as.factor(white_df$quality)
+
+################
+#Load models
+################
+
 ################
 #Define UI for application
 ################
@@ -37,7 +42,7 @@ ui <- dashboardPage(
     sidebarMenu(
       menuItem("About", tabName = "about", icon = icon("th")),
       menuItem("Overview", tabName = "overview", icon = icon("th")),
-      menuItem("Wine Quality Prediction", tabName = "prediction", icon = icon("th"))
+      menuItem("Wine Quality Insights", tabName = "prediction", icon = icon("th"))
     )
   ),
   dashboardBody(
@@ -62,12 +67,42 @@ ui <- dashboardPage(
               )
       ),
       tabItem(tabName="prediction",
+              sidebarLayout(
+                sidebarPanel(
+                  selectInput("wineTypeInput", "Wine Type", choices = c("Red","White"), selected = "Red"),
+                  sliderInput("fixedAcidityInput", "Fixed Acidity:",min = 1, max = 20, value = 2,step = 0.5),
+                  sliderInput("volatileAcidityInput", "Volatile Acidity:",min = 0, max = 2, value = 0.5,step = 0.01),
+                  sliderInput("citricAcidInput", "Citric Acid:",min = 0, max = 2, value = 0.1,step = 0.01),
+                  sliderInput("residualSugarInput", "Residual Sugar",min = 0, max = 70, value = 1,step = 1.5),
+                  sliderInput("chloridesInput", "Chlorides:",min = 0.01, max = 0.8, value = 0.01,step=0.01),
+                  sliderInput("freeSulfurDioxideInput", "Free Sulfur Dioxide:",min = 1, max = 300, value = 5,step=10),
+                  sliderInput("totalSulfurDioxideInput", "Total Sulphur Dioxide:",min = 5, max = 500, value = 15,step = 10),
+                  sliderInput("densityInput", "Density:",min = 0.9, max = 1.5, value = 1,step = 0.0001),
+                  sliderInput("phInput", "pH:",min = 2.5, max = 4, value = 2.5,step=0.05),
+                  sliderInput("sulphatesInput", "Sulphates:",min = 0.1, max = 2, value = 0.15,step = 0.01),
+                  sliderInput("alcoholInput", "Alcohol:",min = 8, max = 15, value = 8,step = 0.1),
+                  submitButton("Submit")
+                ),
               mainPanel(
-                h2("Wine Quality Prediction",style="text-align:center;")
+                
+                #h3("Wine Properties Correlation",style="text-align: center;"),
+                #plotOutput("WineCorrelationPlot"),  
+                #h3("Quality vs pH",style="text-align: center;"),
+                #plotOutput("QualitypHPlot"),
+                #h3("Quality vs Alcohol Content",style="text-align: center;"),
+                #plotOutput("QualityAlcoholPlot")
+               
+                tabsetPanel(
+                  type = "tabs",
+                  tabPanel("Plot", plotOutput("plot")),
+                  tabPanel("Summary", tableOutput("summary")),
+                  tabPanel("Data", DT::dataTableOutput("data"))
+                )
               )
               )
     )
   )
+ )
 )
 
 
@@ -87,8 +122,6 @@ df <- reactive({
 })  
   
 
- 
-  
   output$WineQualityPlot <- renderPlot({
     
     wine_info <- df() %>%
