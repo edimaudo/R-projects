@@ -53,7 +53,7 @@ ui <- dashboardPage(
                   h3("Wine Quality distribution",style="text-align: center;"),
                   plotOutput("WineQualityPlot"),
                   h3("Wine Properties Correlation",style="text-align: center;"),
-                  plotOutput("WineCorrelationyPlot"),  
+                  plotOutput("WineCorrelationPlot"),  
                   h3("Quality vs pH",style="text-align: center;"),
                   plotOutput("QualitypHPlot"),
                   h3("Quality vs Alcohol Content",style="text-align: center;"),
@@ -107,6 +107,11 @@ df <- reactive({
   })
   
   output$WineCorrelationPlot <- renderPlot({
+    
+    corr_df <- df() %>%
+      select (- quality)
+    
+    corrplot(cor(corr_df),method="number")
     
   })
   
