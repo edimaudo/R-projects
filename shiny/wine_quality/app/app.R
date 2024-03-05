@@ -118,10 +118,19 @@ df <- reactive({
   
   output$QualitypHPlot <- renderPlot({
     
+    wine_info <- df()
+    ggplot(wine_info, aes(x = quality, y = pH, fill = quality)) +
+      geom_violin(trim = FALSE) +
+      geom_boxplot(width = 0.07)
+    
   })
   
   
   output$QualityAlcoholPlot <- renderPlot({
+    
+    wine_info <- df()
+    ggplot(wine_info, aes(x = quality, y = y, alcohol = quality)) +
+      geom_beeswarm(cex = 3)
     
   })
   
