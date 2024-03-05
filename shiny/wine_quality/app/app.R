@@ -7,7 +7,7 @@ rm(list = ls())
 #packages 
 ################
 packages <- c(
-              'ggplot2', 'corrplot','tidyverse','shiny','shinydashboard','dplyr',
+              'ggplot2','ggbeeswarm', 'corrplot','tidyverse','shiny','shinydashboard','dplyr',
               'mlbench','caTools','gridExtra','doParallel','grid',
               'caret','dummies','mlbench','tidyr','Matrix','lubridate',
               'data.table', 'rsample','scales'
@@ -129,8 +129,12 @@ df <- reactive({
   output$QualityAlcoholPlot <- renderPlot({
     
     wine_info <- df()
-    ggplot(wine_info, aes(x = quality, y = y, alcohol = quality)) +
-      geom_beeswarm(cex = 3)
+    ##ggplot(wine_info, aes(x = quality, y = alcohol, color = quality)) +
+    ##  geom_beeswarm(cex = 3)
+    
+    ggplot(wine_info, aes(x = quality, y = alcohol, fill = quality)) +
+      geom_violin(trim = FALSE) +
+      geom_boxplot(width = 0.07)
     
   })
   
