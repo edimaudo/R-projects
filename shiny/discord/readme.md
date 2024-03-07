@@ -1,7 +1,7 @@
 ## About
 This challenge aims to uncover insights into community engagement and trends on Ocean Protocol's Discord server, providing a deeper understanding of the community's dynamics and predicting future activity patterns.
 
-**Field Description**
+### Field Description
 
 **Channel**: Channel name and ID
 
