@@ -7,7 +7,7 @@ rm(list = ls())
 #packages 
 ################
 packages <- c(
-              'ggplot2','ggbeeswarm', 'corrplot','tidyverse','shiny','shinydashboard',
+              'ggplot2', 'corrplot','tidyverse','shiny','shinydashboard',
               'mlbench','caTools','gridExtra','doParallel','grid',
               'caret','dummies','mlbench','tidyr','Matrix','lubridate',
               'data.table', 'rsample','scales'
@@ -74,7 +74,6 @@ ui <- dashboardPage(
               sidebarLayout(
                 sidebarPanel(
                   selectInput("wineTypeInput", "Wine Type", choices = c("Red","White"), selected = "Red"),
-                  selectInput("qualityInput", "Quality", choices = c("Bad","Good"), selected = "Good"),
                   sliderInput("fixedAcidityInput", "Fixed Acidity:",min = 1, max = 20, value = 2,step = 0.5),
                   sliderInput("volatileAcidityInput", "Volatile Acidity:",min = 0, max = 2, value = 0.5,step = 0.01),
                   sliderInput("citricAcidInput", "Citric Acid:",min = 0, max = 2, value = 0.1,step = 0.01),
@@ -87,19 +86,14 @@ ui <- dashboardPage(
                   sliderInput("sulphatesInput", "Sulphates:",min = 0.1, max = 2, value = 0.15,step = 0.01),
                   sliderInput("alcoholInput", "Alcohol:",min = 8, max = 15, value = 8,step = 0.1),
                   submitButton("Submit")
-                ),
+                ), 
               mainPanel(
                 tabsetPanel(
                   type = "tabs",
-                  tabPanel("Correlation", plotOutput("plot")),
-                  tabPanel("Free-Total Sulphur", tableOutput("summary")),
-                  tabPanel("Sulphates-Chloride", tableOutput("summary")),
-                  tabPanel("pH-Density", tableOutput("summary")),
-                  tabPanel("Residual Sugar-Alcohol", tableOutput("summary")),
-                  tabPanel("Fixed-Volatile acidity", tableOutput("summary")),
-                  tabPanel("ML Prediction", tableOutput("summary")),
+                  tabPanel("Correlation", plotOutput("insightCorrelationPlot")),
+                  tabPanel("ML Prediction", DT::dataTableOutput("predictionTable"))
                 )
-              )
+              ) 
         )
     )
   )
@@ -116,11 +110,32 @@ server <- function(input, output,session) {
   
 df <- reactive({
   if (input$wineTypeInput == 'White'){
+    model <- white_wine_model
     white_df
+    
   } else {
+    model <- red_wine_model
     red_df
   }
 })  
+
+filtered_df <- reactive({
+  df() %>%
+    filter(
+      fixed.acidity >= input$fixedAcidityInput[1],
+      volatile.acidity >= input$volatileAcidityInput[1],
+      citric.acid >= input$citricAcidInput[1],
+      residual.sugar >= input$residualSugarInput[1],
+      chlorides >= input$chloridesInput[1],
+      free.sulfur.dioxide >= input$freeSulfurDioxideInput[1],
+      total.sulfur.dioxide >= input$totalSulfurDioxideInput[1],
+      density  >= input$densityInput[1],
+      pH>= input$phInput[1],
+      sulphates >= input$sulphatesInput[1],
+      alcohol >= input$alcoholInput[1]
+    ) 
+}) 
+
 
 ##==========
 # Overview
@@ -161,19 +176,46 @@ df <- reactive({
   
   
   output$QualityAlcoholPlot <- renderPlot({
-    
     wine_info <- df()
     ggplot(wine_info, aes(x = quality, y = alcohol, fill = quality)) +
       geom_violin(trim = FALSE) +
       geom_boxplot(width = 0.07)
+  })
+
+##==========
+# Insights
+##=========  
+  output$insightCorrelationPlot <- renderPlot({
+    corr_df <- filtered_df() %>%
+      select (- quality)
+    corrplot(cor(corr_df),method="number")
+  })
+  
+  # pH vs Density
+  output$insightpHDesnsityPlot <- renderPlot({
     
+  })
+  
+  
+  # Residual Sugar-Alcohol
+  output$insightResidualSugarPlot <- renderPlot({
+    
+  })
+  
+  ## ML Output
+  output$predictionBox <- renderValueBox({
+    
+    
+    
+    valueBox(
+      "Wine Quality is: ", "80%", icon = icon("thumbs-up", lib = "glyphicon"),
+      color = "green"
+    )
   })
   
 }
 
-##==========
-# Insights
-##=========
+
 
 
 shinyApp(ui, server)
