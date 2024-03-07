@@ -110,11 +110,8 @@ server <- function(input, output,session) {
   
 df <- reactive({
   if (input$wineTypeInput == 'White'){
-    model <- white_wine_model
     white_df
-    
   } else {
-    model <- red_wine_model
     red_df
   }
 })  
@@ -192,18 +189,19 @@ filtered_df <- reactive({
   })
   
   # pH vs Density
-  output$insightpHDesnsityPlot <- renderPlot({
-    
-  })
-  
-  
+  #output$insightpHDesnsityPlot <- renderPlot({})
   # Residual Sugar-Alcohol
-  output$insightResidualSugarPlot <- renderPlot({
-    
-  })
+  #output$insightResidualSugarPlot <- renderPlot({})
   
   ## ML Output
   output$predictionTable <- DT::renderDataTable({
+    
+    if (input$wineTypeInput == 'White'){
+      predicted.classes <- white_wine_model %>% predict(filtered_df())  
+    } else {
+      predicted.classes <- red_wine_model %>% predict(filtered_df()) 
+    }
+    
     
   })
   
