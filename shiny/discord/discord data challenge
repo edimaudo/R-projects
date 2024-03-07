@@ -1,0 +1,52 @@
+About
+This challenge aims to uncover insights into community engagement and trends on Ocean Protocol's Discord server, providing a deeper understanding of the community's dynamics and predicting future activity patterns.
+
+Field Description
+
+Channel: Channel name and ID
+
+AuthorID: ID of the account which post the message
+
+Author: User name of the account which post the message
+
+Date: Date and time on which the message was sent
+
+Content: Content of the message
+
+Attachments: URL of message attachments
+
+Reactions: Type and number of emoji received on the message
+
+
+
+https://debruine.github.io/shinyintro/reactives.html
+
+1)General Trends
+Analyze the evolution of message numbers over time on a weekly, monthly, or quarterly basis. Determine if all channels follow the same trend and identify outlier periods with potential causes.
+(dropdown channel types)
+day of week chart
+weekly line chart
+monthly line chart
+quarterly line chart
+
+
+2) Community Activity
+Rank the most active users by various metrics (messages, attachments sent, reactions received). Analyze the time of day/week for peak user activity 
+
+-dropdown (messages, attachments, reactions received)
+--top 10 activity users bar chart
+--day of week chart by user activity volume
+
+
+3) Server Activity Prediction Model
+-Develop a forecasting models to predict future server activity, 
+--day-hour + content posted  --> server activity
+
+
+4)Text Analysis :: Technical Issues + Community Questions
+-Identify and categorize the most frequently asked questions into themes (technical, price-related, general information)
+-Identify and categorize the most common technical issues, indicating their potential sources (user-related, system-related, external factors).
+
+--categorize content --> 
+--- FAQ (technical, price-related, general information)
+--- technical issues (user-related, system-related, external factors)
