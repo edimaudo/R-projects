@@ -7,7 +7,7 @@ rm(list = ls())
 #packages 
 ################
 packages <- c(
-              'ggplot2', 'corrplot','tidyverse','shiny','shinydashboard',
+              'ggplot2', 'corrplot','tidyverse','shiny','shinydashboard','DT',
               'mlbench','caTools','gridExtra','doParallel','grid',
               'caret','dummies','mlbench','tidyr','Matrix','lubridate',
               'data.table', 'rsample','scales'
@@ -203,14 +203,8 @@ filtered_df <- reactive({
   })
   
   ## ML Output
-  output$predictionBox <- renderValueBox({
+  output$predictionTable <- DT::renderDataTable({
     
-    
-    
-    valueBox(
-      "Wine Quality is: ", "80%", icon = icon("thumbs-up", lib = "glyphicon"),
-      color = "green"
-    )
   })
   
 }
