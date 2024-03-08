@@ -63,3 +63,15 @@ ui <- dashboardPage(
    )
   ) 
  
+
+################
+# Define server logic 
+################
+server <- function(input, output,session) {
+  
+}
+
+
+
+
+shinyApp(ui, server)
