@@ -25,6 +25,19 @@ for (package in packages) {
 ################
 df<- read.csv("Ocean Discord Data Challenge Dataset.csv")
 
+# channel setup
+channel <- sort(unique(df$Channel))
+channel <- c("All",channel)
+
+# Date setup
+df$Date2 <- lubridate::mdy(substring(df$Date,1,10))
+df$year <- lubridate::year(df$Date2)
+df$quarter <- lubridate::quarter(df$Date2)
+df$month <- lubridate::month(df$Date2)
+df$week <- lubridate::week(df$Date2)
+df$day <- lubridate::mday(df$Date2)
+df$dayofweek <- lubridate::wday(df$date, label=TRUE)
+
 
 ################
 #UI
@@ -34,8 +47,10 @@ ui <- dashboardPage(
   dashboardSidebar(
     sidebarMenu(
       menuItem("About", tabName = "about", icon = icon("th")),
-      menuItem("Overview", tabName = "overview", icon = icon("th")),
-      menuItem("Wine Quality Insights", tabName = "prediction", icon = icon("th"))
+      menuItem("General Trends", tabName = "general", icon = icon("th")),
+      menuItem("Community Activity", tabName = "community", icon = icon("th")),
+      menuItem("Server Activity", tabName = "server", icon = icon("th")),
+      menuItem("Community Questions", tabName = "questions", icon = icon("th"))
     )
   ),
   dashboardBody(
@@ -44,18 +59,10 @@ ui <- dashboardPage(
       tabItem(tabName = "overview",
               sidebarLayout(
                 sidebarPanel(
-                  selectInput("wineTypeInput", "Wine Type", choices = c("Red","White"), selected = "Red"),
+                  ##selectInput("wineTypeInput", "Wine Type", choices = c("Red","White"), selected = "Red"),
                   submitButton("Submit")
                 ),
                 mainPanel(
-                  h3("Wine Quality distribution",style="text-align: center;"),
-                  plotOutput("WineQualityPlot"),
-                  h3("Wine Properties Correlation",style="text-align: center;"),
-                  plotOutput("WineCorrelationPlot"),  
-                  h3("Quality vs pH",style="text-align: center;"),
-                  plotOutput("QualitypHPlot"),
-                  h3("Quality vs Alcohol Content",style="text-align: center;"),
-                  plotOutput("QualityAlcoholPlot")
                 )
               )
       )
