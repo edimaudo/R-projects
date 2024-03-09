@@ -62,7 +62,7 @@ channel_category_list <- sort(unique(df$channel))
 #Date setup
 df$Date2 <- lubridate::mdy(substring(df$Date,1,10))
 df$year <- lubridate::year(df$Date2)
-df$quarter <- lubridate::quarter(df$Date2)
+df$quarter <- paste0(year(df$Date2),"/0",quarter(df$Date2))
 df$month <- lubridate::month(df$Date2)
 df$week <- lubridate::week(df$Date2)
 df$day <- lubridate::mday(df$Date2)
@@ -98,6 +98,10 @@ ui <- dashboardPage(
                     plotOutput("yearlyTrendePlot"),
                   ),
                   fluidRow(
+                    h4("Quarterly Trend",style="text-align: center;"),
+                    plotOutput("QuarterlyTrendPlot"),
+                  ),
+                  fluidRow(
                     h4("Monthly Trend",style="text-align: center;"),
                     plotOutput("MonthlyTrendPlot"),
                   )
@@ -117,7 +121,9 @@ server <- function(input, output,session) {
   output$yearlyTrendPlot <- renderPlot({
     
   })
-  
+  output$quarterlyTrendPlot <- renderPlot({
+    
+  })
   output$monthlyTrendPlot <- renderPlot({
     
   })
