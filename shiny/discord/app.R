@@ -56,10 +56,11 @@ ui <- dashboardPage(
   dashboardBody(
     tabItems(
       tabItem(tabName = "about",includeMarkdown("readme.md"),hr()),
-      tabItem(tabName = "overview",
+      tabItem(tabName = "general",
               sidebarLayout(
                 sidebarPanel(
-                  ##selectInput("wineTypeInput", "Wine Type", choices = c("Red","White"), selected = "Red"),
+                  selectInput("channelInput", "Channel", choices = c("Red","White"), selected = "Red"),
+                  selectInput("channelSubCategoryInput", "Channel Sub-category", choices = c("Red","White"), selected = "Red"),
                   submitButton("Submit")
                 ),
                 mainPanel(
