@@ -89,7 +89,8 @@ ui <- dashboardPage(
               sidebarLayout(
                 sidebarPanel(
                   helpText("Select a Channel"),
-                  checkboxGroupInput("channelInput", "Channels", choices = channel_category_list),
+                  checkboxGroupInput("channelInput", "Channels", choices = channel_category_list,
+                                     selected=channel_category_list),
                   submitButton("Submit")
                 ),
                 mainPanel(
@@ -99,12 +100,23 @@ ui <- dashboardPage(
                   ),
                   fluidRow(
                     h4("Quarterly Trend",style="text-align: center;"),
-                    plotOutput("QuarterlyTrendPlot"),
+                    plotOutput("quarterlyTrendPlot"),
                   ),
                   fluidRow(
                     h4("Monthly Trend",style="text-align: center;"),
-                    plotOutput("MonthlyTrendPlot"),
+                    plotOutput("monthlyTrendPlot"),
+                    plotOutput("monthTrendPlot"),
+                  ),
+                  fluidRow(
+                    h4("Weekly Trend",style="text-align: center;"),
+                    plotOutput("weeklyTrendPlot"),
+                  ),
+                  fluidRow(
+                    h4("Daily Trend",style="text-align: center;"),
+                    plotOutput("dailyTrendPlot"),
+                    plotOutput("dowTrendPlot"),
                   )
+                  
                 )
               )
       )
@@ -125,6 +137,22 @@ server <- function(input, output,session) {
     
   })
   output$monthlyTrendPlot <- renderPlot({
+    
+  })
+
+  output$monthTrendPlot <- renderPlot({
+    
+  })
+
+  output$weeklyTrendPlot <- renderPlot({
+    
+  })
+
+  output$dailyTrendPlot <- renderPlot({
+    
+  })
+  
+  output$dowTrendPlot <- renderPlot({
     
   })
   
