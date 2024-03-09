@@ -10,8 +10,7 @@ packages <- c(
   'ggplot2', 'corrplot','tidyverse','shiny','shinydashboard','DT',
   'mlbench','caTools','gridExtra','doParallel','grid','forecast',
   'caret','dummies','mlbench','tidyr','Matrix','lubridate',
-  'data.table', 'rsample','scales','stopwords','tidytext','stringr',
-  'reshape2', 'textmineR','topicmodels','textclean','plotly'
+  'data.table', 'rsample','scales','plotly'
 )
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
@@ -67,7 +66,7 @@ df$quarter <- lubridate::quarter(df$Date2)
 df$month <- lubridate::month(df$Date2)
 df$week <- lubridate::week(df$Date2)
 df$day <- lubridate::mday(df$Date2)
-df$dayofweek <- lubridate::wday(df$date, label=TRUE)
+df$dayofweek <- lubridate::wday(df$Date2, label=TRUE)
 
 
 ################
@@ -80,8 +79,7 @@ ui <- dashboardPage(
       menuItem("About", tabName = "about", icon = icon("th")),
       menuItem("General Trends", tabName = "general", icon = icon("th")),
       menuItem("Community Activity", tabName = "community", icon = icon("th")),
-      menuItem("Server Activity", tabName = "server", icon = icon("th")),
-      menuItem("Community Questions", tabName = "questions", icon = icon("th"))
+      menuItem("Server Activity", tabName = "server", icon = icon("th"))
     )
   ),
   dashboardBody(
@@ -90,11 +88,19 @@ ui <- dashboardPage(
       tabItem(tabName = "general",
               sidebarLayout(
                 sidebarPanel(
-                  selectInput("channelInput", "Channel", choices = c("Red","White"), selected = "Red"),
-                  selectInput("channelSubCategoryInput", "Channel Sub-category", choices = c("Red","White"), selected = "Red"),
+                  helpText("Select a Channel"),
+                  checkboxGroupInput("channelInput", "Channels", choices = channel_category_list),
                   submitButton("Submit")
                 ),
                 mainPanel(
+                  fluidRow(
+                    h4("Yearly Trend",style="text-align: center;"),
+                    plotOutput("yearlyTrendePlot"),
+                  ),
+                  fluidRow(
+                    h4("Monthly Trend",style="text-align: center;"),
+                    plotOutput("MonthlyTrendPlot"),
+                  )
                 )
               )
       )
@@ -107,6 +113,14 @@ ui <- dashboardPage(
 # Define server logic 
 ################
 server <- function(input, output,session) {
+  
+  output$yearlyTrendPlot <- renderPlot({
+    
+  })
+  
+  output$monthlyTrendPlot <- renderPlot({
+    
+  })
   
 }
 
