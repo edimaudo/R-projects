@@ -57,16 +57,17 @@ df <- df %>%
                                                          "Ocean Protocol - GET STARTED - 🧐︱ask-the-ai [1082698926865522808]")
                                       ~ 'GET STARTED'))
 
-channel_category_list <- sort(unique(df$channel))
+channel_category_list <- sort(unique(df$channel_category))
 
 #Date setup
 df$Date2 <- lubridate::mdy(substring(df$Date,1,10))
 df$year <- lubridate::year(df$Date2)
-df$quarter <- paste0(year(df$Date2),"/0",quarter(df$Date2))
-df$month <- lubridate::month(df$Date2)
+df$quarter <- paste0("Quarter","-",quarter(df$Date2))#paste0(year(df$Date2),"/0",quarter(df$Date2))
+df$month <- lubridate::month(df$Date2,label = TRUE,abbr = FALSE)
 df$week <- lubridate::week(df$Date2)
 df$day <- lubridate::mday(df$Date2)
 df$dayofweek <- lubridate::wday(df$Date2, label=TRUE)
+df$hour <- lubridate::hour(lubridate::hm(substring(df$Date,12,length(df$Date))))
 
 
 ################
@@ -105,7 +106,7 @@ ui <- dashboardPage(
                   fluidRow(
                     h4("Monthly Trend",style="text-align: center;"),
                     plotOutput("monthlyTrendPlot"),
-                    plotOutput("monthTrendPlot"),
+                    #plotOutput("monthTrendPlot"),
                   ),
                   fluidRow(
                     h4("Weekly Trend",style="text-align: center;"),
@@ -132,15 +133,23 @@ server <- function(input, output,session) {
   
   output$yearlyTrendPlot <- renderPlot({
     
+    df_trend <-  df %>% 
+      filter(channel_category %in% input$channelInput ) %>%
+      group_by(channel_category,year)
+      summarise(total_count=count(Content)) %>%
+      select(channel_category,year,total_count)
+      
+    fig <- plot_ly(df_trend, x = ~year, y = ~total_count, type = 'scatter', mode = 'lines',color = ~channel_category)
+    fig <- fig %>% layout(title = "",
+                            xaxis = list(title = "Year"),
+                            yaxis = list(title = "# of Messages"))
+    fig
+    
   })
   output$quarterlyTrendPlot <- renderPlot({
     
   })
   output$monthlyTrendPlot <- renderPlot({
-    
-  })
-
-  output$monthTrendPlot <- renderPlot({
     
   })
 
