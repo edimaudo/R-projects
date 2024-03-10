@@ -10,7 +10,7 @@ packages <- c(
   'ggplot2', 'corrplot','tidyverse','shiny','shinydashboard','DT',
   'mlbench','caTools','gridExtra','doParallel','grid','forecast',
   'caret','dummies','mlbench','tidyr','Matrix','lubridate',
-  'data.table', 'rsample','scales','plotly'
+  'data.table','scales'
 )
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
@@ -62,7 +62,7 @@ channel_category_list <- sort(unique(df$channel_category))
 #Date setup
 df$Date2 <- lubridate::mdy(substring(df$Date,1,10))
 df$year <- lubridate::year(df$Date2)
-df$quarter <- paste0("Quarter","-",quarter(df$Date2))#paste0(year(df$Date2),"/0",quarter(df$Date2))
+df$quarter <- paste0("Quarter","-",quarter(df$Date2))
 df$month <- lubridate::month(df$Date2,label = TRUE,abbr = FALSE)
 df$week <- lubridate::week(df$Date2)
 df$day <- lubridate::mday(df$Date2)
@@ -97,7 +97,7 @@ ui <- dashboardPage(
                 mainPanel(
                   fluidRow(
                     h4("Yearly Trend",style="text-align: center;"),
-                    plotOutput("yearlyTrendePlot"),
+                    plotOutput("yearlyTrendPlot"),
                   ),
                   fluidRow(
                     h4("Quarterly Trend",style="text-align: center;"),
@@ -106,7 +106,7 @@ ui <- dashboardPage(
                   fluidRow(
                     h4("Monthly Trend",style="text-align: center;"),
                     plotOutput("monthlyTrendPlot"),
-                    #plotOutput("monthTrendPlot"),
+                    
                   ),
                   fluidRow(
                     h4("Weekly Trend",style="text-align: center;"),
@@ -130,41 +130,119 @@ ui <- dashboardPage(
 # Define server logic 
 ################
 server <- function(input, output,session) {
-  
+  #-------------
+  # Trend Output
+  #-------------
   output$yearlyTrendPlot <- renderPlot({
     
-    df_trend <-  df %>% 
+    df %>% 
       filter(channel_category %in% input$channelInput ) %>%
-      group_by(channel_category,year)
-      summarise(total_count=count(Content)) %>%
-      select(channel_category,year,total_count)
-      
-    fig <- plot_ly(df_trend, x = ~year, y = ~total_count, type = 'scatter', mode = 'lines',color = ~channel_category)
-    fig <- fig %>% layout(title = "",
-                            xaxis = list(title = "Year"),
-                            yaxis = list(title = "# of Messages"))
-    fig
-    
+      group_by(channel_category,year) %>%
+      summarize(total_count=n()) %>%
+      select(channel_category,year,total_count) %>%
+      ggplot( aes(x=year, y=total_count, group=channel_category, color=channel_category)) +
+      geom_line() + theme_classic() + 
+      labs(x ="Year", y = "# of Messages",color='Channels') +
+      theme(legend.text = element_text(size = 12),
+            legend.title = element_text(size = 12),
+            axis.title = element_text(size = 14),
+            axis.text = element_text(size = 12))  
+  
   })
+
   output$quarterlyTrendPlot <- renderPlot({
+    df %>% 
+      filter(channel_category %in% input$channelInput ) %>%
+      group_by(channel_category,quarter) %>%
+      summarize(total_count=n()) %>%
+      select(channel_category,quarter,total_count) %>%
+      ggplot(aes(x = quarter ,y = total_count, fill=channel_category))  +
+      geom_bar(stat = "identity",width = 0.5) + theme_classic() + 
+      labs(x ="Quarter", y = "# of Messages",fill='Channels') +
+      theme(legend.text = element_text(size = 12),
+            legend.title = element_text(size = 12),
+            axis.title = element_text(size = 14),
+            axis.text = element_text(size = 12))
+    
     
   })
   output$monthlyTrendPlot <- renderPlot({
+  
+    df %>% 
+      filter(channel_category %in% input$channelInput ) %>%
+      group_by(channel_category,month) %>%
+      summarize(total_count=n()) %>%
+      select(channel_category,month,total_count) %>%
+      ggplot( aes(x=month, y=total_count, group=channel_category, color=channel_category)) +
+      geom_line() + theme_classic() + 
+      labs(x ="Month", y = "# of Messages",color='Channels') +
+      theme(legend.text = element_text(size = 12),
+            legend.title = element_text(size = 12),
+            axis.title = element_text(size = 14),
+            axis.text = element_text(size = 12),
+            axis.text.x = element_text(hjust=0, angle=30))  
     
   })
 
   output$weeklyTrendPlot <- renderPlot({
+    df %>% 
+      filter(channel_category %in% input$channelInput ) %>%
+      group_by(channel_category,week) %>%
+      summarize(total_count=n()) %>%
+      select(channel_category,week,total_count) %>%
+      ggplot( aes(x=week, y=total_count, group=channel_category, color=channel_category)) +
+      geom_line() + theme_classic() + 
+      labs(x ="Week", y = "# of Messages",color='Channels') +
+      theme(legend.text = element_text(size = 12),
+            legend.title = element_text(size = 12),
+            axis.title = element_text(size = 14),
+            axis.text = element_text(size = 12))  
     
   })
 
   output$dailyTrendPlot <- renderPlot({
-    
+    df %>% 
+      filter(channel_category %in% input$channelInput ) %>%
+      group_by(channel_category,day) %>%
+      summarize(total_count=n()) %>%
+      select(channel_category,day,total_count) %>%
+      ggplot( aes(x=day, y=total_count, group=channel_category, color=channel_category)) +
+      geom_line() + theme_classic() + 
+      labs(x ="Day", y = "# of Messages",color='Channels') +
+      theme(legend.text = element_text(size = 12),
+            legend.title = element_text(size = 12),
+            axis.title = element_text(size = 14),
+            axis.text = element_text(size = 12))  
   })
   
   output$dowTrendPlot <- renderPlot({
-    
+    df %>% 
+      filter(channel_category %in% input$channelInput ) %>%
+      group_by(channel_category,dayofweek) %>%
+      summarize(total_count=n()) %>%
+      select(channel_category,dayofweek,total_count) %>%
+      ggplot(aes(x = dayofweek ,y = total_count, fill=channel_category))  +
+      geom_bar(stat = "identity",width = 0.5) + theme_classic() + 
+      labs(x ="Day of Week", y = "# of Messages",fill='Channels') +
+      theme(legend.text = element_text(size = 12),
+            legend.title = element_text(size = 12),
+            axis.title = element_text(size = 14),
+            axis.text = element_text(size = 12))
   })
+ 
+   
+#2) Community Activity
+#channels by various metrics (messages, attachments sent, reactions received). 
+#Analyze the day of week and time of day for activity 
+
+#-dropdown (channel)
+#  --day of week chart by user activity volume  
+
   
+  # 3) Server Activity Prediction Model
+  # - channel
+  # -Develop forecasting models to predict future server activity, 
+  #  day + content posted  --> server activity   
 }
 
 
