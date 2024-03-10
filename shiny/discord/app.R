@@ -9,7 +9,7 @@ rm(list = ls())
 packages <- c(
   'ggplot2', 'corrplot','tidyverse','shiny','shinydashboard','DT',
   'mlbench','caTools','gridExtra','doParallel','grid','forecast',
-  'caret','dummies','mlbench','tidyr','Matrix','lubridate',
+  'caret','dummies','mlbench','tidyr','Matrix','lubridate','TTR','xts',
   'data.table','scales'
 )
 for (package in packages) {
