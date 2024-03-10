@@ -86,7 +86,11 @@ ui <- dashboardPage(
   dashboardBody(
     tabItems(
       tabItem(tabName = "about",includeMarkdown("readme.md"),hr()),
+      #-------------
+      # Trend UI
+      #-------------
       tabItem(tabName = "general",
+            
               sidebarLayout(
                 sidebarPanel(
                   helpText("Select a Channel"),
@@ -119,7 +123,35 @@ ui <- dashboardPage(
                   )
                   
                 )
-              )
+              ),
+      #-------------
+      # Community UI
+      #-------------
+            tabItem(tabName="community",
+                    sidebarLayout(
+                      sidebarPanel(
+                        helpText("Select a Channel"),
+                        checkboxGroupInput("channelInput", "Channels", choices = channel_category_list,
+                                           selected=channel_category_list),
+                        submitButton("Submit")
+                      ),
+                      mainPanel(
+                        fluidRow(
+                          h4("Yearly Trend",style="text-align: center;"),
+                          plotOutput("yearlyTrendPlot"),
+                        ),
+                        fluidRow(
+                          h4("Quarterly Trend",style="text-align: center;"),
+                          plotOutput("quarterlyTrendPlot"),
+                        ),
+                        fluidRow(
+                          h4("Monthly Trend",style="text-align: center;"),
+                          plotOutput("monthlyTrendPlot"),
+                        )
+                      )
+                    )
+              
+            )
       )
     )
    )
@@ -229,7 +261,9 @@ server <- function(input, output,session) {
             axis.title = element_text(size = 14),
             axis.text = element_text(size = 12))
   })
- 
+  #-------------
+  # Community Trend Output
+  #-------------
    
 #2) Community Activity
 #channels by various metrics (messages, attachments sent, reactions received). 
