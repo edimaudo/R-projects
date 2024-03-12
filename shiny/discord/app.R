@@ -123,7 +123,8 @@ ui <- dashboardPage(
                   )
                   
                 )
-              ),
+              )
+            ),
       #-------------
       # Community UI
       #-------------
@@ -142,7 +143,7 @@ ui <- dashboardPage(
                         ),
                         fluidRow(
                           h4("Day Trend",style="text-align: center;"),
-                          plotOutput("dayTrendPlot"),
+                          plotOutput("dayTrendPlot")
                         )
                       )
                     )
@@ -151,7 +152,6 @@ ui <- dashboardPage(
       )
     )
    )
-  ) 
  
 
 ################
