@@ -137,16 +137,12 @@ ui <- dashboardPage(
                       ),
                       mainPanel(
                         fluidRow(
-                          h4("Yearly Trend",style="text-align: center;"),
-                          plotOutput("yearlyTrendPlot"),
+                          h4("Time Trend",style="text-align: center;"),
+                          plotOutput("timeTrendPlot"),
                         ),
                         fluidRow(
-                          h4("Quarterly Trend",style="text-align: center;"),
-                          plotOutput("quarterlyTrendPlot"),
-                        ),
-                        fluidRow(
-                          h4("Monthly Trend",style="text-align: center;"),
-                          plotOutput("monthlyTrendPlot"),
+                          h4("Day Trend",style="text-align: center;"),
+                          plotOutput("dayTrendPlot"),
                         )
                       )
                     )
@@ -264,13 +260,45 @@ server <- function(input, output,session) {
   #-------------
   # Community Trend Output
   #-------------
+  output$timeTrendPlot <- renderPlot({
+    df %>% 
+      select(channel_category,hour,Content) %>%
+      filter(channel_category %in% input$channelInput ) %>%
+      group_by(channel_category,hour) %>%
+      na.omit() %>%
+      summarise(total_count = n()) %>%
+        ggplot( aes(x=hour, y=total_count, group=channel_category, color=channel_category)) +
+        geom_line() + theme_classic() + 
+        labs(x ="Hour", y = "# of Messages",color='Channels') +
+        theme(legend.text = element_text(size = 12),
+              legend.title = element_text(size = 12),
+              axis.title = element_text(size = 14),
+              axis.text = element_text(size = 12))  
+    
+    
+  })
+  
+  output$dayTrendPlot <- renderPlot({ #
+    df %>% 
+      select(channel_category,dayofweek,Content) %>%
+      filter(channel_category %in% input$channelInput ) %>%
+      group_by(channel_category,dayofweek) %>%
+      na.omit() %>%
+      summarise(total_count = n()) %>%
+      ggplot(aes(x = dayofweek ,y = total_count, fill=channel_category))  +
+      geom_bar(stat = "identity",width = 0.5) + theme_classic() + 
+      labs(x ="Day of Week", y = "# of Messages",fill='Channels') +
+      theme(legend.text = element_text(size = 12),
+            legend.title = element_text(size = 12),
+            axis.title = element_text(size = 14),
+            axis.text = element_text(size = 12))
+    
+  })
    
-#2) Community Activity
-#channels by various metrics (messages, attachments sent, reactions received). 
+
 #Analyze the day of week and time of day for activity 
 
-#-dropdown (channel)
-#  --day of week chart by user activity volume  
+
 
   
   # 3) Server Activity Prediction Model
