@@ -28,8 +28,17 @@ chlamydia<- read.csv("Number_of_Chlamydia_Cases_by_Age_Group.csv")
 ################
 #Data Setup
 ################
-age_group <- c("Under 15","15-19","20-24")
+age_group <- c("Under-15","15-19","20-24")
 year <- c(2001:2017)
+
+colnames(gonorrhea)[3] <- "Under-15"
+colnames(gonorrhea)[4] <- "15-19"
+colnames(gonorrhea)[5] <- "20-24"
+
+colnames(chlamydia)[3] <- "Under-15"
+colnames(chlamydia)[4] <- "15-19"
+colnames(chlamydia)[5] <- "20-24"
+
 
 ################
 # Application UI
