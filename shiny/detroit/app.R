@@ -44,11 +44,11 @@ colnames(chlamydia)[5] <- "20-24"
 # Application UI
 ################
 ui <- dashboardPage(
-  dashboardHeader(title = "Detroit Open Data Challenge 2024"),
+  dashboardHeader(title = "Detroit Open Data Challenge"),
   dashboardSidebar(
     sidebarMenu(
       menuItem("About", tabName = "about", icon = icon("th")),
-      menuItem("Youth Health Insights", tabName = "general", icon = icon("th"))
+      menuItem("Youth Sexual Health", tabName = "general", icon = icon("th"))
     )
   ),
   dashboardBody(
