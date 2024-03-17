@@ -4,7 +4,7 @@
 #================================================================================
 rm(list = ls())
 ################
-#packages 
+# Packages 
 ################
 packages <- c(
   'ggplot2', 'corrplot','tidyverse','shiny','shinydashboard',
@@ -18,7 +18,7 @@ for (package in packages) {
 }
 
 ################
-#Load data
+# Load data
 ################
 youth<- read.csv("Youth_Risk_Behavioral_Surveillance_System_2017.csv")
 gonorrhea<- read.csv("Number_of_Gonorrhea_Cases_by_Age_Group.csv")
@@ -26,7 +26,7 @@ chlamydia<- read.csv("Number_of_Chlamydia_Cases_by_Age_Group.csv")
 
 
 ################
-#Data Setup
+# Data Setup
 ################
 age_group <- c("Under-15","15-19","20-24")
 year <- c(2001:2017)
@@ -61,9 +61,9 @@ ui <- dashboardPage(
               
               sidebarLayout(
                 sidebarPanel(
-                  sliderInput("yearInput", "Year:",min = year[1] , 
+                  sliderInput("year_input", "Year:",min = year[1] , 
                               max = year[length(year)], value = year[1], step = 1),
-                  checkboxGroupInput("ageInput", "Age Group", choices = age_group,
+                  checkboxGroupInput("age_input", "Age Group", choices = age_group,
                                      selected=age_group),
                   submitButton("Submit")
                 ),
@@ -78,7 +78,7 @@ ui <- dashboardPage(
                   ),
                   fluidRow(
                     h4("Youth Sexual Behavior",style="text-align: center;"),
-                    plotOutput("monthlyTrendPlot")
+                    dataTableOutput("behaviour_table")
                   
                 )
               )
@@ -91,6 +91,12 @@ ui <- dashboardPage(
 ################
 # Server
 ################
-server <- function(input, output,session) {}
+server <- function(input, output,session) {
+  output$behaviour_table <- renderDataTable({
+    youth_behvaior <- youth %>%
+      filter(Health_Topic == 'Sexual Behaviors') %>%
+      select(Statement, Male_Percent, Female_Percent)
+  })
+}
 
 shinyApp(ui, server)
