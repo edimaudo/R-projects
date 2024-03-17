@@ -70,11 +70,11 @@ ui <- dashboardPage(
                 mainPanel(
                   fluidRow(
                     h4("Youth Gonorrhea Trend",style="text-align: center;"),
-                    plotOutput("yearlyTrendPlot"),
+                    plotOutput("youth_gonorrhea_trend"),
                   ),
                   fluidRow(
                     h4("Youth Chlamydia Trend",style="text-align: center;"),
-                    plotOutput("quarterlyTrendPlot"),
+                    plotOutput("youth_chlamydia_trend"),
                   ),
                   fluidRow(
                     h4("Youth Sexual Behavior",style="text-align: center;"),
@@ -92,6 +92,9 @@ ui <- dashboardPage(
 # Server
 ################
 server <- function(input, output,session) {
+  
+  
+  
   output$behaviour_table <- renderDataTable({
     youth_behvaior <- youth %>%
       filter(Health_Topic == 'Sexual Behaviors') %>%
