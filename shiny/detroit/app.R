@@ -28,3 +28,60 @@ chlamydia<- read.csv("Number_of_Chlamydia_Cases_by_Age_Group.csv")
 ################
 #Data Setup
 ################
+age_group <- c("Under 15","15-19","20-24")
+year <- c(2001:2017)
+
+################
+# Application UI
+################
+ui <- dashboardPage(
+  dashboardHeader(title = "Detroit Open Data Challenge 2024"),
+  dashboardSidebar(
+    sidebarMenu(
+      menuItem("About", tabName = "about", icon = icon("th")),
+      menuItem("Youth Health Insights", tabName = "general", icon = icon("th"))
+    )
+  ),
+  dashboardBody(
+    tabItems(
+      tabItem(tabName = "about",includeMarkdown("readme.md"),hr()),
+      #-------------
+      # Trend UI
+      #-------------
+      tabItem(tabName = "general",
+              
+              sidebarLayout(
+                sidebarPanel(
+                  sliderInput("yearInput", "Year:",min = year[1] , 
+                              max = year[length(year)], value = year[1], step = 1),
+                  checkboxGroupInput("ageInput", "Age Group", choices = age_group,
+                                     selected=age_group),
+                  submitButton("Submit")
+                ),
+                mainPanel(
+                  fluidRow(
+                    h4("Youth Gonorrhea Trend",style="text-align: center;"),
+                    plotOutput("yearlyTrendPlot"),
+                  ),
+                  fluidRow(
+                    h4("Youth Chlamydia Trend",style="text-align: center;"),
+                    plotOutput("quarterlyTrendPlot"),
+                  ),
+                  fluidRow(
+                    h4("Youth Sexual Behavior",style="text-align: center;"),
+                    plotOutput("monthlyTrendPlot")
+                  
+                )
+              )
+            )
+    
+        )
+    )
+  )
+)    
+################
+# Server
+################
+server <- function(input, output,session) {}
+
+shinyApp(ui, server)
