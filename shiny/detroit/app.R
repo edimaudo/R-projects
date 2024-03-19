@@ -7,7 +7,7 @@ rm(list = ls())
 # Packages 
 ################
 packages <- c(
-  'ggplot2', 'corrplot','tidyverse','shiny','shinydashboard',
+  'ggplot2', 'corrplot','tidyverse','shiny','shinydashboard','dplyr',
   'DT','Matrix','lubridate','data.table','plotly'
 )
 for (package in packages) {
@@ -62,7 +62,7 @@ ui <- dashboardPage(
               sidebarLayout(
                 sidebarPanel(
                   sliderInput("year_input", "Year:",min = year[1] , 
-                              max = year[length(year)], value = year[1], step = 1),
+                              max = year[length(year)], value = year[length(year)], step = 1),
                   checkboxGroupInput("age_input", "Age Group", choices = age_group,
                                      selected=age_group),
                   submitButton("Submit")
@@ -70,10 +70,9 @@ ui <- dashboardPage(
                 mainPanel(
                   fluidRow(
                     h4("Youth Gonorrhea Trend",style="text-align: center;"),
-                    plotlyOutput("youth_gonorrhea_trend"),
-                    verbatimTextOutput("hover"),
+                    plotOutput("youth_gonorrhea_trend"),
                     h4("Youth Chlamydia Trend",style="text-align: center;"),
-                    plotlyOutput("youth_chlamydia_trend"),
+                    plotOutput("youth_chlamydia_trend"),
                   ),
                   fluidRow(
                     h4("Youth Sexual Behavior",style="text-align: center;"),
@@ -95,15 +94,45 @@ server <- function(input, output,session) {
   #==========
   # gonorrhea
   #==========
-  output$youth_gonorrhea_trend <- renderPlotly({
+  output$youth_gonorrhea_trend <- renderPlot({
+    
+    temp_df <- gonorrhea %>%
+      filter(Year <= input$year_input) %>%
+      select(Year,input$age_input) 
+    
+    d <- melt(temp_df, id.vars="Year")
+    
+    # Everything on the same plot
+    ggplot(d, aes(Year,value, col=variable)) + 
+      geom_line()  + 
+      theme_classic() + 
+      labs(x ="Year", y = "# of Cases",col='Age Group') + 
+      theme(legend.text = element_text(size = 12),
+            legend.title = element_text(size = 12),
+            axis.title = element_text(size = 14),
+            axis.text = element_text(size = 12)) 
     
   })
   
   #==========
   # chlamydia
   #==========
-  output$youth_chlamydia_trend <- renderPlotly({
+  output$youth_chlamydia_trend <- renderPlot({
+    temp_df <- chlamydia %>%
+      filter(Year <= input$year_input) %>%
+      select(Year,input$age_input) 
     
+    d <- melt(temp_df, id.vars="Year")
+    
+    # Everything on the same plot
+    ggplot(d, aes(Year,value, col=variable)) + 
+      geom_line()  + 
+      theme_classic() + 
+      labs(x ="Year", y = "# of Cases",col='Age Group') + 
+      theme(legend.text = element_text(size = 12),
+            legend.title = element_text(size = 12),
+            axis.title = element_text(size = 14),
+            axis.text = element_text(size = 12)) 
   })
   
   #==========
