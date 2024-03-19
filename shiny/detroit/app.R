@@ -72,8 +72,6 @@ ui <- dashboardPage(
                     h4("Youth Gonorrhea Trend",style="text-align: center;"),
                     plotlyOutput("youth_gonorrhea_trend"),
                     verbatimTextOutput("hover"),
-                  ),
-                  fluidRow(
                     h4("Youth Chlamydia Trend",style="text-align: center;"),
                     plotlyOutput("youth_chlamydia_trend"),
                   ),
