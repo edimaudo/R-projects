@@ -105,7 +105,6 @@ server <- function(input, output,session) {
     # Everything on the same plot
     ggplot(d, aes(Year,value, col=variable)) + 
       geom_line()  + 
-      theme_classic() + 
       labs(x ="Year", y = "# of Cases",col='Age Group') + 
       theme(legend.text = element_text(size = 12),
             legend.title = element_text(size = 12),
@@ -127,7 +126,6 @@ server <- function(input, output,session) {
     # Everything on the same plot
     ggplot(d, aes(Year,value, col=variable)) + 
       geom_line()  + 
-      theme_classic() + 
       labs(x ="Year", y = "# of Cases",col='Age Group') + 
       theme(legend.text = element_text(size = 12),
             legend.title = element_text(size = 12),
