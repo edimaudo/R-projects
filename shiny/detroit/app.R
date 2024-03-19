@@ -70,11 +70,12 @@ ui <- dashboardPage(
                 mainPanel(
                   fluidRow(
                     h4("Youth Gonorrhea Trend",style="text-align: center;"),
-                    plotOutput("youth_gonorrhea_trend"),
+                    plotlyOutput("youth_gonorrhea_trend"),
+                    verbatimTextOutput("hover"),
                   ),
                   fluidRow(
                     h4("Youth Chlamydia Trend",style="text-align: center;"),
-                    plotOutput("youth_chlamydia_trend"),
+                    plotlyOutput("youth_chlamydia_trend"),
                   ),
                   fluidRow(
                     h4("Youth Sexual Behavior",style="text-align: center;"),
@@ -93,8 +94,23 @@ ui <- dashboardPage(
 ################
 server <- function(input, output,session) {
   
+  #==========
+  # gonorrhea
+  #==========
+  output$youth_gonorrhea_trend <- renderPlotly({
+    
+  })
   
+  #==========
+  # chlamydia
+  #==========
+  output$youth_chlamydia_trend <- renderPlotly({
+    
+  })
   
+  #==========
+  # youth behaviour
+  #==========
   output$behaviour_table <- renderDataTable({
     youth_behvaior <- youth %>%
       filter(Health_Topic == 'Sexual Behaviors') %>%
