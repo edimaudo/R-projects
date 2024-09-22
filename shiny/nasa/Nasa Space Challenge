@@ -1,0 +1,12 @@
+What is the challenge?
+Bill Jelen, “MrExcel,” has analyzed a space data set – of all crewed missions, spacewalks, space vehicles, mission by crew, and space travelers – and crafted three questions to test your skills. 
+In addition, there will also be an option of a “wildcard,” where you can surprise us with an idea for a visualization beyond the three questions! We will announce one top entry for each category after the challenge concludes.
+ Explore this data set at aka.ms/Rocket-DataSet. 
+ For all these questions, please only use the provided data to create your visualization.
+- Show the number of astronauts who have launched on each launch vehicle in the dataset. 
+--Your visualization should include at least the top three spacecraft that carried humans to space. Bonus: which spacecraft was most prevalent for crewed missions in each decade from 1960's to 2020's?
+- Show the nationalities of astronauts who have visited the International Space Station. By country, show the total number of human-days on the ISS for each country. This only includes time spent at the ISS, not other space stations such as Skylab or Mir. Simplifying assumption: Assume the space travelers arrive at the ISS on the day after they launch.
+- Show the distribution of human-days in space by decade. This includes all crewed spaceflights and stays at the Moon or any space station including Mir, Skylab, and the ISS. Optionally, add interesting Filters such as gender, launch site, astronaut nationality. Consider a way to show the 20 years of continuous space presence. 
+- Wildcard! Show us an interesting or surprising insight!
+
+link - https://techcommunity.microsoft.com/t5/excel-blog/welcome-to-the-day-of-data-visualization-challenge/ba-p/1791401
