@@ -9,7 +9,7 @@ rm(list = ls())
 packages <- c(
   'ggplot2', 'corrplot','tidyverse','shiny','shinydashboard','DT',
   'mlbench','caTools','gridExtra','doParallel','grid','forecast',
-  'caret','dummies','mlbench','tidyr','Matrix','lubridate','TTR','xts',
+  'caret','mlbench','tidyr','Matrix','lubridate','TTR','xts',
   'data.table','scales'
 )
 for (package in packages) {
@@ -79,8 +79,7 @@ ui <- dashboardPage(
     sidebarMenu(
       menuItem("About", tabName = "about", icon = icon("th")),
       menuItem("General Trends", tabName = "general", icon = icon("th")),
-      menuItem("Community Activity", tabName = "community", icon = icon("th")),
-      menuItem("Server Activity", tabName = "server", icon = icon("th"))
+      menuItem("Community Activity", tabName = "community", icon = icon("th"))
     )
   ),
   dashboardBody(
