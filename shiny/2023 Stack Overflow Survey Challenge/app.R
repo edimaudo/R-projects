@@ -46,15 +46,7 @@ ui <- dashboardPage(
   dashboardBody(
     tabItems(
       # About tab
-      tabItem(tabName = "about",includeMarkdown("readme.md"),
-              tags$ul(
-                tags$li(strong("Demographics:"), "Age, country, education, employment status"),
-                tags$li(strong("Experience:"), "Years coding, professional experience, org size"),
-                tags$li(strong("Learning:"), "Learning methods, resources, and training"),
-                tags$li(strong("Tooling:"), "Programming languages, databases, platforms, frameworks")
-              )
-      ),
-      
+      tabItem(tabName = "about",includeMarkdown("readme.md"),tags$ul()),
       # Demographics tab
       tabItem(tabName = "demographics",
               h2("Developer Demographics"),
