@@ -293,17 +293,7 @@ server <- function(input, output,session) {
             axis.text = element_text(size = 12))
     
   })
-   
-
-#Analyze the day of week and time of day for activity 
-
-
-
-  
-  # 3) Server Activity Prediction Model
-  # - channel
-  # -Develop forecasting models to predict future server activity, 
-  #  day + content posted  --> server activity   
+     
 }
 
 
