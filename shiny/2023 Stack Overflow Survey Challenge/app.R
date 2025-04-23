@@ -276,7 +276,7 @@ ui <- dashboardPage(
 
 ####### Server #######
 server <- function(input, output, session) {
-  
+  ##### Data #####
   # Filter the data based on inputs
   filtered_demo_data <- reactive({
     data <- df
@@ -360,7 +360,7 @@ server <- function(input, output, session) {
     return(data)
   })
   
-  # Demographics section outputs
+  ###### Demographics section outputs ######
   output$age_chart <- renderHighchart({
     demo_data <- filtered_demo_data()
     
@@ -454,7 +454,7 @@ server <- function(input, output, session) {
       theme_minimal()
   })
   
-  # Experience section outputs
+  ###### Experience section outputs #####
   output$years_code_chart <- renderPlot({
     exp_data <- filtered_exp_data()
     
@@ -466,7 +466,7 @@ server <- function(input, output, session) {
     
     ggplot(years_code_data, aes(x = YearsCode)) +
       geom_histogram(binwidth = 2, fill = "#00BFC4", color = "white") +
-      labs(x = "Years Coding", y = "Count") +
+      labs(x = "", y = "") +
       theme_minimal()
   })
   
@@ -481,7 +481,7 @@ server <- function(input, output, session) {
     
     ggplot(years_pro_data, aes(x = YearsCodePro)) +
       geom_histogram(binwidth = 2, fill = "#00BFC4", color = "white") +
-      labs(x = "Years Coding Professionally", y = "Count") +
+      labs(x = "", y = "") +
       theme_minimal()
   })
   
@@ -497,7 +497,7 @@ server <- function(input, output, session) {
     ggplot(org_size_counts, aes(x = reorder(OrgSize, n), y = n)) +
       geom_bar(stat = "identity", fill = "#B79F00") +
       coord_flip() +
-      labs(x = "Organization Size", y = "Count") +
+      labs(x = "", y = "") +
       theme_minimal()
   })
   
@@ -514,7 +514,7 @@ server <- function(input, output, session) {
     ggplot(industry_counts, aes(x = reorder(Industry, n), y = n)) +
       geom_bar(stat = "identity", fill = "#F8766D") +
       coord_flip() +
-      labs(x = "Industry", y = "Count") +
+      labs(x = "", y = "") +
       theme_minimal() +
       theme(axis.text.y = element_text(size = 9))
   })
