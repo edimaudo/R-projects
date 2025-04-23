@@ -71,12 +71,12 @@ ui <- dashboardPage(
                 box(
                   title = "Age Distribution", status = "warning", solidHeader = TRUE,
                   collapsible = TRUE, width = 6,
-                  highchartOutput("age_chart")
+                  plotOutput("age_chart")
                 ),
                 box(
                   title = "Geographic Distribution", status = "warning", solidHeader = TRUE,
                   collapsible = TRUE, width = 6,
-                  highchartOutput("country_chart")
+                  plotOutput("country_chart")
                 )
               ),
               fluidRow(
@@ -361,41 +361,35 @@ server <- function(input, output, session) {
   })
   
   ###### Demographics section outputs ######
-  output$age_chart <- renderHighchart({
+  output$age_chart <- renderPlot({
     demo_data <- filtered_demo_data()
     
-    # Count by age group
     age_counts <- demo_data %>%
       filter(!is.na(Age)) %>%
       count(Age) %>%
       arrange(desc(n))
     
-    highchart() %>%
-      hc_chart(type = "column") %>%
-      hc_title(text = "Age Distribution") %>%
-      hc_xAxis(categories = age_counts$Age) %>%
-      hc_yAxis(title = list(text = "")) %>%
-      hc_add_series(name = "Age", data = age_counts$n) %>%
-      hc_colors(c("#F8766D"))
+    ggplot(age_counts, aes(x = reorder(Age, n), y = n)) +
+      geom_col(fill = "#F8766D") +
+      labs(x = "", y = "", title = "Age Distribution") +
+      theme_minimal() +
+      coord_flip()
   })
   
-  output$country_chart <- renderHighchart({
+  output$country_chart <- renderPlot({
     demo_data <- filtered_demo_data()
     
-    # Get top 10 countries
     country_counts <- demo_data %>%
       filter(!is.na(Country)) %>%
       count(Country) %>%
       arrange(desc(n)) %>%
-      head(10)
+      slice_max(n, n = 10)
     
-    highchart() %>%
-      hc_chart(type = "bar") %>%
-      hc_title(text = "Top 10 Countries") %>%
-      hc_xAxis(categories = country_counts$Country) %>%
-      hc_yAxis(title = list(text = "")) %>%
-      hc_add_series(name = "Countries", data = country_counts$n) %>%
-      hc_colors(c("#00BA38"))
+    ggplot(country_counts, aes(x = reorder(Country, n), y = n)) +
+      geom_col(fill = "#00BA38") +
+      labs(x = "", y = "", title = "Top 10 Countries") +
+      theme_minimal() +
+      coord_flip()
   })
   
   output$education_chart <- renderPlot({
@@ -727,9 +721,9 @@ server <- function(input, output, session) {
       labs(x = "", y = "") +
       theme_minimal()
   })
-    
-  }
-
   
+}
+
+
 ####### Run the application #######
-  shinyApp(ui = ui, server = server)
+shinyApp(ui = ui, server = server)
