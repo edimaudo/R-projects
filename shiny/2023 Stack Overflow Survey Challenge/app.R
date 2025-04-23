@@ -724,7 +724,7 @@ server <- function(input, output, session) {
     ggplot(collab_tools, aes(x = reorder(NEWCollabToolsHaveWorkedWith, n), y = n)) +
       geom_bar(stat = "identity", fill = "#00BFC4") +
       coord_flip() +
-      #labs(x = "Development Environment", y = "Count") +
+      labs(x = "", y = "") +
       theme_minimal()
   })
     
