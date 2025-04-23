@@ -82,14 +82,14 @@ ui <- dashboardPage(
               fluidRow(
                 box(
                   title = "Education Level", status = "warning", solidHeader = TRUE,
-                  collapsible = TRUE, width = 6,
+                  collapsible = TRUE, width = 12,
                   plotOutput("education_chart")
-                ),
-                box(
-                  title = "Remote Work Patterns", status = "warning", solidHeader = TRUE,
-                  collapsible = TRUE, width = 6,
-                  plotOutput("remote_work_chart")
-                )
+                )#,
+                ##box(
+                ##  title = "Remote Work Patterns", status = "warning", solidHeader = TRUE,
+                ##  collapsible = TRUE, width = 6,
+                ##  plotOutput("remote_work_chart")
+                ##)
               ),
               fluidRow(
                 box(
@@ -374,8 +374,8 @@ server <- function(input, output, session) {
       hc_chart(type = "column") %>%
       hc_title(text = "Age Distribution") %>%
       hc_xAxis(categories = age_counts$Age) %>%
-      hc_yAxis(title = list(text = "Count")) %>%
-      hc_add_series(name = "Count", data = age_counts$n) %>%
+      hc_yAxis(title = list(text = "")) %>%
+      hc_add_series(name = "Age", data = age_counts$n) %>%
       hc_colors(c("#F8766D"))
   })
   
@@ -393,8 +393,8 @@ server <- function(input, output, session) {
       hc_chart(type = "bar") %>%
       hc_title(text = "Top 10 Countries") %>%
       hc_xAxis(categories = country_counts$Country) %>%
-      hc_yAxis(title = list(text = "Count")) %>%
-      hc_add_series(name = "Count", data = country_counts$n) %>%
+      hc_yAxis(title = list(text = "")) %>%
+      hc_add_series(name = "Countries", data = country_counts$n) %>%
       hc_colors(c("#00BA38"))
   })
   
@@ -410,7 +410,7 @@ server <- function(input, output, session) {
     ggplot(edu_counts, aes(x = reorder(EdLevel, n), y = n)) +
       geom_bar(stat = "identity", fill = "#619CFF") +
       coord_flip() +
-      labs(x = "Education Level", y = "Count") +
+      labs(x = "", y = "") +
       theme_minimal() +
       theme(axis.text.y = element_text(size = 10))
   })
@@ -450,7 +450,7 @@ server <- function(input, output, session) {
     ggplot(dev_types, aes(x = reorder(DevType, n), y = n)) +
       geom_bar(stat = "identity", fill = "#F564E3") +
       coord_flip() +
-      labs(x = "Developer Type", y = "Count") +
+      labs(x = "", y = "") +
       theme_minimal()
   })
   
