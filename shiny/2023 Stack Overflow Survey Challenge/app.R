@@ -253,22 +253,22 @@ ui <- dashboardPage(
               fluidRow(
                 box(
                   title = "Development Environments", status = "danger", solidHeader = TRUE,
-                  collapsible = TRUE, width = 6,
-                  plotOutput("collab_tools_chart")
-                ),
-                box(
-                  title = "Operating Systems", status = "danger", solidHeader = TRUE,
-                  collapsible = TRUE, width = 6,
-                  plotOutput("os_chart")
-                )
-              ),
-              fluidRow(
-                box(
-                  title = "AI Tools Usage", status = "danger", solidHeader = TRUE,
                   collapsible = TRUE, width = 12,
-                  plotOutput("ai_tools_chart")
-                )
+                  plotOutput("collab_tools_chart")
+                )#,
+                # box(
+                #   title = "Operating Systems", status = "danger", solidHeader = TRUE,
+                #   collapsible = TRUE, width = 6,
+                #   plotOutput("os_chart")
+                # )
               )
+              # fluidRow(
+              #   box(
+              #     title = "AI Tools Usage", status = "danger", solidHeader = TRUE,
+              #     collapsible = TRUE, width = 12,
+              #     plotOutput("ai_tools_chart")
+              #   )
+              # )
       )
     )
   )
@@ -542,7 +542,7 @@ server <- function(input, output, session) {
       theme_minimal()
   })
   
-  # Learning section outputs
+  ###### Learning section outputs #####
   output$learn_method_chart <- renderPlot({
     learn_data <- filtered_learn_data()
     
@@ -632,7 +632,7 @@ server <- function(input, output, session) {
       theme_minimal()
   })
   
-  # Tooling section outputs
+  ###### Tooling section outputs ######
   output$lang_chart <- renderPlot({
     tool_data <- filtered_tool_data()
     
@@ -648,7 +648,7 @@ server <- function(input, output, session) {
     ggplot(languages, aes(x = reorder(LanguageHaveWorkedWith, n), y = n)) +
       geom_bar(stat = "identity", fill = "#F8766D") +
       coord_flip() +
-      labs(x = "Programming Language", y = "Count") +
+      labs(x = "", y = "") +
       theme_minimal()
   })
   
@@ -667,7 +667,7 @@ server <- function(input, output, session) {
     ggplot(databases, aes(x = reorder(DatabaseHaveWorkedWith, n), y = n)) +
       geom_bar(stat = "identity", fill = "#00BA38") +
       coord_flip() +
-      labs(x = "Database", y = "Count") +
+      labs(x = "", y = "") +
       theme_minimal()
   })
   
@@ -686,7 +686,7 @@ server <- function(input, output, session) {
     ggplot(frameworks, aes(x = reorder(WebframeHaveWorkedWith, n), y = n)) +
       geom_bar(stat = "identity", fill = "#619CFF") +
       coord_flip() +
-      labs(x = "Web Framework", y = "Count") +
+      labs(x = "", y = "") +
       theme_minimal()
   })
   
@@ -705,7 +705,7 @@ server <- function(input, output, session) {
     ggplot(platforms, aes(x = reorder(PlatformHaveWorkedWith, n), y = n)) +
       geom_bar(stat = "identity", fill = "#F564E3") +
       coord_flip() +
-      labs(x = "Cloud Platform", y = "Count") +
+      #labs(x = "Cloud Platform", y = "Count") +
       theme_minimal()
   })
   
@@ -724,7 +724,7 @@ server <- function(input, output, session) {
     ggplot(collab_tools, aes(x = reorder(NEWCollabToolsHaveWorkedWith, n), y = n)) +
       geom_bar(stat = "identity", fill = "#00BFC4") +
       coord_flip() +
-      labs(x = "Development Environment", y = "Count") +
+      #labs(x = "Development Environment", y = "Count") +
       theme_minimal()
   })
     
