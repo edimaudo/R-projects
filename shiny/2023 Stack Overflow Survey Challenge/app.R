@@ -3,7 +3,7 @@
 ## Environment setup
 rm(list = ls())
 
-## Load Libraries
+#####Load Libraries###### 
 packages <- c('ggplot2', 'corrplot','tidyverse',"caret",
               'scales','ggfortify','DT',
               'shiny','shinydashboard','lubridate','caret',
@@ -17,10 +17,10 @@ for (package in packages) {
   }
 }
 
-## Load Data
+#### Load Data ####
 df <- read_csv("survey_results_public.csv")
 
-## UI dropdowns
+#### UI dropdowns ####
 developer_style <- sort(unique(df$MainBranch))
 age <- sort(unique(df$Age))
 employment <- sort(unique(df$Employment))
@@ -31,7 +31,7 @@ orgsize <- sort(unique(df$OrgSize))
 country <- sort(unique(df$Country))
 industry <- sort(unique(df$Industry))
 
-## UI 
+#### UI ####
 ui <- dashboardPage(
   dashboardHeader(title = "2023 Survey Insights"),
   dashboardSidebar(
@@ -45,9 +45,9 @@ ui <- dashboardPage(
   ),
   dashboardBody(
     tabItems(
-      # About tab
+      ####### About tab #######
       tabItem(tabName = "about",includeMarkdown("readme.md"),tags$ul()),
-      # Demographics tab
+      ####### Demographics tab #######
       tabItem(tabName = "demographics",
               h2("Developer Demographics"),
               fluidRow(
@@ -100,7 +100,7 @@ ui <- dashboardPage(
               )
       ),
       
-      # Experience tab
+      ####### Experience tab #######
       tabItem(tabName = "experience",
               h2("Developer Experience"),
               fluidRow(
@@ -153,7 +153,7 @@ ui <- dashboardPage(
               )
       ),
       
-      # Learning tab
+      ####### Learning tab #######
       tabItem(tabName = "learning",
               h2("Developer Learning"),
               fluidRow(
@@ -206,7 +206,7 @@ ui <- dashboardPage(
               )
       ),
       
-      # Tooling tab
+      ####### Tooling tab #######
       tabItem(tabName = "tooling",
               h2("Developer Tooling"),
               fluidRow(
@@ -274,7 +274,7 @@ ui <- dashboardPage(
   )
 )
 
-## Server
+####### Server #######
 server <- function(input, output, session) {
   
   # Filter the data based on inputs
@@ -731,5 +731,5 @@ server <- function(input, output, session) {
   }
 
   
-  # Run the application 
+####### Run the application #######
   shinyApp(ui = ui, server = server)
