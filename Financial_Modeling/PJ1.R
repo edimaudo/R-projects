@@ -3,7 +3,7 @@
 ## Environment setup
 rm(list = ls())
 
-#####Load Libraries ###### 
+##### Load Libraries ###### 
 packages <- c('ggplot2', 'corrplot','tidyverse',"caret",
               'scales','ggfortify','DT',
               'shiny','shinydashboard','lubridate'
@@ -15,7 +15,7 @@ for (package in packages) {
   }
 }
 
-# --- Input Parameters ---
+#####  Input Parameters ##### 
 noutput <- 100000    # Number of phones per machine per year
 pscrap <- 50000      # Scrap value of machine ($)
 pphone <- 500        # Price per phone ($)
@@ -28,7 +28,7 @@ gd <- 0.2            # Percentage growth in demand for each advertisement (0.2 =
 r <- 0.05            # Interest rate earned on investments (0.05 = 5%)
 max_year <- 20       # Maximum number of years for the model
 
-# --- Initialization ---
+#####  Initialization ##### 
 years <- 1:max_year
 cash_flow <- numeric(max_year)
 demand <- numeric(max_year)
@@ -45,7 +45,7 @@ active_machines <- numeric(max_year)
 machine_details <- matrix(NA, nrow = nmachines_to_buy, ncol = 2)
 colnames(machine_details) <- c("YearBought", "YearScrapped")
 
-# --- Yearly Simulation Loop ---
+#####  Yearly Simulation Loop ##### 
 for (y in years) {
   
   # 1. Investment / Advertising Cost
@@ -111,12 +111,12 @@ for (y in years) {
   cash_flow[y] <- revenue[y] - variable_cost[y] - investment_or_ad_cost[y] + scrap_value_received[y]
 }
 
-# --- Calculate Net Present Value (NPV) ---
+#####  Calculate Net Present Value (NPV) ##### 
 discount_factors <- (1 + r)^years
 present_values <- cash_flow / discount_factors
 npv <- sum(present_values)
 
-# --- Output ---
+#####  Output ##### 
 
 # Print Yearly Cash Flow
 cat("--- Yearly Cash Flow ---\n")
